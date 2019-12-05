@@ -1339,7 +1339,7 @@ void Pic_offset_fig(void)
 *  ±¸    ×¢£º
 
 *************************************************************************/
-/*
+
 void Pic_offset_filter(void)
 {
   Cam_offset_filter[3]=Cam_offset_filter[2];
@@ -1355,7 +1355,7 @@ void Pic_offset_filter(void)
 //int map_y[60]={
 // 235,223,212,201,191,181,172,163,154,146,138,130,123,116,109,103,97,92,86,81,76,72,67,63,59,55,52,48,45,42,39,37,34,32,29,27,25,23,21,20,18,17,15,14,13,11,10,9,8,7,6,5,5,4,3,3,2,1,1,0
 //};
-*/
+
 int temx;
 int mid_map[60];
 //my analitical version of remapping x and y
