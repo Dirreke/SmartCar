@@ -55,3 +55,12 @@
 更改/* 调试参数 */ 从main.c到search.c
 
 //------------------------------------//
+
+/**2019.12.07  **/
+GMY
+
+修改fsl_pwm.h中PWM_DUTY_MAX值为20000
+修改电机频率为13000Hz，初始化后电机转速0；
+设定舵机参数SERVO_MIDDLE以及SERVO_RANGE;
+舵机Servo_duty中对duty限幅，以防duty溢出;
+**新建Properties.h用于放置小车属性及其他参数;

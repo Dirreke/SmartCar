@@ -83,6 +83,11 @@
 #include "pwm_me.h"
 #include "qtimer.h"
 
+
+
+
+#include"properties.h"
+
 #include "Data_Send.h"
 
 

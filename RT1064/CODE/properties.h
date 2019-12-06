@@ -1,0 +1,2 @@
+#define SERVO_MIDDLE 1360  //1.36*20000/20;
+#define SERVO_RANGE 480

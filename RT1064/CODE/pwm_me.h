@@ -24,6 +24,7 @@ typedef enum
 }Mot_CHn_e;
 
 
+
 //电机占空比的控制
 void Motor_Init(void);
 void Motor_Duty(uint16 Motno, uint32 duty);
