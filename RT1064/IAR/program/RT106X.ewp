@@ -1839,6 +1839,9 @@
     <group>
         <name>user_c</name>
         <file>
+            <name>$PROJ_DIR$\..\..\CODE\control.c</name>
+        </file>
+        <file>
             <name>$PROJ_DIR$\..\..\CODE\Data_Send.c</name>
         </file>
         <file>
@@ -1846,6 +1849,12 @@
         </file>
         <file>
             <name>$PROJ_DIR$\..\..\USER\src\main.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\CODE\pwm_me.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\CODE\qtimer.c</name>
         </file>
         <file>
             <name>$PROJ_DIR$\..\..\CODE\search.c</name>
@@ -1857,6 +1866,9 @@
     <group>
         <name>user_h</name>
         <file>
+            <name>$PROJ_DIR$\..\..\CODE\control.h</name>
+        </file>
+        <file>
             <name>$PROJ_DIR$\..\..\CODE\Data_Send.h</name>
         </file>
         <file>
@@ -1864,6 +1876,12 @@
         </file>
         <file>
             <name>$PROJ_DIR$\..\..\USER\inc\isr.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\CODE\pwm_me.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\CODE\qtimer.h</name>
         </file>
         <file>
             <name>$PROJ_DIR$\..\..\USER\inc\RT106X_config.h</name>

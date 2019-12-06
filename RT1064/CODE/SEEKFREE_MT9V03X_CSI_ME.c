@@ -2,7 +2,7 @@
 
  * @file       		ÉãÏñÍ·´¦Àíº¯Êı
  * @date       		2019-11-20
- * @note		
+ * @note
 
  ********************************************************************************************************************/
 
@@ -12,7 +12,7 @@
 //Êı¾İÎñ±Ø¶¨ÒåÔÚnoncacheÇøÓò£¬ÒòÎªÉãÏñÍ·Êı¾İ°áÒÆÊÇÓÉDMAÍê³ÉµÄ£¬¶ÔÓÚÄÚºËÀ´Ëµ£¬Ëü²¢²»ÖªµÀÕâ¸öÊı×éÄÚÈİÔÚÊ²Ã´Ê±ºò±»¸üĞÂ¹ı£¬
 //Èç¹û²»¶¨ÒåÔÚnoncacheÇøÓò£¬Ôò»áÔì³ÉÉãÏñÍ·Êı¾İ²É¼¯Íê³Éºó£¬ÄÚºËÈ¥·ÃÎÊÕâ¸öÊı×éµÄÊ±ºò£¬¶ÁÈ¡µÄÊı¾İÊÇÖ±½Ó³åcacheÀïÃæ¶ÁÈ¡µÄ¶ø²»ÊÇÈ¥»ñÈ¡¸üĞÂºóµÄÄÚÈİ
 //´Ó¶øÔì³É²»Í¬²½µÄÎÊÌâ¡£
-                                                  
+
 __ramfunc void Get_Use_Image(void);
 
 /* AT_NONCACHEABLE_SECTION_ALIGN(uint8 image[MT9V03X_CSI_H][MT9V03X_CSI_W],4); */
@@ -31,24 +31,24 @@ __ramfunc void Get_Use_Image(void)
 	for(i = 20; i  < 80; i+=1)  //120ĞĞ£¬Ã¿2ĞĞ²É¼¯Ò»ĞĞ£¬15  74
 	{
 		for(j = 15;j < 174; j+=2)  //188£¬È¡94ÁĞ
-		{        
-			Image_Use[row][(j-15)>>1] = mt9v03x_csi_image[i][j];   
-                 
-		}     
+		{
+			Image_Use[row][(j-15)>>1] = mt9v03x_csi_image[i][j];
+
+		}
                 row+=1;
-	}  
+	}
 }
-/*************************************************************** 
-* 
-* º¯ÊıÃû³Æ£ºuint8_t GetOSTU(uint8_t tmImage[IMAGEH][IMAGEW]) 
-* ¹¦ÄÜËµÃ÷£ºÇóãĞÖµ´óĞ¡ 
-* ²ÎÊıËµÃ÷£º 
-* º¯Êı·µ»Ø£ºãĞÖµ´óĞ¡ 
-* ĞŞ¸ÄÊ±¼ä£º2018Äê3ÔÂ27ÈÕ 
-* ±¸ ×¢£º 
+/***************************************************************
+*
+* º¯ÊıÃû³Æ£ºuint8_t GetOSTU(uint8_t tmImage[IMAGEH][IMAGEW])
+* ¹¦ÄÜËµÃ÷£ºÇóãĞÖµ´óĞ¡
+* ²ÎÊıËµÃ÷£º
+* º¯Êı·µ»Ø£ºãĞÖµ´óĞ¡
+* ĞŞ¸ÄÊ±¼ä£º2018Äê3ÔÂ27ÈÕ
+* ±¸ ×¢£º
 ²Î¿¼£ºhttps://blog.csdn.net/zyzhangyue/article/details/45841255
       https://www.cnblogs.com/moon1992/p/5092726.html
-      https://www.cnblogs.com/zhonghuasong/p/7250540.html     
+      https://www.cnblogs.com/zhonghuasong/p/7250540.html
 Ostu·½·¨ÓÖÃû×î´óÀà¼ä²î·½·¨£¬Í¨¹ıÍ³¼ÆÕû¸öÍ¼ÏñµÄÖ±·½Í¼ÌØĞÔÀ´ÊµÏÖÈ«¾ÖãĞÖµTµÄ×Ô¶¯Ñ¡È¡£¬ÆäËã·¨²½ÖèÎª£º
 1) ÏÈ¼ÆËãÍ¼ÏñµÄÖ±·½Í¼£¬¼´½«Í¼ÏñËùÓĞµÄÏñËØµã°´ÕÕ0~255¹²256¸öbin£¬Í³¼ÆÂäÔÚÃ¿¸öbinµÄÏñËØµãÊıÁ¿
 2) ¹éÒ»»¯Ö±·½Í¼£¬Ò²¼´½«Ã¿¸öbinÖĞÏñËØµãÊıÁ¿³ıÒÔ×ÜµÄÏñËØµã
@@ -58,39 +58,39 @@ Ostu·½·¨ÓÖÃû×î´óÀà¼ä²î·½·¨£¬Í¨¹ıÍ³¼ÆÕû¸öÍ¼ÏñµÄÖ±·½Í¼ÌØĞÔÀ´ÊµÏÖÈ«¾ÖãĞÖµTµÄ×Ô¶¯Ñ¡È
 6) i++£»×ªµ½4)£¬Ö±µ½iÎª256Ê±½áÊøµü´ú
 7£©½«×î´ógÏàÓ¦µÄiÖµ×÷ÎªÍ¼ÏñµÄÈ«¾ÖãĞÖµ
 È±Ïİ:OSTUËã·¨ÔÚ´¦Àí¹âÕÕ²»¾ùÔÈµÄÍ¼ÏñµÄÊ±ºò£¬Ğ§¹û»áÃ÷ÏÔ²»ºÃ£¬ÒòÎªÀûÓÃµÄÊÇÈ«¾ÖÏñËØĞÅÏ¢¡£
-***************************************************************/ 
-uint8_t GetOSTU(uint8_t tmImage[CAMERA_H][CAMERA_W]) 
-{ 
-  int16_t i,j; 
-  uint32_t Amount = 0; 
-  uint32_t PixelBack = 0; 
-  uint32_t PixelIntegralBack = 0; 
-  uint32_t PixelIntegral = 0; 
-  int32_t PixelIntegralFore = 0; 
-  int32_t PixelFore = 0; 
-  double OmegaBack, OmegaFore, MicroBack, MicroFore, SigmaB, Sigma; // Àà¼ä·½²î; 
-  int16_t MinValue, MaxValue; 
+***************************************************************/
+uint8_t GetOSTU(uint8_t tmImage[CAMERA_H][CAMERA_W])
+{
+  int16_t i,j;
+  uint32_t Amount = 0;
+  uint32_t PixelBack = 0;
+  uint32_t PixelIntegralBack = 0;
+  uint32_t PixelIntegral = 0;
+  int32_t PixelIntegralFore = 0;
+  int32_t PixelFore = 0;
+  double OmegaBack, OmegaFore, MicroBack, MicroFore, SigmaB, Sigma; // Àà¼ä·½²î;
+  int16_t MinValue, MaxValue;
   uint8_t Threshold = 0;
-  uint16 HistoGram[256];              //  
+  uint16 HistoGram[256];              //
 
-  for (j = 0; j < 256; j++)  HistoGram[j] = 0; //³õÊ¼»¯»Ò¶ÈÖ±·½Í¼ 
-  
-  for (j = 0; j < CAMERA_H; j++) 
-  { 
-    for (i = 0; i < CAMERA_W; i++) 
-    { 
+  for (j = 0; j < 256; j++)  HistoGram[j] = 0; //³õÊ¼»¯»Ò¶ÈÖ±·½Í¼
+
+  for (j = 0; j < CAMERA_H; j++)
+  {
+    for (i = 0; i < CAMERA_W; i++)
+    {
       HistoGram[tmImage[j][i]]++; //Í³¼Æ»Ò¶È¼¶ÖĞÃ¿¸öÏñËØÔÚÕû·ùÍ¼ÏñÖĞµÄ¸öÊı
-    } 
-  } 
-  
+    }
+  }
+
   for (MinValue = 0; MinValue < 256 && HistoGram[MinValue] == 0; MinValue++) ;        //»ñÈ¡×îĞ¡»Ò¶ÈµÄÖµ
   for (MaxValue = 255; MaxValue > MinValue && HistoGram[MaxValue] == 0; MaxValue--) ; //»ñÈ¡×î´ó»Ò¶ÈµÄÖµ
-      
-  if (MaxValue == MinValue)     return MaxValue;         // Í¼ÏñÖĞÖ»ÓĞÒ»¸öÑÕÉ«    
+
+  if (MaxValue == MinValue)     return MaxValue;         // Í¼ÏñÖĞÖ»ÓĞÒ»¸öÑÕÉ«
   if (MinValue + 1 == MaxValue)  return MinValue;        // Í¼ÏñÖĞÖ»ÓĞ¶ş¸öÑÕÉ«
-    
+
   for (j = MinValue; j <= MaxValue; j++)    Amount += HistoGram[j];        //  ÏñËØ×ÜÊı
-    
+
   PixelIntegral = 0;
   for (j = MinValue; j <= MaxValue; j++)
   {
@@ -115,7 +115,7 @@ uint8_t GetOSTU(uint8_t tmImage[CAMERA_H][CAMERA_W])
     }
   }
   return Threshold;                        //·µ»Ø×î¼ÑãĞÖµ;
-} 
+}
 
 void Get_01_Value(void)
 {
@@ -123,13 +123,13 @@ void Get_01_Value(void)
   for(i = 0; i < LCDH; i++)
   {
     for(j = 0; j < LCDW; j++)
-    {                                
-      
-      if(Image_Use[i][j] > 110+camera_offset) //´ó½ò·¨ãĞÖµ   ÊıÖµÔ½´ó£¬ÏÔÊ¾µÄÄÚÈİÔ½¶à£¬½ÏÇ³µÄÍ¼ÏñÒ²ÄÜÏÔÊ¾³öÀ´    
-        Pixle[i][j] =1;        
-      else                                        
+    {
+
+      if(Image_Use[i][j] > 110+camera_offset) //´ó½ò·¨ãĞÖµ   ÊıÖµÔ½´ó£¬ÏÔÊ¾µÄÄÚÈİÔ½¶à£¬½ÏÇ³µÄÍ¼ÏñÒ²ÄÜÏÔÊ¾³öÀ´
+        Pixle[i][j] =1;
+      else
         Pixle[i][j] =0;
-    }    
+    }
   }
 }
 
@@ -143,15 +143,15 @@ void swap(uint8_t *p,int a,int b){
 
 void sobel()//Sobel±ßÑØ¼ì²â
 {
-        
+
 	int tempx=0,tempy=0,i=0,j=0;
-        double tempsqrt=0; 
+        double tempsqrt=0;
         uint8 threshold;
         threshold=GetOSTU(Image_Use);
 	for(i=1;i <LCDH-1; i++)
             for(j=1;j<LCDW-1;j++)
             {
-                
+
                 if(Image_Use[i][j]<threshold + threshold_offset)
                 {
                   Pixle[i][j] = 0;
@@ -159,7 +159,7 @@ void sobel()//Sobel±ßÑØ¼ì²â
                   FINAL[i] = 0;
                   continue;
                 }
-		tempx=-Image_Use[i-1][j-1]-2*Image_Use[i][j-1]-Image_Use[i+1][j-1]+Image_Use[i-1][j+1]+2*Image_Use[i][j+1]+Image_Use[i+1][j+1];				
+		tempx=-Image_Use[i-1][j-1]-2*Image_Use[i][j-1]-Image_Use[i+1][j-1]+Image_Use[i-1][j+1]+2*Image_Use[i][j+1]+Image_Use[i+1][j+1];
 		tempy= Image_Use[i+1][j-1]+2*Image_Use[i+1][j]+Image_Use[i+1][j+1]-Image_Use[i-1][j-1]-2*Image_Use[i-1][j]-Image_Use[i-1][j+1];
                 tempsqrt=sqrt(tempx*tempx+tempy*tempy);
                 if(i<Sobel_Near_Far_Line && tempsqrt > Sobel_Threshold_Far && Image_Use[i][j]<200)
@@ -178,7 +178,7 @@ void sobel()//Sobel±ßÑØ¼ì²â
                     FINAL[i] = 1;
                 }
             }
-	
+
 }
 /*************************************************************************
 *  º¯ÊıÃû³Æ£ºvoid Pic_particular()
@@ -221,9 +221,28 @@ int circle_set2 = -350;
 int circle_flag = 0;
 
 void camera_dispose_main(void)//ÉãÏñÍ·´¦ÀíÖ÷º¯Êı
-{  
-     // static char Road3_cnt = 0 ; 
+{
+     // static char Road3_cnt = 0 ;
       Get_Use_Image(); //Í¼ÏñÔ¤´¦Àí
+      if(Road == 0)
+      {
+        circle_flag = 0;
+      }
+      if(Road == 1)
+      {
+        if(circle_set < 1)//Cam_Block_Cnt == 100)
+          {
+            Road = 0;
+          }
+      }
+      if(Road == 2)
+      {
+        if(circle_set < 1)//Cam_Block_Cnt == 100)
+          {
+            Road = 0;
+          }
+      }
+
 /*
      if(Road == 0)
      {
@@ -243,25 +262,24 @@ void camera_dispose_main(void)//ÉãÏñÍ·´¦ÀíÖ÷º¯Êı
     {
       Road = 0;
     }
-    
+
      }
      */
      if(Road == 6 && Road6_flag != 2)//||(Cam_Block_State ==1))
-      { 
+      {
          //sobel±ßÔµ¼ì²â
         Get_01_Value();
-      
       }
       else
       {
        sobel();
        if(Road ==1 && Road1_flag == 4)//||Road ==2)
-       { 
+       {
           //Pic_seedfill();///ÖÖ×ÓËÑË÷Ëã·¨
        }
        Pic_noi_elim();//Í¼Ïñ¼òµ¥È¥Ôëµã
       }
-      Pic_DrawMid();//Ñ°ÕÒ×óÓÒ±ßÏß  
+      Pic_DrawMid();//Ñ°ÕÒ×óÓÒ±ßÏß
       Cam_End_Detect();
       Pic_undistort();//Í¼ÏñÈ¥»û±ä
       Pic_particular();
@@ -271,18 +289,14 @@ void camera_dispose_main(void)//ÉãÏñÍ·´¦ÀíÖ÷º¯Êı
       Pic_find_leap();//Ñ°ÕÒÍ»±äµã
       Pic_Block_Rec();
       Cam_Break_Rec();
-     // Road_rec();//ÀûÓÃ×óÓÒ±ßÏßĞ±ÂÊÊ¶±ğÈüµÀ
+      Road_rec();//ÀûÓÃ×óÓÒ±ßÏßĞ±ÂÊÊ¶±ğÈüµÀ
       Pic_Fix_Line();//²¹Ïß´¦Àí
-      //Pic_offset_fig();//offset¼ÆËã
-      //Pic_offset_filter();//offsetÂË²¨ 
-      
-      
+      Pic_offset_fig();//offset¼ÆËã
+      Pic_offset_filter();//offsetÂË²¨
+
+
       //if(Road == 0)
       //{
-       
+
         //}
      }
-      
-      
-
- 

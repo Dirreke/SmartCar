@@ -25,16 +25,16 @@ extern int whitecnt;
 extern float speedTarget1;
 extern float speedTarget2;
 extern float angle_dbg_1,angle_dbg_2;
-//extern PID PID_SPEED;
+extern PID PID_SPEED;
 extern float gyroy_1;
 extern int16 icm_gyro_y;
 extern float stat_slope;
 extern char Road1_turnout;
 //extern float cam_off_dbg;
 /*
- * 取一个数据的各个位 
+ * 取一锟斤拷锟斤拷锟捷的革拷锟斤拷位
  */
-#define BYTE0(Temp)       (*(char *)(&Temp))     
+#define BYTE0(Temp)       (*(char *)(&Temp))
 #define BYTE1(Temp)       (*((char *)(&Temp) + 1))
 #define BYTE2(Temp)       (*((char *)(&Temp) + 2))
 #define BYTE3(Temp)       (*((char *)(&Temp) + 3))

@@ -1,22 +1,22 @@
 /*********************************************************************************************************************
  * COPYRIGHT NOTICE
- * Copyright (c) 2019,逐飞科技
+ * Copyright (c) 2019,锟斤拷锟缴科硷拷
  * All rights reserved.
- * 技术讨论QQ群：一群：179029047(已满)  二群：244861897
+ * 锟斤拷锟斤拷锟斤拷锟斤拷QQ群锟斤拷一群锟斤拷179029047(锟斤拷锟斤拷)  锟斤拷群锟斤拷244861897
  *
- * 以下所有内容版权均属逐飞科技所有，未经允许不得用于商业用途，
- * 欢迎各位使用并传播本程序，修改内容时必须保留逐飞科技的版权声明。
+ * 锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷锟捷帮拷权锟斤拷锟斤拷锟斤拷锟缴科硷拷锟斤拷锟叫ｏ拷未锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷业锟斤拷途锟斤拷
+ * 锟斤拷迎锟斤拷位使锟矫诧拷锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷锟睫革拷锟斤拷锟斤拷时锟斤拷锟诫保锟斤拷锟斤拷锟缴科硷拷锟侥帮拷权锟斤拷锟斤拷锟斤拷
  *
  * @file       		headfile
- * @company	   		成都逐飞科技有限公司
- * @author     		逐飞科技(QQ3184284598)
- * @version    		查看doc内version文件 版本说明
+ * @company	   		锟缴讹拷锟斤拷锟缴科硷拷锟斤拷锟睫癸拷司
+ * @author     		锟斤拷锟缴科硷拷(QQ3184284598)
+ * @version    		锟介看doc锟斤拷version锟侥硷拷 锟芥本说锟斤拷
  * @Software 		IAR 8.3 or MDK 5.24
  * @Target core		NXP RT1064DVL6A
  * @Taobao   		https://seekfree.taobao.com/
  * @date       		2019-04-30
  ********************************************************************************************************************/
- 
+
 #ifndef _headfile_h
 #define _headfile_h
 
@@ -39,7 +39,7 @@
 #include "SEEKFREE_PRINTF.h"
 
 
-//------逐飞科技单片机外设驱动头文件
+//------锟斤拷锟缴科硷拷锟斤拷片锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷头锟侥硷拷
 #include "zf_gpio.h"
 #include "zf_iomuxc.h"
 #include "zf_pit.h"
@@ -56,7 +56,7 @@
 #include "zf_rom_api.h"
 #include "zf_usb_cdc.h"
 
-//------逐飞科技产品驱动头文件
+//------锟斤拷锟缴科硷拷锟斤拷品锟斤拷锟斤拷头锟侥硷拷
 #include "SEEKFREE_FONT.h"
 #include "SEEKFREE_18TFT.h"
 #include "SEEKFREE_IPS114_SPI.h"
@@ -79,6 +79,11 @@
 
 #include "SEEKFREE_MT9V03X_CSI_ME.h"
 #include "search.h"
-#include "Data_Send.h"
-#endif
+#include "control.h"
+#include "pwm_me.h"
+#include "qtimer.h"
 
+#include "Data_Send.h"
+
+
+#endif

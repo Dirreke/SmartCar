@@ -62,6 +62,7 @@ extern int Rig_break_point;
 extern int Cam_Block_State;
 extern int Middle;
 extern int end;
+extern float Cam_offset;
 
 
 //#define Car_Speed_Str     2200   //直道速度

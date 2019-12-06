@@ -47,136 +47,62 @@
 
 #include "headfile.h"
 
-uint8 test1[4] ={0x00,0xff,0x01,0x01};
-uint8 test2= 0xff;
-uint8 test3= 0x00;
+uint8 image_head[4] ={0x00,0xff,0x01,0x01};
 
 
 
-uint8 otsuThreshold(uint8 *image, uint16 col, uint16 row)
-{
-    #define GrayScale 256
-    uint16 width = col;
-    uint16 height = row;
-    int pixelCount[GrayScale];
-    float pixelPro[GrayScale];
-    int i, j, pixelSum = width * height;
-    uint8 threshold = 0;
-    uint8* data = image;  //指向像素数据的指针
-    for (i = 0; i < GrayScale; i++)
-    {
-        pixelCount[i] = 0;
-        pixelPro[i] = 0;
-    }
-
-    //统计灰度级中每个像素在整幅图像中的个数  
-    for (i = 0; i < height; i++)
-    {
-        for (j = 0; j < width; j++)
-        {
-            pixelCount[(int)data[i * width + j]]++;  //将像素值作为计数数组的下标
-        }
-    }
-
-    //计算每个像素在整幅图像中的比例  
-    float maxPro = 0.0;
-    for (i = 0; i < GrayScale; i++)
-    {
-        pixelPro[i] = (float)pixelCount[i] / pixelSum;
-        if (pixelPro[i] > maxPro)
-        {
-            maxPro = pixelPro[i];
-        }
-    }
-
-    //遍历灰度级[0,255]  
-    float w0, w1, u0tmp, u1tmp, u0, u1, u, deltaTmp, deltaMax = 0;
-    for (i = 0; i < GrayScale; i++)     // i作为阈值
-    {
-        w0 = w1 = u0tmp = u1tmp = u0 = u1 = u = deltaTmp = 0;
-        for (j = 0; j < GrayScale; j++)
-        {
-            if (j <= i)   //背景部分  
-            {
-                w0 += pixelPro[j];
-                u0tmp += j * pixelPro[j];
-            }
-            else   //前景部分  
-            {
-                w1 += pixelPro[j];
-                u1tmp += j * pixelPro[j];
-            }
-        }
-        u0 = u0tmp / w0;
-        u1 = u1tmp / w1;
-        u = u0tmp + u1tmp;
-        deltaTmp = w0 * pow((u0 - u), 2) + w1 * pow((u1 - u), 2);
-        if (deltaTmp > deltaMax)
-        {
-            deltaMax = deltaTmp;
-            threshold = i;
-        }
-    }
-
-    return threshold;
-}
-
-uint8 image_threshold;  //图像阈值
-uint32 use_time;     
+uint32 use_time;
 
 
 int main(void)
 {
-    //int i;
-    //uint8 *p;
-    uint8 k;
-    
-    DisableGlobalIRQ();
-    board_init();   		//务必保留，本函数用于初始化MPU 时钟 调试串口
-    
-	systick_delay_ms(100);	//延时100ms，等待主板其他外设上电成功
-	
-        seekfree_wireless_init();
 
-	mt9v03x_csi_init();		//初始化摄像头	使用CSI接口
-	ips200_init();			//初始化2.0寸IPS屏幕
-   
+    DisableGlobalIRQ();
+    /** board init **/
+    board_init();   	      	 //务必保留，本函数用于初始化MPU 时钟 调试串口
+    systick_delay_ms(100);	   //延时100ms，等待主板其他外设上电成功
+
+    /** program init **/
+    seekfree_wireless_init();  //初始化无线串口模块
+    mt9v03x_csi_init();		     //初始化摄像头	使用CSI接口
+    ips200_init();	       		 //初始化2.0寸IPS屏幕
+    Motor_Init(); //电机初始化
+    Servo_Init(); //舵机初始化
+    pit_init();   //中断初始化，每2ms控制电机一次（中断的时间也许可以改到更小一些，因为主频有所提升）
+    pit_interrupt_ms(PIT_CH0,10);
+    qtimer_AB_init();//解码器初始化
+
     EnableGlobalIRQ(0);
+
+    /** main loop **/
     while(1)
     {
-      
         if(mt9v03x_csi_finish_flag)			//图像采集完成
         {
-			mt9v03x_csi_finish_flag = 0;	//清除采集完成标志位
-                        
-			camera_dispose_main();
-			//使用缩放显示函数，根据原始图像大小 以及设置需要显示的大小自动进行缩放或者放大显示
-			//总钻风采集到的图像分辨率为 188*120 ，2.0寸IPS屏显示分辨率为 320*240 ，图像拉伸全屏显示。
-            ips200_displayimage032_zoom(mt9v03x_csi_image[0], MT9V03X_CSI_W, MT9V03X_CSI_H, 320, 240);	//显示摄像头图像
-            image_threshold = otsuThreshold(mt9v03x_csi_image[0],MT9V03X_CSI_W,MT9V03X_CSI_H);  //大津法计算阈值
-                        //Send_Data();
-                   //发送二值化图像至上位机
-            p = mt9v03x_csi_image[0];
-       //seekfree_wireless_send_buff(test1,sizeof(test1));//由于sizeof计算字符串的长度包含了最后一个0，因此需要减一
-            //seekfree_wireless_send_buff(*Image_Use,80*60);
-              /*
-        for(i=0; i<MT9V03X_CSI_W*MT9V03X_CSI_H; i++)
-            {
-                if(p[i]>image_threshold)    seekfree_wireless_send_buff(&test3,sizeof(test3));
-                else                        seekfree_wireless_send_buff(&test3,sizeof(test3));
-            }
-        */
+            mt9v03x_csi_finish_flag = 0;	//清除采集完成标志位
+            camera_dispose_main();
+            //使用缩放显示函数，根据原始图像大小 以及设置需要显示的大小自动进行缩放或者放大显示。
+            //总钻风采集到的图像分辨率为 188*120 ，2.0寸IPS屏显示分辨率为 320*240 ，图像拉伸全屏显示。
+            //上位机显示的图像分辨率为 80*60 ， 采集第15-174列 ， 1-120行 ， 每两行取一行。
+            ips200_displayimage032_zoom(mt9v03x_csi_image[0], MT9V03X_CSI_W, MT9V03X_CSI_H, 320, 240);	//屏幕显示摄像头图像
+            seekfree_wireless_send_buff(image_head,sizeof(image_head));//由于sizeof计算字符串的长度包含了最后一个\0，因此需要减一。数组不用
+            seekfree_wireless_send_buff(*Image_Use,80*60);//Image_Use后80*60
         }
-        seekfree_wireless_send_buff(&k,1);
-        k++;
-/       /  if (k>=256)
-  //  k=0;
-        
-    //systick_delay_ms(10); 
-    //}
+
+        //更改占空比为  百分之100*2000/PWM_DUTY_MAX  PWM_DUTY_MAX在fsl_pwm.h文件中 默认为50000
+//      占空比对应关系  0：D0  1：D1  2：D12  3：D13
+
+        /*
+        Motor_Duty(0,12500);
+        Motor_Duty(1,0);
+
+        Motor_Duty(2,0);
+        Motor_Duty(3,12500);
+        */
+
+        //舵机
+        Servo_Duty(2500);
+
 }
 
-
-
-
-
+}
