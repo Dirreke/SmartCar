@@ -63,4 +63,4 @@ GMY
 修改电机频率为13000Hz，初始化后电机转速0；
 设定舵机参数SERVO_MIDDLE以及SERVO_RANGE;
 舵机Servo_duty中对duty限幅，以防duty溢出;
-**新建Properties.h用于放置小车属性及其他参数;
+**新建Properties.h用于放置小车属性及其他参数;**
