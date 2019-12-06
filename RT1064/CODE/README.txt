@@ -29,6 +29,7 @@
 取消注释Data_Send.h第28行extern PID PID_SPEED
 添加search.c中50行对Cam_offset的定义
 取消注释search.c中433行开始的Road_rec()函数
+注释Road_rec()中oldwhite，Road1_cnt1，Road1_flag1变量，因为没有用到
 注释search.c中63-73行，都是EM
 注释search.c中482-493行，因为有关EM
 注释第499行原先if条件，改为无EM判断
