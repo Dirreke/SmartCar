@@ -59,7 +59,7 @@ int New_Rig[60];//用于存储逆透视变换后的横坐标
 int Ca_offset=0;
 int Cam_Break_Flag = 0;
 
-extern float Cam_Turn_Control;
+
 /*
 extern float EM_Turn_Control;
 extern float Turn_P_EM;

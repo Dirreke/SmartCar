@@ -13,6 +13,7 @@ void Motor_Init(void)
 }
 
 //舵机居中   1.5ms/20ms * PWM_DUTY_MAX（PWM_DUTY_MAX是PWM的满占空比时候的值） PWM_DUTY_MAX在fsl_pwm.h文件中 已改为20000
+
 void Servo_Init(void)
 {
   pwm_init(PWM4_MODULE2_CHA_C30, 50, SERVO_MIDDLE); //SERVOMIDDLE 在Properties中定义
@@ -42,20 +43,26 @@ void Motor_Duty(uint16 Motno, uint32 duty)
     }
   }
 }
-void Servo_Duty(uint32 duty)
+
+//中位修改放入Servo_Duty中。既输入量<+-SERVO_RANGE
+void Servo_Duty(float duty)
 {
-  if (duty > SERVO_MIDDLE + SERVO_RANGE)
+  if (duty > SERVO_RANGE)
   {
-    duty = SERVO_MIDDLE + SERVO_RANGE;
+    duty =  SERVO_MIDDLE + SERVO_RANGE;
   }
-  else if (duty < SERVO_MIDDLE - SERVO_RANGE)
+  else if (duty < 0- SERVO_RANGE)
   {
-    duty = SERVO_MIDDLE - SERVO_RANGE;
+    duty = SERVO_MIDDLE  - SERVO_RANGE;
+  }
+  else
+  {
+    duty+=SERVO_MIDDLE ;
   }
   //归一化为2500--12500
   //if((duty>2500)&&(duty<12500))
   //{
-  pwm_duty(PWM4_MODULE2_CHA_C30, duty);
+  pwm_duty(PWM4_MODULE2_CHA_C30, (uint32)duty);
   /*
         //计算舵机位置舵机位置   （0.5ms - 2.5ms）ms/20ms * 50000（50000是PWM的满占空比时候的值）
         //舵机最小值为1250   最大值为6250

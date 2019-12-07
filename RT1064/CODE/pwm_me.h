@@ -30,4 +30,4 @@ void Motor_Init(void);
 void Motor_Duty(uint16 Motno, uint32 duty);
 //舵机占空比的控制
 void Servo_Init(void);
-void Servo_Duty(uint32 duty);
+void Servo_Duty(float duty);

@@ -63,4 +63,12 @@ GMY
 修改电机频率为13000Hz，初始化后电机转速0；
 设定舵机参数SERVO_MIDDLE以及SERVO_RANGE;
 舵机Servo_duty中对duty限幅，以防duty溢出;
+**Servo_duty输入量中心偏置放入duty函数中**
+**Servo_duty输入改为float**
 **新建Properties.h用于放置小车属性及其他参数;**
+
+Cam_Turn_Control声明及定义由search.c迁移至control.h&c,
+Cam_Turn_Control更名为Turn_Cam_Out
+Turn_P_Cam更名为Turn_Cam_P;Turn_D_Cam更名为Turn_Cam_D;*_Table同
+删除Cam_offset在control多余的声明和定义
+//-------------------------------------//

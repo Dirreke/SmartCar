@@ -173,11 +173,11 @@ void Send_Variable(void){
 void Variable_update(void)
 {
   Variable[0]= cntt;//Cam_offset;//ToF_distance;
-  Variable[1]= cnt;//Cam_Turn_Control;//;//stat_slope;//gyroy_1;//Cam_Turn_Control;//Car_W;
+  Variable[1]= cnt;//Turn_Cam_Out;//;//stat_slope;//gyroy_1;//Turn_Cam_Out;//Car_W;
   Variable[2]= cnt;//speedTarget1; //Allwhiteend;
   Variable[3]= cnt;//CarSpeed1;//whitecnt;
   /*
-  Variable[4]= EM_Turn_Control;//speedTarget2;//Cam_Turn_Control;
+  Variable[4]= EM_Turn_Control;//speedTarget2;//Turn_Cam_Out;
   Variable[5]= Lef_circle;//Cam_offset;
   Variable[6]= Rig_circle;
   Variable[7]= Road1_flag;
