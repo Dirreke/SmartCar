@@ -72,3 +72,27 @@ Cam_Turn_Control更名为Turn_Cam_Out
 Turn_P_Cam更名为Turn_Cam_P;Turn_D_Cam更名为Turn_Cam_D;*_Table同
 删除Cam_offset在control多余的声明和定义
 //-------------------------------------//
+
+/** 191208  **/
+JMK&LKM
+
+增加main.c的    Para_Init();    //各个变量初始化
+增加function.c&h
+增加diff.c&h
+增加speed.c&h
+更改isr.c第30行开始的void PIT_IRQHandler(void)函数
+添加control.c第2行对差分函数get_diff_state的声明
+取消control.c第5行对PID的注释
+取消control.c第9行对motor_out的注释
+添加control.c第11行对cam_offset_range的定义
+添加control.h第17.18行对：float limit_f(float n, float lower, float higher);float my_limit(float a, float limit)的声明
+添加control.h第22行Speed_Control()的声明
+添加headfile.h对三个.h的include
+properties内容遷移至function.c
+#define中断时间
+//-------------------------------------//
+
+
+
+
+

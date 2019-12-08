@@ -85,8 +85,9 @@
 
 
 
-
-#include"properties.h"
+#include "diff.h"
+#include "function.h"
+#include "speed.h"
 
 #include "Data_Send.h"
 

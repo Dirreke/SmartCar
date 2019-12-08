@@ -32,23 +32,16 @@ void PIT_IRQHandler(void)
     if(PIT_FLAG_GET(PIT_CH0))
     {
         PIT_FLAG_CLEAR(PIT_CH0);
-        
+
+
+
+       Get_Speed();
+       Speed_Control();
+       Speed_Control_Output();
+       Moto_Out();
+
     }
-    
-    if(PIT_FLAG_GET(PIT_CH1))
-    {
-        PIT_FLAG_CLEAR(PIT_CH1);
-    }
-    
-    if(PIT_FLAG_GET(PIT_CH2))
-    {
-        PIT_FLAG_CLEAR(PIT_CH2);
-    }
-    
-    if(PIT_FLAG_GET(PIT_CH3))
-    {
-        PIT_FLAG_CLEAR(PIT_CH3);
-    }
+
 
     __DSB();
 }
@@ -58,7 +51,7 @@ void GPIO2_Combined_16_31_IRQHandler(void)
 {
 
     CLEAR_GPIO_FLAG(C16);//清除中断标志位
-    
+
 }
 
 
@@ -186,6 +179,3 @@ PWM4_3_IRQHandler
 PWM4_FAULT_IRQHandler
 Reserved171_IRQHandler
 GPIO6_7_8_9_IRQHandler*/
-
-
-

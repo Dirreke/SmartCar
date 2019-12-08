@@ -6,10 +6,10 @@ void Motor_Init(void)
   //每一个通道只能有一个引脚输出PWM
   //最大占空比值PWM_DUTY_MAX 可以在fsl_pwm.h文件中修改 已改为20000
 
-  pwm_init(PWM1_MODULE3_CHB_D1, 13000, 0);
-  pwm_init(PWM1_MODULE3_CHA_D0, 13000, 0);
-  pwm_init(PWM1_MODULE0_CHB_D13, 13000, 0);
-  pwm_init(PWM1_MODULE0_CHA_D12, 13000, 0);
+  pwm_init(PWM1_MODULE3_CHB_D1, 17000, 0);
+  pwm_init(PWM1_MODULE3_CHA_D0, 17000, 0);
+  pwm_init(PWM1_MODULE0_CHB_D13, 17000, 0);
+  pwm_init(PWM1_MODULE0_CHA_D12, 17000, 0);
 }
 
 //舵机居中   1.5ms/20ms * PWM_DUTY_MAX（PWM_DUTY_MAX是PWM的满占空比时候的值） PWM_DUTY_MAX在fsl_pwm.h文件中 已改为20000

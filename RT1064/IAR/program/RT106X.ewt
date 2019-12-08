@@ -1944,6 +1944,12 @@
             <name>$PROJ_DIR$\..\..\CODE\Data_Send.c</name>
         </file>
         <file>
+            <name>$PROJ_DIR$\..\..\CODE\diff.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\CODE\function.c</name>
+        </file>
+        <file>
             <name>$PROJ_DIR$\..\..\USER\src\isr.c</name>
         </file>
         <file>
@@ -1961,6 +1967,9 @@
         <file>
             <name>$PROJ_DIR$\..\..\CODE\SEEKFREE_MT9V03X_CSI_ME.c</name>
         </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\CODE\speed.c</name>
+        </file>
     </group>
     <group>
         <name>user_h</name>
@@ -1969,6 +1978,12 @@
         </file>
         <file>
             <name>$PROJ_DIR$\..\..\CODE\Data_Send.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\CODE\diff.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\CODE\function.h</name>
         </file>
         <file>
             <name>$PROJ_DIR$\..\..\..\Libraries\seekfree_libraries\headfile.h</name>
@@ -1990,6 +2005,9 @@
         </file>
         <file>
             <name>$PROJ_DIR$\..\..\CODE\SEEKFREE_MT9V03X_CSI_ME.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\CODE\speed.h</name>
         </file>
     </group>
     <group>
