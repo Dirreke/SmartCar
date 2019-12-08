@@ -4,6 +4,7 @@ extern char get_diff_state(void);
 //PID����������
 PID PID_SPEED,PID_TURN,PID_SPEED1,PID_SPEED2;
 
+
 /***********************************************************
 摄像头转向控制部分变量
 ************************************************************/
@@ -212,8 +213,8 @@ void Speed_Control(void)
 void Speed_Control_Output(void) //2ms运行一次
 {
 //	float fValue1,fValue2;
-        PID_SPEED1.OUT += 50*SpeedControlOutNew1;
-        PID_SPEED2.OUT += 50*SpeedControlOutNew2;
+        PID_SPEED1.OUT += SpeedControlOutNew1;
+        PID_SPEED2.OUT += SpeedControlOutNew2;
 }
 
 void Moto_Out()
@@ -238,22 +239,22 @@ void Moto_Out()
 
         if(MotorOut1>=0) //��ת
 	{
-		Motor_Duty(3, (uint32)(MotorOut1/100)*100);
-		Motor_Duty(2, 0);
+		Motor_Duty(3, 0);
+		Motor_Duty(2, (uint32)(MotorOut1/100)*100);
 	}
 	else   //��ת
 	{
 		Motor_Duty(3, 0);
-		Motor_Duty(2, (uint32)(-MotorOut1/100)*100);
+		Motor_Duty(2, 0);//(uint32)(-MotorOut1/100)*100);
 	}
 
         if(MotorOut2>=0)
-	{       Motor_Duty(1, (uint32)(MotorOut2/100)*100);
-		Motor_Duty(0, 0);
+	{       Motor_Duty(1, 0);
+		Motor_Duty(0, (uint32)(MotorOut2/100)*100);
 
 	}
 	else{
-                Motor_Duty(0, (uint32)(-MotorOut2/100)*100);
+                Motor_Duty(0, 0);//(uint32)(-MotorOut2/100)*100);
 		Motor_Duty(1, 0);
 
 	}

@@ -90,6 +90,10 @@ JMK&LKM
 添加headfile.h对三个.h的include
 properties内容遷移至function.c
 #define中断时间
+D12-B1
+D13-B2
+D0-A1
+D1-A2
 //-------------------------------------//
 
 
