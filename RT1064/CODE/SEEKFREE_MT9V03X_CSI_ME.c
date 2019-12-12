@@ -208,6 +208,25 @@ void Pic_particular(void)
 }
 
 /*************************************************************************
+*  函数名称：void Get_pic_with_edge()
+*  功能说明：带边线灰度图
+*  参数说明：无
+*  函数返回：无
+*  修改时间：2019.12.12
+*  备    注：
+*************************************************************************/
+void Get_pic_with_edge()
+{
+    int i = 0;
+    for(i=0;i<60;i++){
+      Image_Use[i][Lef[i]] = 0xFF;
+      Image_Use[i][Mid[i]] = 0xFF;
+      Image_Use[i][Rig[i]] = 0xFF;
+    }
+}
+
+
+/*************************************************************************
 *  函数名称：void Pic_main()
 *  功能说明：图像处理主函数
 *  参数说明：无
@@ -293,6 +312,8 @@ void camera_dispose_main(void)//摄像头处理主函数
       Pic_Fix_Line();//补线处理
       Pic_offset_fig();//offset计算
       Pic_offset_filter();//offset滤波
+
+      Get_pic_with_edge();//获得带边线灰度图
 
 
       //if(Road == 0)

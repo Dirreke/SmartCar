@@ -96,7 +96,19 @@ D0-A1
 D1-A2
 //-------------------------------------//
 
+/** 191213 **/
+ALL
 
+修改function.h中舵机限幅为180（190极限）
+修改function.h中舵机中位为1335
+添加SEEKFREE_MT9V03X_CSI_ME.c第210-226行Get_pic_with_edge()函数定义，用于带边线的灰度图
+添加SEEKFREE_MT9V03X_CSI_ME.hGet_pic_with_edge()函数的声明
+添加SEEKFREE_MT9V03X_CSI_ME.c第316行Get_pic_with_edge()函数
+修改SEEKFREE_MT9V03X_CSI.c中63行 MT9V03X_CFG_CSI[CONFIG_FINISH][2]的FPS为200
+修改function.c第28行为diff_on()，开差速
+修改function.c初始差速设定值：lib_set_speed(1.0);
+取消control.c中第171-177行的注释，将speedTarget1/2替代SetSpeed1/2
+A接右轮 B接左轮
 
 
 

@@ -43,7 +43,7 @@ float Turn_Cam_D_Table0[15] = {0.65, 0.85, 0.89, 1.4, 1.8, 2.0, 2.3, 0.2, 2.3, 2
 
 
 
-void Get_Speed()                     //��ȡ�������ٶ�
+void Get_Speed()                     //获取电机的速度
 {
 
 	static float Speed10 = 0,Speed11 = 0,Speed12 = 0,Speed13 = 0;
@@ -166,7 +166,7 @@ void Speed_Control(void)
  /////斜坡控制，暂时还没有加上
  // lib_speed_utility();
 
-  /*
+
 
   if(angle_local<0){              //右转
 	speedTarget1 = lib_get_speed(LIB_TIRE_LEFT)*(1+p);       //左侧车轮
@@ -177,7 +177,7 @@ void Speed_Control(void)
   }
 
 
-  */
+
 	///////////////////////////////////////////////
 	//PID算法开始
 	///////////////////////////////////////////////
@@ -186,8 +186,8 @@ void Speed_Control(void)
 	//P分量
         OldE1=SpeedE1;
         OldE2=SpeedE2;
-	SpeedE1 = (int)((SetSpeed1 - CarSpeed1)*100.0);
-	SpeedE2 = (int)((SetSpeed2 - CarSpeed2)*100.0);
+	SpeedE1 = (int)((speedTarget1 - CarSpeed1)*100.0);
+	SpeedE2 = (int)((speedTarget2 - CarSpeed2)*100.0);
 
 	//kp
 	Speed_kP1 = PID_SPEED.P;
@@ -221,12 +221,12 @@ void Moto_Out()
 {
 
 
-	//�ٶȿ��������޷�
-	if(PID_SPEED1.OUT>18000)//��������ǰ�㣬����ģ���ٶȿ�������Ϊ������֮Ϊ��
+	//速度控制输出限幅
+	if(PID_SPEED1.OUT>18000)//如果车子前倾，则车模的速度控制输出为正，反之为负
 		PID_SPEED1.OUT=18000;
 	if(PID_SPEED1.OUT<-18000)
 		PID_SPEED1.OUT=-18000;
-	if(PID_SPEED2.OUT>18000)//��������ǰ�㣬����ģ���ٶȿ�������Ϊ������֮Ϊ��
+	if(PID_SPEED2.OUT>18000)//如果车子前倾，则车模的速度控制输出为正，反之为负
 		PID_SPEED2.OUT=18000;
 	if(PID_SPEED2.OUT<-18000)
 		PID_SPEED2.OUT=-18000;
@@ -237,12 +237,12 @@ void Moto_Out()
 
 
 
-        if(MotorOut1>=0) //��ת
+        if(MotorOut1>=0) //正转
 	{
 		Motor_Duty(3, 0);
 		Motor_Duty(2, (uint32)(MotorOut1/100)*100);
 	}
-	else   //��ת
+	else    //反转
 	{
 		Motor_Duty(3, 0);
 		Motor_Duty(2, 0);//(uint32)(-MotorOut1/100)*100);

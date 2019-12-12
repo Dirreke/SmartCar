@@ -48,6 +48,7 @@ extern uint8 GaveValue;
 extern int thresh;
 extern uint16 Pixle[CAMERA_H][CAMERA_W]; 		//change to uint8
 extern uint16 FINAL[59];
+void Get_pic_with_edge(void);
 void Get_Use_Image(void);
 void Get_01_Value(void);
 void Test_V032(void);

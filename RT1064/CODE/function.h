@@ -2,8 +2,8 @@
 #define __FUNCTION_H__
 
 #define PIT_TIME 2
-#define SERVO_MIDDLE 1360  //1.36*20000/20;
-#define SERVO_RANGE 480
+#define SERVO_MIDDLE 1335  //1.36*20000/20;
+#define SERVO_RANGE 180 //190 limit
 
 void Para_Init();
 extern float SetSpeed1,SetSpeed2;
