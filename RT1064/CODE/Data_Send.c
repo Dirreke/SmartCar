@@ -132,7 +132,7 @@ void Pic_send_new(void)
                 
 void My_Put_Char(char tmp)
 {
-    uart_putchar(USART_1,0xff);//根据实际的串口号来修改
+    uart_putchar(USART_1,tmp);//根据实际的串口号来修改
 }
 
 
@@ -172,10 +172,10 @@ void Send_Variable(void){
 
 void Variable_update(void)
 {
-  Variable[0]= cntt;//Cam_offset;//ToF_distance;
-  Variable[1]= cnt;//Turn_Cam_Out;//;//stat_slope;//gyroy_1;//Turn_Cam_Out;//Car_W;
-  Variable[2]= cnt;//speedTarget1; //Allwhiteend;
-  Variable[3]= cnt;//CarSpeed1;//whitecnt;
+  Variable[0]= Cam_offset;//cntt;//ToF_distance;
+  Variable[1]= Turn_Cam_Out;//cnt;//Turn_Cam_Out;//;//stat_slope;//gyroy_1;//Turn_Cam_Out;//Car_W;
+  Variable[2]= CarSpeed1;//speedTarget1; //Allwhiteend;
+  Variable[3]= CarSpeed2;//whitecnt;
   /*
   Variable[4]= EM_Turn_Control;//speedTarget2;//Turn_Cam_Out;
   Variable[5]= Lef_circle;//Cam_offset;

@@ -6,6 +6,8 @@
 /////////////////////////////////////////
 typedef struct PID{float P,pout,I,iout,D,dout,OUT;}PID;
 extern  PID PID_SPEED,PID_TURN,PID_SPEED1,PID_SPEED2;
+extern float CarSpeed1;
+extern float CarSpeed2;
 
 //摄像头转弯变量
 extern float offset ;
