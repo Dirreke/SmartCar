@@ -79,10 +79,14 @@ int Cam_End = 0;
 int block_flag = 1;
 
 /*调试参数*/
+/*
 float offset_map[60]={(float)31/77,(float)31/77,(float)31/9	,(float)31/9	 ,(float)31/10	,(float)31/11	,(float)31/12	 ,(float)31/13	,(float)31/14,(float)31/15,(float)31/16
 ,(float)31/17,(float)31/17,(float)31/19,(float)31/19,(float)31/21	,(float)31/21,(float)31/23,(float)31/24	,(float)31/25	 ,(float)31/25	,(float)31/27,(float)31/28,(float)31/29
 ,(float)31/30,(float)31/31,(float)31/31	,(float)31/33,(float)31/34,(float)31/34,(float)31/36,(float)31/36	,(float)31/36	,(float)31/38	,(float)31/40,(float)31/40,(float)31/42,(float)31/42
 ,(float)31/42	,(float)31/44	 ,(float)31/46	 ,(float)31/46	 ,(float)31/48	  ,(float)31/48	,(float)31/48	,(float)31/50	,(float)31/51,(float)31/52,(float)31/53,(float)31/54,(float)31/54,(float)31/56,(float)31/56,(float)31/58,(float)31/58,(float)31/58,(float)31/60,(float)31/60,(float)31/61,(float)31/77};
+*/
+float K0_Table[5]={300.0/63,300.0/63,300.0/62,300.0/62,300.0/62}
+
 int threshold_offset = 5;
 float zhidaosudu = 2.5;//直道速度
 float xiaowandaosudu = 2.3;//小弯道速度
@@ -1367,15 +1371,25 @@ int mid_map[60];
 //my analitical version of remapping x and y
 void pixel_undistort(int x,int y,int LR)
 {
+  int K0;//变比
   temx=x;
   if(temx==2)temx=0;
   if(temx==78)temx=79;
+  if (y>55)
+  {
+    K0=K0_Table[y-56];
+  }
+  else
+  {
+    K0=MAP_K0/(y+MAP_B);
+  }
+
   if(LR==0){
-	New_Lef[y]=(int)(10*(temx-39)*offset_map[y]);
+	New_Lef[y]=(int)((temx-39)*K0//offset_map[y]);
         if(New_Lef[y]<-MIDMAP)
           New_Lef[y]=-MIDMAP;
   }else{
-	New_Rig[y]=(int)(10*(temx-39)*offset_map[y]);
+	New_Rig[y]=(int)((temx-39)*K0))//offset_map[y]);
         if(New_Rig[y]>MIDMAP)
           New_Rig[y]=MIDMAP;
   }
