@@ -1229,15 +1229,15 @@ void Pic_offset_fig(void)
   {
     for(i=0;i<60;i++)
     {
-         if(Road==1&&(Road1_flag==0||Road1_flag==2))
-         {
-             if(New_Rig[i]!=MIDMAP)
-             {
-             Cam_offset=Cam_offset+New_Rig[i]-ROAD_HALF_WIDTH;
-             count++;
-             }
-             continue;
-         }
+        //  if(Road==1&&(Road1_flag==0||Road1_flag==2))
+        //  {
+        //      if(New_Rig[i]!=MIDMAP)
+        //      {
+        //      Cam_offset=Cam_offset+New_Rig[i]-ROAD_HALF_WIDTH;
+        //      count++;
+        //      }
+        //      continue;
+        //  }
           if(Road==1&&(Road1_flag==3||Road1_flag ==1))
           {
             if(New_Rig[i]!=MIDMAP)
@@ -1247,7 +1247,7 @@ void Pic_offset_fig(void)
             }
             continue;
           }
-           if(Road==2&&(Road2_flag==3||Road2_flag ==1))
+          else if(Road==2&&(Road2_flag==3||Road2_flag ==1))
           {
             if(New_Lef[i]!=-MIDMAP)
             {

@@ -138,7 +138,7 @@ clear Image Image_unpcsImage Image_others frame frame0 flag data a temp ki kj n 
 
 
 %% 
-No=261;
+No=316;
 Pic=Images{No};
 Pic_L=Image_L(:,No);
 Pic_M=Image_M(:,No);
@@ -162,11 +162,11 @@ for k=1:ImageH
         end
     end
 end
-for k=1:60
-        a=pixel_undistort(Pic_L(k),k,0)+301;
-        test=[test,a];
-        Pic_new(k,a)=Pic(k,Pic_L(k));
-end
+% for k=1:60
+%         a=pixel_undistort(Pic_L(k),k,0)+301;
+% %         test=[test,a];
+%         Pic_new(k,a)=Pic(k,Pic_L(k));
+% end
 
 figure
 imshow(Pic)
