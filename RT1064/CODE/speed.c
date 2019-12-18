@@ -1,8 +1,11 @@
 #include "headfile.h"
 
 static float speed;
+#ifdef DIFF0
 static int active_diff_val;		//>0:active turn left;<0 active turn right
 static float diff_bias = 0.3;
+#endif
+
 #define diff_throttle_ratio 2.0   //lib_speed_utility
 
 typedef enum{
@@ -29,7 +32,7 @@ static struct {
   
   
 } utility_s;
-
+#ifdef DIFF0
 static struct {
   float p;
   float d;
@@ -48,14 +51,19 @@ float lib_get_speed(tire_type a)
 {
   return (a==LIB_TIRE_LEFT)? (diff_bias+speed-(float)(active_diff_val)*speed/2.0/active_diff_val_range):(diff_bias+speed+(float)(active_diff_val)*speed/2.0/active_diff_val_range);
 }
+#endif
 
 void lib_set_speed(float a)
 {
   utility_s.start=0;
   utility_s.stop=1;
   speed = a;
-  diff_bias = -active_diff_val*a/45.0/10.0;//a/5;
+  #ifdef DIFF0
+  diff_bias = -active_diff_val*speed/active_diff_val_range/diff_throttle_ratio;//a/5;
+  #endif 
+  
 }
+#ifdef DIFF0
 //active diff function
 void lib_active_diff_init(void){
 	lib_active_diff_set(0);
@@ -83,6 +91,7 @@ void lib_active_diff_set_p(float a){
 void lib_active_diff_set_d(float a){
   diff_pid.d=a;
 }
+#endif
 
 /////////////////////////////////////////
 //speed lib init
@@ -108,7 +117,9 @@ void lib_speed_utility(void){
       }
       else{
         speed=(utility_s.ramp_to-utility_s.ramp_step*utility_s.ramp_count);
+        #ifdef DIFF0
         diff_bias = -active_diff_val*speed/active_diff_val_range/diff_throttle_ratio;//a/5;
+        #endif
         utility_s.ramp_count = utility_s.ramp_count - 1;
       }
     }break;
@@ -117,12 +128,16 @@ void lib_speed_utility(void){
       if(utility_s.ramp_reload_val>=utility_s.ramp_count) utility_s.ramp_count+=utility_s.ramp_count_back;          //decrease speed by 2 steps
       utility_s.utility_type=ramp_speed_;               //go back to speed up mode
       speed=(utility_s.ramp_to-utility_s.ramp_step*utility_s.ramp_count);
+      #ifdef DIFF0
       diff_bias = -active_diff_val*speed/active_diff_val_range/diff_throttle_ratio;//a/5;
+      #endif
     }break;
     case ramp_speed_reset_:{
        utility_s.ramp_count=utility_s.ramp_reload_val;
         speed=(utility_s.ramp_to-utility_s.ramp_step*utility_s.ramp_count);
+        #ifdef DIFF0
         diff_bias = -active_diff_val*speed/active_diff_val_range/diff_throttle_ratio;//a/5;
+        #endif
         utility_s.utility_type=ramp_speed_;
     }break;
     case off:break;

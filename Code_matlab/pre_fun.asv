@@ -138,7 +138,7 @@ clear Image Image_unpcsImage Image_others frame frame0 flag data a temp ki kj n 
 
 
 %% 
-No=313;
+No=300;
 Pic=Images{No};
 Pic_L=Image_L(:,No);
 Pic_M=Image_M(:,No);
@@ -165,7 +165,7 @@ for k=1:ImageH
 end
 for k=1:ImageH
         a=pixel_undistort(Pic_L(k),k,0)+301;
-        b=pixel_undistort(Pic_R(k),k,1)+301;
+        b=pixel_undistort(Pic_R(k),k,0)+301;
         Lef_New(k)=a;
         Rig_New(k)=b;
         Pic_new_edge(k,a)=Pic(k,Pic_L(k));
@@ -199,7 +199,7 @@ plot(y)
 function a=pixel_undistort(x,y,LR)
 MIDMAP=300;
 offset=300/(y+10);
-table=[66 67 68 69 90];
+table=[63 63 62 62 58];
 temx=x;
   if temx==2
       temx=0;

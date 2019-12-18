@@ -20,10 +20,11 @@ void Para_Init()
         lib_speed_init();
 
         lib_set_speed(1.5);
+#ifdef DIFF0
         lib_active_diff_init();
         lib_active_diff_set_p(0.1);
         lib_active_diff_set_d(0.1);
-        
+#endif
         //¿ª²îËÙ
         diff_on();
         //diff_off();

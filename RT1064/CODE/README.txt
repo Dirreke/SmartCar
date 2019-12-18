@@ -149,9 +149,21 @@ JMK
 添加search.c的Road_rec()部分注释、flag置位代码、进圆环补线距离
 添加function.h对DIS_IN_CIRCLE的定义
 （get_speed 需要km重新迁一下）
+/** 1218 **/
+GMY
+修改diff原程序中的前后不符（前用数，后用宏定义）
+新写一套diff，因为调试周期可能比较长，故用选择编译
+******************************************
+km签get_speed()的时候可以写一下，
+#ifdef DIFF0
+ 此时为speed+diff_bias
 
-
-
+#endif
+#ifdef DIFF1
+ 此时为speed
+#endif
+********************************************
+新建参量放入function.h
 
 
 
