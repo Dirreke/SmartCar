@@ -1,0 +1,10 @@
+Road==0 正常
+Road==1 左圆环
+Road==2 右圆环
+Lef_break_point 左圆环断点行数
+Rig_break_point 右圆环断点行数
+Lef_circle==1 找到左圆环
+Rig_circle==1 找到右圆环
+Lef_slope & Rig_slope斜率 998为直线，999为最小二乘分母为0（斜率无穷大，但边线所在列相差较大，即不稳定边界），其余为计算值
+Lef[] 每行边线所在列数
+479-494注释可能有问题

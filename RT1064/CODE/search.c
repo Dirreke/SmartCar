@@ -85,7 +85,7 @@ float offset_map[60]={(float)31/77,(float)31/77,(float)31/9	,(float)31/9	 ,(floa
 ,(float)31/30,(float)31/31,(float)31/31	,(float)31/33,(float)31/34,(float)31/34,(float)31/36,(float)31/36	,(float)31/36	,(float)31/38	,(float)31/40,(float)31/40,(float)31/42,(float)31/42
 ,(float)31/42	,(float)31/44	 ,(float)31/46	 ,(float)31/46	 ,(float)31/48	  ,(float)31/48	,(float)31/48	,(float)31/50	,(float)31/51,(float)31/52,(float)31/53,(float)31/54,(float)31/54,(float)31/56,(float)31/56,(float)31/58,(float)31/58,(float)31/58,(float)31/60,(float)31/60,(float)31/61,(float)31/77};
 */
-float K0_Table[5]={300.0/63,300.0/63,300.0/62,300.0/62,300.0/62}
+float K0_Table[5]={300.0/63,300.0/63,300.0/62,300.0/62,300.0/62};
 
 int threshold_offset = 5;
 float zhidaosudu = 2.5;//直道速度
@@ -480,9 +480,10 @@ void Road_rec(void)
     return;
   }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////左圆环→普通赛道
-  else if(Road==1 && Road1_flag==0)
+  else if(Road==1 && Road1_flag==0)//准备进左圆环
   {
     Road0_flag = 0;
+    Road1_flag=1; 
     /*
     if(EM_Value_2+EM_Value_3>3.8)//弯内识别：左右两边仅有一边发生丢线
     {
@@ -497,13 +498,13 @@ void Road_rec(void)
     */
     return;
   }
-  else if(Road==1 && (Road1_flag==1))
+  else if(Road==1 && (Road1_flag==1))//进左圆环1/4
   {
     Road0_flag = 0;
     if(Lef_circle==0||( Lef_circle ==1 && Lef_break_point>30))//if(((Lef_circle==0||( Lef_circle ==1 && Lef_break_point>30)))&& Road1_turnin(EM_Value_2,EM_Value_3,3.8))//if(((Lef_circle==0||( Lef_circle ==1 && Lef_break_point>30))) && Rig_slope>=10)/ && Road1_turnin(EM_Value_2,EM_Value_3,3.8))    //Rig_slope<1 && (Lef_leap[0]==0||Lef_slope==999)&& Rig_leap[0]==0)
     {
       Road13_count++;
-      if(Road13_count==2)
+      if(Road13_count==2)//2帧后 进左圆环第一弯道
       {
         Road1_flag = 2;
 //        Road1_flag1 = 1;
@@ -513,22 +514,19 @@ void Road_rec(void)
       return;
     }
   }
-  else if(Road==1 && Road1_flag==2)
+  else if(Road==1 && Road1_flag==2)//进左圆环2/4 开始补线进弯道
   {
     Road0_flag = 0;
-    if(1)//
+    Road14_count++;
+    if(Road14_count==(int)(DIS_IN_CIRCLE*10000/(get_speed()*CAMERA_FPS))+1)//宏定义在function.h，get_speed()需要km迁一下
     {
-      Road14_count++;
- //     if(Road14_count==(int)(115/(get_speed()+1)))
- //     {
- //       Road1_flag = 4;
- //       Road14_count=0;
- //       return;
- //     }
+      Road1_flag = 4;
+      Road14_count=0;
+      return;
     }
     return;
   }
-    else if(Road==1 && Road1_flag==4)
+    else if(Road==1 && Road1_flag==4)//进入圆环内 ，取消补线
   {
     Road0_flag = 0;
     if(Rig_circle&&whitecnt>2700)//
@@ -543,7 +541,7 @@ void Road_rec(void)
     }
     return;
   }
-  else if(Road==1 && Road1_flag==3)
+  else if(Road==1 && Road1_flag==3)//准备出圆环回到直路 ， 开始补线
   {
     Road0_flag = 0;
     if((Rig_slope>-0.02 && Rig_slope<0)||(Pixle[58][74] == 1 && Pixle[57][74] == 1 && Pixle[56][74] == 1 && Pixle[55][74] == 1&& Pixle[54][74]==1&&Pixle[53][74]==1 ))//|| Lef_edge < 20))
@@ -560,10 +558,11 @@ void Road_rec(void)
     }
     return;
   }
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////右圆环→普通赛道
-  else if(Road==2 && Road2_flag==0)
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////右圆环→普通赛道，同上左圆环，注释从简
+  else if(Road==2 && Road2_flag==0)//
   {
     Road0_flag = 0;
+    Road2_flag = 1;
     /*
     if( EM_Value_2 +EM_Value_3 >3.8)//弯内识别：左右两边仅有一边发生丢线
     {
@@ -578,13 +577,13 @@ void Road_rec(void)
     */
     return;
   }
-  else if(Road==2 && Road2_flag==1)
+  else if(Road==2 && Road2_flag==1)//
   {
     Road0_flag = 0;
     if((Rig_circle==0||( Rig_circle ==1 && Rig_break_point>30)) && Rig_slope>=10) //if(((Rig_circle==0||( Rig_circle ==1 && Rig_break_point>30))) && Rig_slope>=10)/ && Road1_turnin(EM_Value_2,EM_Value_3,3.4))
     {
       Road23_count++;
-      if(Road23_count==2)
+      if(Road23_count==2)//
       {
 
         Road2_flag=2;
@@ -594,19 +593,16 @@ void Road_rec(void)
     }
     return;
   }
-  else if(Road==2 && Road2_flag==2)
+  else if(Road==2 && Road2_flag==2)//
   {
     Road0_flag = 0;
-    if(1)
-    {
-      Road24_count++;
-      //if(Road24_count==(int)(115/(get_speed()+1)))
-      //{
-      //  Road24_count=0;
-      //  Road2_flag=4;
-      //  return;
-      //}
-    }
+    Road24_count++;
+    if(Road24_count==(int)(DIS_IN_CIRCLE*10000/(get_speed()*CAMERA_FPS))+1)
+      {
+        Road24_count=0;
+        Road2_flag=4;
+        return;
+      }
     return;
   }
   else if(Road==2 && Road2_flag==4)
@@ -1377,7 +1373,7 @@ void pixel_undistort(int x,int y,int LR)
   if(temx==78)temx=79;
   if (y>55)
   {
-    K0=K0_Table[y-56];
+    K0=(int)K0_Table[y-56];
   }
   else
   {
@@ -1385,11 +1381,11 @@ void pixel_undistort(int x,int y,int LR)
   }
 
   if(LR==0){
-	New_Lef[y]=(int)((temx-39)*K0//offset_map[y]);
+	New_Lef[y]=(int)((temx-39)*K0);//offset_map[y]);
         if(New_Lef[y]<-MIDMAP)
           New_Lef[y]=-MIDMAP;
   }else{
-	New_Rig[y]=(int)((temx-39)*K0))//offset_map[y]);
+	New_Rig[y]=(int)((temx-39)*K0);//offset_map[y]);
         if(New_Rig[y]>MIDMAP)
           New_Rig[y]=MIDMAP;
   }
