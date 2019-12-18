@@ -132,9 +132,10 @@ float p_get(float angle)
 void Speed_Control(void)
 
 {
+#ifdef DIFF0
   float p;
   int angle_local;
-
+#endif
 /**GMY**/
 #ifdef DIFF1
   float angle_val; // 用来表示实际转向角度

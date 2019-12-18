@@ -1,5 +1,7 @@
 #ifndef _SPEED_H_
 #define _SPEED_H_
+#define DIFF1
+
 #ifdef DIFF0
 static float active_diff_val_range = 45.0;
 

@@ -17,26 +17,25 @@ __ramfunc void Get_Use_Image(void);
 
 /* AT_NONCACHEABLE_SECTION_ALIGN(uint8 image[MT9V03X_CSI_H][MT9V03X_CSI_W],4); */
 uint8 Image_Use[CAMERA_H][CAMERA_W];
-uint8 imgbuff_process[CAMERA_SIZE];               //¶¨Òå´¦ÀíÍ¼ÏñÓÃµÄÊı×é                        //
+uint8 imgbuff_process[CAMERA_SIZE]; //¶¨Òå´¦ÀíÍ¼ÏñÓÃµÄÊı×é                        //
 uint8 GaveValue;
-uint8_t Threshold;                  //OSTU´ó½ò·¨¼ÆËãµÄÍ¼ÏñãĞÖµ
-uint16 Pixle[CAMERA_H][CAMERA_W];              //¶şÖµ»¯ºóÓÃÓÚOLEDÏÔuint16ÄÊı¾?//u16
+uint8_t Threshold;                //OSTU´ó½ò·¨¼ÆËãµÄÍ¼ÏñãĞÖµ
+uint16 Pixle[CAMERA_H][CAMERA_W]; //¶şÖµ»¯ºóÓÃÓÚOLEDÏÔuint16ÄÊ???//u16
 uint16 FINAL[59];
-uint16 adj_9034[5]={20,80,6,10,0};    //kkkl ÁÁ¶È ×îĞ¡ÆØ¹â¶È Êı×ÖÔöÒæ thresh*  plus
+uint16 adj_9034[5] = {20, 80, 6, 10, 0}; //kkkl ÁÁ¶È ×îĞ¡ÆØ¹â¶È Êı×ÖÔöÒæ thresh*  plus
 
 __ramfunc void Get_Use_Image(void)
 {
-	int i = 0,j = 0;
-	int row = 0;
-	for(i = 20; i  < 80; i+=1)  //120ĞĞ£¬Ã¿2ĞĞ²É¼¯Ò»ĞĞ£¬15  74
-	{
-		for(j = 15;j < 174; j+=2)  //188£¬È¡94ÁĞ
-		{
-			Image_Use[row][(j-15)>>1] = mt9v03x_csi_image[i][j];
-
-		}
-                row+=1;
-	}
+  int i = 0, j = 0;
+  int row = 0;
+  for (i = 20; i < 80; i += 1) //120ĞĞ£¬Ã¿2ĞĞ²É¼¯Ò»ĞĞ£¬15  74
+  {
+    for (j = 15; j < 174; j += 2) //188£¬È¡94ÁĞ
+    {
+      Image_Use[row][(j - 15) >> 1] = mt9v03x_csi_image[i][j];
+    }
+    row += 1;
+  }
 }
 /***************************************************************
 *
@@ -61,7 +60,7 @@ Ostu·½·¨ÓÖÃû×î´óÀà¼ä²î·½·¨£¬Í¨¹ıÍ³¼ÆÕû¸öÍ¼ÏñµÄÖ±·½Í¼ÌØĞÔÀ´ÊµÏÖÈ«¾ÖãĞÖµTµÄ×Ô¶¯Ñ¡È
 ***************************************************************/
 uint8_t GetOSTU(uint8_t tmImage[CAMERA_H][CAMERA_W])
 {
-  int16_t i,j;
+  int16_t i, j;
   uint32_t Amount = 0;
   uint32_t PixelBack = 0;
   uint32_t PixelIntegralBack = 0;
@@ -71,9 +70,10 @@ uint8_t GetOSTU(uint8_t tmImage[CAMERA_H][CAMERA_W])
   double OmegaBack, OmegaFore, MicroBack, MicroFore, SigmaB, Sigma; // Àà¼ä·½²î;
   int16_t MinValue, MaxValue;
   uint8_t Threshold = 0;
-  uint16 HistoGram[256];              //
+  uint16 HistoGram[256]; //
 
-  for (j = 0; j < 256; j++)  HistoGram[j] = 0; //³õÊ¼»¯»Ò¶ÈÖ±·½Í¼
+  for (j = 0; j < 256; j++)
+    HistoGram[j] = 0; //³õÊ¼»¯»Ò¶ÈÖ±·½Í¼
 
   for (j = 0; j < CAMERA_H; j++)
   {
@@ -83,102 +83,109 @@ uint8_t GetOSTU(uint8_t tmImage[CAMERA_H][CAMERA_W])
     }
   }
 
-  for (MinValue = 0; MinValue < 256 && HistoGram[MinValue] == 0; MinValue++) ;        //»ñÈ¡×îĞ¡»Ò¶ÈµÄÖµ
-  for (MaxValue = 255; MaxValue > MinValue && HistoGram[MaxValue] == 0; MaxValue--) ; //»ñÈ¡×î´ó»Ò¶ÈµÄÖµ
+  for (MinValue = 0; MinValue < 256 && HistoGram[MinValue] == 0; MinValue++)
+    ; //»ñÈ¡×îĞ¡»Ò¶ÈµÄÖµ
+  for (MaxValue = 255; MaxValue > MinValue && HistoGram[MaxValue] == 0; MaxValue--)
+    ; //»ñÈ¡×î´ó»Ò¶ÈµÄÖµ
 
-  if (MaxValue == MinValue)     return MaxValue;         // Í¼ÏñÖĞÖ»ÓĞÒ»¸öÑÕÉ«
-  if (MinValue + 1 == MaxValue)  return MinValue;        // Í¼ÏñÖĞÖ»ÓĞ¶ş¸öÑÕÉ«
+  if (MaxValue == MinValue)
+    return MaxValue; // Í¼ÏñÖĞÖ»ÓĞÒ»¸öÑÕÉ«
+  if (MinValue + 1 == MaxValue)
+    return MinValue; // Í¼ÏñÖĞÖ»ÓĞ¶ş¸öÑÕÉ«
 
-  for (j = MinValue; j <= MaxValue; j++)    Amount += HistoGram[j];        //  ÏñËØ×ÜÊı
+  for (j = MinValue; j <= MaxValue; j++)
+    Amount += HistoGram[j]; //  ÏñËØ×ÜÊı
 
   PixelIntegral = 0;
   for (j = MinValue; j <= MaxValue; j++)
   {
-    PixelIntegral += HistoGram[j] * j;//»Ò¶ÈÖµ×ÜÊı
+    PixelIntegral += HistoGram[j] * j; //»Ò¶ÈÖµ×ÜÊı
   }
   SigmaB = -1;
   for (j = MinValue; j < MaxValue; j++)
   {
-    PixelBack = PixelBack + HistoGram[j];    //Ç°¾°ÏñËØµãÊı
-    PixelFore = Amount - PixelBack;         //±³¾°ÏñËØµãÊı
-    OmegaBack = (double)PixelBack / Amount;//Ç°¾°ÏñËØ°Ù·Ö±È
-    OmegaFore = (double)PixelFore / Amount;//±³¾°ÏñËØ°Ù·Ö±È
-    PixelIntegralBack += HistoGram[j] * j;  //Ç°¾°»Ò¶ÈÖµ
-    PixelIntegralFore = PixelIntegral - PixelIntegralBack;//±³¾°»Ò¶ÈÖµ
-    MicroBack = (double)PixelIntegralBack / PixelBack;   //Ç°¾°»Ò¶È°Ù·Ö±È
-    MicroFore = (double)PixelIntegralFore / PixelFore;   //±³¾°»Ò¶È°Ù·Ö±È
-    Sigma = OmegaBack * OmegaFore * (MicroBack - MicroFore) * (MicroBack - MicroFore);//¼ÆËãÀà¼ä·½²î
-    if (Sigma > SigmaB)                    //±éÀú×î´óµÄÀà¼ä·½²îg //ÕÒ³ö×î´óÀà¼ä·½²îÒÔ¼°¶ÔÓ¦µÄãĞÖµ
+    PixelBack = PixelBack + HistoGram[j];                                              //Ç°¾°ÏñËØµãÊı
+    PixelFore = Amount - PixelBack;                                                    //±³¾°ÏñËØµãÊı
+    OmegaBack = (double)PixelBack / Amount;                                            //Ç°¾°ÏñËØ°Ù·Ö±È
+    OmegaFore = (double)PixelFore / Amount;                                            //±³¾°ÏñËØ°Ù·Ö±È
+    PixelIntegralBack += HistoGram[j] * j;                                             //Ç°¾°»Ò¶ÈÖµ
+    PixelIntegralFore = PixelIntegral - PixelIntegralBack;                             //±³¾°»Ò¶ÈÖµ
+    MicroBack = (double)PixelIntegralBack / PixelBack;                                 //Ç°¾°»Ò¶È°Ù·Ö±È
+    MicroFore = (double)PixelIntegralFore / PixelFore;                                 //±³¾°»Ò¶È°Ù·Ö±È
+    Sigma = OmegaBack * OmegaFore * (MicroBack - MicroFore) * (MicroBack - MicroFore); //¼ÆËãÀà¼ä·½²î
+    if (Sigma > SigmaB)                                                                //±éÀú×î´óµÄÀà¼ä·½²îg //ÕÒ³ö×î´óÀà¼ä·½²îÒÔ¼°¶ÔÓ¦µÄãĞÖµ
     {
       SigmaB = Sigma;
       Threshold = j;
     }
   }
-  return Threshold;                        //·µ»Ø×î¼ÑãĞÖµ;
+  return Threshold; //·µ»Ø×î¼ÑãĞÖµ;
 }
 
 void Get_01_Value(void)
 {
-  int i = 0,j = 0;
-  for(i = 0; i < LCDH; i++)
+  int i = 0, j = 0;
+  for (i = 0; i < LCDH; i++)
   {
-    for(j = 0; j < LCDW; j++)
+    for (j = 0; j < LCDW; j++)
     {
 
-      if(Image_Use[i][j] > 110+camera_offset) //´ó½ò·¨ãĞÖµ   ÊıÖµÔ½´ó£¬ÏÔÊ¾µÄÄÚÈİÔ½¶à£¬½ÏÇ³µÄÍ¼ÏñÒ²ÄÜÏÔÊ¾³öÀ´
-        Pixle[i][j] =1;
+      if (Image_Use[i][j] > 110 + camera_offset) //´ó½ò·¨ãĞÖµ   ÊıÖµÔ½´ó£¬ÏÔÊ¾µÄÄÚÈİÔ½¶à£¬½ÏÇ³µÄÍ¼ÏñÒ²ÄÜÏÔÊ¾³öÀ´
+        Pixle[i][j] = 1;
       else
-        Pixle[i][j] =0;
+        Pixle[i][j] = 0;
     }
   }
 }
 
-void swap(uint8_t *p,int a,int b){
-	uint8_t temp;
-	temp=p[a];
-	p[a]=p[b];
-	p[b]=temp;
+void swap(uint8_t *p, int a, int b)
+{
+  uint8_t temp;
+  temp = p[a];
+  p[a] = p[b];
+  p[b] = temp;
 }
 
-
-void sobel()//Sobel±ßÑØ¼ì²â
+void sobel() //Sobel±ßÑØ¼ì²â
 {
 
-	int tempx=0,tempy=0,i=0,j=0;
-        double tempsqrt=0;
-        uint8 threshold;
-        threshold=GetOSTU(Image_Use);
-	for(i=1;i <LCDH-1; i++)
-            for(j=1;j<LCDW-1;j++)
-            {
+  int tempx = 0, tempy = 0, i = 0, j = 0;
+  double tempsqrt = 0;
+  uint8 threshold;
+  threshold = GetOSTU(Image_Use);
+  for (i = 1; i < LCDH - 1; i++)
+    for (j = 1; j < LCDW - 1; j++)
+    {
 
-                if(Image_Use[i][j]<threshold + threshold_offset)
-                {
-                  Pixle[i][j] = 0;
-                if(j == 40)
-                  FINAL[i] = 0;
-                  continue;
-                }
-		tempx=-Image_Use[i-1][j-1]-2*Image_Use[i][j-1]-Image_Use[i+1][j-1]+Image_Use[i-1][j+1]+2*Image_Use[i][j+1]+Image_Use[i+1][j+1];
-		tempy= Image_Use[i+1][j-1]+2*Image_Use[i+1][j]+Image_Use[i+1][j+1]-Image_Use[i-1][j-1]-2*Image_Use[i-1][j]-Image_Use[i-1][j+1];
-                tempsqrt=sqrt(tempx*tempx+tempy*tempy);
-                if(i<Sobel_Near_Far_Line && tempsqrt > Sobel_Threshold_Far && Image_Use[i][j]<200)
-                {   Pixle[i][j] = 0;
-                if(j == 40)
-                    FINAL[i] = 0;
-                }
-                else if(i>=Sobel_Near_Far_Line && tempsqrt > Sobel_Threshold_Near && Image_Use[i][j]<200)
-                {   Pixle[i][j] = 0;
-                if(j == 40)
-                    FINAL[i] = 0;
-                }
-                else
-                {   Pixle[i][j] = 1;
-                if(j == 40)
-                    FINAL[i] = 1;
-                }
-            }
-
+      if (Image_Use[i][j] < threshold + threshold_offset)
+      {
+        Pixle[i][j] = 0;
+        if (j == 40)
+          FINAL[i] = 0;
+        continue;
+      }
+      tempx = -Image_Use[i - 1][j - 1] - 2 * Image_Use[i][j - 1] - Image_Use[i + 1][j - 1] + Image_Use[i - 1][j + 1] + 2 * Image_Use[i][j + 1] + Image_Use[i + 1][j + 1];
+      tempy = Image_Use[i + 1][j - 1] + 2 * Image_Use[i + 1][j] + Image_Use[i + 1][j + 1] - Image_Use[i - 1][j - 1] - 2 * Image_Use[i - 1][j] - Image_Use[i - 1][j + 1];
+      tempsqrt = sqrt(tempx * tempx + tempy * tempy);
+      if (i < Sobel_Near_Far_Line && tempsqrt > Sobel_Threshold_Far && Image_Use[i][j] < 200)
+      {
+        Pixle[i][j] = 0;
+        if (j == 40)
+          FINAL[i] = 0;
+      }
+      else if (i >= Sobel_Near_Far_Line && tempsqrt > Sobel_Threshold_Near && Image_Use[i][j] < 200)
+      {
+        Pixle[i][j] = 0;
+        if (j == 40)
+          FINAL[i] = 0;
+      }
+      else
+      {
+        Pixle[i][j] = 1;
+        if (j == 40)
+          FINAL[i] = 1;
+      }
+    }
 }
 /*************************************************************************
 *  º¯ÊıÃû³Æ£ºvoid Pic_particular()
@@ -188,22 +195,22 @@ void sobel()//Sobel±ßÑØ¼ì²â
 *  ĞŞ¸ÄÊ±¼ä£º2019.7.7
 *  ±¸    ×¢£º
 *************************************************************************/
-int Lef_edge=0,Rig_edge=0;
+int Lef_edge = 0, Rig_edge = 0;
 void Pic_particular(void)
 {
   int i;
-  Lef_edge=0;
-  Rig_edge=0;
-  for(i=Last_row;i>Fir_row-1;i--)
+  Lef_edge = 0;
+  Rig_edge = 0;
+  for (i = Last_row; i > Fir_row - 1; i--)
   {
-    if(New_Lef[i]==-MIDMAP)
-      Lef_edge+=1;
-    if(New_Rig[i]==MIDMAP)
-      Rig_edge+=1;
+    if (New_Lef[i] == -MIDMAP)
+      Lef_edge += 1;
+    if (New_Rig[i] == MIDMAP)
+      Rig_edge += 1;
   }
-  for(i=Last_row;i>Fir_row-1;i--)//Æ½¾ùÖµ·¨ÖĞĞÄÏß»æÖÆ
+  for (i = Last_row; i > Fir_row - 1; i--) //Æ½¾ùÖµ·¨ÖĞĞÄÏß»æÖÆ
   {
-      Mid[i]=(int)((New_Lef[i]+New_Rig[i])/20)+40;
+    Mid[i] = (int)((New_Lef[i] + New_Rig[i]) / 20) + 40;
   }
 }
 
@@ -217,14 +224,14 @@ void Pic_particular(void)
 *************************************************************************/
 void Get_pic_with_edge()
 {
-    int i = 0;
-    for(i=0;i<60;i++){
-      Image_Use[i][Lef[i]] = 0xFF;
-      Image_Use[i][Mid[i]] = 0xFF;
-      Image_Use[i][Rig[i]] = 0xFF;
-    }
+  int i = 0;
+  for (i = 0; i < 60; i++)
+  {
+    Image_Use[i][Lef[i]] = 0xFF;
+    Image_Use[i][Mid[i]] = 0xFF;
+    Image_Use[i][Rig[i]] = 0xFF;
+  }
 }
-
 
 /*************************************************************************
 *  º¯ÊıÃû³Æ£ºvoid Pic_main()
@@ -239,30 +246,30 @@ int circle_set = 350;
 int circle_set2 = -350;
 int circle_flag = 0;
 
-void camera_dispose_main(void)//ÉãÏñÍ·´¦ÀíÖ÷º¯Êı
+void camera_dispose_main(void) //ÉãÏñÍ·´¦ÀíÖ÷º¯Êı
 {
-     // static char Road3_cnt = 0 ;
-      Get_Use_Image(); //Í¼ÏñÔ¤´¦Àí
-      if(Road == 0)
-      {
-        circle_flag = 0;
-      }
-      if(Road == 1)
-      {
-        if(circle_set < 1)//Cam_Block_Cnt == 100)
-          {
-            Road = 0;
-          }
-      }
-      if(Road == 2)
-      {
-        if(circle_set < 1)//Cam_Block_Cnt == 100)
-          {
-            Road = 0;
-          }
-      }
+  // static char Road3_cnt = 0 ;
+  Get_Use_Image(); //Í¼ÏñÔ¤´¦Àí
+  if (Road == 0)
+  {
+    circle_flag = 0;
+  }
+  if (Road == 1)
+  {
+    if (circle_set < 1) //Cam_Block_Cnt == 100)
+    {
+      Road = 0;
+    }
+  }
+  if (Road == 2)
+  {
+    if (circle_set < 1) //Cam_Block_Cnt == 100)
+    {
+      Road = 0;
+    }
+  }
 
-/*
+  /*
      if(Road == 0)
      {
        Turn_Angle = 0;
@@ -284,40 +291,44 @@ void camera_dispose_main(void)//ÉãÏñÍ·´¦ÀíÖ÷º¯Êı
 
      }
      */
-     if(Road == 6 && Road6_flag != 2)//||(Cam_Block_State ==1))
-      {
-         //sobel±ßÔµ¼ì²â
-        Get_01_Value();
-      }
-      else
-      {
-       sobel();
-       if(Road ==1 && Road1_flag == 4)//||Road ==2)
-       {
-          //Pic_seedfill();///ÖÖ×ÓËÑË÷Ëã·¨
-       }
-       Pic_noi_elim();//Í¼Ïñ¼òµ¥È¥Ôëµã
-      }
-      Pic_DrawMid();//Ñ°ÕÒ×óÓÒ±ßÏß
-      Cam_End_Detect();
-      Pic_undistort();//Í¼ÏñÈ¥»û±ä
-      Pic_particular();
-      LR_Slope_fig();//×óÓÒ±ßÏßĞ±ÂÊ¼ÆËã
-      Allwhite_find();//²éÕÒÈ«°×ĞĞ
-      Pic_find_circle();//Ñ°ÕÒ»·×´ºÚÏß¼°¹Õµã
-      Pic_find_leap();//Ñ°ÕÒÍ»±äµã
-      Pic_Block_Rec();
-      Cam_Break_Rec();
-      Road_rec();//ÀûÓÃ×óÓÒ±ßÏßĞ±ÂÊÊ¶±ğÈüµÀ
-      Pic_Fix_Line();//²¹Ïß´¦Àí
-      Pic_offset_fig();//offset¼ÆËã
-      Pic_offset_filter();//offsetÂË²¨
+  if (Road == 6 && Road6_flag != 2) //||(Cam_Block_State ==1))
+  {
+    //sobel±ßÔµ¼ì²â
+    Get_01_Value();
+  }
+  else
+  {
+    sobel();
+    if (Road == 1 && Road1_flag == 4) //||Road ==2)
+    {
+      //Pic_seedfill();///ÖÖ×ÓËÑË÷Ëã·¨
+    }
+    Pic_noi_elim(); //Í¼Ïñ¼òµ¥È¥Ôëµã
+  }
+  Pic_DrawMid(); //Ñ°ÕÒ×óÓÒ±ßÏß
+  Cam_End_Detect();
+#ifdef undistort0
+  Pic_undistort(); //Í¼ÏñÈ¥»û±ä
+#endif
+#ifdef undistort1
+  Pic_undistort(1, 1); //Í¼ÏñÈ¥»û±ä
+#endif
+  Pic_particular();
+  LR_Slope_fig();    //×óÓÒ±ßÏßĞ±ÂÊ¼ÆËã
+  Allwhite_find();   //²éÕÒÈ«°×ĞĞ
+  Pic_find_circle(); //Ñ°ÕÒ»·×´ºÚÏß¼°¹Õµã
+  Pic_find_leap();   //Ñ°ÕÒÍ»±äµã
+  Pic_Block_Rec();
+  Cam_Break_Rec();
+  Road_rec();          //ÀûÓÃ×óÓÒ±ßÏßĞ±ÂÊÊ¶±ğÈüµÀ
+  Pic_Fix_Line();      //²¹Ïß´¦Àí
+  Pic_offset_fig();    //offset¼ÆËã
+  Pic_offset_filter(); //offsetÂË²¨
 
-      Get_pic_with_edge();//»ñµÃ´ø±ßÏß»Ò¶ÈÍ¼
+  Get_pic_with_edge(); //»ñµÃ´ø±ßÏß»Ò¶ÈÍ¼
 
+  //if(Road == 0)
+  //{
 
-      //if(Road == 0)
-      //{
-
-        //}
-     }
+  //}
+}

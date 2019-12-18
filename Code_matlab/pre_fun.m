@@ -181,19 +181,184 @@ imshow(Pic_new)
 D=Pic_R-Pic_L;
 D(Pic_L==1)=0;
 D(Pic_R==78)=0;
+%% 去畸变2
+H0=150;
+D0=150;
+n0=60;
+K0=300/n0;
+theta=-pi/6.5;
+d=sqrt((H0^2+D0^2)/K0^2-30^2);
+h=(K0-1)*d;
+c=cos(theta);
+s=sin(theta);
+clear Rig_New Lef_New;
+
+for k=1:ImageH
+
+tempy=k-1;
+tempNewy(k)=round(((d*c+h)*(29.5-tempy)-h*d*s)/(s*(29.5-tempy)+d*c)+65.8195);
+tempxR=Pic_R(k);
+if tempxR==78||tempxR==79
+    tempNewxR(k)=450;
+else
+    tempNewxR(k)=round((d*c+h)*(tempxR-39.5)/(s*(29.5-tempy)+d*c));
+end
+if tempNewxR(k)>450
+    tempNewxR(k)=450;
+end
+
+end
+for k=1:ImageH
+tempxL=Pic_L(k);
+if tempxL==1||tempxL==2
+    tempNewxL(k)=-450;
+else
+    tempNewxL(k)=round((d*c+h)*(tempxL-39.5)/(s*(29.5-tempy)+d*c));
+end
+if tempNewxL(k)<-450
+    tempNewxL(k)=-450;
+end
+end
+figure
+plot(tempNewxL,tempNewy)
+hold on 
+plot(tempNewxR,tempNewy)
+figure
+plot(Pic_L,60:-1:1)
+hold on
+plot(Pic_R,60:-1:1)
+%% 插值
+for k=1:ImageH-1
+    step=tempNewy(k)-tempNewy(k+1);
+    if tempNewxR(k)~=450 && tempNewxR(k+1)~=450
+        for k2=1:step
+        Rig_New(tempNewy(k)-k2+1)=(tempNewxR(k)-tempNewxR(k+1))/step*(tempNewy(k)-k2-tempNewy(k+1))+tempNewxR(k+1);
+        end
+        
+    else
+        for k2=1:step
+        Rig_New(tempNewy(k)-k2+1)=450;
+        end
+    end
+end
+for k=1:ImageH-1
+    step=tempNewy(k)-tempNewy(k+1);
+    if tempNewxL(k)~=-450 && tempNewxL(k+1)~=-450
+        for k2=1:step
+        Lef_New(tempNewy(k)-k2+1)=(tempNewxL(k)-tempNewxL(k+1))/step*(tempNewy(k)-k2-tempNewy(k+1))+tempNewxL(k+1);
+        end
+        
+    else
+        for k2=1:step
+        Lef_New(tempNewy(k)-k2+1)=-450;
+        end
+    end
+end
+%% 压缩
+Rig_New_New=Rig_New(1:9:end);
+Lef_New_New=Lef_New(1:9:end);
+clear Rig_New
+clear Lef_New
+Rif_New=Rig_New_New;
+Lef_New=Lef_New_New;
+clear Lef_New_New
+clear Rig_New_New
+
+%% 直接提取=插值+压缩
+clear Rig_New
+clear Lef_New
+k=1;
+k2=59;
+
+while k2>=0
+    temp=k2*9;
+    if tempNewy(k)>=temp && tempNewy(k+1)<=temp
+        step=tempNewy(k)-tempNewy(k+1);
+        if tempNewxR(k)~=450 && tempNewxR(k+1)~=450
+            Rig_New(59-k2+1)=(tempNewxR(k)-tempNewxR(k+1))/step*(temp-tempNewy(k+1))+tempNewxR(k+1);
+        else
+            Rig_New(59-k2+1)=450;
+        end
+        if tempNewxL(k)~=-450 && tempNewxL(k+1)~=-450
+            Lef_New(59-k2+1)=(tempNewxL(k)-tempNewxL(k+1))/step*(temp-tempNewy(k+1))+tempNewxL(k+1);
+        else
+            Lef_New(59-k2+1)=-450;
+        end
+        k2=k2-1;
+    else
+        k=k+1;
+        continue
+    end
+end
+    
+
+
+
 
 %% 滤波
-WindowSize=4;
-b=(1/WindowSize)*ones(1,WindowSize);
-a=1;
-y=filter(b,a,Rig_New);
+
+k=1;
+Lef_New_New=Lef_New;
+while k<=57
+    if Lef_New(k+2)==-450
+        k=k+3;
+        continue;
+    elseif Lef_New(k+1)==-450
+        k=k+2;
+        continue;
+    elseif Lef_New(k)==-450
+        k=k+1;
+        continue
+    end
+    Lef_New_New(k+1)=(Lef_New(k)+Lef_New(k+1)+Lef_New(k+2))/3;
+    if Lef_New(k+3)==-450
+       k=k+4;
+       continue;
+    end
+    while  k<=57 && Lef_New(k+3)~=-450
+    Lef_New_New(k+2)=(Lef_New(k)+Lef_New(k+1)+Lef_New(k+2)+Lef_New(k+3))/4;
+    k=k+1;
+    end
+    k=k+4;
+end
+k=1;
+Rig_New_New=Rig_New;
+while k<=57
+    if Rig_New(k+2)==450
+        k=k+3;
+        continue;
+    elseif Rig_New(k+1)==450
+        k=k+2;
+        continue;
+    elseif Rig_New(k)==450
+        k=k+1;
+        continue
+    end
+    Rig_New_New(k+1)=(Rig_New(k)+Rig_New(k+1)+Rig_New(k+2))/3;
+    if Rig_New(k+3)==450
+       k=k+4;
+       continue;
+    end
+    while k<=57 && Rig_New(k+3)~=450
+    Rig_New_New(k+2)=(Rig_New(k)+Rig_New(k+1)+Rig_New(k+2)+Rig_New(k+3))/4;
+    k=k+1;
+    end
+    k=k+4;
+end     
+    
+
+figure
+plot(Lef_New)
+hold on
+plot(Lef_New_New);
+figure
 plot(Rig_New)
 hold on
-plot(y)
-
-
-
-
+plot(Rig_New_New);
+figure
+plot(Lef_New_New,60:-1:1)
+hold on
+plot(Rig_New_New,60:-1:1)
 
 %% 去畸变函数
 function a=pixel_undistort(x,y,LR)

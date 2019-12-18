@@ -1,5 +1,7 @@
 #ifndef _Picpro_H
 #define _Picpro_H
+#define undistort1
+
 #include "headfile.h"
 void Pic_seedfill(void); 
 char Final_line(void);
@@ -14,8 +16,13 @@ extern void Pic_main(void);
 extern void Pic_Fix_Line(void);//补线程序
 extern void Pic_thresh_get(void);
 extern void LR_Slope_fig(void);
+#ifdef undistort0
 extern void Pic_undistort(void);//图像去畸变
 extern void pixel_undistort(int x,int y,int LR);//像素去畸变
+#endif
+#ifdef undistort1
+extern void Pic_undistort(int L ,int R);//图像去畸变
+#endif
 //extern void Pixel_undistort(int x,int y,int LR);//像素去畸变
 extern void Pic_find_circle(void);//左右黑线寻找环状黑线
 extern void Pic_find_leap(void);
@@ -75,17 +82,29 @@ extern float Cam_offset;
 #define Car_Speed_Cur2    0.9   //弯道速度2
 #define Car_Speed_Cur3    0.5   //弯道速度3
 
-#define MIDMAP 300
+#ifdef undistort0
+    #define MIDMAP 300  //undistort0
 
-#define FIG_AREA_NEAR   50//350
-#define FIG_AREA_FAR   28//550   //逆透视变换后的图像计算区域
-#define FIG_AREA_FAR2   20//600
-#define FIG_AREA_FAR3   15//700
+    #define FIG_AREA_NEAR   50//350
+    #define FIG_AREA_FAR   28//550   //逆透视变换后的图像计算区域
+    #define FIG_AREA_FAR2   20//600
+    #define FIG_AREA_FAR3   15//700
 
-#define FIG_AREA_NEAR1   100//350
-#define FIG_AREA_FAR1   200//550   //逆透视变换后的图像计算区域
+    // #define FIG_AREA_NEAR1   100//350
+    // #define FIG_AREA_FAR1   200//550   //逆透视变换后的图像计算区域
+#endif 
+
+#ifdef undistort1
+    #define MIDMAP 450  //undistort1
+
+    #define FIG_AREA_NEAR   55//50//350
+    #define FIG_AREA_FAR   43//28//550   //逆透视变换后的图像计算区域
+    #define FIG_AREA_FAR2   35//20//600
+    #define FIG_AREA_FAR3   29//15//700
+#endif
 
 #define ROAD_HALF_WIDTH  150  //赛道半宽
+#define ROAD_WIDTH  300  //赛道宽
 
 #define Fir_row      2        //以第7行作为最小有效行
 #define Last_row     (LCDH-2)    //以该行为最大有效行
@@ -98,13 +117,14 @@ extern float Cam_offset;
 #define Last_col_cross     (LCDW-8)    //以该列为最大有效列
 
 
-
+#if 0
 #define UNDISTORT_FX      1.1911        //内参矩阵和畸变系数
 #define UNDISTORT_FY      1.1890
 #define UNDISTORT_CX      77.1315   
 #define UNDISTORT_CY      58.4910
 #define UNDISTORT_K1      (-0.4077)  
 #define UNDISTORT_K2      0.1326
+#endif 
 
 //图像DFS搜索算法起始搜索区域
 #define seed_down	55
@@ -129,11 +149,15 @@ extern int ramp_cnt ;
 extern int iii;
 extern int block_flag;
 #endif
+#if 0
 extern float zhidaosudu ;//直道速度
 extern float xiaowandaosudu ;//小弯道速度
 extern float dawandaosudu  ;//大弯道速度
 extern float duanlusudu ;//断路速度
-extern int camera_offset ;//摄像头二值化阈值
-extern int Tof_thres;//障碍物检测阈值
 extern float luzhangsudu ;//路障速度
+extern int Tof_thres;//障碍物检测阈值
+#endif
+
+extern int camera_offset ;//摄像头二值化阈值
+
 extern int threshold_offset;
