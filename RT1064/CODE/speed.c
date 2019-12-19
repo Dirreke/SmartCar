@@ -63,7 +63,18 @@ void lib_set_speed(float a)
   #endif 
   
 }
+#ifdef DIFF1
+float get_speed()
+{
+  return speed;
+}
+#endif 
+
 #ifdef DIFF0
+float get_speed()
+{
+  return speed+diff_bias;
+}
 //active diff function
 void lib_active_diff_init(void){
 	lib_active_diff_set(0);

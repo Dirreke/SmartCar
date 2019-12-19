@@ -95,12 +95,12 @@ extern float Cam_offset;
 #endif 
 
 #ifdef undistort1
-    #define MIDMAP 450  //undistort1
+    #define MIDMAP 860  //undistort1
 
-    #define FIG_AREA_NEAR   55//50//350
-    #define FIG_AREA_FAR   43//28//550   //逆透视变换后的图像计算区域
-    #define FIG_AREA_FAR2   35//20//600
-    #define FIG_AREA_FAR3   29//15//700
+    #define FIG_AREA_NEAR   57//50//350/*(59-tempNewy(50)/Bili)(Bili=12)
+    #define FIG_AREA_FAR   44//28//550   //逆透视变换后的图像计算区域
+    #define FIG_AREA_FAR2   44//20//600
+    #define FIG_AREA_FAR3   39//15//700
 #endif
 
 #define ROAD_HALF_WIDTH  150  //赛道半宽

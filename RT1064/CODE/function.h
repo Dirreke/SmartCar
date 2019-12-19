@@ -15,14 +15,14 @@
 //MAP_K0/(y+MAP_B)
 
 /*************************search.c去畸变2 *****************************/
-#define UNDISTORT_D 30.0
-#define UNDISTORT_H 120.0
-#define UNDISTORT_C 0.8855
-#define UNDISTORT_S 0.4647
+#define UNDISTORT_D 60.8582
+#define UNDISTORT_H 73.3878
+#define UNDISTORT_C 0.5594
+#define UNDISTORT_S 0.8289//程序中加了负号，故与matlab相反
 
 /********************** conrtol.c差速 ********************************/
-#define ANGLE_RANGE 3.1415926/4 //舵机最大偏转角，单位：弧度
-#define CAR_DIFF_K 0//小车两轮宽比两轮长，暂设为0，此时无差速
+#define ANGLE_RANGE 0.5585 //舵机最大偏转角，单位：弧度,32du
+#define CAR_DIFF_K 0.7750//小车两轮宽比两轮长，暂设为0，此时无差速，车宽15.5，车长20
 
 
 /***************************差速两套**********************************/

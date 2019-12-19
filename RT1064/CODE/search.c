@@ -1242,8 +1242,7 @@ void Pic_offset_fig(void)
   int i;
   int count = 0, count2 = 0;
 
-  if (1)
-  {
+
     for (i = 0; i < 60; i++)
     {
       //  if(Road==1&&(Road1_flag==0||Road1_flag==2))
@@ -1342,17 +1341,15 @@ void Pic_offset_fig(void)
       Cam_offset2 = Cam_offset2 / count2;
     }
 
-    Cam_offset = (0.4 * Cam_offset + 0.6 * Cam_offset2);
+    //Cam_offset = (0.4 * Cam_offset + 0.6 * Cam_offset2);
     if (Road == 3 || Road1_flag == 2 || Road2_flag == 2)
     {
       Cam_offset *= 1;
     }
     return;
-  }
-  else
-  {
-    Cam_offset = 0;
-  }
+  
+
+
 }
 
 /*************************************************************************
@@ -1481,7 +1478,7 @@ void Pic_undistort(int L, int R)
   int step;
   int Rig_New[60];
   int Lef_New[60];
-  static int tempNewy[60] = {532, 505, 480, 456, 434, 413, 393, 374, 357, 340, 325, 310, 296, 282, 270, 257, 246, 235, 224, 214, 204, 195, 186, 177, 169, 161, 153, 146, 139, 132, 126, 119, 113, 107, 101, 96, 90, 85, 80, 75, 70, 65, 61, 57, 52, 48, 44, 40, 36, 33, 29, 25, 22, 19, 15, 12, 9, 6, 3, 0};
+  static const int tempNewy[60] = {707,640,583,533,490,452,419,389,362,337,315,295,277,260,244,230,216,204,192,182,171,162,153,145,137,129,122,115,109,103,97,91,86,81,76,72,67,63,59,55,51,48,44,41,38,34,31,29,26,23,20,18,15,13,11,8,6,4,2,0};
 
   /*************************Ó³Éä*******************************/
   if (R)
@@ -1493,7 +1490,7 @@ void Pic_undistort(int L, int R)
       if (tempx >= Last_col)
         tempNewxR[i] = MIDMAP;
       else
-        tempNewxR[i] = (int)((UNDISTORT_D * UNDISTORT_C + UNDISTORT_H) * (tempx - 39.5) / (-UNDISTORT_S * (29.5 - tempy) + UNDISTORT_D * UNDISTORT_C) + 0.5);
+        tempNewxR[i] = (int)((UNDISTORT_D * UNDISTORT_C + UNDISTORT_H) *2* (tempx - 39.5) / (-UNDISTORT_S * (29.5 - tempy) + UNDISTORT_D * UNDISTORT_C) + 0.5);
 
       if (tempNewxR[i] > MIDMAP)
         tempNewxR[i] = MIDMAP;
@@ -1508,7 +1505,7 @@ void Pic_undistort(int L, int R)
       if (tempx <= Fir_col)
         tempNewxL[i] = -MIDMAP;
       else
-        tempNewxL[i] = (int)((UNDISTORT_D * UNDISTORT_C + UNDISTORT_H) * (tempx - 39.5) / (-UNDISTORT_S * (29.5 - tempy) + UNDISTORT_D * UNDISTORT_C) + 0.5);
+        tempNewxL[i] = (int)((UNDISTORT_D * UNDISTORT_C + UNDISTORT_H) *2* (tempx - 39.5) / (-UNDISTORT_S * (29.5 - tempy) + UNDISTORT_D * UNDISTORT_C) + 0.5);
 
       if (tempNewxL[i] < -MIDMAP)
         tempNewxL[i] = -MIDMAP;
@@ -1516,11 +1513,12 @@ void Pic_undistort(int L, int R)
   }
   /************************²åÖµ+Ñ¹Ëõ+µ¹Ðò*************************/
   i = 0;
-  j = 59;
-
+  j = 58;
+Rig_New[0]=tempNewxR[0];
+Lef_New[0]=tempNewxL[0];
   while (j >= 0)
   {
-    temp = 9 * j;
+    temp = 12 * j;
     if (tempNewy[i] >= temp && tempNewy[i + 1] <= temp)
     {
       step = tempNewy[i] - tempNewy[i + 1];

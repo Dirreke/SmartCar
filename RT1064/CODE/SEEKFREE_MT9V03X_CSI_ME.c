@@ -318,8 +318,8 @@ void camera_dispose_main(void) //摄像头处理主函数
   Allwhite_find();   //查找全白行
   Pic_find_circle(); //寻找环状黑线及拐点
   Pic_find_leap();   //寻找突变点
-  Pic_Block_Rec();
-  Cam_Break_Rec();
+  //Pic_Block_Rec();
+  //Cam_Break_Rec();
   Road_rec();          //利用左右边线斜率识别赛道
   Pic_Fix_Line();      //补线处理
   Pic_offset_fig();    //offset计算

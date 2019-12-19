@@ -13,7 +13,7 @@ typedef enum{
 float lib_get_speed(tire_type a);
 #endif
 
-//float get_speed(void);
+float get_speed(void);
 void lib_set_speed(float a);
 
 #ifdef DIFF0
