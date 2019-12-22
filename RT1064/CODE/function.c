@@ -19,7 +19,7 @@ void Para_Init()
 //diff.h and speed.h init
         lib_speed_init();
 
-        lib_set_speed(2);
+        lib_set_speed(2.0);
 #ifdef DIFF0
         lib_active_diff_init();
         lib_active_diff_set_p(0.1);
@@ -27,7 +27,7 @@ void Para_Init()
 #endif
         //¿ª²îËÙ
         diff_on();
-        //diff_off();
+     //   diff_off();
   
   
         

@@ -1,6 +1,8 @@
 #include "Data_Send.h"
 #include "search.h"
 
+#define und_pic
+
 uint16 Pic_new[600];
 int cnt;
 int cntt=1;
@@ -58,7 +60,7 @@ void Send_Img(void)
     My_Put_Char(0xa2);
     My_Put_Char(0x01); //小车状态
     
-    num = cnt + 2 + 180;//4+4*2
+    num = cnt + 2 +180;//4+4*2
     //num = cnt+2+180;
     //num=cont+2+180+36;  
     //统计将要传输的数据量 2是因为要传输关键字即0xf0和0xf2   (0xf2 所有数据结束，0xf0图像数据结束，180=60*3)
@@ -78,7 +80,6 @@ void Send_Img(void)
 //    }
     My_Put_Char(0xf0);  //代表图像数据发完了
     /******************星号围起来的可以不传输*******************/
-
     ////////////////////////传输左右边线和计算得到的中线///////////
     for(i=0;i<60;i++){
       My_Put_Char(Lef[i]);//New_Lef[i]/10+40); 
@@ -90,7 +91,6 @@ void Send_Img(void)
       My_Put_Char(Rig[i]);//New_Rig[i]/10+40); 
     }
     
-
     /*****************************************************/
     My_Put_Char(0xf2); //代表整个数据都发完了
 
@@ -101,6 +101,7 @@ void Pic_send_new(void)
   int i;
   int j;
   cnt=0;
+#ifdef ori_pic
   for(i=0;i<60;i++)
   {
     if(Pixle[i][0]==1)
@@ -119,6 +120,33 @@ void Pic_send_new(void)
     Pic_new[cnt]=0xff;
     cnt++;
   }
+#endif
+  
+#ifdef und_pic
+    for(i=0;i<60;i++)
+  {
+    if((int)(New_Lef[i]+450)*0.089 <= 0)
+    {
+     Pic_new[cnt]=0;  
+     cnt++;
+     Pic_new[cnt]=1;  
+     cnt++;     
+    }else{
+    Pic_new[cnt]=(int)(New_Lef[i]+450)*0.089;
+    cnt++;
+    Pic_new[cnt]=(int)(New_Lef[i]+450)*0.089+1;
+    cnt++; 
+    }
+    
+    Pic_new[cnt]=(int)(New_Rig[i]+450)*0.089;
+    cnt++;
+    Pic_new[cnt]=(int)(New_Rig[i]+450)*0.089+1;
+    cnt++;
+    Pic_new[cnt]=0xff;
+    cnt++;
+  }  
+#endif
+  
 }
 /*************************************************************************
 *  函数名称：void My_Put_Char(void)
@@ -142,8 +170,8 @@ void Send_Variable(void){
   My_Put_Char(0xaa);
   My_Put_Char(0xff);
   My_Put_Char(0x01);
-  My_Put_Char(4);
-  for(int i=0;i<4;i++){
+  My_Put_Char(11);
+  for(int i=0;i<11;i++){
             temp1=Variable[i];
             ch=BYTE0(temp1);
             My_Put_Char(ch);
@@ -176,15 +204,13 @@ void Variable_update(void)
   Variable[1]= Turn_Cam_Out;//cnt;//Turn_Cam_Out;//;//stat_slope;//gyroy_1;//Turn_Cam_Out;//Car_W;
   Variable[2]= CarSpeed1;//speedTarget1; //Allwhiteend;
   Variable[3]= CarSpeed2;//whitecnt;
-  /*
-  Variable[4]= EM_Turn_Control;//speedTarget2;//Turn_Cam_Out;
+  Variable[4]= Road;//speedTarget2;//Turn_Cam_Out;
   Variable[5]= Lef_circle;//Cam_offset;
   Variable[6]= Rig_circle;
   Variable[7]= Road1_flag;
   Variable[8]= Road2_flag;
   Variable[9]= Lef_slope;
   Variable[10]=Rig_slope;
-*/
   //Variable[11]=Road;/*Rig_circle;*///Road6_flag ;//CarSpeed2;
 /*
   Variable[12]=whitecnt;//Road1_turnout;//limit_pos(EM_Value_1/1.5-EM_Value_2/3.5);//speedTarget1;//map_line[MIN(50,AllWhileStartLine)];

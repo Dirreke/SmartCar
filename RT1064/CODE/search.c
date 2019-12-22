@@ -515,7 +515,7 @@ void Road_rec(void)
   {
     Road0_flag = 0;
     Road14_count++;
-    if (Road14_count == (int)(DIS_IN_CIRCLE * 10000 / (get_speed() * CAMERA_FPS)) + 1) //宏定义在function.h，get_speed()需要km迁一下
+    if (Road14_count == (int)(DIS_IN_CIRCLE * 10000 / (get_speed() * CAMERA_FPS)) + 1) //宏定义在function.h
     {
       Road1_flag = 4;
       Road14_count = 0;

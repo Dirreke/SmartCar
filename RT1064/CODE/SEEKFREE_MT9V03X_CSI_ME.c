@@ -167,13 +167,7 @@ void sobel() //Sobel±ßÑØ¼ì²â
       tempx = -Image_Use[i - 1][j - 1] - 2 * Image_Use[i][j - 1] - Image_Use[i + 1][j - 1] + Image_Use[i - 1][j + 1] + 2 * Image_Use[i][j + 1] + Image_Use[i + 1][j + 1];
       tempy = Image_Use[i + 1][j - 1] + 2 * Image_Use[i + 1][j] + Image_Use[i + 1][j + 1] - Image_Use[i - 1][j - 1] - 2 * Image_Use[i - 1][j] - Image_Use[i - 1][j + 1];
       tempsqrt = sqrt(tempx * tempx + tempy * tempy);
-      if (i < Sobel_Near_Far_Line && tempsqrt > Sobel_Threshold_Far && Image_Use[i][j] < 200)
-      {
-        Pixle[i][j] = 0;
-        if (j == 40)
-          FINAL[i] = 0;
-      }
-      else if (i >= Sobel_Near_Far_Line && tempsqrt > Sobel_Threshold_Near && Image_Use[i][j] < 200)
+      if (tempsqrt > Sobel_Threshold_Far && Image_Use[i][j] < 200)//i < Sobel_Near_Far_Line &&
       {
         Pixle[i][j] = 0;
         if (j == 40)
@@ -291,6 +285,7 @@ void camera_dispose_main(void) //ÉãÏñÍ·´¦ÀíÖ÷º¯Êý
 
      }
      */
+  /*
   if (Road == 6 && Road6_flag != 2) //||(Cam_Block_State ==1))
   {
     //sobel±ßÔµ¼ì²â
@@ -298,11 +293,12 @@ void camera_dispose_main(void) //ÉãÏñÍ·´¦ÀíÖ÷º¯Êý
   }
   else
   {
-    sobel();
-    if (Road == 1 && Road1_flag == 4) //||Road ==2)
-    {
+*/
+  sobel();
+  if (Road == 1 && Road1_flag == 4) //||Road ==2)
+  {
       //Pic_seedfill();///ÖÖ×ÓËÑË÷Ëã·¨
-    }
+//    }
     Pic_noi_elim(); //Í¼Ïñ¼òµ¥È¥Ôëµã
   }
   Pic_DrawMid(); //Ñ°ÕÒ×óÓÒ±ßÏß
