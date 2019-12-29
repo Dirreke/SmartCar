@@ -1,4 +1,4 @@
-clear all; 
+clear all;
 clc;
 close all;
 name='mykc20191217(11)';
@@ -42,10 +42,10 @@ while 1
                 k=k+MAX_VARIAVLE*WORD_LENS;
                 continue
             end
-
+            
             if data(k+4*num1+5)==1
-            temp=data(k+5:k+4*num1+5);
-            Variable(frame0,1:length(temp))=temp;
+                temp=data(k+5:k+4*num1+5);
+                Variable(frame0,1:length(temp))=temp;
                 flag=1;
             else
                 warning('The Variable data is more or less than it is declared');
@@ -121,9 +121,9 @@ for ki=1:m
             Pi=Pi+1;
             Image(Pi,Pj:ImageW)=P;
         else
-        Image(Pi,Pj:Image_unpcsImage(ki,kj)-1)=P;
-        Pj=Image_unpcsImage(ki,kj);
-        P=~P;
+            Image(Pi,Pj:Image_unpcsImage(ki,kj)-1)=P;
+            Pj=Image_unpcsImage(ki,kj);
+            P=~P;
         end
         
     end
@@ -137,50 +137,50 @@ Image_R=Image_others(:,1+ImageH*2:ImageH*3)';
 clear Image Image_unpcsImage Image_others frame frame0 flag data a temp ki kj n num1 num2 i k m p Pi Pj P MAX_VARIABLE WORD_LENS ;
 
 
-%% 
-No=429;
+%%
+No=455;%429
 Pic=Images{No};
 Pic_L=Image_L(:,No);
 Pic_M=Image_M(:,No);
 Pic_R=Image_R(:,No);
-clear Images Image_L Image_R Image_M No 
-%%
-Picedge=edge(Pic);
+figure
+imshow(Pic)
+clear Images Image_L Image_R Image_M No
+%% Matlab 自带函数边缘提取
+% Picedge=edge(Pic);
 
 
 
 %% 去畸变
-Pic_new=zeros(60,601);
-Pic_new_edge=zeros(60,601);
-Lef_New=zeros(1,ImageH);
-Rig_New=zeros(1,ImageH);
+% Pic_new=zeros(60,601);
+% Pic_new_edge=zeros(60,601);
+% Lef_New=zeros(1,ImageH);
+% Rig_New=zeros(1,ImageH);
+%
+% for k=1:ImageH
+%     for k2=2:601
+%         a=pixel_undistort2(k2,k);
+%         if a>0 &&a<=ImageW
+%             Pic_new(k,k2)=Pic(k,a);
+%         end
+%     end
+% end
+% for k=1:ImageH
+%         a=pixel_undistort(Pic_L(k),k,0)+301;
+%         b=pixel_undistort(Pic_R(k),k,1)+301;
+%         Lef_New(k)=a;
+%         Rig_New(k)=b;
+%         Pic_new_edge(k,a)=Pic(k,Pic_L(k));
+% end
+%
+% figure
+% imshow(Pic_new)
 
-for k=1:ImageH
-    for k2=2:601
-        a=pixel_undistort2(k2,k);
-        if a>0 &&a<=ImageW
-            Pic_new(k,k2)=Pic(k,a);
-        end
-    end
-end
-for k=1:ImageH
-        a=pixel_undistort(Pic_L(k),k,0)+301;
-        b=pixel_undistort(Pic_R(k),k,1)+301;
-        Lef_New(k)=a;
-        Rig_New(k)=b;
-        Pic_new_edge(k,a)=Pic(k,Pic_L(k));
-end
 
-figure
-imshow(Pic)
-figure
-imshow(Pic_new)
-
-    
 %% 畸变标定，对于直行，需人工
-D=Pic_R-Pic_L;
-D(Pic_L==1)=0;
-D(Pic_R==78)=0;
+% D=Pic_R-Pic_L;
+% D(Pic_L==1)=0;
+% D(Pic_R==78)=0;
 %% 去畸变2
 % D0=10cm
 % RoadWidth=40.4cm
@@ -205,83 +205,84 @@ s=sin(theta);
 clear Rig_New Lef_New;
 
 for k=1:ImageH
-
-tempy=k-1;
-tempNewy(k)=round(((d*c+h)*(29.5-tempy)-h*d*s)/(s*(29.5-tempy)+d*c));
-% tempNewy(k)=((d*c+h)*(29.5-tempy)-h*d*s)/(s*(29.5-tempy)+d*c);
-
-tempxR=Pic_R(k);
-% if tempxR==78||tempxR==79
-%     tempNewxR(k)=450*10;
-% else
-    tempNewxR(k)=round((d*c+h)*2*(tempxR-39.5)/(s*(29.5-tempy)+d*c));
-% end
-% if tempNewxR(k)>450*10
-%     tempNewxR(k)=450*10;
-% end
-
+    
+    tempy=k-1;
+    tempNewy(k)=round(((d*c+h)*(29.5-tempy)-h*d*s)/(s*(29.5-tempy)+d*c));
+    % tempNewy(k)=((d*c+h)*(29.5-tempy)-h*d*s)/(s*(29.5-tempy)+d*c);
+    
+    tempxR=Pic_R(k);
+    if tempxR==78||tempxR==79
+        tempNewxR(k)=860;
+    else
+        tempNewxR(k)=round((d*c+h)*2*(tempxR-39.5)/(s*(29.5-tempy)+d*c));
+    end
+    if tempNewxR(k)>860
+        tempNewxR(k)=860;
+    end
+    
 end
 tempNewy=tempNewy-tempNewy(60);
 
 for k=1:ImageH
     tempy=k-1;
-tempxL=Pic_L(k);
-if tempxL==1||tempxL==2
-    tempNewxL(k)=-860;
-else
-    tempNewxL(k)=round((d*c+h)*2*(tempxL-39.5)/(s*(29.5-tempy)+d*c));
-end
-if tempNewxL(k)<-860
-    tempNewxL(k)=-860;
-end
+    tempxL=Pic_L(k);
+    if tempxL==1||tempxL==2
+        tempNewxL(k)=-860;
+    else
+        tempNewxL(k)=round((d*c+h)*2*(tempxL-39.5)/(s*(29.5-tempy)+d*c));
+    end
+    if tempNewxL(k)<-860
+        tempNewxL(k)=-860;
+    end
 end
 figure
 plot(tempNewxL,tempNewy)
-hold on 
+hold on
 plot(tempNewxR,tempNewy)
 figure
 plot(Pic_L,60:-1:1)
 hold on
 plot(Pic_R,60:-1:1)
 %% 插值
-for k=1:ImageH-1
-    step=tempNewy(k)-tempNewy(k+1);
-    if tempNewxR(k)~=450 && tempNewxR(k+1)~=860
-        for k2=1:step
-        Rig_New(tempNewy(k)-k2+1)=(tempNewxR(k)-tempNewxR(k+1))/step*(tempNewy(k)-k2-tempNewy(k+1))+tempNewxR(k+1);
-        end
-        
-    else
-        for k2=1:step
-        Rig_New(tempNewy(k)-k2+1)=860;
-        end
-    end
-end
-for k=1:ImageH-1
-    step=tempNewy(k)-tempNewy(k+1);
-    if tempNewxL(k)~=-860 && tempNewxL(k+1)~=-860
-        for k2=1:step
-        Lef_New(tempNewy(k)-k2+1)=(tempNewxL(k)-tempNewxL(k+1))/step*(tempNewy(k)-k2-tempNewy(k+1))+tempNewxL(k+1);
-        end
-        
-    else
-        for k2=1:step
-        Lef_New(tempNewy(k)-k2+1)=-860;
-        end
-    end
-end
+% for k=1:ImageH-1
+%     step=tempNewy(k)-tempNewy(k+1);
+%     if tempNewxR(k)~=450 && tempNewxR(k+1)~=860
+%         for k2=1:step
+%         Rig_New(tempNewy(k)-k2+1)=(tempNewxR(k)-tempNewxR(k+1))/step*(tempNewy(k)-k2-tempNewy(k+1))+tempNewxR(k+1);
+%         end
+%
+%     else
+%         for k2=1:step
+%         Rig_New(tempNewy(k)-k2+1)=860;
+%         end
+%     end
+% end
+% for k=1:ImageH-1
+%     step=tempNewy(k)-tempNewy(k+1);
+%     if tempNewxL(k)~=-860 && tempNewxL(k+1)~=-860
+%         for k2=1:step
+%         Lef_New(tempNewy(k)-k2+1)=(tempNewxL(k)-tempNewxL(k+1))/step*(tempNewy(k)-k2-tempNewy(k+1))+tempNewxL(k+1);
+%         end
+%
+%     else
+%         for k2=1:step
+%         Lef_New(tempNewy(k)-k2+1)=-860;
+%         end
+%     end
+% end
+
 %% 压缩
-Bili=round(tempNewy(1)/59);
-Rig_New_New=Rig_New(1:Bili:end);
-Lef_New_New=Lef_New(1:Bili:end);
-Lef_New_New(60)=Lef_New(end);
-Rig_New_New(60)=Rig_New(end);
-clear Rig_New
-clear Lef_New
-Rig_New=Rig_New_New;
-Lef_New=Lef_New_New;
-clear Lef_New_New
-clear Rig_New_New
+% Bili=round(tempNewy(1)/59);
+% Rig_New_New=Rig_New(1:Bili:end);
+% Lef_New_New=Lef_New(1:Bili:end);
+% Lef_New_New(60)=Lef_New(end);
+% Rig_New_New(60)=Rig_New(end);
+% clear Rig_New
+% clear Lef_New
+% Rig_New=Rig_New_New;
+% Lef_New=Lef_New_New;
+% clear Lef_New_New
+% clear Rig_New_New
 
 %% 直接提取=插值+压缩
 clear Rig_New
@@ -309,8 +310,8 @@ while k2>=0
         continue
     end
 end
-    Rig_New(1)=tempNewxR(1);
-    Lef_New(1)=tempNewxL(1);
+Rig_New(1)=tempNewxR(1);
+Lef_New(1)=tempNewxL(1);
 
 
 
@@ -332,12 +333,12 @@ while k<=57
     end
     Lef_New_New(k+1)=(Lef_New(k)+Lef_New(k+1)+Lef_New(k+2))/3;
     if Lef_New(k+3)==-860
-       k=k+4;
-       continue;
+        k=k+4;
+        continue;
     end
     while  k<=57 && Lef_New(k+3)~=-860
-    Lef_New_New(k+2)=(Lef_New(k)+Lef_New(k+1)+Lef_New(k+2)+Lef_New(k+3))/4;
-    k=k+1;
+        Lef_New_New(k+2)=(Lef_New(k)+Lef_New(k+1)+Lef_New(k+2)+Lef_New(k+3))/4;
+        k=k+1;
     end
     k=k+4;
 end
@@ -356,25 +357,25 @@ while k<=57
     end
     Rig_New_New(k+1)=(Rig_New(k)+Rig_New(k+1)+Rig_New(k+2))/3;
     if Rig_New(k+3)==860
-       k=k+4;
-       continue;
+        k=k+4;
+        continue;
     end
     while k<=57 && Rig_New(k+3)~=860
-    Rig_New_New(k+2)=(Rig_New(k)+Rig_New(k+1)+Rig_New(k+2)+Rig_New(k+3))/4;
-    k=k+1;
+        Rig_New_New(k+2)=(Rig_New(k)+Rig_New(k+1)+Rig_New(k+2)+Rig_New(k+3))/4;
+        k=k+1;
     end
     k=k+4;
-end     
-    
+end
 
-figure
-plot(Lef_New)
-hold on
-plot(Lef_New_New);
-figure
-plot(Rig_New)
-hold on
-plot(Rig_New_New);
+
+% figure
+% plot(Lef_New)
+% hold on
+% plot(Lef_New_New);
+% figure
+% plot(Rig_New)
+% hold on
+% plot(Rig_New_New);
 figure
 plot(Lef_New_New,60:-1:1)
 hold on
@@ -386,41 +387,38 @@ MIDMAP=300;
 offset=300/(y+10);
 table=[66 67 68 69 90];
 temx=x;
-  if temx==2
-      temx=0;
-  end
-  if temx==78 
-      temx=79;
-  end
-  if y>55
-      offset=300/table(y-55);
-  end
-  if LR==0 %左边线
-	New_Lef=round( (temx-39)*offset);
-    
+if temx==2
+    temx=0;
+end
+if temx==78
+    temx=79;
+end
+if y>55
+    offset=300/table(y-55);
+end
+if LR==0 %左边线
+    New_Lef=round( (temx-39)*offset);
     if New_Lef < -MIDMAP
-          New_Lef = -MIDMAP;
+        New_Lef = -MIDMAP;
     end
     a=New_Lef;
-  else
+else
     New_Rig=round((temx-39)*offset);
-    
     if New_Rig> MIDMAP
-      New_Rig = MIDMAP;
-  
+        New_Rig = MIDMAP;
     end
-    a=New_Rig;  
-  end
+    a=New_Rig;
+end
 end
 function a=pixel_undistort2(x,y)
 % offset_map=[31/77,31/77,31/9,31/9,31/10,31/11,31/12,31/13,31/14,31/15,31/16,31/17,31/17,31/19,31/19,31/21,31/21,31/23,31/24,31/25,31/25,31/27,31/28,31/29,31/30,31/31,31/31	,31/33,31/34,31/34,31/36,31/36	,31/36	,31/38	,31/40,31/40,31/42,31/42,31/42	,31/44	 ,31/46	 ,31/46	 ,31/48	  ,31/48	,31/48	,31/50	,31/51,31/52,31/53,31/54,31/54,31/56,31/56,31/58,31/58,31/58,31/60,31/60,31/61,31/77];
 table=[63 63 62 62 62];
 New_Lef=x-301;
-  offset=300/(y+10);
-  if y>55
-      offset=300/table(y-55);
-  end
-  	a=round(New_Lef/offset+39);
+offset=300/(y+10);
+if y>55
+    offset=300/table(y-55);
+end
+a=round(New_Lef/offset+39);
 end
 
 
