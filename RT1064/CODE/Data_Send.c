@@ -1,7 +1,7 @@
 #include "Data_Send.h"
 #include "search.h"
 
-#define und_pic
+#define ori_pic
 
 uint16 Pic_new[600];
 int cnt;
