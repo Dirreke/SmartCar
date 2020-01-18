@@ -1838,6 +1838,7 @@ void Cam_Break_Rec(void)
 *  备    注：不用了
 
 *************************************************************************/
+#if 0
 int Cam_Block_Cnt = 0;
 int Cam_Block_State = 0;
 int Road6_flag;
@@ -2015,3 +2016,4 @@ void Pic_Block_Rec(void) //障碍物识别
 
   return;
 }
+#endif
