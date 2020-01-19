@@ -230,9 +230,9 @@ void Pic_undistort(int L, int R)
     }
     /************************插值+压缩+倒序*************************/
     i = startpoint;
-    j = 58;
-    Rig_New[0] = tempNewxR[0];
-    Lef_New[0] = tempNewxL[0];
+    j = 59;//59，不补最远行，58，补最远行需+下面两行代码
+    // Rig_New[0] = tempNewxR[0];
+    // Lef_New[0] = tempNewxL[0];
     while (j >= 0)
     {
         temp = 12 * j;
