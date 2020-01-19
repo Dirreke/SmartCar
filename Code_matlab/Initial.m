@@ -1,0 +1,8 @@
+function []=Initial()
+global MAX_VARIAVLE ImageH ImageW MIDMAP ROAD_HALF_WIDTH;
+MAX_VARIAVLE=30;
+ImageH=60;
+ImageW=80;
+MIDMAP=860;
+ROAD_HALF_WIDTH=150;
+end

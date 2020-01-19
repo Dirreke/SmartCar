@@ -4,7 +4,6 @@ if nargin==4
     flag_canshu=0;
 end
 %% 参数
-startpoint=12;%此参数小为远景。，从此开始取
 % D0=10cm
 % RoadWidth=40.4cm
 % H0=17.5cm
@@ -29,7 +28,6 @@ s=sin(theta);
 
 %% 去畸变
 tempNewy=zeros(ImageH,1);
-% 此段程序中在C中为表
 for k=1:ImageH
     
     tempy=k-1;
@@ -37,10 +35,9 @@ for k=1:ImageH
     % tempNewy(k)=((d*c+h)*(29.5-tempy)-h*d*s)/(s*(29.5-tempy)+d*c);
 end
 tempNewy=tempNewy-tempNewy(60);
-% 代码
 tempNewxR=zeros(ImageH,1);
 if R
-    for k=startpoint:ImageH
+    for k=1:ImageH
         tempy=k-1;
         tempxR=Pic_R(k);
         if tempxR==78||tempxR==79
@@ -56,7 +53,7 @@ if R
 end
 tempNewxL=zeros(ImageH,1);
 if L
-for k=startpoint:ImageH
+for k=1:ImageH
     tempy=k-1;
     tempxL=Pic_L(k);
     if tempxL==1||tempxL==2
@@ -81,8 +78,8 @@ end
 %% 直接提取=插值+压缩
 % clear Rig_New
 % clear Lef_New
-k=startpoint;%寻找起点
-k2=59;%Bili=5
+k=1;%寻找起点
+k2=59;%Bili=67,59
 Bili=round(tempNewy(k)/59);
 Rig_New=zeros(ImageH,1);
 Lef_New=zeros(ImageH,1);
