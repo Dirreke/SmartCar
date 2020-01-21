@@ -7,7 +7,6 @@
 *  修改时间：2020.1.18
 *  备    注：Cam_offset为负，车偏右，向左拐；
              Cam_offset为正，车偏左，向右拐；
-
 *************************************************************************/
 int New_Mid[60];
 
@@ -83,56 +82,7 @@ void Pic_DrawMid_und(void)
             continue;
         }
 
-        else if (i <= FIG_AREA_NEAR && i >= FIG_AREA_FAR)
-        {
-            if (New_Lef[i] != -MIDMAP && New_Rig[i] != MIDMAP)
-            {
-                Cam_offset = Cam_offset + New_Lef[i] + New_Rig[i];
-                count++;
-                continue;
-            }
-            else if (New_Lef[i] == -MIDMAP && New_Rig[i] != MIDMAP)
-            {
-                Cam_offset = Cam_offset + New_Rig[i] - ROAD_HALF_WIDTH;
-                count++;
-                continue;
-            }
-            else if (New_Lef[i] != -MIDMAP && New_Rig[i] == MIDMAP)
-            {
-                Cam_offset = Cam_offset + New_Lef[i] + ROAD_HALF_WIDTH;
-                count++;
-                continue;
-            }
-            else
-            {
-                continue;
-            }
-        }
-        else if ((i <= FIG_AREA_FAR && i >= FIG_AREA_FAR2))
-        {
-            if (New_Lef[i] != -MIDMAP && New_Rig[i] != MIDMAP)
-            {
-                Cam_offset2 = Cam_offset2 + New_Lef[i] + New_Rig[i];
-                count2++;
-                continue;
-            }
-            else if (New_Lef[i] == -MIDMAP && New_Rig[i] != MIDMAP)
-            {
-                Cam_offset2 = Cam_offset2 + New_Rig[i] - ROAD_HALF_WIDTH;
-                count2++;
-                continue;
-            }
-            else if (New_Lef[i] != -MIDMAP && New_Rig[i] == MIDMAP)
-            {
-                Cam_offset2 = Cam_offset2 + New_Lef[i] + ROAD_HALF_WIDTH;
-                count2++;
-                continue;
-            }
-            else
-            {
-                continue;
-            }
-        }
+       
     }
     if (Road0_flag && Road == 0)
     {
@@ -142,14 +92,7 @@ void Pic_DrawMid_und(void)
     if (Road1_flag == 3 || Road2_flag == 3)
         Cam_offset *= 0.8;
 
-    if (count != 0)
-    {
-        Cam_offset = Cam_offset / count;
-    }
-    if (count2 != 0)
-    {
-        Cam_offset2 = Cam_offset2 / count2;
-    }
+
 
     //Cam_offset = (0.4 * Cam_offset + 0.6 * Cam_offset2);
     if (Road == 3 || Road1_flag == 2 || Road2_flag == 2)
