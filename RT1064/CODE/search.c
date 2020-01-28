@@ -1242,114 +1242,110 @@ void Pic_offset_fig(void)
   int i;
   int count = 0, count2 = 0;
 
-
-    for (i = 0; i < 60; i++)
+  for (i = 0; i < 60; i++)
+  {
+    //  if(Road==1&&(Road1_flag==0||Road1_flag==2))
+    //  {
+    //      if(New_Rig[i]!=MIDMAP)
+    //      {
+    //      Cam_offset=Cam_offset+New_Rig[i]-ROAD_HALF_WIDTH;
+    //      count++;
+    //      }
+    //      continue;
+    //  }
+    if (Road == 1 && (Road1_flag == 3 || Road1_flag == 1))
     {
-      //  if(Road==1&&(Road1_flag==0||Road1_flag==2))
-      //  {
-      //      if(New_Rig[i]!=MIDMAP)
-      //      {
-      //      Cam_offset=Cam_offset+New_Rig[i]-ROAD_HALF_WIDTH;
-      //      count++;
-      //      }
-      //      continue;
-      //  }
-      if (Road == 1 && (Road1_flag == 3 || Road1_flag == 1))
+      if (New_Rig[i] != MIDMAP)
       {
-        if (New_Rig[i] != MIDMAP)
-        {
-          Cam_offset = Cam_offset + New_Rig[i] - ROAD_HALF_WIDTH;
-          count++;
-        }
+        Cam_offset = Cam_offset + New_Rig[i] - ROAD_HALF_WIDTH;
+        count++;
+      }
+      continue;
+    }
+    else if (Road == 2 && (Road2_flag == 3 || Road2_flag == 1))
+    {
+      if (New_Lef[i] != -MIDMAP)
+      {
+        Cam_offset = Cam_offset + New_Lef[i] + ROAD_HALF_WIDTH;
+        count++;
+      }
+      continue;
+    }
+
+    else if (i <= FIG_AREA_NEAR && i >= FIG_AREA_FAR)
+    {
+      if (New_Lef[i] != -MIDMAP && New_Rig[i] != MIDMAP)
+      {
+        Cam_offset = Cam_offset + New_Lef[i] + New_Rig[i];
+        count++;
         continue;
       }
-      else if (Road == 2 && (Road2_flag == 3 || Road2_flag == 1))
+      else if (New_Lef[i] == -MIDMAP && New_Rig[i] != MIDMAP)
       {
-        if (New_Lef[i] != -MIDMAP)
-        {
-          Cam_offset = Cam_offset + New_Lef[i] + ROAD_HALF_WIDTH;
-          count++;
-        }
+        Cam_offset = Cam_offset + New_Rig[i] - ROAD_HALF_WIDTH;
+        count++;
         continue;
       }
-
-      else if (i <= FIG_AREA_NEAR && i >= FIG_AREA_FAR)
+      else if (New_Lef[i] != -MIDMAP && New_Rig[i] == MIDMAP)
       {
-        if (New_Lef[i] != -MIDMAP && New_Rig[i] != MIDMAP)
-        {
-          Cam_offset = Cam_offset + New_Lef[i] + New_Rig[i];
-          count++;
-          continue;
-        }
-        else if (New_Lef[i] == -MIDMAP && New_Rig[i] != MIDMAP)
-        {
-          Cam_offset = Cam_offset + New_Rig[i] - ROAD_HALF_WIDTH;
-          count++;
-          continue;
-        }
-        else if (New_Lef[i] != -MIDMAP && New_Rig[i] == MIDMAP)
-        {
-          Cam_offset = Cam_offset + New_Lef[i] + ROAD_HALF_WIDTH;
-          count++;
-          continue;
-        }
-        else
-        {
-          continue;
-        }
+        Cam_offset = Cam_offset + New_Lef[i] + ROAD_HALF_WIDTH;
+        count++;
+        continue;
       }
-      else if ((i <= FIG_AREA_FAR && i >= FIG_AREA_FAR2))
+      else
       {
-        if (New_Lef[i] != -MIDMAP && New_Rig[i] != MIDMAP)
-        {
-          Cam_offset2 = Cam_offset2 + New_Lef[i] + New_Rig[i];
-          count2++;
-          continue;
-        }
-        else if (New_Lef[i] == -MIDMAP && New_Rig[i] != MIDMAP)
-        {
-          Cam_offset2 = Cam_offset2 + New_Rig[i] - ROAD_HALF_WIDTH;
-          count2++;
-          continue;
-        }
-        else if (New_Lef[i] != -MIDMAP && New_Rig[i] == MIDMAP)
-        {
-          Cam_offset2 = Cam_offset2 + New_Lef[i] + ROAD_HALF_WIDTH;
-          count2++;
-          continue;
-        }
-        else
-        {
-          continue;
-        }
+        continue;
       }
     }
-    if (Road0_flag && Road == 0)
+    else if ((i <= FIG_AREA_FAR && i >= FIG_AREA_FAR2))
     {
-      Cam_offset *= 0.3;
+      if (New_Lef[i] != -MIDMAP && New_Rig[i] != MIDMAP)
+      {
+        Cam_offset2 = Cam_offset2 + New_Lef[i] + New_Rig[i];
+        count2++;
+        continue;
+      }
+      else if (New_Lef[i] == -MIDMAP && New_Rig[i] != MIDMAP)
+      {
+        Cam_offset2 = Cam_offset2 + New_Rig[i] - ROAD_HALF_WIDTH;
+        count2++;
+        continue;
+      }
+      else if (New_Lef[i] != -MIDMAP && New_Rig[i] == MIDMAP)
+      {
+        Cam_offset2 = Cam_offset2 + New_Lef[i] + ROAD_HALF_WIDTH;
+        count2++;
+        continue;
+      }
+      else
+      {
+        continue;
+      }
     }
+  }
+  if (Road0_flag && Road == 0)
+  {
+    Cam_offset *= 0.3;
+  }
 
-    if (Road1_flag == 3 || Road2_flag == 3)
-      Cam_offset *= 0.8;
+  if (Road1_flag == 3 || Road2_flag == 3)
+    Cam_offset *= 0.8;
 
-    if (count != 0)
-    {
-      Cam_offset = Cam_offset / count;
-    }
-    if (count2 != 0)
-    {
-      Cam_offset2 = Cam_offset2 / count2;
-    }
+  if (count != 0)
+  {
+    Cam_offset = Cam_offset / count;
+  }
+  if (count2 != 0)
+  {
+    Cam_offset2 = Cam_offset2 / count2;
+  }
 
-    //Cam_offset = (0.4 * Cam_offset + 0.6 * Cam_offset2);
-    if (Road == 3 || Road1_flag == 2 || Road2_flag == 2)
-    {
-      Cam_offset *= 1;
-    }
-    return;
-  
-
-
+  //Cam_offset = (0.4 * Cam_offset + 0.6 * Cam_offset2);
+  if (Road == 3 || Road1_flag == 2 || Road2_flag == 2)
+  {
+    Cam_offset *= 1;
+  }
+  return;
 }
 
 /*************************************************************************
@@ -1478,7 +1474,7 @@ void Pic_undistort(int L, int R)
   int step;
   int Rig_New[60];
   int Lef_New[60];
-  static const int tempNewy[60] = {707,640,583,533,490,452,419,389,362,337,315,295,277,260,244,230,216,204,192,182,171,162,153,145,137,129,122,115,109,103,97,91,86,81,76,72,67,63,59,55,51,48,44,41,38,34,31,29,26,23,20,18,15,13,11,8,6,4,2,0};
+  static const int tempNewy[60] = {707, 640, 583, 533, 490, 452, 419, 389, 362, 337, 315, 295, 277, 260, 244, 230, 216, 204, 192, 182, 171, 162, 153, 145, 137, 129, 122, 115, 109, 103, 97, 91, 86, 81, 76, 72, 67, 63, 59, 55, 51, 48, 44, 41, 38, 34, 31, 29, 26, 23, 20, 18, 15, 13, 11, 8, 6, 4, 2, 0};
 
   /*************************映射*******************************/
   if (R)
@@ -1490,7 +1486,7 @@ void Pic_undistort(int L, int R)
       if (tempx >= Last_col)
         tempNewxR[i] = MIDMAP;
       else
-        tempNewxR[i] = (int)((UNDISTORT_D * UNDISTORT_C + UNDISTORT_H) *2* (tempx - 39.5) / (-UNDISTORT_S * (29.5 - tempy) + UNDISTORT_D * UNDISTORT_C) + 0.5);
+        tempNewxR[i] = (int)((UNDISTORT_D * UNDISTORT_C + UNDISTORT_H) * 2 * (tempx - 39.5) / (-UNDISTORT_S * (29.5 - tempy) + UNDISTORT_D * UNDISTORT_C) + 0.5);
 
       if (tempNewxR[i] > MIDMAP)
         tempNewxR[i] = MIDMAP;
@@ -1505,7 +1501,7 @@ void Pic_undistort(int L, int R)
       if (tempx <= Fir_col)
         tempNewxL[i] = -MIDMAP;
       else
-        tempNewxL[i] = (int)((UNDISTORT_D * UNDISTORT_C + UNDISTORT_H) *2* (tempx - 39.5) / (-UNDISTORT_S * (29.5 - tempy) + UNDISTORT_D * UNDISTORT_C) + 0.5);
+        tempNewxL[i] = (int)((UNDISTORT_D * UNDISTORT_C + UNDISTORT_H) * 2 * (tempx - 39.5) / (-UNDISTORT_S * (29.5 - tempy) + UNDISTORT_D * UNDISTORT_C) + 0.5);
 
       if (tempNewxL[i] < -MIDMAP)
         tempNewxL[i] = -MIDMAP;
@@ -1514,8 +1510,8 @@ void Pic_undistort(int L, int R)
   /************************插值+压缩+倒序*************************/
   i = 0;
   j = 58;
-Rig_New[0]=tempNewxR[0];
-Lef_New[0]=tempNewxL[0];
+  Rig_New[0] = tempNewxR[0];
+  Lef_New[0] = tempNewxL[0];
   while (j >= 0)
   {
     temp = 12 * j;
@@ -1766,6 +1762,7 @@ void Cam_End_Detect(void) //End记录从上至下最后一行边界行
   Cam_End = max_block(Lef_End, Rig_End);
 }
 
+#if 0
 int cnt_duanlu = 0;
 int end;
 int Road6_flag = 0;
@@ -1838,7 +1835,7 @@ void Cam_Break_Rec(void)
 *  备    注：不用了
 
 *************************************************************************/
-#if 0
+
 int Cam_Block_Cnt = 0;
 int Cam_Block_State = 0;
 int Road6_flag;
