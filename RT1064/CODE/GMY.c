@@ -27,12 +27,16 @@ void Pic_DrawMid_und(void)
                 New_Mid[i] = New_Rig[i] - ROAD_HALF_WIDTH;
                 flag = 1;
             }
-            else if (flag == 1)
+            else
             {
-                count++; //for 插值
-                flag = 0;
+                New_Mid[i] = 998;
+                if (flag == 1)
+                {
+                    count++; //for 插值
+                    flag = 0;
+                    continue;
+                }
             }
-
             if (count != 0 && flag == 1) //插值
             {
                 slope_temp = (New_Mid[i] - New_Mid[i - count - 1]) / (count + 1);
@@ -53,10 +57,15 @@ void Pic_DrawMid_und(void)
                 New_Mid[i] = New_Lef[i] + ROAD_HALF_WIDTH;
                 flag = 1;
             }
-            else if (flag == 1)
+            else
             {
-                count++; //for 插值
-                flag = 0;
+                New_Mid[i] = 998;
+                if (flag == 1)
+                {
+                    count++; //for 插值
+                    flag = 0;
+                    continue;
+                }
             }
 
             if (count != 0 && flag == 1) //插值
@@ -89,10 +98,15 @@ void Pic_DrawMid_und(void)
                 New_Mid[i] = New_Lef[i] + ROAD_HALF_WIDTH;
                 flag = 1;
             }
-            else if (flag == 1)
+            else
             {
-                count++; //for 插值
-                flag = 0;
+                New_Mid[i] = 998;
+                if (flag == 1)
+                {
+                    count++; //for 插值
+                    flag = 0;
+                    continue;
+                }
             }
 
             if (count != 0 && flag == 1) //插值
@@ -116,14 +130,13 @@ void Pic_DrawMid_und(void)
  * **********************************************************************/
 #ifdef undistort1
 /*************************************************************************
-*  函数名称：void Pic_undistort(int L, int R)
-*  功能说明：图像去畸变
-*  参数说明：无
-*  函数返回：无
-*  修改时间：2019.12.28
-*  备    注：对Lef、Rig进行映射处理
-
-*************************************************************************/
+ *  函数名称：void Pic_undistort(int L, int R)
+ *  功能说明：图像去畸变
+ *  参数说明：无
+ *  函数返回：无
+ *  修改时间：2019.12.28
+ *  备    注：对Lef、Rig进行映射处理
+ * **********************************************************************/
 void Pic_undistort(int L, int R)
 {
     int i = 0;
