@@ -17,97 +17,96 @@ void Pic_DrawMid_und(void)
     int flag = 0;
     float slope_temp;
 
-    for (i = 0; i < 60; i++)
+    if ((Road0_flag == 3 && Road == 0) || Road == 1)
     {
-        if (New_Lef[i] != -MIDMAP && New_Rig[i] != MIDMAP) //Mid Calculaing
+        for (i = 0; i < 60; i++)
         {
-            New_Mid[i] = (int)((New_Lef[i] + New_Rig[i]) / 2.0 + 0.5);
-            flag = 1;
-        }
-        else if (New_Lef[i] == -MIDMAP && New_Rig[i] != MIDMAP)
-        {
-            New_Mid[i] = New_Rig[i] - ROAD_HALF_WIDTH;
-            flag = 1;
-        }
-        else if (New_Lef[i] != -MIDMAP && New_Rig[i] == MIDMAP)
-        {
-            New_Mid[i] = New_Lef[i] + ROAD_HALF_WIDTH;
-            flag = 1;
-        }
-        else if (flag == 1)
-        {
-            count++; //for 插值
-            flag = 0;
-        }
 
-        if (count != 0 && flag == 1) //插值
-        {
-            slope_temp = (New_Mid[i] - New_Mid[i - count - 1]) / (count + 1);
-            for (j = count; j > 0; j--)
-            {
-                New_Mid[i - j] = (int)(New_Mid[i] - slope_temp * j + 0.5);
-            }
-        }
-    }
-    /*
-    //   int count = 0, count2 = 0;
-
-    for (i = 0; i < 60; i++)
-    {
-        //  if(Road==1&&(Road1_flag==0||Road1_flag==2))
-        //  {
-        //      if(New_Rig[i]!=MIDMAP)
-        //      {
-        //      Cam_offset=Cam_offset+New_Rig[i]-ROAD_HALF_WIDTH;
-        //      count++;
-        //      }
-        //      continue;
-        //  }
-        if (Road == 1 && (Road1_flag == 3 || Road1_flag == 1))
-        {
             if (New_Rig[i] != MIDMAP)
             {
-                Cam_offset = Cam_offset + New_Rig[i] - ROAD_HALF_WIDTH;
-                count++;
+                New_Mid[i] = New_Rig[i] - ROAD_HALF_WIDTH;
+                flag = 1;
             }
-            continue;
-        }
-        else if (Road == 2 && (Road2_flag == 3 || Road2_flag == 1))
-        {
-            if (New_Lef[i] != -MIDMAP)
+            else if (flag == 1)
             {
-                Cam_offset = Cam_offset + New_Lef[i] + ROAD_HALF_WIDTH;
-                count++;
+                count++; //for 插值
+                flag = 0;
             }
-            continue;
+
+            if (count != 0 && flag == 1) //插值
+            {
+                slope_temp = (New_Mid[i] - New_Mid[i - count - 1]) / (count + 1);
+                for (j = count; j > 0; j--)
+                {
+                    New_Mid[i - j] = (int)(New_Mid[i] - slope_temp * j + 0.5);
+                }
+            }
         }
-
-       
     }
-    if (Road0_flag && Road == 0)
+    else if (Road0_flag == 4 && Road == 0 || Road == 2)
     {
-        Cam_offset *= 0.3;
+        for (i = 0; i < 60; i++)
+        {
+
+            if (New_Lef[i] != MIDMAP)
+            {
+                New_Mid[i] = New_Lef[i] + ROAD_HALF_WIDTH;
+                flag = 1;
+            }
+            else if (flag == 1)
+            {
+                count++; //for 插值
+                flag = 0;
+            }
+
+            if (count != 0 && flag == 1) //插值
+            {
+                slope_temp = (New_Mid[i] - New_Mid[i - count - 1]) / (count + 1);
+                for (j = count; j > 0; j--)
+                {
+                    New_Mid[i - j] = (int)(New_Mid[i] - slope_temp * j + 0.5);
+                }
+            }
+        }
     }
-
-    if (Road1_flag == 3 || Road2_flag == 3)
-        Cam_offset *= 0.8;
-
-
-
-    //Cam_offset = (0.4 * Cam_offset + 0.6 * Cam_offset2);
-    if (Road == 3 || Road1_flag == 2 || Road2_flag == 2)
+    else
     {
-        Cam_offset *= 1;
+        for (i = 0; i < 60; i++)
+        {
+
+            if (New_Lef[i] != -MIDMAP && New_Rig[i] != MIDMAP) //Mid Calculaing
+            {
+                New_Mid[i] = (int)((New_Lef[i] + New_Rig[i]) / 2.0 + 0.5);
+                flag = 1;
+            }
+            else if (New_Lef[i] == -MIDMAP && New_Rig[i] != MIDMAP)
+            {
+                New_Mid[i] = New_Rig[i] - ROAD_HALF_WIDTH;
+                flag = 1;
+            }
+            else if (New_Lef[i] != -MIDMAP && New_Rig[i] == MIDMAP)
+            {
+                New_Mid[i] = New_Lef[i] + ROAD_HALF_WIDTH;
+                flag = 1;
+            }
+            else if (flag == 1)
+            {
+                count++; //for 插值
+                flag = 0;
+            }
+
+            if (count != 0 && flag == 1) //插值
+            {
+                slope_temp = (New_Mid[i] - New_Mid[i - count - 1]) / (count + 1);
+                for (j = count; j > 0; j--)
+                {
+                    New_Mid[i - j] = (int)(New_Mid[i] - slope_temp * j + 0.5);
+                }
+            }
+        }
     }
-    */
     return;
 }
-
-
-
-
-
-
 
 /************************************************************************
  * search.c 1459-
@@ -173,7 +172,7 @@ void Pic_undistort(int L, int R)
     }
     /************************插值+压缩+倒序*************************/
     i = startpoint;
-    j = 59;//59，不补最远行，58，补最远行需+下面两行代码
+    j = 59; //59，不补最远行，58，补最远行需+下面两行代码
     // Rig_New[0] = tempNewxR[0];
     // Lef_New[0] = tempNewxL[0];
     while (j >= 0)
@@ -299,8 +298,3 @@ void Pic_undistort(int L, int R)
 }
 
 #endif
-
-
-
-
-
