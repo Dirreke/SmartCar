@@ -13,8 +13,9 @@ int New_Mid[60];
 void Pic_DrawMid_und(void)
 {
     int i;
-    int count = 0;
+    int inter_point = 0;
     int flag = 0;
+    int inter_count = 0;
     float slope_temp;
 
     if ((Road0_flag == 3 && Road == 0) || Road == 1)
@@ -25,22 +26,51 @@ void Pic_DrawMid_und(void)
             if (New_Rig[i] != MIDMAP)
             {
                 New_Mid[i] = New_Rig[i] - ROAD_HALF_WIDTH;
-                flag = 1;
-            }
-            else
-            {
-                New_Mid[i] = 998;
-                if (flag == 1)
+
+                if (flag == 0 || inter_count == 0)
                 {
-                    count++; //for 插值
-                    flag = 0;
+                    inter_count = 1;
                     continue;
                 }
             }
-            if (count != 0 && flag == 1) //插值
+            else
             {
-                slope_temp = (New_Mid[i] - New_Mid[i - count - 1]) / (count + 1);
-                for (j = count; j > 0; j--)
+                inter_point++; //for 插值
+                if (i == 0)
+                {
+                    flag = 1;
+                    continue;
+                }
+                else if (i == 59)
+                {
+                    flag = 3;
+                }
+                else if (flag != 1)
+                {
+                    flag = 2;
+                    continue;
+                }
+            }
+            if (flag == 2) //插值
+            {
+                slope_temp = (New_Mid[i] - New_Mid[i - inter_point - 1]) / (inter_point + 1);
+                for (j = inter_point; j > 0; j--)
+                {
+                    New_Mid[i - j] = (int)(New_Mid[i] - slope_temp * j + 0.5);
+                }
+            }
+            else if (flag == 3)
+            {
+                slope_temp = New_Mid[i - inter_point] - New_Mid[i - inter_point - 1];
+                for (j = inter_point - 1; j >= 0; j--)
+                {
+                    New_Mid[i - j] = (int)(New_Mid[i - inter_point] + slope_temp * (inter_point - j) + 0.5);
+                }
+            }
+            else if (flag == 1)
+            {
+                slope_temp = New_Mid[i] - New_Mid[i - 1];
+                for (j = inter_point + 1; j > 1; j--)
                 {
                     New_Mid[i - j] = (int)(New_Mid[i] - slope_temp * j + 0.5);
                 }
@@ -62,16 +92,16 @@ void Pic_DrawMid_und(void)
                 New_Mid[i] = 998;
                 if (flag == 1)
                 {
-                    count++; //for 插值
+                    inter_point++; //for 插值
                     flag = 0;
                     continue;
                 }
             }
 
-            if (count != 0 && flag == 1) //插值
+            if (inter_point != 0 && flag == 1) //插值
             {
-                slope_temp = (New_Mid[i] - New_Mid[i - count - 1]) / (count + 1);
-                for (j = count; j > 0; j--)
+                slope_temp = (New_Mid[i] - New_Mid[i - inter_point - 1]) / (inter_point + 1);
+                for (j = inter_point; j > 0; j--)
                 {
                     New_Mid[i - j] = (int)(New_Mid[i] - slope_temp * j + 0.5);
                 }
@@ -103,16 +133,16 @@ void Pic_DrawMid_und(void)
                 New_Mid[i] = 998;
                 if (flag == 1)
                 {
-                    count++; //for 插值
+                    inter_point++; //for 插值
                     flag = 0;
                     continue;
                 }
             }
 
-            if (count != 0 && flag == 1) //插值
+            if (inter_point != 0 && flag == 1) //插值
             {
-                slope_temp = (New_Mid[i] - New_Mid[i - count - 1]) / (count + 1);
-                for (j = count; j > 0; j--)
+                slope_temp = (New_Mid[i] - New_Mid[i - inter_point - 1]) / (inter_point + 1);
+                for (j = inter_point; j > 0; j--)
                 {
                     New_Mid[i - j] = (int)(New_Mid[i] - slope_temp * j + 0.5);
                 }
