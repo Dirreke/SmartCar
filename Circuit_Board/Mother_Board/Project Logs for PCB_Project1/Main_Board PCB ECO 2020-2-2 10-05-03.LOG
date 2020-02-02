@@ -1,0 +1,6 @@
+Removed Pin From Net: NetName=VCCBAT Pin=S6-1
+Removed Pin From Net: NetName=VCCBAT Pin=S6-2
+Added Pin To Net: NetName=NetS6_1 Pin=S6-1
+Added Pin To Net: NetName=NetS6_1 Pin=S6-2
+Added Net: Name=NetS6_1
+Added Room: Name=Sheet1
