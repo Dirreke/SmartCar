@@ -2,7 +2,7 @@
 
 //params init
 int Road03_count = 0, Road04_count = 0;
-
+global float centerAngle;
 
 // 赛道识别
 char Road1_turnout = 1;
@@ -236,4 +236,96 @@ void Road_rec(void)
   {
     Road0_flag = 0;
   }
+}
+/*************************************************************************
+ *  函数名称：void car_center_pid()
+ *  功能说明：车正 与中心线位置差pid
+ *  参数说明：无 (pixel)
+ *  函数返回：无
+ *  修改时间：2019.12.28
+ *  备    注：与车直合用
+ * **********************************************************************/
+
+ struct _pid{
+     float err;                //定义偏差值
+     float err_last;           //定义上一个偏差值
+     float Kp,Ki,Kd;           //定义比例、积分、微分系数
+     float voltage;            //定义电压值（控制执行器的变量）
+     float integral;           //定义积分值
+     float ActualAngle;        //输出转角
+ };
+
+ _pid pid_center;
+
+ void PID_init_center(){
+    printf("PID_init begin \n");
+    pid_center.err=0.0;
+    pid_center.err_last=0.0;
+    pid_center.voltage=0.0;
+    pid_center.integral=0.0;
+    pid_center.Kp=0.2;
+    pid_center.Ki=0.015;
+    pid_center.Kd=0.2;
+    printf("pid_center_init end \n");
+}
+
+float PID_realize_center(float err){
+    pid_center.err=err;
+    float incrementAngle=pid_center.Kp*(pid_center.err-pid_center.err_next)+pid_center.Ki*pid_center.err+pid_center.Kd*(pid_center.err-2*pid_center.err_next+pid_center.err_last);
+    pid_center.ActualAngle+=incrementAngle;
+    pid_center.err_last=pid_center.err_next;
+    pid_center.err_next=pid_center.err;
+    return pid_center.ActualAngle;
+}
+
+void car_center_pid(){
+
+  PID_init_center();
+  float avr = 0;
+  int startLine = 3;
+  int endLine = 8
+  for(int i = startLine; i < endLine; ++i){
+    avr += New_Mid[i];
+  }
+  avr /= (endLine - startLine);
+
+  centerAngle=PID_realize_center(avr);
+}
+
+/*************************************************************************
+ *  函数名称：void car_straight_pid()
+ *  功能说明：车直 与中线角度差pid
+ *  参数说明：无 (theta)
+ *  函数返回：无
+ *  修改时间：2019.12.28
+ *  备    注：给gmydl的车直加(打)pid(call)
+ * **********************************************************************/
+_pid pid_straight;
+
+void PID_init_straight(){
+    printf("PID_init begin \n");
+    pid_straight.err=0.0;
+    pid_straight.err_last=0.0;
+    pid_straight.voltage=0.0;
+    pid_straight.integral=0.0;
+    pid_straight.Kp=0.2;
+    pid_straight.Ki=0.015;
+    pid_straight.Kd=0.2;
+    printf("pid_straight_init end \n");
+}
+
+float PID_realize_straight(float err){
+    pid_straight.err=err;
+    float incrementAngle=pid_straight.Kp*(pid_straight.err-pid_straight.err_next)+pid_straight.Ki*pid_straight.err+pid_straight.Kd*(pid_straight.err-2*pid_straight.err_next+pid_straight.err_last);
+    pid_straight.ActualAngle+=incrementAngle;
+    pid_straight.err_last=pid_straight.err_next;
+    pid_straight.err_next=pid_straight.err;
+    return pid_straight.ActualAngle;
+}
+
+void car_straight_pid(){
+
+  PID_init_straight();
+  centerAngle=PID_realize_straight(theta);
+
 }
