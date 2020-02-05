@@ -41,19 +41,16 @@ if LT%(Road0_flag == 3 && Road == 0) || Road == 1
             for j = inter_point:-1:1
                 New_Mid(i-j) = round(New_Mid(i) - slope_temp * j);
             end
-            flag = 0;
         elseif flag == 3 %外推
             slope_temp = New_Mid(i - inter_point) - New_Mid(i - inter_point - 1);
             for j = inter_point - 1:-1:0
                 New_Mid(i-j) = round(New_Mid(i - inter_point) + slope_temp * (inter_point - j));
             end
-            flag = 0;
         elseif flag == 1 %外推
             slope_temp = New_Mid(i) - New_Mid(i - 1);
             for j = inter_point + 1:-1:2
                 New_Mid(i-j) = round(New_Mid(i) - slope_temp * j );
             end
-            flag = 0;
         end
     end
 elseif RT%(Road0_flag == 4 && Road == 0) || Road == 2
@@ -90,19 +87,16 @@ elseif RT%(Road0_flag == 4 && Road == 0) || Road == 2
             for j = inter_point:-1:1
                 New_Mid(i-j) = round(New_Mid(i) - slope_temp * j);
             end
-            flag = 0;
         elseif flag == 3 %外推
             slope_temp = New_Mid(i - inter_point) - New_Mid(i - inter_point - 1);
             for j = inter_point - 1:-1:0
                 New_Mid(i-j) = round(New_Mid(i - inter_point) + slope_temp * (inter_point - j));
             end
-            flag = 0;
         elseif flag == 1 %外推
             slope_temp = New_Mid(i) - New_Mid(i - 1);
             for j = inter_point + 1:-1:2
                 New_Mid(i-j) = round(New_Mid(i) - slope_temp * j );
             end
-            flag = 0;
         end
     end
 else
@@ -150,19 +144,19 @@ else
             for j = inter_point:-1:1
                 New_Mid(i-j) = round(New_Mid(i) - slope_temp * j);
             end
-            flag = 0;
+            flag=0;
         elseif flag == 3 %外推
             slope_temp = New_Mid(i - inter_point) - New_Mid(i - inter_point - 1);
             for j = inter_point - 1:-1:0
                 New_Mid(i-j) = round(New_Mid(i - inter_point) + slope_temp * (inter_point - j));
             end
-            flag = 0;
+            flag=0;
         elseif flag == 1 %外推
             slope_temp = New_Mid(i) - New_Mid(i - 1);
             for j = inter_point + 1:-1:2
                 New_Mid(i-j) = round(New_Mid(i) - slope_temp * j );
             end
-            flag = 0;
+            flag=0;
         end
     end
 end
