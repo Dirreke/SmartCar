@@ -1,6 +1,6 @@
 clear all;clc;close all;
 
-name='mykc20191217(11)';
+name='01';
 
 Initial();
 global New_Lef New_Rig New_Mid;

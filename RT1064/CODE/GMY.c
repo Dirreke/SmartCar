@@ -12,7 +12,7 @@ int New_Mid[60];
 
 void Pic_DrawMid_und(void)
 {
-    int i;
+    int i, j;
     int inter_point = 0;
     int flag = 0;
     int inter_count = 0;
@@ -29,28 +29,115 @@ void Pic_DrawMid_und(void)
 
                 if (flag == 0 || inter_count == 0)
                 {
-                    inter_count = 1;
+                    inter_count = 1; //第一个点直接continue，flag==0意味着每断点直接continue
                     continue;
                 }
             }
             else
             {
                 inter_point++; //for 插值
-                if (i == 0)
+                if (flag == 1)
+                {
+                    if (i = 59)
+                    {
+                        for (j = 0; j < 60; j++)
+                        {
+                            New_Mid[j] = 999;
+                        }
+                    }
+                    continue;
+                }
+                if (i == 0) //开头断点，下一个有值点后插值
                 {
                     flag = 1;
                     continue;
                 }
-                else if (i == 59)
-                {
-                    flag = 3;
-                }
-                else if (flag != 1)
+                else if (i != 59) //中间断点，直接进插值
                 {
                     flag = 2;
                     continue;
                 }
+                else//结尾断点
+                {
+                    flag = 3;
+                }
+                
             }
+
+            if (flag == 2) //插值 内插
+            {
+                slope_temp = (New_Mid[i] - New_Mid[i - inter_point - 1]) / (inter_point + 1);
+                for (j = inter_point; j > 0; j--)
+                {
+                    New_Mid[i - j] = (int)(New_Mid[i] - slope_temp * j + 0.5);
+                }
+                flag = 0;
+            }
+            else if (flag == 3) //外推
+            {
+                slope_temp = New_Mid[i - inter_point] - New_Mid[i - inter_point - 1];
+                for (j = inter_point - 1; j >= 0; j--)
+                {
+                    New_Mid[i - j] = (int)(New_Mid[i - inter_point] + slope_temp * (inter_point - j) + 0.5);
+                }
+                flag = 0;
+            }
+            else if (flag == 1) //外推
+            {
+                slope_temp = New_Mid[i] - New_Mid[i - 1];
+                for (j = inter_point + 1; j > 1; j--)
+                {
+                    New_Mid[i - j] = (int)(New_Mid[i] - slope_temp * j + 0.5);
+                }
+                flag = 0;
+            }
+        }
+    }
+    else if ((Road0_flag == 4 && Road == 0) || Road == 2)
+    {
+        for (i = 0; i < 60; i++)
+        {
+
+            if (New_Lef[i] != MIDMAP)
+            {
+                New_Mid[i] = New_Lef[i] + ROAD_HALF_WIDTH;
+                if (flag == 0 || inter_count == 0)
+                {
+                    inter_count = 1;
+                    continue;
+                }
+            }
+
+            else
+            {
+                inter_point++; //for 插值
+                if (flag == 1)
+                {
+                    if (i = 59)
+                    {
+                        for (j = 0; j < 60; j++)
+                        {
+                            New_Mid[j] = 999;
+                        }
+                    }
+                    continue;
+                }
+                if (i == 0) //开头断点，下一个有值点后插值
+                {
+                    flag = 1;
+                    continue;
+                }
+                else if (i != 59) //中间断点，直接进插值
+                {
+                    flag = 2;
+                    continue;
+                }
+                else//结尾断点
+                {
+                    flag = 3;
+                }
+            }
+
             if (flag == 2) //插值
             {
                 slope_temp = (New_Mid[i] - New_Mid[i - inter_point - 1]) / (inter_point + 1);
@@ -58,6 +145,7 @@ void Pic_DrawMid_und(void)
                 {
                     New_Mid[i - j] = (int)(New_Mid[i] - slope_temp * j + 0.5);
                 }
+                flag = 0;
             }
             else if (flag == 3)
             {
@@ -66,6 +154,7 @@ void Pic_DrawMid_und(void)
                 {
                     New_Mid[i - j] = (int)(New_Mid[i - inter_point] + slope_temp * (inter_point - j) + 0.5);
                 }
+                flag = 0;
             }
             else if (flag == 1)
             {
@@ -74,37 +163,7 @@ void Pic_DrawMid_und(void)
                 {
                     New_Mid[i - j] = (int)(New_Mid[i] - slope_temp * j + 0.5);
                 }
-            }
-        }
-    }
-    else if (Road0_flag == 4 && Road == 0 || Road == 2)
-    {
-        for (i = 0; i < 60; i++)
-        {
-
-            if (New_Lef[i] != MIDMAP)
-            {
-                New_Mid[i] = New_Lef[i] + ROAD_HALF_WIDTH;
-                flag = 1;
-            }
-            else
-            {
-                New_Mid[i] = 998;
-                if (flag == 1)
-                {
-                    inter_point++; //for 插值
-                    flag = 0;
-                    continue;
-                }
-            }
-
-            if (inter_point != 0 && flag == 1) //插值
-            {
-                slope_temp = (New_Mid[i] - New_Mid[i - inter_point - 1]) / (inter_point + 1);
-                for (j = inter_point; j > 0; j--)
-                {
-                    New_Mid[i - j] = (int)(New_Mid[i] - slope_temp * j + 0.5);
-                }
+                flag = 0;
             }
         }
     }
@@ -116,36 +175,86 @@ void Pic_DrawMid_und(void)
             if (New_Lef[i] != -MIDMAP && New_Rig[i] != MIDMAP) //Mid Calculaing
             {
                 New_Mid[i] = (int)((New_Lef[i] + New_Rig[i]) / 2.0 + 0.5);
-                flag = 1;
+                if (flag == 0 || inter_count == 0)
+                {
+                    inter_count = 1;
+                    continue;
+                }
             }
             else if (New_Lef[i] == -MIDMAP && New_Rig[i] != MIDMAP)
             {
                 New_Mid[i] = New_Rig[i] - ROAD_HALF_WIDTH;
-                flag = 1;
+                if (flag == 0 || inter_count == 0)
+                {
+                    inter_count = 1;
+                    continue;
+                }
             }
             else if (New_Lef[i] != -MIDMAP && New_Rig[i] == MIDMAP)
             {
                 New_Mid[i] = New_Lef[i] + ROAD_HALF_WIDTH;
-                flag = 1;
-            }
-            else
-            {
-                New_Mid[i] = 998;
-                if (flag == 1)
+                if (flag == 0 || inter_count == 0)
                 {
-                    inter_point++; //for 插值
-                    flag = 0;
+                    inter_count = 1;
                     continue;
                 }
             }
+            else
+            {
+                inter_point++; //for 插值
+                if (flag == 1)
+                {
+                    if (i = 59)
+                    {
+                        for (j = 0; j < 60; j++)
+                        {
+                            New_Mid[j] = 999;
+                        }
+                    }
+                    continue;
+                }
+                if (i == 0) //开头断点，下一个有值点后插值
+                {
+                    flag = 1;
+                    continue;
+                }
+                else if (i != 59) //中间断点，直接进插值
+                {
+                    flag = 2;
+                    continue;
+                }
+                else//结尾断点
+                {
+                    flag = 3;
+                }
+            }
 
-            if (inter_point != 0 && flag == 1) //插值
+            if (flag == 2) //插值
             {
                 slope_temp = (New_Mid[i] - New_Mid[i - inter_point - 1]) / (inter_point + 1);
                 for (j = inter_point; j > 0; j--)
                 {
                     New_Mid[i - j] = (int)(New_Mid[i] - slope_temp * j + 0.5);
                 }
+                flag = 0;
+            }
+            else if (flag == 3)
+            {
+                slope_temp = New_Mid[i - inter_point] - New_Mid[i - inter_point - 1];
+                for (j = inter_point - 1; j >= 0; j--)
+                {
+                    New_Mid[i - j] = (int)(New_Mid[i - inter_point] + slope_temp * (inter_point - j) + 0.5);
+                }
+                flag=0;
+            }
+            else if (flag == 1)
+            {
+                slope_temp = New_Mid[i] - New_Mid[i - 1];
+                for (j = inter_point + 1; j > 1; j--)
+                {
+                    New_Mid[i - j] = (int)(New_Mid[i] - slope_temp * j + 0.5);
+                }
+                flag=0;
             }
         }
     }
