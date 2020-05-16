@@ -3,30 +3,75 @@ global ImageH MIDMAP New_Lef New_Rig;
 if nargin==4
     flag_canshu=0;
 end
-%% 参数
-startpoint=12;%此参数小为远景。，从此开始取
-% D0=10cm
-% RoadWidth=40.4cm
-% H0=17.5cm
-%n=68;
-%theta=60du
-% /40.4*300
-H0=129.9504950495050;
-D0=74.257425742574260;
-n0=68*2;
-K0=300/n0;
-d=sqrt((H0^2+D0^2)/K0^2-30^2);
-h=(K0-1)*d;
-% theta=-0.389;
-theta=-(atan(D0/H0)+atan(30/d));
-% theta=-0.2;
-% K0=300/n0;
-% d=sqrt((H0^2+D0^2)/K0^2-30^2);
-% h=(K0-1)*d;
-c=cos(theta);
-s=sin(theta);
-% clear Rig_New Lef_New;
-
+% % % %% 参数
+% % % startpoint=12;%此参数小为远景。，从此开始取
+% % % D0=10cm
+% % % % RoadWidth=40.4cm
+% % % % H0=10cm%17.5cm
+% % % %n=68;
+% % % %theta=60du
+% % % % /40.4*300
+% H0=129.9504950495050;
+H0=76;
+D0=80;
+% % % D0=60;
+% n0=68*2;
+n0=80*2;
+% % % K0=300/n0;
+% % % d=sqrt((H0^2+D0^2)/K0^2-30^2);
+% % % h=(K0-1)*d;
+% % % % theta=-0.389;
+% % % theta=-(atan(D0/H0)+atan(30/d));
+% % % % theta=-0.2;
+% % % % K0=300/n0;
+% % % % d=sqrt((H0^2+D0^2)/K0^2-30^2);
+% % % % h=(K0-1)*d;
+% % % c=cos(theta);
+% % % s=sin(theta);
+% % % % clear Rig_New Lef_New;
+%%
+startpoint=12;
+% H0=74.257425742574260;
+% D0=200;
+% n0=80*2;
+K1=300/n0;
+theta1=0;
+while 1
+    theta0=theta1;
+    ah=H0-29.5*sin(theta0);
+    ad=D0+29.5*cos(theta0);
+    d=sqrt((ah^2+ad^2)/(K1-1)^2-29.5^2);
+    theta1=(atan(ad/ah)+atan(29.5/d));
+    if theta1-theta0<1e-6
+        break
+    end
+end
+c=cos(-theta1);
+s=sin(-theta1);
+h=H0;
+% clear theta0 ad ah
+%% 
+% startpoint=12;
+% % H0=74.257425742574260;
+% % D0=200;
+% % n0=80*2;
+% K1=300/n0;
+% theta1=0;
+% while 1
+%     theta0=theta1;
+%     ah=H0+30*sin(theta0);
+%     ad=D0-30*cos(theta0);
+%     d=sqrt((ah^2+ad^2)/(K1+1)^2-30^2);
+%     theta1=(atan(D0/H0)+atan(30/d));
+%     if abs(theta1-theta0)<1e-5
+%         break
+%     end
+% end
+% c=cos(-theta1);
+% s=sin(-theta1);
+% h=H0;
+% d=d;
+% clear theta0 ad ah
 %% 去畸变
 tempNewy=zeros(ImageH,1);
 % 此段程序中在C中为表
@@ -86,6 +131,7 @@ k2=59;%Bili=5
 Bili=round(tempNewy(k)/59);
 Rig_New=zeros(ImageH,1);
 Lef_New=zeros(ImageH,1);
+tempNewy(k)=k2*Bili;
 while k2>=0
     temp=k2*Bili;
     if tempNewy(k)>=temp && tempNewy(k+1)<=temp
