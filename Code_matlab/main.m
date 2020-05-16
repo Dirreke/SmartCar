@@ -1,7 +1,7 @@
 clear all;clc;close all;
 
-name='01';
-
+name='mykc20200513_10cm';
+% mykc20200513_10cm
 Initial();
 global New_Lef New_Rig New_Mid;
 try load(strcat('./Data/',name,'.mat'))
@@ -13,7 +13,7 @@ No=455;
 
 %% ȡͼ
 
-% No=455;%429
+No=9272;%429
 Pic=Images{No};
 Pic_L=Image_L(:,No);
 Pic_M=Image_M(:,No);
