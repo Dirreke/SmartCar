@@ -5,7 +5,7 @@ flag = 0;
 inter_point = 0;
 flag = 0;
 inter_count = 0;
-LT=1;
+LT=0;
 RT=0;
 
 if LT%(Road0_flag == 3 && Road == 0) || Road == 1
