@@ -28,11 +28,21 @@ __ramfunc void Get_Use_Image(void)
 {
   int i = 0, j = 0;
   int row = 0;
+  /*
   for (i = 20; i < 80; i += 1) //120行，每2行采集一行，15  74
   {
     for (j = 15; j < 174; j += 2) //188，取94列
     {
       Image_Use[row][(j - 15) >> 1] = mt9v03x_csi_image[i][j];
+    }
+    row += 1;
+  }
+*/
+    for (i = 0; i < 60; i += 1) //60hang
+  {
+    for (j = 0; j < 80; j += 1) //240，取94列
+    {
+      Image_Use[row][j] = mt9v03x_csi_image[i][3*j];
     }
     row += 1;
   }

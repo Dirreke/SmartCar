@@ -8,8 +8,8 @@ void Motor_Init(void)
 
   pwm_init(PWM1_MODULE3_CHB_D1, 17000, 0);
   pwm_init(PWM1_MODULE3_CHA_D0, 17000, 0);
-  pwm_init(PWM1_MODULE0_CHB_D13, 17000, 0);
-  pwm_init(PWM1_MODULE0_CHA_D12, 17000, 0);
+  pwm_init(PWM2_MODULE3_CHB_D3, 17000, 0);
+  pwm_init(PWM2_MODULE3_CHA_D2, 17000, 0);
 }
 
 //舵机居中   1.5ms/20ms * PWM_DUTY_MAX（PWM_DUTY_MAX是PWM的满占空比时候的值） PWM_DUTY_MAX在fsl_pwm.h文件中 已改为20000
@@ -24,20 +24,41 @@ void Motor_Duty(uint16 Motno, uint32 duty)
   //归一化为0--500--1000
   //if(duty<1001)
   {
+    /** if new main_board **/
+    /*
     switch (Motno)
     {
     case Mot0:
-      pwm_duty(PWM1_MODULE3_CHA_D0, duty); //电机，
+      pwm_duty(PWM2_MODULE3_CHB_D3, duty); //右电机，
       break;
     case Mot1:
-      pwm_duty(PWM1_MODULE3_CHB_D1, duty); //电机，
+      pwm_duty(PWM1_MODULE3_CHB_D1, duty); //右电机，
       break;
     case Mot2:
-      pwm_duty(PWM1_MODULE0_CHA_D12, duty); //电机，
+      pwm_duty(PWM1_MODULE3_CHA_D0, duty); //左电机，
       break;
     case Mot3:
-      pwm_duty(PWM1_MODULE0_CHB_D13, duty); //电机，
+      pwm_duty(PWM2_MODULE3_CHA_D2, duty); //左电机，
       break;
+    default:
+      break;
+    }
+    */
+    /** if old main_board **/
+    switch (Motno)
+    {
+    case Mot0:
+      pwm_duty(PWM1_MODULE3_CHA_D0, duty); //R电机，
+      break;
+    case Mot1:
+      pwm_duty(PWM2_MODULE3_CHA_D2, duty); //R电机，
+      break;
+    case Mot2:
+      pwm_duty(PWM2_MODULE3_CHB_D3, duty); //L电机，
+      break;
+    case Mot3:
+      pwm_duty(PWM1_MODULE3_CHB_D1, duty); //L电机，
+      break;    
     default:
       break;
     }
