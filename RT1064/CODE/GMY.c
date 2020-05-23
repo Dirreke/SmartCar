@@ -262,6 +262,11 @@ void Pic_DrawMid_und(void)
     }
     return;
 }
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> 0501c7b... GMY -zhaohui diushi daima
 /*************************************************************************
  *  函数名称：float Circle_angle_val1_calculate(void)
  *  功能说明：计算中线的曲率半径,并计算理想舵机打角
@@ -302,6 +307,12 @@ float Circle_R_calculate(void)
     }
     return angle_val1;
 }
+<<<<<<< HEAD
+=======
+
+
+
+>>>>>>> 0501c7b... GMY -zhaohui diushi daima
 /************************************************************************
  * search.c 1459-
  * 修改，减少取景行
