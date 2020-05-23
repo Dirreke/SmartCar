@@ -19,8 +19,8 @@
 #define Sobel_Threshold_Far 70
 #define Sobel_Threshold_Near 80   
 
-#define IMAGEH  120  //行 HEIGHT 待采集摄像头图像高度行数
-#define IMAGEW  188  //列 WIDTH  待采集摄像头图像宽度列数
+#define IMAGEH  60  //行 HEIGHT 待采集摄像头图像高度行数
+#define IMAGEW  240  //列 WIDTH  待采集摄像头图像宽度列数
 
 #define CAMERA_W 80
 #define CAMERA_H 60
