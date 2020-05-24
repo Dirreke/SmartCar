@@ -2,26 +2,26 @@
 #include "math.h"
 extern char get_diff_state(void);
 
-//PIDï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//PID¿ØÖÆÀà±äÁ¿
 PID PID_SPEED, PID_TURN, PID_SPEED1, PID_SPEED2;
 
 /***********************************************************
-æ‘„åƒå¤´è½¬å‘æ§åˆ¶éƒ¨åˆ†å˜é‡
+ÉãÏñÍ·×ªÏò¿ØÖÆ²¿·Ö±äÁ¿
 ************************************************************/
 
 #define cam_offset_range 235
 
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//µç»úÊä³öÁ¿ 
 float MotorOut;
 float MotorOut1, MotorOut2;
 
 int16 qd1_result;
 int16 qd2_result;
 float CarSpeed1 = 0, CarSpeed2 = 0;
-/////////////////////////////////////////////////////////ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¡ï¿½Ù¶ï¿½  Î´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+/////////////////////////////////////////////////////////????????????  ¦Ä??????
 
 /********************************
- * ï¿½ï¿½ï¿½ï¿½Í·ï¿½ï¿½ï¿½ï¿½
+ * PD
  ********************************/
 float Turn_Cam_Out;
 float Turn_Cam_P = 2;
@@ -38,7 +38,7 @@ float Turn_Cam_P_Table0[15] = {0.95, 1.05, 0.9, 0.8, 0.68, 0.28, 0.18, 0.06, 0.1
 //float Turn_D_Cam_Table0[15] = {0.65,   0.85,   0.89,    1,      1.3,      1.35,   1.5,   0.25,    1.5,    1.35,   1.3,    1,    0.89,    0.85,    0.65};//{0.432,  0.46,     0.476,   0.356,    0.80,    0.130,   0.056,    0.01,  0.056,    0.13,  0.26,     0.356,      0.476,     0.46,      0.432};
 float Turn_Cam_D_Table0[15] = {0.65, 0.85, 0.89, 1.4, 1.8, 2.0, 2.3, 0.2, 2.3, 2.0, 1.8, 1.4, 0.89, 0.85, 0.65}; //{0.432,  0.46,     0.476,   0.356,    0.80,    0.130,   0.056,    0.01,  0.056,    0.13,  0.26,     0.356,      0.476,     0.46,      0.432};
 
-void Get_Speed() //è·å–ç”µæœºçš„é€Ÿåº¦
+void Get_Speed() //»ñÈ¡µç»úµÄËÙ¶È
 {
 
   static float Speed10 = 0, Speed11 = 0, Speed12 = 0, Speed13 = 0;
@@ -78,7 +78,7 @@ int OldE1, OldE2;
 float Speed_kP1, Speed_kP2, Speed_kI1, Speed_kI2, Speed_kD, Speed_kD_offset;
 
 /*0***********************************
-å°†è¾“å…¥né™åˆ¶åœ¨lower-higherä¹‹é—´
+½«ÊäÈënÏŞÖÆÔÚlower-higherÖ®¼ä
 ***********************************/
 float limit_f(float n, float lower, float higher)
 {
@@ -105,9 +105,9 @@ float my_limit(float a, float limit)
 
 /*0********************************************
 ***
-***è¾“å…¥å‚æ•°ï¼šè§’åº¦ï¼ˆåº¦ï¼‰
-***è¾“å‡ºå‚æ•°ï¼šP
-***è¯´æ˜ï¼š
+***ÊäÈë²ÎÊı£º½Ç¶È£¨¶È£©
+***Êä³ö²ÎÊı£ºP
+***ËµÃ÷£º
            w
           ---
           2.0
@@ -139,22 +139,22 @@ void Speed_Control(void)
 #endif
 /**GMY**/
 #ifdef DIFF1
-  float angle_val; // ç”¨æ¥è¡¨ç¤ºå®é™…è½¬å‘è§’åº¦
-  float diff_K0;   // å·®é€Ÿç‡=å·®é€Ÿæ¯”å‡é€Ÿï¼Œå·¦å³è½®å„ä¸€åŠ
+  float angle_val; // ÓÃÀ´±íÊ¾Êµ¼Ê×ªÏò½Ç¶È
+  float diff_K0;   // ²îËÙÂÊ=²îËÙ±È¾ùËÙ£¬×óÓÒÂÖ¸÷Ò»°ë
 #endif
 
-  //å·®é€Ÿæ§åˆ¶ ï¼Œå¦‚æœå®å®šä¹‰äº†DIFF_ONï¼Œå°±æ ¹æ®å·®é€Ÿè®¡ç®—pï¼Œå¦åˆ™pä¸º0
+  //²îËÙ¿ØÖÆ £¬Èç¹ûºê¶¨ÒåÁËDIFF_ON£¬¾Í¸ù¾İ²îËÙ¼ÆËãp£¬·ñÔòpÎª0
 #ifdef DIFF0
 #ifdef DIFF_ON
   if (get_diff_state() == DIFF_ON_VAL)
   {
-    //å¼€å…³å·®é€Ÿåœ¨Paraä¸­å®šä¹‰
+    //¿ª¹Ø²îËÙÔÚParaÖĞ¶¨Òå
 
     angle_local = -((int)(Cam_offset)*45) / cam_offset_range;
-    angle_local = (int)my_limit(angle_local, 45); //é€šè¿‡æ‘„åƒå¤´è®¡ç®—å¾—åˆ°çš„è½¬å‘åå·®è§’å¾—åˆ°è®¾é™çš„è½¬å‘è§’
+    angle_local = (int)my_limit(angle_local, 45); //Í¨¹ıÉãÏñÍ·¼ÆËãµÃµ½µÄ×ªÏòÆ«²î½ÇµÃµ½ÉèÏŞµÄ×ªÏò½Ç
 
-    lib_active_diff_input(angle_local);       //é€šè¿‡å·®é€Ÿpid å¾—åˆ°åé¦ˆé‡active_diff_val
-    p = 1.0 * p_get((float)abs(angle_local)); //è®¡ç®—æ¯”ä¾‹p
+    lib_active_diff_input(angle_local);       //Í¨¹ı²îËÙpid µÃµ½·´À¡Á¿active_diff_val
+    p = 1.0 * p_get((float)abs(angle_local)); //¼ÆËã±ÈÀıp
   }
   else if (get_diff_state() == DIFF_OFF_VAL)
   {
@@ -166,14 +166,14 @@ void Speed_Control(void)
   p = 0;
 #endif
   if (angle_local < 0)
-  {                                                         //å³è½¬
-    speedTarget1 = lib_get_speed(LIB_TIRE_LEFT) * (1 + p);  //å·¦ä¾§è½¦è½®
-    speedTarget2 = lib_get_speed(LIB_TIRE_RIGHT) * (1 - p); //å³ä¾§è½¦è½®
+  {                                                         //ÓÒ×ª
+    speedTarget1 = lib_get_speed(LIB_TIRE_LEFT) * (1 + p);  //×ó²à³µÂÖ
+    speedTarget2 = lib_get_speed(LIB_TIRE_RIGHT) * (1 - p); //ÓÒ²à³µÂÖ
   }
   else
   {
-    speedTarget1 = lib_get_speed(LIB_TIRE_LEFT) * (1 - p);  //å·¦ä¾§è½¦è½®
-    speedTarget2 = lib_get_speed(LIB_TIRE_RIGHT) * (1 + p); //å³ä¾§è½¦è½®
+    speedTarget1 = lib_get_speed(LIB_TIRE_LEFT) * (1 - p);  //×ó²à³µÂÖ
+    speedTarget2 = lib_get_speed(LIB_TIRE_RIGHT) * (1 + p); //ÓÒ²à³µÂÖ
   }
 #endif
 
@@ -181,7 +181,7 @@ void Speed_Control(void)
 #ifdef DIFF_ON
   if (get_diff_state() == DIFF_ON_VAL)
   {
-    //å¼€å…³å·®é€Ÿåœ¨Paraä¸­å®šä¹‰
+    //¿ª¹Ø²îËÙÔÚParaÖĞ¶¨Òå
 
     angle_val = Turn_Cam_Out / SERVO_RANGE * ANGLE_RANGE;
     diff_K0 = CAR_DIFF_K * tan(angle_val);
@@ -194,20 +194,20 @@ void Speed_Control(void)
 #else
   diff_K0 = 0;
 #endif
-  speedTarget1 = get_speed() * (1 + diff_K0 / 2); //å·¦ä¾§è½¦è½®
-  speedTarget2 = get_speed() * (1 - diff_K0 / 2); //å³ä¾§è½¦è½®
+  speedTarget1 = get_speed() * (1 + diff_K0 / 2); //×ó²à³µÂÖ
+  speedTarget2 = get_speed() * (1 - diff_K0 / 2); //ÓÒ²à³µÂÖ
 
 #endif
 
-  /////æ–œå¡æ§åˆ¶ï¼Œæš‚æ—¶è¿˜æ²¡æœ‰åŠ ä¸Š
+  /////Ğ±ÆÂ¿ØÖÆ£¬ÔİÊ±»¹Ã»ÓĞ¼ÓÉÏ
   // lib_speed_utility();
 
   ///////////////////////////////////////////////
-  //PIDç®—æ³•å¼€å§‹
+  //PIDËã·¨¿ªÊ¼
   ///////////////////////////////////////////////
 
-  //speedTarget1æ˜¯å·®é€Ÿè®¾å®šçš„é€Ÿåº¦å€¼ï¼Œsetspeedæ˜¯ç›´æ¥è®¾å®šçš„å€¼ï¼Œå¯ä»¥ç”¨æ¥è°ƒè¯•ï¼Œå¼€å·®é€Ÿåå°±ç”¨ä¸åˆ°äº†
-  //Påˆ†é‡
+  //speedTarget1ÊÇ²îËÙÉè¶¨µÄËÙ¶ÈÖµ£¬setspeedÊÇÖ±½ÓÉè¶¨µÄÖµ£¬¿ÉÒÔÓÃÀ´µ÷ÊÔ£¬¿ª²îËÙºó¾ÍÓÃ²»µ½ÁË
+  //P·ÖÁ¿
   OldE1 = SpeedE1;
   OldE2 = SpeedE2;
   SpeedE1 = (int)((speedTarget1 - CarSpeed1) * 100.0);
@@ -232,8 +232,8 @@ void Speed_Control(void)
   SpeedControlOutNew2 = (Speed_kP2 * SpeedI2 + Speed_kI2 * SpeedE2);
 }
 
-//é€Ÿåº¦æ§åˆ¶
-void Speed_Control_Output(void) //2msè¿è¡Œä¸€æ¬¡
+//ËÙ¶È¿ØÖÆ
+void Speed_Control_Output(void) //2msÔËĞĞÒ»´Î
 {
   //	float fValue1,fValue2;
   PID_SPEED1.OUT += SpeedControlOutNew1;
@@ -243,12 +243,12 @@ void Speed_Control_Output(void) //2msè¿è¡Œä¸€æ¬¡
 void Moto_Out()
 {
 
-  //é€Ÿåº¦æ§åˆ¶è¾“å‡ºé™å¹…
-  if (PID_SPEED1.OUT > 18000) //å¦‚æœè½¦å­å‰å€¾ï¼Œåˆ™è½¦æ¨¡çš„é€Ÿåº¦æ§åˆ¶è¾“å‡ºä¸ºæ­£ï¼Œåä¹‹ä¸ºè´Ÿ
+  //ËÙ¶È¿ØÖÆÊä³öÏŞ·ù
+  if (PID_SPEED1.OUT > 18000) //Èç¹û³µ×ÓÇ°Çã£¬Ôò³µÄ£µÄËÙ¶È¿ØÖÆÊä³öÎªÕı£¬·´Ö®Îª¸º
     PID_SPEED1.OUT = 18000;
   if (PID_SPEED1.OUT < -18000)
     PID_SPEED1.OUT = -18000;
-  if (PID_SPEED2.OUT > 18000) //å¦‚æœè½¦å­å‰å€¾ï¼Œåˆ™è½¦æ¨¡çš„é€Ÿåº¦æ§åˆ¶è¾“å‡ºä¸ºæ­£ï¼Œåä¹‹ä¸ºè´Ÿ
+  if (PID_SPEED2.OUT > 18000) //Èç¹û³µ×ÓÇ°Çã£¬Ôò³µÄ£µÄËÙ¶È¿ØÖÆÊä³öÎªÕı£¬·´Ö®Îª¸º
     PID_SPEED2.OUT = 18000;
   if (PID_SPEED2.OUT < -18000)
     PID_SPEED2.OUT = -18000;
@@ -256,12 +256,12 @@ void Moto_Out()
   MotorOut1 = PID_SPEED1.OUT;
   MotorOut2 = PID_SPEED2.OUT;
 
-  if (MotorOut1 >= 0) //æ­£è½¬
+  if (MotorOut1 >= 0) //Õı×ª
   {
     Motor_Duty(3, 0);
     Motor_Duty(2, (uint32)(MotorOut1 / 100) * 100);
   }
-  else //åè½¬
+  else //·´×ª
   {
     Motor_Duty(3, 0);
     Motor_Duty(2, 0); //(uint32)(-MotorOut1/100)*100);
@@ -280,10 +280,10 @@ void Moto_Out()
 }
 
 /*********************************
-×ªï¿½ï¿½PDÄ£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½------ï¿½ï¿½ï¿½ï¿½Í·ï¿½ï¿½ï¿½ï¿½
-ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í·ï¿½ï¿½ï¿½ï¿½Æ«ï¿½ï¿½Öµ
-ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í·ï¿½ï¿½ï¿½ï¿½×ªï¿½ï¿½PD
-***********************************/
+×ªÍäPDÄ£ºıº¯Êı------ÉãÏñÍ·¿ØÖÆ
+ÊäÈë²ÎÊı£ºÉãÏñÍ·¼ÆËãÆ«²îÖµ
+Êä³ö²ÎÊı£ºÉãÏñÍ·¿ØÖÆ×ªÍäPD
+***********************************/ 
 
 void TurnFuzzyPD_Cam(void)
 {
@@ -295,7 +295,7 @@ void TurnFuzzyPD_Cam(void)
   {
     if (Cam_offset >= Cam_Offset_Table0[i] && Cam_offset < Cam_Offset_Table0[i + 1])
     {
-      Turn_Cam_P = Turn_Cam_P_Table0[i] + (Cam_offset - Cam_Offset_Table0[i]) * (Turn_Cam_P_Table0[i + 1] - Turn_Cam_P_Table0[i]) / (Cam_Offset_Table0[i + 1] - Cam_Offset_Table0[i]); //ï¿½ï¿½ï¿½ï¿½
+      Turn_Cam_P = Turn_Cam_P_Table0[i] + (Cam_offset - Cam_Offset_Table0[i]) * (Turn_Cam_P_Table0[i + 1] - Turn_Cam_P_Table0[i]) / (Cam_Offset_Table0[i + 1] - Cam_Offset_Table0[i]); //ÏßĞÔ
       Turn_Cam_D = Turn_Cam_D_Table0[i] + (Cam_offset - Cam_Offset_Table0[i]) * (Turn_Cam_D_Table0[i + 1] - Turn_Cam_D_Table0[i]) / (Cam_Offset_Table0[i + 1] - Cam_Offset_Table0[i]);
       break;
     }
@@ -315,11 +315,11 @@ void TurnFuzzyPD_Cam(void)
 }
 
 /*********************************************
-***ï¿½ï¿½ï¿½ï¿½Í·×ªï¿½ï¿½ï¿½ï¿½ï¿½Æ³ï¿½ï¿½ò£¬¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ«ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
-***ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ù¶È£ï¿½ï¿½ï¿½ï¿½ï¿½Æ«ï¿½ï¿½ï¿½ï¿½
-***ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ù¶È£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ù¶ï¿½
-***Ëµï¿½ï¿½ï¿½ï¿½Æ«ï¿½ï¿½ï¿½ï¿½offsetÎªï¿½ï¿½Ëµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ«ï¿½ï¿½
-         Æ«ï¿½ï¿½ï¿½ï¿½offsetÎªï¿½ï¿½Ëµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ«ï¿½ï¿½
+***ÉãÏñÍ·×ªÍä¿ØÖÆ³ÌĞò£¬¸ù¾İÖĞĞÄÆ«ÒÆÁ¿¼ÆËã¶æ»úÊä³öÁ¿
+***ÊäÈë²ÎÊı£º³µÉíËÙ¶È£¬ÖĞĞÄÆ«ÒÆÁ¿
+***Êä³ö²ÎÊı£º×óÂÖËÙ¶È£¬ÓÒÂÖËÙ¶È
+***ËµÃ÷£ºÆ«ÒÆÁ¿offsetÎª¸ºËµÃ÷³µÉíÏà¶ÔÈüµÀÖĞĞÄÆ«×ó
+         Æ«ÒÆÁ¿offsetÎªÕıËµÃ÷³µÉíÏà¶ÔÈüµÀÖĞĞÄÆ«ÓÒ
 *********************************************/
 void Turn_Cam()
 {
@@ -330,7 +330,7 @@ void Turn_Cam()
   Turn_Cam_P *= 0.768; //0.85;//0.7
   Turn_Cam_D *= 0.768; //6.5
 
-  Turn_Cam_Out = Turn_Cam_P * Cam_offset + Turn_Cam_D * (Cam_offset - Cam_offset_old); //×ªï¿½ï¿½PDï¿½ï¿½ï¿½ï¿½(Kp*C+Kd*delta C)
+  Turn_Cam_Out = Turn_Cam_P * Cam_offset + Turn_Cam_D * (Cam_offset - Cam_offset_old); //×ªÏòPID¿ØÖÆ
 
   Cam_offset_old = Cam_offset;
 

@@ -688,3 +688,92 @@ void Pic_undistort(int L, int R)
 }
 
 #endif
+
+
+//起跑线
+int start_waited = 0;
+int start_stop_line=0;
+void start_stop_rec(void)
+{
+  int i;
+  int stop_line = 59;
+  int Black_line = 0;
+  int start_stop_line_flag;
+  if (Road == 0) //如果前40行找不到边线，认为是断路或者起跑线
+  {
+    for (i = 15; i < 60; i++) //自上而下寻找有边线的开始行
+    {
+      if (Lef[i] == 1 && Rig[i] == 78)
+      {
+        continue;
+      }
+      else
+      {
+        stop_line = i;
+        break;
+      }
+    }
+    start_waited++;
+    if (start_waited > 600)
+    {
+      start_waited = 601;
+      if (stop_line < 20 && Lef_slope != 999 && Rig_slope != 999)
+      {
+        start_stop_line_flag=0;
+        for (i = 25; i < 50; i++)
+        {
+          if (Lef[i] == 1 && Rig[i] == 78)
+          {
+            if (start_stop_line_flag == 0)
+            {
+              start_stop_line=i;
+              start_stop_line_flag=1;
+            }
+            if(Pixle[i][8] + Pixle[i][72] + Pixle[i][30] + Pixle[i][35] + Pixle[i][40] + Pixle[i][45] + Pixle[i][50] < 2)
+            {
+             Black_line++;
+            }
+            if (Black_line > 3)
+            {
+              Road = 7;
+              return;
+            }
+          }
+          else
+          {
+            start_stop_line_flag=0;
+            Black_line = 0;
+          }
+        }
+      }
+    }
+  }
+  else if (Road == 7)
+  {
+    start_stop_line_flag = 0;
+    for (i = start_stop_line; i < 50; i++)
+    {
+      if (Lef[i] == 1 && Rig[i] == 78)
+      {
+        if (start_stop_line_flag == 0)
+        {
+          start_stop_line = i;
+          start_stop_line_flag = 1;
+        }
+        if (Pixle[i][8] + Pixle[i][72] + Pixle[i][30] + Pixle[i][35] + Pixle[i][40] + Pixle[i][45] + Pixle[i][50] < 2)
+        {
+          Black_line++;
+        }
+        if (Black_line > 3)
+        {
+          return;
+        }
+      }
+      else
+      {
+        start_stop_line_flag = 0;
+        Black_line = 0;
+      }
+    }
+  }
+}

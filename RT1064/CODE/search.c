@@ -1745,22 +1745,22 @@ void Pic_find_leap(void)
   }
 }
 
-void Cam_End_Detect(void) //End记录从上至下最后一行边界行
-{
-  int i;
+// void Cam_End_Detect(void) //End记录从上至下最后一行边界行
+// {
+//   int i;
 
-  for (i = 50; i >= Fir_row; i--)
-  {
-    if (Lef[i] == 1 && Pixle[i][2] == 0)
-      Lef_End = i;
-    if (Rig[i] == 78 && Pixle[i][77] == 0)
-      Rig_End = i;
+//   for (i = 50; i >= Fir_row; i--)
+//   {
+//     if (Lef[i] == 1 && Pixle[i][2] == 0)
+//       Lef_End = i;
+//     if (Rig[i] == 78 && Pixle[i][77] == 0)
+//       Rig_End = i;
 
-    if (Lef[i] == 1 && Rig[i] == 78)
-      break; // || (Lef[i]==1 && Pixle[i][2] ==1) || (Rig[i]==78 && Pixle[i][77] ==1))break;
-  }
-  Cam_End = max_block(Lef_End, Rig_End);
-}
+//     if (Lef[i] == 1 && Rig[i] == 78)
+//       break; // || (Lef[i]==1 && Pixle[i][2] ==1) || (Rig[i]==78 && Pixle[i][77] ==1))break;
+//   }
+//   Cam_End = max_block(Lef_End, Rig_End);
+// }
 
 #if 0
 int cnt_duanlu = 0;

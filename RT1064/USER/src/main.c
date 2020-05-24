@@ -72,6 +72,7 @@ int main(void)
     pit_init();   //中断初始化，每2ms控制电机一次（中断的时间也许可以改到更小一些，因为主频有所提升）
     pit_interrupt_ms(PIT_CH0,PIT_TIME);
     qtimer_AB_init();//解码器初始化
+    //EM_Init();//ADC初始化
     Para_Init();    //各个变量初始化
     
     EnableGlobalIRQ(0);
@@ -85,6 +86,7 @@ int main(void)
             mt9v03x_csi_finish_flag = 0;	//清除采集完成标志位
             camera_dispose_main();
             Turn_Cam();
+            //EM_main();
             Send_Data();
             
             
