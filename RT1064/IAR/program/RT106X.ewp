@@ -1848,6 +1848,9 @@
             <name>$PROJ_DIR$\..\..\CODE\diff.c</name>
         </file>
         <file>
+            <name>$PROJ_DIR$\..\..\CODE\EM.c</name>
+        </file>
+        <file>
             <name>$PROJ_DIR$\..\..\CODE\function.c</name>
         </file>
         <file>
@@ -1882,6 +1885,9 @@
         </file>
         <file>
             <name>$PROJ_DIR$\..\..\CODE\diff.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\CODE\EM.h</name>
         </file>
         <file>
             <name>$PROJ_DIR$\..\..\CODE\function.h</name>
