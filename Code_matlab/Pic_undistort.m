@@ -1,4 +1,4 @@
-% function []=Pic_undistort(Pic_L,Pic_R,L,R,flag_canshu)
+function []=Pic_undistort(Pic_L,Pic_R,L,R,flag_canshu)
 global ImageH MIDMAP New_Lef New_Rig;
 % if nargin==4
     flag_canshu=0;
@@ -30,29 +30,35 @@ n0=77*2;
 % % % s=sin(theta);
 % % % % clear Rig_New Lef_New;
 %%
-K=0.71;
-startpoint=20;
-H0=75;
-D0=86;
-n0=77*2*K;
-K1=300/n0;
-theta1=0;
-d1=0;
-while 1
-    d0=d1;
-    theta0=theta1;
-    ah=H0-28.5*K*sin(theta0);
-    ad=D0+28.5*K*cos(theta0);
-    d1=sqrt((ah^2+ad^2)/(K1-1)^2-(28.5*K)^2);
-    theta1=(atan(ad/ah)+atan(28.5*K/d1));
-    if d1-d0<1e-12 && theta1-theta0<1e-6
-        break
-    end
-end
+K=1;%0.71;
+startpoint=25;
+% H0=75;
+% D0=50;
+% n0=77*2*K;
+% K1=300/n0;
+% theta1=0;
+% d1=0;
+% while 1
+%     d0=d1;
+%     theta0=theta1;
+%     ah=H0-28.5*K*sin(theta0);
+%     ad=D0+28.5*K*cos(theta0);
+%     d1=sqrt((ah^2+ad^2)/(K1-1)^2-(28.5*K)^2);
+%     theta1=(atan(ad/ah)+atan(28.5*K/d1));
+%     if d1-d0<1e-12 && theta1-theta0<1e-6
+%         break
+%     end
+% end
+% c=cos(-theta1);
+% s=sin(-theta1);
+% h=H0;
+% d=d1;
+  
+h=55.115450159981592;d=40.979835145934850;theta1=atan(d*(71/8-1)/(71*5.5/8+28.5));
 c=cos(-theta1);
 s=sin(-theta1);
-h=H0;
-d=d1;
+
+
 % clear theta0 ad ah
 %%
 % K=-0.6;
