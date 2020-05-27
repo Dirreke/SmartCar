@@ -30,8 +30,8 @@ n0=77*2;
 % % % s=sin(theta);
 % % % % clear Rig_New Lef_New;
 %%
-
-startpoint=24+1;
+K=150/130;%0.71;% K=150*(s*-28.5+d*c)/((d*c+h)*71);
+startpoint=25;
 % H0=75;
 % D0=50;
 % n0=77*2*K;
@@ -53,10 +53,11 @@ startpoint=24+1;
 % s=sin(-theta1);
 % h=H0;
 % d=d1;
-h=55.085226319160249;d=41.350059427213317;theta1=atan(d*(71/8-1)/(71*5.5/8+28.5));
+  
+h=55.115450159981592;d=40.979835145934850;theta1=atan(d*(71/8-1)/(71*5.5/8+28.5));
 c=cos(-theta1);
 s=sin(-theta1);
-K=150*(s*-28.5+d*c)/((d*c+h)*70);%0.71;% K=150*(s*-28.5+d*c)/((d*c+h)*70);
+
 
 % clear theta0 ad ah
 %%
@@ -93,7 +94,7 @@ for k=1:ImageH
     tempNewy(k)=round(((d*c+h)*(29.5-tempy)-h*d*s)/(s*(29.5-tempy)+d*c));
     % tempNewy(k)=((d*c+h)*(29.5-tempy)-h*d*s)/(s*(29.5-tempy)+d*c);
 end
-tempNewy=tempNewy-tempNewy(59);
+tempNewy=tempNewy-tempNewy(60);
 % ДњТы
 tempNewxR=zeros(ImageH,1);
 if R
@@ -103,7 +104,7 @@ if R
         if tempxR==78||tempxR==79
             tempNewxR(k)=MIDMAP;
         else
-            tempNewxR(k)=round(K*(d*c+h)*2*(tempxR-39.5)/(s*(29.5-tempy)+d*c));
+            tempNewxR(k)=round(K*(d*c+h)*2*(tempxR-40.5)/(s*(29.5-tempy)+d*c));
         end
         if tempNewxR(k)>MIDMAP
             tempNewxR(k)=MIDMAP;
@@ -119,7 +120,7 @@ for k=startpoint:ImageH
     if tempxL==1||tempxL==2
         tempNewxL(k)=-MIDMAP;
     else
-        tempNewxL(k)=round(K*(d*c+h)*2*(tempxL-39.5)/(s*(29.5-tempy)+d*c));
+        tempNewxL(k)=round(K*(d*c+h)*2*(tempxL-40.5)/(s*(29.5-tempy)+d*c));
     end
     if tempNewxL(k)<-MIDMAP
         tempNewxL(k)=-MIDMAP;
