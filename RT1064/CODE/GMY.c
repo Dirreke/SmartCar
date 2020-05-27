@@ -319,6 +319,8 @@ float Circle_R_calculate(void)
  * 增加参数startpoint便于调整
  * 
  * **********************************************************************/
+#define UNDISTORT_PYK 5
+#define UNDISTORT_XYK 1.235946609885535
 #ifdef undistort1
 /*************************************************************************
  *  函数名称：void Pic_undistort(int L, int R)
@@ -333,7 +335,7 @@ void Pic_undistort(int L, int R)
 {
     int i = 0;
     int j = 0;
-    int const startpoint = 11;
+    int const startpoint = 29;
     int tempy;
     int tempx;
     int tempNewxR[60];
@@ -341,20 +343,20 @@ void Pic_undistort(int L, int R)
     int temp;
     int step;
     int Rig_New[60];
-    int Lef_New[60];
-    static const int tempNewy[60] = {707, 640, 583, 533, 490, 452, 419, 389, 362, 337, 315, 295, 277, 260, 244, 230, 216, 204, 192, 182, 171, 162, 153, 145, 137, 129, 122, 115, 109, 103, 97, 91, 86, 81, 76, 72, 67, 63, 59, 55, 51, 48, 44, 41, 38, 34, 31, 29, 26, 23, 20, 18, 15, 13, 11, 8, 6, 4, 2, 0};
+    int Lef_New[60];,
+    static const int tempNewy[60] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1188,807,602,475,387,324,276,238,208,182,161,144,128,115,103,93,84,75,68,61,55,49,44,39,35,31,27,24,20,17,14,12,9,7,4,2,0,0};
 
     /*************************映射*******************************/
     if (R)
     {
-        for (i = startpoint; i < 60; i++)
+        for (i = startpoint; i < 59; i++)
         {
             tempy = i;
             tempx = Rig[i];
             if (tempx >= Last_col)
                 tempNewxR[i] = MIDMAP;
             else
-                tempNewxR[i] = (int)((UNDISTORT_D * UNDISTORT_C + UNDISTORT_H) * 2 * (tempx - 39.5) / (-UNDISTORT_S * (29.5 - tempy) + UNDISTORT_D * UNDISTORT_C) + 0.5);
+                tempNewxR[i] = (int)((UNDISTORT_XYK*(UNDISTORT_D * UNDISTORT_C + UNDISTORT_H) * 2 * (tempx - 39.5) / (-UNDISTORT_S * (29.5 - tempy) + UNDISTORT_D * UNDISTORT_C) + 0.5);
 
             if (tempNewxR[i] > MIDMAP)
                 tempNewxR[i] = MIDMAP;
@@ -362,14 +364,14 @@ void Pic_undistort(int L, int R)
     }
     if (L)
     {
-        for (i = startpoint; i < 60; i++)
+        for (i = startpoint; i < 59; i++)
         {
             tempy = i;
             tempx = Lef[i];
             if (tempx <= Fir_col)
                 tempNewxL[i] = -MIDMAP;
             else
-                tempNewxL[i] = (int)((UNDISTORT_D * UNDISTORT_C + UNDISTORT_H) * 2 * (tempx - 39.5) / (-UNDISTORT_S * (29.5 - tempy) + UNDISTORT_D * UNDISTORT_C) + 0.5);
+                tempNewxL[i] = (int)(UNDISTORT_XYK*(UNDISTORT_D * UNDISTORT_C + UNDISTORT_H) * 2 * (tempx - 39.5) / (-UNDISTORT_S * (29.5 - tempy) + UNDISTORT_D * UNDISTORT_C) + 0.5);
 
             if (tempNewxL[i] < -MIDMAP)
                 tempNewxL[i] = -MIDMAP;
@@ -382,7 +384,7 @@ void Pic_undistort(int L, int R)
     // Lef_New[0] = tempNewxL[0];
     while (j >= 0)
     {
-        temp = 12 * j;
+        temp = UNDISTORT_PYK * j;
         if (tempNewy[i] >= temp && tempNewy[i + 1] <= temp)
         {
             step = tempNewy[i] - tempNewy[i + 1];
@@ -504,190 +506,6 @@ void Pic_undistort(int L, int R)
 
 #endif
 
-
-#ifdef undistort1
-/*************************************************************************
- *  函数名称：void Pic_undistort(int L, int R)
- *  功能说明：图像去畸变
- *  参数说明：无
- *  函数返回：无
- *  修改时间：2019.12.28
- *  备    注：对Lef、Rig进行映射处理
- * **********************************************************************/
-void Pic_undistort(int L, int R)
-{
-    int i = 0;
-    int j = 0;
-    int const startpoint = 11;
-    int tempy;
-    int tempx;
-    int tempNewxR[60];
-    int tempNewxL[60];
-    int temp;
-    int step;
-    int Rig_New[60];
-    int Lef_New[60];
-    static const int tempNewy[60] = {707, 640, 583, 533, 490, 452, 419, 389, 362, 337, 315, 295, 277, 260, 244, 230, 216, 204, 192, 182, 171, 162, 153, 145, 137, 129, 122, 115, 109, 103, 97, 91, 86, 81, 76, 72, 67, 63, 59, 55, 51, 48, 44, 41, 38, 34, 31, 29, 26, 23, 20, 18, 15, 13, 11, 8, 6, 4, 2, 0};
-
-    /*************************映射*******************************/
-    if (R)
-    {
-        for (i = startpoint; i < 60; i++)
-        {
-            tempy = i;
-            tempx = Rig[i];
-            if (tempx >= Last_col)
-                tempNewxR[i] = MIDMAP;
-            else
-                tempNewxR[i] = (int)((UNDISTORT_D * UNDISTORT_C + UNDISTORT_H) * 2 * (tempx - 39.5) / (-UNDISTORT_S * (29.5 - tempy) + UNDISTORT_D * UNDISTORT_C) + 0.5);
-
-            if (tempNewxR[i] > MIDMAP)
-                tempNewxR[i] = MIDMAP;
-        }
-    }
-    if (L)
-    {
-        for (i = startpoint; i < 60; i++)
-        {
-            tempy = i;
-            tempx = Lef[i];
-            if (tempx <= Fir_col)
-                tempNewxL[i] = -MIDMAP;
-            else
-                tempNewxL[i] = (int)((UNDISTORT_D * UNDISTORT_C + UNDISTORT_H) * 2 * (tempx - 39.5) / (-UNDISTORT_S * (29.5 - tempy) + UNDISTORT_D * UNDISTORT_C) + 0.5);
-
-            if (tempNewxL[i] < -MIDMAP)
-                tempNewxL[i] = -MIDMAP;
-        }
-    }
-    /************************插值+压缩+倒序*************************/
-    i = startpoint;
-    j = 59; //59，不补最远行，58，补最远行需+下面两行代码
-    // Rig_New[0] = tempNewxR[0];
-    // Lef_New[0] = tempNewxL[0];
-    while (j >= 0)
-    {
-        temp = 12 * j;
-        if (tempNewy[i] >= temp && tempNewy[i + 1] <= temp)
-        {
-            step = tempNewy[i] - tempNewy[i + 1];
-            if (R)
-            {
-                if (tempNewxR[i] != MIDMAP && tempNewxR[i + 1] != MIDMAP)
-                {
-                    Rig_New[59 - j] = (tempNewxR[i] - tempNewxR[i + 1]) / step * (temp - tempNewy[i + 1]) + tempNewxR[i + 1];
-                }
-                else
-                {
-                    Rig_New[59 - j] = MIDMAP;
-                }
-            }
-            if (L)
-            {
-                if (tempNewxL[i] != -MIDMAP && tempNewxL[i + 1] != -MIDMAP)
-                {
-                    Lef_New[59 - j] = (tempNewxL[i] - tempNewxL[i + 1]) / step * (temp - tempNewy[i + 1]) + tempNewxL[i + 1];
-                }
-                else
-                {
-                    Lef_New[59 - j] = -MIDMAP;
-                }
-            }
-            j--;
-        }
-        else
-        {
-            i++;
-        }
-    }
-    /************************滤波*************************/
-
-    if (L)
-    {
-
-        for (i = 0; i < 60; i++)
-        {
-            New_Lef[i] = Lef_New[i];
-        }
-        i = 0;
-        while (i < 57)
-        {
-            if (Lef_New[i + 2] == -MIDMAP)
-            {
-                i = i + 3;
-                continue;
-            }
-            else if (Lef_New[i + 1] == -MIDMAP)
-            {
-                i = i + 2;
-                continue;
-            }
-            else if (Lef_New[i] == -MIDMAP)
-            {
-                i = i + 1;
-                continue;
-            }
-
-            New_Lef[i + 1] = (Lef_New[i] + Lef_New[i + 1] + Lef_New[i + 2]) / 3;
-            if (Lef_New[i + 3] == -MIDMAP)
-            {
-                i = i + 4;
-                continue;
-            }
-
-            while (i < 57 && Lef_New[i + 3] != -MIDMAP)
-            {
-
-                New_Lef[i + 2] = (Lef_New[i] + Lef_New[i + 1] + Lef_New[i + 2] + Lef_New[i + 3]) / 4;
-                i = i + 1;
-            }
-            i = i + 4;
-        }
-    }
-    if (R)
-    {
-        for (i = 0; i < 60; i++)
-        {
-            New_Rig[i] = Rig_New[i];
-        }
-        i = 0;
-        while (i < 57)
-        {
-            if (Rig_New[i + 2] == MIDMAP)
-            {
-                i = i + 3;
-                continue;
-            }
-            else if (Rig_New[i + 1] == MIDMAP)
-            {
-                i = i + 2;
-                continue;
-            }
-            else if (Rig_New[i] == MIDMAP)
-            {
-                i = i + 1;
-                continue;
-            }
-
-            New_Rig[i + 1] = (Rig_New[i] + Rig_New[i + 1] + Rig_New[i + 2]) / 3;
-            if (Rig_New[i + 3] == MIDMAP)
-            {
-                i = i + 4;
-                continue;
-            }
-
-            while (i < 57 && Rig_New[i + 3] != MIDMAP)
-            {
-
-                New_Rig[i + 2] = (Rig_New[i] + Rig_New[i + 1] + Rig_New[i + 2] + Rig_New[i + 3]) / 4;
-                i = i + 1;
-            }
-            i = i + 4;
-        }
-    }
-}
-
-#endif
 
 
 //起跑线
