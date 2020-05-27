@@ -16,7 +16,7 @@ global ImageH MIDMAP New_Lef New_Rig;
 % D0=67;
 % % % D0=60;
 % n0=68*2;
-n0=77*2;
+% n0=77*2;
 % % % K0=300/n0;
 % % % d=sqrt((H0^2+D0^2)/K0^2-30^2);
 % % % h=(K0-1)*d;
