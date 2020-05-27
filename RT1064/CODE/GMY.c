@@ -319,7 +319,7 @@ float Circle_R_calculate(void)
  * 增加参数startpoint便于调整
  * 
  * **********************************************************************/
-#define UNDISTORT_PYK 5
+#define UNDISTORT_PYK 4
 #define UNDISTORT_XYK 1.235946609885535
 #ifdef undistort1
 /*************************************************************************
