@@ -155,7 +155,7 @@ void sobel() //Sobel边沿检测
   double tempsqrt = 0;
   uint8 threshold;
   threshold = GetOSTU(Image_Use);
-  for (i = 1; i < LCDH - 1; i++)
+  for (i = Fir_row; i < LCDH - 1; i++)
     for (j = 1; j < LCDW - 1; j++)
     {
 
@@ -304,7 +304,7 @@ void camera_dispose_main(void) //摄像头处理主函数
     Pic_noi_elim(); //图像简单去噪点
   }
   Pic_DrawMid(); //寻找左右边线
-  Cam_End_Detect();
+  // Cam_End_Detect();
 #ifdef undistort0
   Pic_undistort(); //图像去畸变
 #endif
@@ -314,6 +314,7 @@ void camera_dispose_main(void) //摄像头处理主函数
   Pic_particular();
   LR_Slope_fig();    //左右边线斜率计算
   Allwhite_find();   //查找全白行
+  //*GMY改到这里*//
   Pic_find_circle(); //寻找环状黑线及拐点
   Pic_find_leap();   //寻找突变点
   //Pic_Block_Rec();
