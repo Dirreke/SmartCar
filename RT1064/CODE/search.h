@@ -14,7 +14,7 @@ extern void Pic_offset_fig(void);//offset计算
 extern void Pic_offset_filter(void);//offset滤波处理
 extern void Pic_main(void);
 extern void Pic_Fix_Line(void);//补线程序
-extern void Pic_thresh_get(void);
+// extern void Pic_thresh_get(void);//没有用到
 extern void LR_Slope_fig(void);
 #ifdef undistort0
 extern void Pic_undistort(void);//图像去畸变
@@ -106,7 +106,7 @@ extern float Cam_offset;
 #define ROAD_HALF_WIDTH  150  //赛道半宽
 #define ROAD_WIDTH  300  //赛道宽
 
-#define Fir_row      2        //以第7行作为最小有效行
+#define Fir_row      START_LINE+1        //以第7行作为最小有效行
 #define Last_row     (LCDH-2)    //以该行为最大有效行
 #define Fir_col      2         //以第7列作为最小有效列
 #define Last_col     (LCDW-3)    //以该列为最大有效列
