@@ -384,7 +384,7 @@ void Pic_noi_elim(void)
   int nr; //行
   int nc; //列
   whitecnt = 0;
-  for (nr = 1; nr < LCDH - 1; nr++)
+  for (nr = Fir_row; nr < LCDH - 1; nr++)
   {
     for (nc = 1; nc < LCDW - 1; nc = nc + 1)
     {
@@ -408,19 +408,19 @@ void Pic_noi_elim(void)
 *  参数说明：无
 *  函数返回：无
 *  修改时间：2019.3.15
-*  备    注：
+*  备    注：没有用到
 *************************************************************************/
 
-void Pic_thresh_get(void)
-{
-  int i = 0;
-  int thresh_sum = 0;
-  for (i = area[2]; i < area[1]; i++)
-  {
-    thresh_sum = thresh_sum + Image_Use[i][Mid[i]];
-  }
-  Threshold = (int)(thresh_sum * 1.0 / (area[1] - area[2])) - 20;
-}
+// void Pic_thresh_get(void)
+// {
+//   int i = 0;
+//   int thresh_sum = 0;
+//   for (i = area[2]; i < area[1]; i++)
+//   {
+//     thresh_sum = thresh_sum + Image_Use[i][Mid[i]];
+//   }
+//   Threshold = (int)(thresh_sum * 1.0 / (area[1] - area[2])) - 20;
+// }
 
 char Road1_turnin(float a, float b, float c)
 {
@@ -832,7 +832,7 @@ void Allwhite_find(void)
   for (i = Fir_row; i < Last_row + 1; i++)
   {
     Allwhiterow[i] = 0;
-    if (Road0_flag == 1 && i < 30)
+    if (Road0_flag == 1 && i < 40)//不知道多少合适
     {
       if (abs(Lef[i] - 8) < 5 && abs(72 - Rig[i]) < 5 && Pixle[i][40] == 1 && Pixle[i][20] == 1 && Pixle[i][60] == 1)
       {
@@ -1131,7 +1131,7 @@ void Pic_Fix_Line(void)
 void Pic_DrawMid(void)
 {
   int i = 0, j = 0, k = 0;
-  for (i = 0; i < LCDH; i++) //将左右置黑（防止全白下无法找寻跳变点）
+  for (i = Fir_row; i < LCDH; i++) //将左右置黑（防止全白下无法找寻跳变点）
   {
     Rig[i] = 78;
     Lef[i] = 1;
@@ -1745,22 +1745,22 @@ void Pic_find_leap(void)
   }
 }
 
-// void Cam_End_Detect(void) //End记录从上至下最后一行边界行
-// {
-//   int i;
+void Cam_End_Detect(void) //End记录从上至下最后一行边界行
+{
+  int i;
 
-//   for (i = 50; i >= Fir_row; i--)
-//   {
-//     if (Lef[i] == 1 && Pixle[i][2] == 0)
-//       Lef_End = i;
-//     if (Rig[i] == 78 && Pixle[i][77] == 0)
-//       Rig_End = i;
+  for (i = 50; i >= Fir_row; i--)
+  {
+    if (Lef[i] == 1 && Pixle[i][2] == 0)
+      Lef_End = i;
+    if (Rig[i] == 78 && Pixle[i][77] == 0)
+      Rig_End = i;
 
-//     if (Lef[i] == 1 && Rig[i] == 78)
-//       break; // || (Lef[i]==1 && Pixle[i][2] ==1) || (Rig[i]==78 && Pixle[i][77] ==1))break;
-//   }
-//   Cam_End = max_block(Lef_End, Rig_End);
-// }
+    if (Lef[i] == 1 && Rig[i] == 78)
+      break; // || (Lef[i]==1 && Pixle[i][2] ==1) || (Rig[i]==78 && Pixle[i][77] ==1))break;
+  }
+  Cam_End = max_block(Lef_End, Rig_End);
+}
 
 #if 0
 int cnt_duanlu = 0;
