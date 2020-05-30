@@ -172,8 +172,8 @@ void Send_Variable(void){
   My_Put_Char(0xaa);
   My_Put_Char(0xff);
   My_Put_Char(0x01);
-  My_Put_Char(11);
-  for(int i=0;i<11;i++)
+  My_Put_Char(12);
+  for(int i=0;i<12;i++)
   {
             temp1=Variable[i];
             ch=BYTE0(temp1);
@@ -206,17 +206,19 @@ void Variable_update(void)
   Variable[1]= Turn_Cam_Out;//cnt;//Turn_Cam_Out;//;//stat_slope;//gyroy_1;//Turn_Cam_Out;//Car_W;
   Variable[2]= CarSpeed1;//speedTarget1; //Allwhiteend;
   Variable[3]= CarSpeed2;//whitecnt;
-  Variable[4]= Road;//speedTarget2;//Turn_Cam_Out;
   //  EM_Value_1=(float)(EM_Value_1*3.3/4096);
   // EM_Value_2=(float)(EM_Value_2*3.3/4096);
   // EM_Value_3=(float)(EM_Value_3*3.3/4096);
   // EM_Value_4=(float)(EM_Value_4*3.3/4096);
-  Variable[5]= EM_Value_1;//Cam_offset;
-  Variable[6]= EM_Value_2;
-  Variable[7]= EM_Value_3;
-  Variable[8]= EM_Value_4;
-  Variable[9]= Lef_slope;
-  Variable[10]=Rig_slope;
+  Variable[4]= EM_Value_1;//Cam_offset;
+  Variable[5]= EM_Value_2;
+  Variable[6]= EM_Value_3;
+  Variable[7]= EM_Value_4;
+  Variable[8]= EM_offset;
+  Variable[9]= Road;//speedTarget2;//Turn_Cam_Out;
+  Variable[10]=Road1_flag;
+  Variable[11]=Lef_circle;
+  Variable[12]=whitecnt;
   //Variable[11]=Road;/*Rig_circle;*///Road6_flag ;//CarSpeed2;
 /*
   Variable[12]=whitecnt;//Road1_turnout;//limit_pos(EM_Value_1/1.5-EM_Value_2/3.5);//speedTarget1;//map_line[MIN(50,AllWhileStartLine)];

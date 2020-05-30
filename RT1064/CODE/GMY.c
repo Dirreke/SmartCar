@@ -263,8 +263,84 @@ void Pic_DrawMid_und(void)
     return;
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+/*************************************************************************
+ *  函数名称：void Pic_DrawMid_und(void)
+ *  功能说明：计算去畸变后中线无插值
+ *  参数说明：无
+ *  函数返回：无
+ *  修改时间：2020.5.31
+ *  备    注：
+ * ************************************************************************/
+int New_Mid[60];
 
+void Pic_DrawMid_und(void)
+{
+    int i, j;
+    int inter_point = 0;
+    int flag = 0;
+    int inter_count = 0;
+    float slope_temp;
+
+    if ((Road0_flag == 3 && Road == 0) || Road == 1)
+    {
+        for (i = 0; i < 60; i++)
+        {
+
+            if (New_Rig[i] != MIDMAP)
+            {
+                New_Mid[i] = New_Rig[i] - ROAD_HALF_WIDTH;
+            }
+            else
+            {
+                    New_Mid[i]=999;
+            }
+        }
+    }
+    else if ((Road0_flag == 4 && Road == 0) || Road == 2)
+    {
+        for (i = 0; i < 60; i++)
+        {
+
+            if (New_Lef[i] != MIDMAP)
+            {
+                New_Mid[i] = New_Lef[i] + ROAD_HALF_WIDTH;
+            }
+            else
+            {
+             New_Mid[i]=999;
+            }
+        }
+    }
+    else
+    {
+        for (i = 0; i < 60; i++)
+        {
+>>>>>>> 222cb59... 0531-GMY_chongxiehenduohanshu_jiaruzuixiaoerchengzhuanwan
+
+            if (New_Lef[i] != -MIDMAP && New_Rig[i] != MIDMAP) //Mid Calculaing
+            {
+                New_Mid[i] = (int)((New_Lef[i] + New_Rig[i]) / 2.0 + 0.5);
+
+            }
+            else if (New_Lef[i] == -MIDMAP && New_Rig[i] != MIDMAP)
+            {
+                New_Mid[i] = New_Rig[i] - ROAD_HALF_WIDTH;
+            }
+            else if (New_Lef[i] != -MIDMAP && New_Rig[i] == MIDMAP)
+            {
+                New_Mid[i] = New_Lef[i] + ROAD_HALF_WIDTH;
+            }
+            else
+            {
+                New_Mid[i]=999;
+            }
+        }
+    }
+    return;
+}
 
 >>>>>>> 0501c7b... GMY -zhaohui diushi daima
 /*************************************************************************
@@ -274,11 +350,12 @@ void Pic_DrawMid_und(void)
  *  函数返回：转向打角
  *  修改时间：2020.1.18
  *  备    注：其中12位参数等于去畸中压缩比例的数字,y2_origin为参数
-             angle_val1为负，车偏右，向左拐；
-             angle_val1为正，车偏左，向右拐；
+             -angle_val1为正，车偏右，向左拐；
+             -angle_val1为负，车偏左，向右拐；
+            
  * ************************************************************************/
 #define CAR_LENGTH 148.5149
-float Circle_R_calculate(void)
+float car_straight(float car_dias)
 {
     int i;
     float x2_temp;
@@ -286,33 +363,41 @@ float Circle_R_calculate(void)
     float sum2=0;
     float temp_sin;
     float angle_val1;
-    static const float y2_origin[58]={467856,451584,435600,419904,404496,389376,374544,360000,345744,331776,318096,304704,291600,278784,266256,254016,242064,230400,219024,207936,197136,186624,176400,166464,156816,147456,138384,129600,121104,112896,104976,97344,90000,82944,76176,69696,63504,57600,51984,46656,41616,36864,32400,28224,24336,20736,17424,14400,11664,9216,7056,5184,3600,2304,1296,576,144,0};
-    //认为控制行高（近）行为第0行，成比例反转，即y2_origin=((control_line_min-y)*12)^2，暂定控制行3-57。
+    // static const float y2_origin[58] = {467856, 451584, 435600, 419904, 404496, 389376, 374544, 360000, 345744, 331776, 318096, 304704, 291600, 278784, 266256, 254016, 242064, 230400, 219024, 207936, 197136, 186624, 176400, 166464, 156816, 147456, 138384, 129600, 121104, 112896, 104976, 97344, 90000, 82944, 76176, 69696, 63504, 57600, 51984, 46656, 41616, 36864, 32400, 28224, 24336, 20736, 17424, 14400, 11664, 9216, 7056, 5184, 3600, 2304, 1296, 576, 144, 0};
+    // //认为控制行高（近）行为第0行，成比例反转，即y2_origin=((control_line_min-y)*12)^2，暂定控制行3-57。
+    static const float y2_origin[60] = {55696,53824,51984,50176,48400,46656,44944,43264,41616,40000,38416,36864,35344,33856,32400,30976,29584,28224,26896,25600,24336,23104,21904,20736,19600,18496,17424,16384,15376,14400,13456,12544,11664,10816,10000,9216,8464,7744,7056,6400,5776,5184,4624,4096,3600,3136,2704,2304,1936,1600,1296,1024,784,576,400,256,144,64,16,0};
+    // //认为控制行高（近）行为第0行，成比例反转，即y2_origin=((control_line_min-y)*4)^2，暂定控制行3-57。
 
-    for(i=3;i<58;i++)
+    for (i = 3; i < 58; i++)
     {
-        x2_temp=New_Mid[i]^2;
-        sum1+=x2_temp;
-        sum2+=(x2_temp+y2_origin[i])*New_Mid[i];
+        if (New_Mid != 999)
+        {
+            x2_temp = ((New_Mid[i]-car_dias) / UNDISTORT_XYK ) ^ 2;
+            sum1 += x2_temp;
+            sum2 += (x2_temp + y2_origin[i]) * New_Mid[i];
+        }
     }
     if (sum2 == 0)
     {
-        angle_val1=0
+        angle_val1 = 0;
     }
     else
     {
-        temp_sin=sum1/sum2*2*CAR_LENGTH;
-        temp_sin=limit_f(temp_sin, -1, 1);
-        angle_val1=asin(temp_sin);
+        temp_sin = sum1 / sum2 * 2 * CAR_LENGTH;
+        temp_sin = limit_f(temp_sin, -1, 1);
+        angle_val1 = asin(temp_sin);
     }
-    return angle_val1;
+    return -angle_val1;
 }
 <<<<<<< HEAD
 =======
 
+<<<<<<< HEAD
 
 
 >>>>>>> 0501c7b... GMY -zhaohui diushi daima
+=======
+>>>>>>> 222cb59... 0531-GMY_chongxiehenduohanshu_jiaruzuixiaoerchengzhuanwan
 /************************************************************************
  * search.c 1459-
  * 修改，减少取景行
@@ -517,7 +602,7 @@ void start_stop_rec(void)
   int stop_line = 59;
   int Black_line = 0;
   int start_stop_line_flag;
-  if (Road == 0) //如果前40行找不到边线，认为是断路或者起跑线
+  if (Road == 0 && Road0_flag!=0 &&Road0_flag !=1) //如果前40行找不到边线，认为是断路或者起跑线
   {
     for (i = Fir_row; i < 60; i++) //自上而下寻找有边线的开始行
     {
@@ -594,4 +679,22 @@ void start_stop_rec(void)
       }
     }
   }
+}
+
+
+
+
+
+void Turn_Cam_New()
+{
+    float car_center_dias;
+    float car_straight_angle;
+    int car_center_PWM;
+    int car_straight_PWM;
+    car_center_dias=car_center();
+    car_straight_angle=Circle_R_calculate(car_center_dias);
+    car_center_PWM=PID_realize_center(car_center_dias);
+    car_straight_PWM=PID_realize_straight(car_straight_angle*SERVO_RANGE/ANGLE_RANGE);
+    Turn_Cam_Out=car_center_PWM+car_straight_PWM;
+    Servo_Duty(-Turn_Cam_Out);
 }

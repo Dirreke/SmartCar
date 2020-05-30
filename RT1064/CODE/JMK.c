@@ -5,6 +5,7 @@ int Road03_count = 0, Road04_count = 0;
 global float centerAngle;
 
 // 赛道识别
+#if 0
 char Road1_turnout = 1;
 void Road_rec(void)
 {
@@ -237,6 +238,7 @@ void Road_rec(void)
     Road0_flag = 0;
   }
 }
+#endif
 /*************************************************************************
  *  函数名称：void car_center_pid()
  *  功能说明：车正 与中心线位置差pid
@@ -278,18 +280,18 @@ float PID_realize_center(float err){
     return pid_center.ActualAngle;
 }
 
-void car_center_pid(){
+float car_center(){
 
-  PID_init_center();
-  float avr = 0;
-  int startLine = 3;
-  int endLine = 8
-  for(int i = startLine; i < endLine; ++i){
-    avr += New_Mid[i];
+  // PID_init_center();
+  float car_center_dias=0;
+  int car_center_start = 3;
+  int car_center_end= 8;
+  for(int i =car_center_start; i < car_center_end; ++i){
+    car_center_dias += New_Mid[i];
   }
-  avr /= (endLine - startLine);
-
-  centerAngle=PID_realize_center(avr);
+  car_center_dias /= (car_center_start - car_center_end);
+  return car_center_dias;
+  // centerAngle=PID_realize_center(car_center_dias);
 }
 
 /*************************************************************************
@@ -314,13 +316,13 @@ void PID_init_straight(){
     printf("pid_straight_init end \n");
 }
 
-float PID_realize_straight(float err){
+int PID_realize_straight(float err){
     pid_straight.err=err;
     float incrementAngle=pid_straight.Kp*(pid_straight.err-pid_straight.err_next)+pid_straight.Ki*pid_straight.err+pid_straight.Kd*(pid_straight.err-2*pid_straight.err_next+pid_straight.err_last);
     pid_straight.ActualAngle+=incrementAngle;
     pid_straight.err_last=pid_straight.err_next;
     pid_straight.err_next=pid_straight.err;
-    return pid_straight.ActualAngle;
+    return (int) pid_straight.ActualAngle;
 }
 
 void car_straight_pid(){

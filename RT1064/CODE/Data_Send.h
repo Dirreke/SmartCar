@@ -13,6 +13,7 @@ extern void Variable_update(void);
 extern void Send_Data(void);
 extern int New_Lef[60];
 extern int New_Rig[60];
+extern int New_Mid[60];
 extern float Lef_slope;
 extern float Rig_slope;
 extern int Lef_circle;
