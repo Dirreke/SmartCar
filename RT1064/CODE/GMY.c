@@ -519,7 +519,7 @@ void start_stop_rec(void)
   int start_stop_line_flag;
   if (Road == 0) //如果前40行找不到边线，认为是断路或者起跑线
   {
-    for (i = 15; i < 60; i++) //自上而下寻找有边线的开始行
+    for (i = Fir_row; i < 60; i++) //自上而下寻找有边线的开始行
     {
       if (Lef[i] == 1 && Rig[i] == 78)
       {
@@ -538,7 +538,7 @@ void start_stop_rec(void)
       if (stop_line < 20 && Lef_slope != 999 && Rig_slope != 999)
       {
         start_stop_line_flag=0;
-        for (i = 25; i < 50; i++)
+        for (i = Fir_row+5; i < 50; i++)
         {
           if (Lef[i] == 1 && Rig[i] == 78)
           {
