@@ -64,7 +64,7 @@ int main(void)
 
     /** program init **/
     //seekfree_wireless_init();  //初始化无线串口模块
-    //uart_init(USART_1,1500000,UART1_TX_B12, UART1_RX_B13);
+    uart_init(USART_1,1500000,UART1_TX_B12, UART1_RX_B13);
     mt9v03x_csi_init();		     //初始化摄像头	使用CSI接口
     //ips200_init();	       		 //初始化2.0寸IPS屏幕
     Motor_Init(); //电机初始化

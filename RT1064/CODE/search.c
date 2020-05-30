@@ -28,8 +28,8 @@ int Lef_circle;
 int Rig_circle; //左右边线寻找环状黑线标志位
 int Lef_break_point;
 int Rig_break_point; //左右环状黑线拐弯点
-int Lef_leap[4];
-int Rig_leap[4]; //左右变线跳变点坐标
+// int Lef_leap[4];
+// int Rig_leap[4]; //左右变线跳变点坐标
 
 uint16 Lef_road = 0; //左右岔路标志位，若检测到有岔路，则置1
 uint16 Rig_road = 0;
@@ -71,7 +71,7 @@ extern int16 qd1_result;
 
 int Lef_End = 0;
 int Rig_End = 0;
-int Cam_End = 0;
+// int Cam_End = 0;
 int block_flag = 1;
 
 /*调试参数*/
@@ -452,7 +452,7 @@ void Road_rec(void)
   // static uint8 Road1_cnt1=0;
   // static char Road1_flag1=0;
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////普通赛道→圆环
-  if ((Lef_break_point < 20 && Road == 0 && Rig_circle == 0 && Lef_circle == 1 && Rig_slope == 998 && Lef_slope != 998 && Rig[13] - Rig[11] < 5 && Rig[11] - Rig[9] < 5 && Rig[9] - Rig[7] < 5 && Rig[7] - Rig[5] < 5 && Rig[5] - Rig[3] < 5 && Rig[11] != 78 && New_Lef[50] == -MIDMAP && Rig_edge < 10)) //左圆环：左边线,右边线：直通到底
+  if ((Lef_break_point < 40 && Road == 0 && Rig_circle == 0 && Lef_circle == 1 && Rig_slope == 998 && Lef_slope != 998  && Rig[39] - Rig[37] < 5  && Rig[37] - Rig[35] < 5 && Rig[35] - Rig[33] < 5 && Rig[33] - Rig[31] < 5 && Rig[31] - Rig[29] < 5 && Rig[29] - Rig[27] < 5 && Rig[27] - Rig[25] < 5  && New_Lef[52] == -MIDMAP && Rig_edge < 10)) //左圆环：左边线,右边线：直通到底//&& Rig[11] != 78
   {
     Road0_flag = 0;
     Road11_count++;
@@ -464,7 +464,7 @@ void Road_rec(void)
     }
     return;
   }
-  else if (Rig_break_point < 20 && Road == 0 && Lef_circle == 0 && Rig_circle == 1 && Lef_slope == 998 && Rig_slope != 998 && Lef[3] - Lef[5] < 5 && Lef[5] - Lef[7] < 5 && Lef[7] - Lef[9] < 5 && Lef[9] - Lef[11] < 5 && Lef[11] - Lef[13] < 5 && Lef[11] != 2 && New_Rig[50] == MIDMAP && Lef_edge < 10) //右圆环：右边线：突变点→拐点→突变点
+  else if (Rig_break_point < 40 && Road == 0 && Lef_circle == 0 && Rig_circle == 1 && Lef_slope == 998 && Rig_slope != 998 && Lef[25] - Lef[27] < 5 && Lef[27] - Lef[29] < 5 && Lef[29] - Lef[31] < 5 && Lef[31] - Lef[33] < 5 && Lef[33] - Lef[35] < 5&& Lef[35] - Lef[37] < 5 && Lef[37] - Lef[39] < 5   && New_Rig[52] == MIDMAP && Lef_edge < 10) //右圆环：右边线：突变点→拐点→突变点//&& Lef[11] != 2 
   {
     Road0_flag = 0;
     Road21_count++;
@@ -480,9 +480,8 @@ void Road_rec(void)
   else if (Road == 1 && Road1_flag == 0) //准备进左圆环
   {
     Road0_flag = 0;
-    Road1_flag = 1;
-    /*
-    if(EM_Value_2+EM_Value_3>3.8)//弯内识别：左右两边仅有一边发生丢线
+    // Road1_flag = 1;
+    if(EM_Value_2+EM_Value_3>4.3)//弯内识别：左右两边仅有一边发生丢线
     {
       Road12_count++;
       if(Road12_count==2)
@@ -492,13 +491,12 @@ void Road_rec(void)
       }
       return;
     }
-    */
     return;
   }
   else if (Road == 1 && (Road1_flag == 1)) //进左圆环1/4
   {
     Road0_flag = 0;
-    if (Lef_circle == 0 || (Lef_circle == 1 && Lef_break_point > 30)) //if(((Lef_circle==0||( Lef_circle ==1 && Lef_break_point>30)))&& Road1_turnin(EM_Value_2,EM_Value_3,3.8))//if(((Lef_circle==0||( Lef_circle ==1 && Lef_break_point>30))) && Rig_slope>=10)/ && Road1_turnin(EM_Value_2,EM_Value_3,3.8))    //Rig_slope<1 && (Lef_leap[0]==0||Lef_slope==999)&& Rig_leap[0]==0)
+    if (Lef_circle == 0 || (Lef_circle == 1 && Lef_break_point > 45)) //if(((Lef_circle==0||( Lef_circle ==1 && Lef_break_point>30)))&& Road1_turnin(EM_Value_2,EM_Value_3,3.8))//if(((Lef_circle==0||( Lef_circle ==1 && Lef_break_point>30))) && Rig_slope>=10)/ && Road1_turnin(EM_Value_2,EM_Value_3,3.8))    //Rig_slope<1 && (Lef_leap[0]==0||Lef_slope==999)&& Rig_leap[0]==0)
     {
       Road13_count++;
       if (Road13_count == 2) //2帧后 进左圆环第一弯道
@@ -526,7 +524,7 @@ void Road_rec(void)
   else if (Road == 1 && Road1_flag == 4) //进入圆环内 ，取消补线
   {
     Road0_flag = 0;
-    if (Rig_circle && whitecnt > 2700) //
+    if (Rig_circle && whitecnt > 1200) //
     {
       Road14_count++;
       if (Road14_count == 3)
@@ -559,9 +557,8 @@ void Road_rec(void)
   else if (Road == 2 && Road2_flag == 0) //
   {
     Road0_flag = 0;
-    Road2_flag = 1;
-    /*
-    if( EM_Value_2 +EM_Value_3 >3.8)//弯内识别：左右两边仅有一边发生丢线
+    // Road2_flag = 1;
+    if( EM_Value_2 +EM_Value_3 >4.3)//弯内识别：左右两边仅有一边发生丢线
     {
       Road22_count++;
       if(Road22_count==2)
@@ -571,13 +568,13 @@ void Road_rec(void)
       }
       return;
     }
-    */
+
     return;
   }
   else if (Road == 2 && Road2_flag == 1) //
   {
     Road0_flag = 0;
-    if ((Rig_circle == 0 || (Rig_circle == 1 && Rig_break_point > 30)) && Rig_slope >= 10) //if(((Rig_circle==0||( Rig_circle ==1 && Rig_break_point>30))) && Rig_slope>=10)/ && Road1_turnin(EM_Value_2,EM_Value_3,3.4))
+    if ((Rig_circle == 0 || (Rig_circle == 1 && Rig_break_point > 45)) && Rig_slope >= 10) //if(((Rig_circle==0||( Rig_circle ==1 && Rig_break_point>30))) && Rig_slope>=10)/ && Road1_turnin(EM_Value_2,EM_Value_3,3.4))
     {
       Road23_count++;
       if (Road23_count == 2) //
@@ -605,7 +602,7 @@ void Road_rec(void)
   else if (Road == 2 && Road2_flag == 4)
   {
     Road0_flag = 0;
-    if (whitecnt > 2700)
+    if (whitecnt > 1200)
     {
       Road25_count++;
       if (Road25_count == 3)
@@ -635,11 +632,11 @@ void Road_rec(void)
     return;
   }
 
-  if (Road == 0 && whitecnt > 2700 && ((Lef_edge > 10 && Rig_edge > 10) || Lef_edge > 30 || Rig_edge > 30) && Allwhitestart < 40)
+  if (Road == 0 && whitecnt > 1700 && ((Lef_edge > 10 && Rig_edge > 10) || Lef_edge > 30 || Rig_edge > 30) && Allwhitestart < 40)
   {
     Road0_flag = 1;
   }
-  else if ((Allwhitestart > 50 && Allwhiteend < 40) || whitecnt > 3000)
+  else if ((Allwhitestart > 45 && Allwhiteend < 45) || whitecnt > 1900)
   {
     Road0_flag = 2;
   }
@@ -832,7 +829,7 @@ void Allwhite_find(void)
   for (i = Fir_row; i < Last_row + 1; i++)
   {
     Allwhiterow[i] = 0;
-    if (Road0_flag == 1 && i < 40)//不知道多少合适
+    if (Road0_flag == 1 && i < 35)
     {
       if (abs(Lef[i] - 8) < 5 && abs(72 - Rig[i]) < 5 && Pixle[i][40] == 1 && Pixle[i][20] == 1 && Pixle[i][60] == 1)
       {
@@ -900,18 +897,18 @@ void Pic_Fix_Line(void)
   static float stat_slope;
   static float stat_slope2;
   //static char road1_flag3=1;
-  static char road1_flag1 = 1;
+  static char road1_flag1 = 1;//0表示已计算完进圆环斜率，1表示已经出圆环，再次进圆环时计算补线斜率
   static char road2_flag1 = 1;
   if (Road0_flag == 1 && Road == 0)
   {
-    for (i = 55; i > 15; i--)
+    for (i = 55; i > Fir_row+15; i--)
     {
       if (abs(Lef[i] - Fir_col) < 5)
         continue;
       slope = Slope(Lef[i], i, Lef[i - 5], i - 5); //Slope(int F1x,int F1y,int F2x,int F2y)
       if (slope != 999)
       {
-        for (j = i + 1; j > 5; j--)
+        for (j = i + 1; j > Fir_row+5; j--)
         {
           Lef[j] = (int)(Lef[i] - (i - j) / slope);
 #ifdef undistort0
@@ -924,14 +921,14 @@ void Pic_Fix_Line(void)
         break;
       }
     }
-    for (i = 55; i > 15; i--)
+    for (i = 55; i > Fir_row+15; i--)
     {
       if (abs(Rig[i] - Last_col) < 5)
         continue;
       slope = Slope(Rig[i], i, Rig[i - 5], i - 5); //Slope(int F1x,int F1y,int F2x,int F2y)
       if (slope != 999)
       {
-        for (j = i + 1; j > 5; j--)
+        for (j = i + 1; j > Fir_row+5; j--)
         {
           Rig[j] = (int)(Rig[i] - (i - j) / slope);
 #ifdef undistort0
@@ -948,7 +945,7 @@ void Pic_Fix_Line(void)
   }
   else if (Road0_flag == 2 && Road == 0)
   {
-    for (i = 15; i < Allwhiteend; i++)
+    for (i = Fir_row+5; i < Allwhiteend; i++)
     {
       if (abs(Lef[i] - Fir_col) < 15)
         continue;
@@ -968,7 +965,7 @@ void Pic_Fix_Line(void)
         break;
       }
     }
-    for (i = 15; i < Allwhiteend; i++)
+    for (i = Fir_row+5; i < Allwhiteend; i++)
     {
       if (abs(Rig[i] - Last_col) < 15)
         continue;
@@ -994,19 +991,19 @@ void Pic_Fix_Line(void)
   //左圆环补线处理
   if (Road == 1 && Road1_flag == 2)
   {
-    for (i = 0; i < 30; i++)
+    for (i = Last_row-13; i > Fir_row; i--)
     {
       if (road1_flag1)
       {
-        if (abs(Lef[i] - Fir_col) < 20)
+        if (abs(Lef[i] - Fir_col) < 25)
           continue;
-        stat_slope = Slope(Lef[i], i, 63, 55);
+        stat_slope = Slope(Lef[i], i, 70, 55);
         road1_flag1 = 0;
       }
 
       if (stat_slope != 999)
       {
-        for (k = 3; k < 55; k++)
+        for (k = Fir_row+3; k < 55; k++)
         {
           Rig[k] = (int)(60 - (57 - k) / stat_slope);
 #ifdef undistort0
@@ -1023,12 +1020,12 @@ void Pic_Fix_Line(void)
   }
   else if (Road == 1 && Road1_flag == 4)
   {
-    road1_flag1 = 1;
+    road1_flag1 = 1;//表示已经出圆环，再次进圆环时计算补线斜率
     return;
   }
   else if (Road == 1 && Road1_flag == 3)
   {
-    for (j = 55; j > Fir_row; j--)
+    for (j = Last_row+3; j > Fir_row; j--)
     {
 
       if (abs(Rig[j] - Last_col) < 2)
@@ -1037,7 +1034,7 @@ void Pic_Fix_Line(void)
 
       if (stat_slope != 999)
       {
-        for (k = j + 1; k > 5; k--)
+        for (k = j + 1; k > Fir_row+5; k--)
         {
           Rig[k] = (int)(64 - (57 - k) / slope);
 #ifdef undistort0
@@ -1056,19 +1053,19 @@ void Pic_Fix_Line(void)
 
   if (Road == 2 && Road2_flag == 2)
   {
-    for (i = 0; i < 30; i++)
+    for (i = Last_row-13; i > Fir_row; i--)
     {
       if (road2_flag1)
       {
-        if (abs(Rig[i] - Last_col) < 20)
+        if (abs(Rig[i] - Last_col) < 25)
           continue;
-        stat_slope2 = Slope(Rig[i], i, 15, 55);
+        stat_slope2 = Slope(Rig[i], i, 10, 55);
         road2_flag1 = 0;
       }
 
       if (stat_slope2 != 999)
       {
-        for (k = 3; k < 55; k++)
+        for (k = Fir_row+3; k < 55; k++)
         {
           Lef[k] = (int)(15 - (57 - k) / stat_slope2);
 #ifdef undistort0
@@ -1090,7 +1087,7 @@ void Pic_Fix_Line(void)
   }
   else if (Road == 2 && Road2_flag == 3)
   {
-    for (j = 55; j > Fir_row; j--)
+    for (j = Last_row+3; j > Fir_row; j--)
     {
 
       if (abs(Lef[j] - Fir_col) < 2)
@@ -1099,7 +1096,7 @@ void Pic_Fix_Line(void)
 
       if (slope2 != 999)
       {
-        for (k = j + 1; k > 5; k--)
+        for (k = j + 1; k > Fir_row+5; k--)
         {
           Lef[k] = (int)(15 - (57 - k) / slope2);
 #ifdef undistort0
@@ -1240,9 +1237,9 @@ void Pic_DrawMid(void)
 void Pic_offset_fig(void)
 {
   int i;
-  int count = 0, count2 = 0;
+  int count = 0;// count2 = 0;
 
-  for (i = 0; i < 60; i++)
+  for (i = Fir_row; i < 60; i++)
   {
     //  if(Road==1&&(Road1_flag==0||Road1_flag==2))
     //  {
@@ -1297,6 +1294,7 @@ void Pic_offset_fig(void)
         continue;
       }
     }
+    /*
     else if ((i <= FIG_AREA_FAR && i >= FIG_AREA_FAR2))
     {
       if (New_Lef[i] != -MIDMAP && New_Rig[i] != MIDMAP)
@@ -1322,6 +1320,7 @@ void Pic_offset_fig(void)
         continue;
       }
     }
+    */
   }
   if (Road0_flag && Road == 0)
   {
@@ -1335,11 +1334,12 @@ void Pic_offset_fig(void)
   {
     Cam_offset = Cam_offset / count;
   }
+  /*
   if (count2 != 0)
   {
     Cam_offset2 = Cam_offset2 / count2;
   }
-
+*/
   //Cam_offset = (0.4 * Cam_offset + 0.6 * Cam_offset2);
   if (Road == 3 || Road1_flag == 2 || Road2_flag == 2)
   {
@@ -1454,187 +1454,188 @@ void Pic_undistort(void)
 #endif
 #ifdef undistort1
 /*************************************************************************
-*  函数名称：void Pic_undistort(int L, int R)
-*  功能说明：图像去畸变
-*  参数说明：无
-*  函数返回：无
-*  修改时间：2019.12.28
-*  备    注：对Lef、Rig进行映射处理
-
-*************************************************************************/
+ *  函数名称：void Pic_undistort(int L, int R)
+ *  功能说明：图像去畸变
+ *  参数说明：无
+ *  函数返回：无
+ *  修改时间：2020.05.30
+ *  备    注：对Lef、Rig进行映射处理
+ * **********************************************************************/
 void Pic_undistort(int L, int R)
 {
-  int i = 0;
-  int j = 0;
-  int tempy;
-  int tempx;
-  int tempNewxR[60];
-  int tempNewxL[60];
-  int temp;
-  int step;
-  int Rig_New[60];
-  int Lef_New[60];
-  static const int tempNewy[60] = {707, 640, 583, 533, 490, 452, 419, 389, 362, 337, 315, 295, 277, 260, 244, 230, 216, 204, 192, 182, 171, 162, 153, 145, 137, 129, 122, 115, 109, 103, 97, 91, 86, 81, 76, 72, 67, 63, 59, 55, 51, 48, 44, 41, 38, 34, 31, 29, 26, 23, 20, 18, 15, 13, 11, 8, 6, 4, 2, 0};
+    int i = 0;
+    int j = 0;
+    int const startpoint = 29;
+    int tempy;
+    int tempx;
+    int tempNewxR[60];
+    int tempNewxL[60];
+    int temp;
+    int step;
+    int Rig_New[60];
+    int Lef_New[60];
+    static const int tempNewy[60] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1188,807,602,475,387,324,276,238,208,182,161,144,128,115,103,93,84,75,68,61,55,49,44,39,35,31,27,24,20,17,14,12,9,7,4,2,0,0};
 
-  /*************************映射*******************************/
-  if (R)
-  {
-    for (i = 0; i < 60; i++)
+    /*************************映射*******************************/
+    if (R)
     {
-      tempy = i;
-      tempx = Rig[i];
-      if (tempx >= Last_col)
-        tempNewxR[i] = MIDMAP;
-      else
-        tempNewxR[i] = (int)((UNDISTORT_D * UNDISTORT_C + UNDISTORT_H) * 2 * (tempx - 39.5) / (-UNDISTORT_S * (29.5 - tempy) + UNDISTORT_D * UNDISTORT_C) + 0.5);
-
-      if (tempNewxR[i] > MIDMAP)
-        tempNewxR[i] = MIDMAP;
-    }
-  }
-  if (L)
-  {
-    for (i = 0; i < 60; i++)
-    {
-      tempy = i;
-      tempx = Lef[i];
-      if (tempx <= Fir_col)
-        tempNewxL[i] = -MIDMAP;
-      else
-        tempNewxL[i] = (int)((UNDISTORT_D * UNDISTORT_C + UNDISTORT_H) * 2 * (tempx - 39.5) / (-UNDISTORT_S * (29.5 - tempy) + UNDISTORT_D * UNDISTORT_C) + 0.5);
-
-      if (tempNewxL[i] < -MIDMAP)
-        tempNewxL[i] = -MIDMAP;
-    }
-  }
-  /************************插值+压缩+倒序*************************/
-  i = 0;
-  j = 58;
-  Rig_New[0] = tempNewxR[0];
-  Lef_New[0] = tempNewxL[0];
-  while (j >= 0)
-  {
-    temp = 12 * j;
-    if (tempNewy[i] >= temp && tempNewy[i + 1] <= temp)
-    {
-      step = tempNewy[i] - tempNewy[i + 1];
-      if (R)
-      {
-        if (tempNewxR[i] != MIDMAP && tempNewxR[i + 1] != MIDMAP)
+        for (i = startpoint; i < 59; i++)
         {
-          Rig_New[59 - j] = (tempNewxR[i] - tempNewxR[i + 1]) / step * (temp - tempNewy[i + 1]) + tempNewxR[i + 1];
+            tempy = i;
+            tempx = Rig[i];
+            if (tempx >= Last_col)
+                tempNewxR[i] = MIDMAP;
+            else
+                tempNewxR[i] = (int)(UNDISTORT_XYK*(UNDISTORT_D * UNDISTORT_C + UNDISTORT_H) * 2 * (tempx - 39.5) / (-UNDISTORT_S * (29.5 - tempy) + UNDISTORT_D * UNDISTORT_C) + 0.5);
+
+            if (tempNewxR[i] > MIDMAP)
+                tempNewxR[i] = MIDMAP;
+        }
+    }
+    if (L)
+    {
+        for (i = startpoint; i < 59; i++)
+        {
+            tempy = i;
+            tempx = Lef[i];
+            if (tempx <= Fir_col)
+                tempNewxL[i] = -MIDMAP;
+            else
+                tempNewxL[i] = (int)(UNDISTORT_XYK*(UNDISTORT_D * UNDISTORT_C + UNDISTORT_H) * 2 * (tempx - 39.5) / (-UNDISTORT_S * (29.5 - tempy) + UNDISTORT_D * UNDISTORT_C) + 0.5);
+
+            if (tempNewxL[i] < -MIDMAP)
+                tempNewxL[i] = -MIDMAP;
+        }
+    }
+    /************************插值+压缩+倒序*************************/
+    i = startpoint;
+    j = 59; //59，不补最远行，58，补最远行需+下面两行代码
+    // Rig_New[0] = tempNewxR[0];
+    // Lef_New[0] = tempNewxL[0];
+    while (j >= 0)
+    {
+        temp = UNDISTORT_PYK * j;
+        if (tempNewy[i] >= temp && tempNewy[i + 1] <= temp)
+        {
+            step = tempNewy[i] - tempNewy[i + 1];
+            if (R)
+            {
+                if (tempNewxR[i] != MIDMAP && tempNewxR[i + 1] != MIDMAP)
+                {
+                    Rig_New[59 - j] = (tempNewxR[i] - tempNewxR[i + 1]) / step * (temp - tempNewy[i + 1]) + tempNewxR[i + 1];
+                }
+                else
+                {
+                    Rig_New[59 - j] = MIDMAP;
+                }
+            }
+            if (L)
+            {
+                if (tempNewxL[i] != -MIDMAP && tempNewxL[i + 1] != -MIDMAP)
+                {
+                    Lef_New[59 - j] = (tempNewxL[i] - tempNewxL[i + 1]) / step * (temp - tempNewy[i + 1]) + tempNewxL[i + 1];
+                }
+                else
+                {
+                    Lef_New[59 - j] = -MIDMAP;
+                }
+            }
+            j--;
         }
         else
         {
-          Rig_New[59 - j] = MIDMAP;
+            i++;
         }
-      }
-      if (L)
-      {
-        if (tempNewxL[i] != -MIDMAP && tempNewxL[i + 1] != -MIDMAP)
+    }
+    /************************滤波*************************/
+
+    if (L)
+    {
+
+        for (i = 0; i < 60; i++)
         {
-          Lef_New[59 - j] = (tempNewxL[i] - tempNewxL[i + 1]) / step * (temp - tempNewy[i + 1]) + tempNewxL[i + 1];
+            New_Lef[i] = Lef_New[i];
         }
-        else
+        i = 0;
+        while (i < 57)
         {
-          Lef_New[59 - j] = -MIDMAP;
+            if (Lef_New[i + 2] == -MIDMAP)
+            {
+                i = i + 3;
+                continue;
+            }
+            else if (Lef_New[i + 1] == -MIDMAP)
+            {
+                i = i + 2;
+                continue;
+            }
+            else if (Lef_New[i] == -MIDMAP)
+            {
+                i = i + 1;
+                continue;
+            }
+
+            New_Lef[i + 1] = (Lef_New[i] + Lef_New[i + 1] + Lef_New[i + 2]) / 3;
+            if (Lef_New[i + 3] == -MIDMAP)
+            {
+                i = i + 4;
+                continue;
+            }
+
+            while (i < 57 && Lef_New[i + 3] != -MIDMAP)
+            {
+
+                New_Lef[i + 2] = (Lef_New[i] + Lef_New[i + 1] + Lef_New[i + 2] + Lef_New[i + 3]) / 4;
+                i = i + 1;
+            }
+            i = i + 4;
         }
-      }
-      j--;
     }
-    else
+    if (R)
     {
-      i++;
+        for (i = 0; i < 60; i++)
+        {
+            New_Rig[i] = Rig_New[i];
+        }
+        i = 0;
+        while (i < 57)
+        {
+            if (Rig_New[i + 2] == MIDMAP)
+            {
+                i = i + 3;
+                continue;
+            }
+            else if (Rig_New[i + 1] == MIDMAP)
+            {
+                i = i + 2;
+                continue;
+            }
+            else if (Rig_New[i] == MIDMAP)
+            {
+                i = i + 1;
+                continue;
+            }
+
+            New_Rig[i + 1] = (Rig_New[i] + Rig_New[i + 1] + Rig_New[i + 2]) / 3;
+            if (Rig_New[i + 3] == MIDMAP)
+            {
+                i = i + 4;
+                continue;
+            }
+
+            while (i < 57 && Rig_New[i + 3] != MIDMAP)
+            {
+
+                New_Rig[i + 2] = (Rig_New[i] + Rig_New[i + 1] + Rig_New[i + 2] + Rig_New[i + 3]) / 4;
+                i = i + 1;
+            }
+            i = i + 4;
+        }
     }
-  }
-  /************************滤波*************************/
-
-  if (L)
-  {
-
-    for (i = 0; i < 60; i++)
-    {
-      New_Lef[i] = Lef_New[i];
-    }
-    i = 0;
-    while (i < 57)
-    {
-      if (Lef_New[i + 2] == -MIDMAP)
-      {
-        i = i + 3;
-        continue;
-      }
-      else if (Lef_New[i + 1] == -MIDMAP)
-      {
-        i = i + 2;
-        continue;
-      }
-      else if (Lef_New[i] == -MIDMAP)
-      {
-        i = i + 1;
-        continue;
-      }
-
-      New_Lef[i + 1] = (Lef_New[i] + Lef_New[i + 1] + Lef_New[i + 2]) / 3;
-      if (Lef_New[i + 3] == -MIDMAP)
-      {
-        i = i + 4;
-        continue;
-      }
-
-      while (i < 57 && Lef_New[i + 3] != -MIDMAP)
-      {
-
-        New_Lef[i + 2] = (Lef_New[i] + Lef_New[i + 1] + Lef_New[i + 2] + Lef_New[i + 3]) / 4;
-        i = i + 1;
-      }
-      i = i + 4;
-    }
-  }
-  if (R)
-  {
-    for (i = 0; i < 60; i++)
-    {
-      New_Rig[i] = Rig_New[i];
-    }
-    i = 0;
-    while (i < 57)
-    {
-      if (Rig_New[i + 2] == MIDMAP)
-      {
-        i = i + 3;
-        continue;
-      }
-      else if (Rig_New[i + 1] == MIDMAP)
-      {
-        i = i + 2;
-        continue;
-      }
-      else if (Rig_New[i] == MIDMAP)
-      {
-        i = i + 1;
-        continue;
-      }
-
-      New_Rig[i + 1] = (Rig_New[i] + Rig_New[i + 1] + Rig_New[i + 2]) / 3;
-      if (Rig_New[i + 3] == MIDMAP)
-      {
-        i = i + 4;
-        continue;
-      }
-
-      while (i < 57 && Rig_New[i + 3] != MIDMAP)
-      {
-
-        New_Rig[i + 2] = (Rig_New[i] + Rig_New[i + 1] + Rig_New[i + 2] + Rig_New[i + 3]) / 4;
-        i = i + 1;
-      }
-      i = i + 4;
-    }
-  }
 }
 
 #endif
+
 /*************************************************************************
 *  函数名称：void Pic_find_circle(void)
 *  功能说明：图像找环状
@@ -1650,7 +1651,7 @@ void Pic_find_circle(void)
   int i;
   Lef_circle = Rig_circle = 0;
   Lef_break_point = Rig_break_point = 0;
-  for (i = 55; i > 2; i--) //从非全白行开始寻找
+  for (i = 55; i > Fir_row+11; i--) //从非全白行开始寻找
   {
     if (Last_col - Rig[i] < 2 || Last_col - Rig[i - 12] < 2) //从右边线离开右边界开始寻找
     {
@@ -1673,7 +1674,7 @@ void Pic_find_circle(void)
       break;
     }
   }
-  for (i = 55; i > 10; i--)
+  for (i = 55; i > Fir_row+11; i--)
   {
     if (Lef[i] - Fir_col < 2 || Lef[i - 12] - Fir_col < 2)
     {
@@ -1705,9 +1706,9 @@ void Pic_find_circle(void)
 *  函数返回：无
 *  修改时间：2019.3.23
 *  备    注：突变点定义：左右边线不连续的点
-
+//没有用到，似乎在旧的圆环状态机中使用。变量也注释掉了
 *************************************************************************/
-
+/*
 void Pic_find_leap(void)
 {
   int i;
@@ -1744,7 +1745,8 @@ void Pic_find_leap(void)
     }
   }
 }
-
+*/
+/*
 void Cam_End_Detect(void) //End记录从上至下最后一行边界行
 {
   int i;
@@ -1761,7 +1763,7 @@ void Cam_End_Detect(void) //End记录从上至下最后一行边界行
   }
   Cam_End = max_block(Lef_End, Rig_End);
 }
-
+*/
 #if 0
 int cnt_duanlu = 0;
 int end;

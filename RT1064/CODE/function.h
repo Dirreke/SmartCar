@@ -19,6 +19,8 @@
 #define UNDISTORT_H 55.085226319160249
 #define UNDISTORT_C 0.231001627837663
 #define UNDISTORT_S 0.972953363700620//程序中加了负号，故与matlab相反
+#define UNDISTORT_PYK 4
+#define UNDISTORT_XYK 1.235946609885535
 
 /********************** conrtol.c差速 ********************************/
 #define ANGLE_RANGE 0.5585 //舵机最大偏转角，单位：弧度,32du
