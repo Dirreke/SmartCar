@@ -9,14 +9,12 @@ PID PID_SPEED, PID_TURN, PID_SPEED1, PID_SPEED2;
 摄像头转向控制部分变量
 ************************************************************/
 
-#define cam_offset_range 235
+#define Cam_offset_range 235
 
 //电机输出量 
-float MotorOut;
+// float MotorOut;
 float MotorOut1, MotorOut2;
 
-int16 qd1_result;
-int16 qd2_result;
 float CarSpeed1 = 0, CarSpeed2 = 0;
 /////////////////////////////////////////////////////////????????????  δ??????
 
@@ -40,6 +38,8 @@ float Turn_Cam_D_Table0[15] = {0.65, 0.85, 0.89, 1.4, 1.8, 2.0, 2.3, 0.2, 2.3, 2
 
 void Get_Speed() //获取电机的速度
 {
+  int16 qd1_result;
+  int16 qd2_result;
 
   static float Speed10 = 0, Speed11 = 0, Speed12 = 0, Speed13 = 0;
   static float Speed20 = 0, Speed21 = 0, Speed22 = 0, Speed23 = 0;
@@ -150,7 +150,7 @@ void Speed_Control(void)
   {
     //开关差速在Para中定义
 
-    angle_local = -((int)(Cam_offset)*45) / cam_offset_range;
+    angle_local = -((int)(Cam_offset)*45) / Cam_offset_range;
     angle_local = (int)my_limit(angle_local, 45); //通过摄像头计算得到的转向偏差角得到设限的转向角
 
     lib_active_diff_input(angle_local);       //通过差速pid 得到反馈量active_diff_val

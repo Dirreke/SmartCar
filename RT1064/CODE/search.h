@@ -4,18 +4,20 @@
 
 #include "headfile.h"
 void Pic_seedfill(void); 
-char Final_line(void);
+// char Final_line(void);
 void Pic_seedfill_grow(uint8 flag[CAMERA_H][CAMERA_W],int i,int j);   //DFS搜索算法递归函数
 extern float KP;
 extern void Pic_DrawMid(void);//图像绘制中心线
 extern void Pic_noi_elim(void);//图像噪点去除
 extern void Road_rec(void);
+extern void Pic_DrawMid_und(void);//计算去畸后中心线
 extern void Pic_offset_fig(void);//offset计算
 extern void Pic_offset_filter(void);//offset滤波处理
-extern void Pic_main(void);
+// extern void Pic_main(void);
 extern void Pic_Fix_Line(void);//补线程序
 // extern void Pic_thresh_get(void);//没有用到
 extern void LR_Slope_fig(void);
+extern float L_R_Slope(char LR);
 #ifdef undistort0
 extern void Pic_undistort(void);//图像去畸变
 extern void pixel_undistort(int x,int y,int LR);//像素去畸变
@@ -27,19 +29,21 @@ extern void Pic_undistort(int L ,int R);//图像去畸变
 extern void Pic_find_circle(void);//左右黑线寻找环状黑线
 // extern void Pic_find_leap(void);
 extern void Allwhite_find(void);
-extern void Pic_precal(void);
-extern void grow(int Pic_precal_done[60][80],int Pic_precal_flag[60][80],int i,int j);
+// extern void Pic_precal(void);
+// extern void grow(int Pic_precal_done[60][80],int Pic_precal_flag[60][80],int i,int j);
 //extern void my_key_debug();
-void Pic_Block_Rec(void);
-extern float L_R_Slope(char LR);
-void Cam_Break_Rec(void);
-void Cam_End_Detect(void); //End记录从上至下最后一行边界行
-void SideLine_Find(int find_mode);
-int Pic_Pixle_jl(int row,int col);
-int Pic_Pixle_jr(int row,int col);
+// void Pic_Block_Rec(void);
+
+// void Cam_Break_Rec(void);
+// void Cam_End_Detect(void); //End记录从上至下最后一行边界行
+// void SideLine_Find(int find_mode);
+// int Pic_Pixle_jl(int row,int col);
+// int Pic_Pixle_jr(int row,int col);
 
 extern float Slope(int F1x,int F1y,int F2x,int F2y);
-extern  int Pic_cur_fig(int AX, int AY, int BX, int BY, int CX, int CY);
+// extern  int Pic_cur_fig(int AX, int AY, int BX, int BY, int CX, int CY);
+
+
 
 #define LCDH    60  //OLED显示的行数
 #define LCDW    80  //OLED显示的列数
@@ -50,14 +54,14 @@ extern int Mid[LCDH]; //道路中心点的纵坐标
 
 // extern int Lef_leap[4];
 // extern int Rig_leap[4];//左右变线跳变点坐标
-extern int Fix_line;
+// extern int Fix_line;
 extern int Road;
 extern int Road1_flag;
 extern int Road2_flag;
 extern int Allwhitestart;
 extern int Allwhiteend;
-extern int Allwhitestart2;
-extern int Allwhiteend2;
+// extern int Allwhitestart2;
+// extern int Allwhiteend2;
 
 extern float Lef_slope;
 extern float Rig_slope;

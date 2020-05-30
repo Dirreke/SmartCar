@@ -4,13 +4,13 @@
 
 int Lef[LCDH];     //µÀÂ·×ó·ÖÀëµãµÄ×İ×ø±ê
 int Rig[LCDH];     //µÀÂ·ÓÒ·ÖÀëµãµÄ×İ×ø±ê
-int Lef_err[LCDH]; //ÓÃÓÚÅĞ¶Ï·ÖÀëµãÊÇ·ñ³É¹¦£¬ÈôÎ´ÕÒµ½£¬ÔòÖÃ1
+int Lef_err[LCDH]; //ÓÃÓÚÅĞ¶Ï·ÖÀëµãÊÇ·ñ³É¹¦£¬ÈôÕÒµ½£¬ÔòÖÃ1
 int Rig_err[LCDH];
 int Mid[LCDH]; //µÀÂ·ÖĞĞÄµãµÄ×İ×ø±ê
 int Middle = 41;
 
 float LR_slope;
-float Cam_offset_filter[4] = {0, 0, 0}; //offsetÂË²¨Êı×é
+float Cam_offset_filter[4] = {0, 0, 0,0}; //offsetÂË²¨Êı×é
 float Cam_offset2;
 
 int area[5] = {Last_row - 8, 48, 34, Last_row - 33, Last_row}; //·ÖÇøÓò¼ÆËãÆ«²îµÄ±ß½ç»®·Ö
@@ -18,10 +18,10 @@ int area[5] = {Last_row - 8, 48, 34, Last_row - 33, Last_row}; //·ÖÇøÓò¼ÆËãÆ«²îµ
 int Allwhiterow[LCDH]; //È«°×ĞĞ£¬1±íÊ¾È«°×£¬·ñÔòÎª0
 int Allwhitestart;     //È«°×ĞĞ¿ªÊ¼ĞĞ
 int Allwhiteend;       //È«°×ĞĞ½áÊøĞĞ
-int Allwhitestart2;
-int Allwhiteend2;
-int Fix1x, Fix2x, Fix1y, Fix2y;
-int Fix_line;  //²¹Ïß±êÖ¾Î»
+// int Allwhitestart2;
+// int Allwhiteend2;
+// int Fix1x, Fix2x, Fix1y, Fix2y;
+// int Fix_line;  //²¹Ïß±êÖ¾Î»
 int Fix[LCDH]; //ÓÃÓÚ²¹Ïß
 
 int Lef_circle;
@@ -31,16 +31,14 @@ int Rig_break_point; //×óÓÒ»·×´ºÚÏß¹ÕÍäµã
 // int Lef_leap[4];
 // int Rig_leap[4]; //×óÓÒ±äÏßÌø±äµã×ø±ê
 
-uint16 Lef_road = 0; //×óÓÒ²íÂ·±êÖ¾Î»£¬Èô¼ì²âµ½ÓĞ²íÂ·£¬ÔòÖÃ1
-uint16 Rig_road = 0;
+// uint16 Lef_road = 0; //×óÓÒ²íÂ·±êÖ¾Î»£¬Èô¼ì²âµ½ÓĞ²íÂ·£¬ÔòÖÃ1
+// uint16 Rig_road = 0;
 
-int Road11_count = 0, Road12_count = 0, Road13_count = 0, Road14_count = 0, Road15_count = 0;
-int Road21_count = 0, Road22_count = 0, Road23_count = 0, Road24_count = 0, Road25_count = 0;
 int Road0_flag = 0;
 int Road1_flag = 0;
 int Road2_flag = 0;
 
-int Lef_start = Fir_row, Rig_start = Fir_row, Rig_sep1 = Fir_row, Rig_sep2 = Fir_row, Lef_sep1 = Fir_row, Lef_sep2 = Fir_row, Lef_lose, Rig_lose; //×óÓÒÈüµÀÆğÊ¼µã¡¢ÒÔ¼°Á½¸ö²íÂ·µã
+// int Lef_start = Fir_row, Rig_start = Fir_row, Rig_sep1 = Fir_row, Rig_sep2 = Fir_row, Lef_sep1 = Fir_row, Lef_sep2 = Fir_row, Lef_lose, Rig_lose; //×óÓÒÈüµÀÆğÊ¼µã¡¢ÒÔ¼°Á½¸ö²íÂ·µã
 
 float Lef_slope = 0;
 float Rig_slope = 0;
@@ -48,13 +46,14 @@ float Rig_slope = 0;
 float Cam_offset = 0;
 
 int Road = 0; //µÀÂ·ÀàĞÍ±êÖ¾Î»
-int Road3_state;
-int cross_flag = 0;
-int unclear = 0;
+// int Road3_state;
+// int cross_flag = 0;
+// int unclear = 0;
 int New_Lef[60];
 int New_Rig[60]; //ÓÃÓÚ´æ´¢ÄæÍ¸ÊÓ±ä»»ºóµÄºá×ø±ê
-int Ca_offset = 0;
-int Cam_Break_Flag = 0;
+int New_Mid[60];
+// int Cam_offset = 0;
+// int Cam_Break_Flag = 0;
 
 /*
 extern float EM_Turn_Control;
@@ -67,12 +66,12 @@ extern float EM_Value_23_Sum;
 extern float EM_Road1_Cnt;
 extern float EM_Road2_Cnt;
 */
-extern int16 qd1_result;
+// extern int16 qd1_result;
 
 int Lef_End = 0;
 int Rig_End = 0;
 // int Cam_End = 0;
-int block_flag = 1;
+// int block_flag = 1;
 
 /*µ÷ÊÔ²ÎÊı*/
 /*
@@ -401,7 +400,7 @@ void Pic_noi_elim(void)
     }
   }
 }
-
+#if 0
 /*************************************************************************
 *  º¯ÊıÃû³Æ£ºvoid Pic_thresh_get()
 *  ¹¦ÄÜËµÃ÷£º¶şÖµ»¯ãĞÖµÔ¤»ñÈ¡
@@ -411,16 +410,18 @@ void Pic_noi_elim(void)
 *  ±¸    ×¢£ºÃ»ÓĞÓÃµ½
 *************************************************************************/
 
-// void Pic_thresh_get(void)
-// {
-//   int i = 0;
-//   int thresh_sum = 0;
-//   for (i = area[2]; i < area[1]; i++)
-//   {
-//     thresh_sum = thresh_sum + Image_Use[i][Mid[i]];
-//   }
-//   Threshold = (int)(thresh_sum * 1.0 / (area[1] - area[2])) - 20;
-// }
+void Pic_thresh_get(void)
+{
+  int i = 0;
+  int thresh_sum = 0;
+  for (i = area[2]; i < area[1]; i++)
+  {
+    thresh_sum = thresh_sum + Image_Use[i][Mid[i]];
+  }
+  Threshold = (int)(thresh_sum * 1.0 / (area[1] - area[2])) - 20;
+}
+
+#endif
 
 char Road1_turnin(float a, float b, float c)
 {
@@ -447,196 +448,222 @@ char Road1_turnin(float a, float b, float c)
 char Road1_turnout = 1;
 void Road_rec(void)
 {
-
+  int Road03_count = 0, Road04_count = 0;
+  int Road11_count = 0, Road12_count = 0, Road13_count = 0, Road14_count = 0, Road15_count = 0;
+  int Road21_count = 0, Road22_count = 0, Road23_count = 0, Road24_count = 0, Road25_count = 0;
   // static int oldwhite=5000;
   // static uint8 Road1_cnt1=0;
   // static char Road1_flag1=0;
-  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////ÆÕÍ¨ÈüµÀ¡úÔ²»·
-  if ((Lef_break_point < 40 && Road == 0 && Rig_circle == 0 && Lef_circle == 1 && Rig_slope == 998 && Lef_slope != 998  && Rig[39] - Rig[37] < 5  && Rig[37] - Rig[35] < 5 && Rig[35] - Rig[33] < 5 && Rig[33] - Rig[31] < 5 && Rig[31] - Rig[29] < 5 && Rig[29] - Rig[27] < 5 && Rig[27] - Rig[25] < 5  && New_Lef[52] == -MIDMAP && Rig_edge < 10)) //×óÔ²»·£º×ó±ßÏß,ÓÒ±ßÏß£ºÖ±Í¨µ½µ×//&& Rig[11] != 78
+  if (Road == 0)
   {
-    Road0_flag = 0;
-    Road11_count++;
-    if (Road11_count == 2 && Road1_flag == 0)
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////ÆÕÍ¨ÈüµÀ¡úÔ²»·
+    if ((Lef_break_point < 40 && Road == 0 && Rig_circle == 0 && Lef_circle == 1 && Rig_slope == 998 && Lef_slope != 998 && Rig[39] - Rig[37] < 5 && Rig[37] - Rig[35] < 5 && Rig[35] - Rig[33] < 5 && Rig[33] - Rig[31] < 5 && Rig[31] - Rig[29] < 5 && Rig[29] - Rig[27] < 5 && Rig[27] - Rig[25] < 5 && New_Lef[52] == -MIDMAP && Rig_edge < 10)) //×óÔ²»·£º×ó±ßÏß,ÓÒ±ßÏß£ºÖ±Í¨µ½µ×//&& Rig[11] != 78
     {
-      Road = 1;
-      Road11_count = 0;
-      return;
-    }
-    return;
-  }
-  else if (Rig_break_point < 40 && Road == 0 && Lef_circle == 0 && Rig_circle == 1 && Lef_slope == 998 && Rig_slope != 998 && Lef[25] - Lef[27] < 5 && Lef[27] - Lef[29] < 5 && Lef[29] - Lef[31] < 5 && Lef[31] - Lef[33] < 5 && Lef[33] - Lef[35] < 5&& Lef[35] - Lef[37] < 5 && Lef[37] - Lef[39] < 5   && New_Rig[52] == MIDMAP && Lef_edge < 10) //ÓÒÔ²»·£ºÓÒ±ßÏß£ºÍ»±äµã¡ú¹Õµã¡úÍ»±äµã//&& Lef[11] != 2 
-  {
-    Road0_flag = 0;
-    Road21_count++;
-    if (Road21_count == 2 && Road2_flag == 0)
-    {
-      Road = 2;
-      Road21_count = 0;
-      return;
-    }
-    return;
-  }
-  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////×óÔ²»·¡úÆÕÍ¨ÈüµÀ
-  else if (Road == 1 && Road1_flag == 0) //×¼±¸½ø×óÔ²»·
-  {
-    Road0_flag = 0;
-    // Road1_flag = 1;
-    if(EM_Value_2+EM_Value_3>4.3)//ÍäÄÚÊ¶±ğ£º×óÓÒÁ½±ß½öÓĞÒ»±ß·¢Éú¶ªÏß
-    {
-      Road12_count++;
-      if(Road12_count==2)
+      Road0_flag = 0;
+      Road11_count++;
+      if (Road11_count == 2 && Road1_flag == 0)
       {
-        Road12_count=0;
-        Road1_flag=1;//±íÊ¾ÒÑ¾­½øÈë×óÔ²»·
+        Road = 1;
+        Road11_count = 0;
       }
       return;
     }
-    return;
-  }
-  else if (Road == 1 && (Road1_flag == 1)) //½ø×óÔ²»·1/4
-  {
-    Road0_flag = 0;
-    if (Lef_circle == 0 || (Lef_circle == 1 && Lef_break_point > 45)) //if(((Lef_circle==0||( Lef_circle ==1 && Lef_break_point>30)))&& Road1_turnin(EM_Value_2,EM_Value_3,3.8))//if(((Lef_circle==0||( Lef_circle ==1 && Lef_break_point>30))) && Rig_slope>=10)/ && Road1_turnin(EM_Value_2,EM_Value_3,3.8))    //Rig_slope<1 && (Lef_leap[0]==0||Lef_slope==999)&& Rig_leap[0]==0)
+    else if (Rig_break_point < 40 && Road == 0 && Lef_circle == 0 && Rig_circle == 1 && Lef_slope == 998 && Rig_slope != 998 && Lef[25] - Lef[27] < 5 && Lef[27] - Lef[29] < 5 && Lef[29] - Lef[31] < 5 && Lef[31] - Lef[33] < 5 && Lef[33] - Lef[35] < 5 && Lef[35] - Lef[37] < 5 && Lef[37] - Lef[39] < 5 && New_Rig[52] == MIDMAP && Lef_edge < 10) //ÓÒÔ²»·£ºÓÒ±ßÏß£ºÍ»±äµã¡ú¹Õµã¡úÍ»±äµã//&& Lef[11] != 2
     {
-      Road13_count++;
-      if (Road13_count == 2) //2Ö¡ºó ½ø×óÔ²»·µÚÒ»ÍäµÀ
+      Road0_flag = 0;
+      Road21_count++;
+      if (Road21_count == 2 && Road2_flag == 0)
       {
-        Road1_flag = 2;
-        //        Road1_flag1 = 1;
-        Road13_count = 0;
+        Road = 2;
+        Road21_count = 0;
+      }
+      return;
+    }
+    //ÍäµÀ
+    else if ((Rig_break_point > 45 && Lef_circle == 0 && Rig_circle == 1 && Rig_slope != 998)) //×ó×ªÍä
+    {
+      Road03_count++;
+      if (Road03_count == 2)
+      {
+        Road0_flag = 3;   //turn left flag
+        Road03_count = 0; //reset
+      }
+      return;
+    }
+    else if ((Lef_break_point > 45 && Rig_circle == 0 && Lef_circle == 1 && Lef_slope != 998)) //ÓÒ×ªÍä
+    {
+      Road04_count++;
+      if (Road04_count == 2)
+      {
+        Road0_flag = 4;   //turn right flag
+        Road04_count = 0; //reset
+      }
+      return;
+    }
+  }
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////×óÔ²»·¡úÆÕÍ¨ÈüµÀ
+  else if (Road == 1)
+  {
+    if (Road1_flag == 0) //×¼±¸½ø×óÔ²»·
+    {
+      Road0_flag = 0;
+      // Road1_flag = 1;
+      if (EM_Value_2 + EM_Value_3 > 4.3) //ÍäÄÚÊ¶±ğ£º×óÓÒÁ½±ß½öÓĞÒ»±ß·¢Éú¶ªÏß
+      {
+        Road12_count++;
+        if (Road12_count == 2)
+        {
+          Road12_count = 0;
+          Road1_flag = 1; //±íÊ¾ÒÑ¾­½øÈë×óÔ²»·
+        }
         return;
       }
       return;
     }
-  }
-  else if (Road == 1 && Road1_flag == 2) //½ø×óÔ²»·2/4 ¿ªÊ¼²¹Ïß½øÍäµÀ
-  {
-    Road0_flag = 0;
-    Road14_count++;
-    if (Road14_count == (int)(DIS_IN_CIRCLE * 10000 / (get_speed() * CAMERA_FPS)) + 1) //ºê¶¨ÒåÔÚfunction.h
+    else if (Road1_flag == 1) //½ø×óÔ²»·1/4
     {
-      Road1_flag = 4;
-      Road14_count = 0;
-      return;
-    }
-    return;
-  }
-  else if (Road == 1 && Road1_flag == 4) //½øÈëÔ²»·ÄÚ £¬È¡Ïû²¹Ïß
-  {
-    Road0_flag = 0;
-    if (Rig_circle && whitecnt > 1200) //
-    {
-      Road14_count++;
-      if (Road14_count == 3)
+      Road0_flag = 0;
+      if (Lef_circle == 0 || (Lef_circle == 1 && Lef_break_point > 45)) //if(((Lef_circle==0||( Lef_circle ==1 && Lef_break_point>30)))&& Road1_turnin(EM_Value_2,EM_Value_3,3.8))//if(((Lef_circle==0||( Lef_circle ==1 && Lef_break_point>30))) && Rig_slope>=10)/ && Road1_turnin(EM_Value_2,EM_Value_3,3.8))    //Rig_slope<1 && (Lef_leap[0]==0||Lef_slope==999)&& Rig_leap[0]==0)
       {
-        Road1_flag = 3;
+        Road13_count++;
+        if (Road13_count == 2) //2Ö¡ºó ½ø×óÔ²»·µÚÒ»ÍäµÀ
+        {
+          Road1_flag = 2;
+          //        Road1_flag1 = 1;
+          Road13_count = 0;
+          return;
+        }
+        return;
+      }
+    }
+    else if (Road1_flag == 2) //½ø×óÔ²»·2/4 ¿ªÊ¼²¹Ïß½øÍäµÀ
+    {
+      Road0_flag = 0;
+      Road14_count++;
+      if (Road14_count == (int)(DIS_IN_CIRCLE * 10000 / (get_speed() * CAMERA_FPS)) + 1) //ºê¶¨ÒåÔÚfunction.h
+      {
+        Road1_flag = 4;
         Road14_count = 0;
         return;
       }
+      return;
     }
-    return;
-  }
-  else if (Road == 1 && Road1_flag == 3) //×¼±¸³öÔ²»·»Øµ½Ö±Â· £¬ ¿ªÊ¼²¹Ïß
-  {
-    Road0_flag = 0;
-    if ((Rig_slope > -0.02 && Rig_slope < 0) || (Pixle[58][74] == 1 && Pixle[57][74] == 1 && Pixle[56][74] == 1 && Pixle[55][74] == 1 && Pixle[54][74] == 1 && Pixle[53][74] == 1)) //|| Lef_edge < 20))
+    else if (Road1_flag == 4) //½øÈëÔ²»·ÄÚ £¬È¡Ïû²¹Ïß
     {
-      Road15_count++;
-      if (Road15_count == 4)
+      Road0_flag = 0;
+      if (Rig_circle && whitecnt > 1200) //
       {
-        Road15_count = 0;
-        Road = 0;
-        //Road1_turnout=1;
-        Road1_flag = 0;
-        return;
+        Road14_count++;
+        if (Road14_count == 3)
+        {
+          Road1_flag = 3;
+          Road14_count = 0;
+          return;
+        }
       }
+      return;
     }
-    return;
+    else if (Road1_flag == 3) //×¼±¸³öÔ²»·»Øµ½Ö±Â· £¬ ¿ªÊ¼²¹Ïß
+    {
+      Road0_flag = 0;
+      if ((Rig_slope > -0.02 && Rig_slope < 0) || (Pixle[58][74] == 1 && Pixle[57][74] == 1 && Pixle[56][74] == 1 && Pixle[55][74] == 1 && Pixle[54][74] == 1 && Pixle[53][74] == 1)) //|| Lef_edge < 20))
+      {
+        Road15_count++;
+        if (Road15_count == 4)
+        {
+          Road15_count = 0;
+          Road = 0;
+          //Road1_turnout=1;
+          Road1_flag = 0;
+          return;
+        }
+      }
+      return;
+    }
   }
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////ÓÒÔ²»·¡úÆÕÍ¨ÈüµÀ£¬Í¬ÉÏ×óÔ²»·£¬×¢ÊÍ´Ó¼ò
-  else if (Road == 2 && Road2_flag == 0) //
+  else if (Road == 2)
   {
-    Road0_flag = 0;
-    // Road2_flag = 1;
-    if( EM_Value_2 +EM_Value_3 >4.3)//ÍäÄÚÊ¶±ğ£º×óÓÒÁ½±ß½öÓĞÒ»±ß·¢Éú¶ªÏß
+    if (Road2_flag == 0) //
     {
-      Road22_count++;
-      if(Road22_count==2)
+      Road0_flag = 0;
+      // Road2_flag = 1;
+      if (EM_Value_2 + EM_Value_3 > 4.3) //ÍäÄÚÊ¶±ğ£º×óÓÒÁ½±ß½öÓĞÒ»±ß·¢Éú¶ªÏß
       {
-        Road22_count=0;
-        Road2_flag=1;//±íÊ¾ÒÑ¾­½øÈë×óÔ²»·
+        Road22_count++;
+        if (Road22_count == 2)
+        {
+          Road22_count = 0;
+          Road2_flag = 1; //±íÊ¾ÒÑ¾­½øÈë×óÔ²»·
+        }
+      }
+
+      return;
+    }
+    else if (Road2_flag == 1) //
+    {
+      Road0_flag = 0;
+      if ((Rig_circle == 0 || (Rig_circle == 1 && Rig_break_point > 45)) && Rig_slope >= 10) //if(((Rig_circle==0||( Rig_circle ==1 && Rig_break_point>30))) && Rig_slope>=10)/ && Road1_turnin(EM_Value_2,EM_Value_3,3.4))
+      {
+        Road23_count++;
+        if (Road23_count == 2) //
+        {
+
+          Road2_flag = 2;
+          Road23_count = 0;
+        }
       }
       return;
     }
-
-    return;
-  }
-  else if (Road == 2 && Road2_flag == 1) //
-  {
-    Road0_flag = 0;
-    if ((Rig_circle == 0 || (Rig_circle == 1 && Rig_break_point > 45)) && Rig_slope >= 10) //if(((Rig_circle==0||( Rig_circle ==1 && Rig_break_point>30))) && Rig_slope>=10)/ && Road1_turnin(EM_Value_2,EM_Value_3,3.4))
+    else if (Road2_flag == 2) //
     {
-      Road23_count++;
-      if (Road23_count == 2) //
+      Road0_flag = 0;
+      Road24_count++;
+      if (Road24_count == (int)(DIS_IN_CIRCLE * 10000 / (get_speed() * CAMERA_FPS)) + 1)
       {
-
-        Road2_flag = 2;
-        Road23_count = 0;
-        return;
+        Road24_count = 0;
+        Road2_flag = 4;
       }
-    }
-    return;
-  }
-  else if (Road == 2 && Road2_flag == 2) //
-  {
-    Road0_flag = 0;
-    Road24_count++;
-    if (Road24_count == (int)(DIS_IN_CIRCLE * 10000 / (get_speed() * CAMERA_FPS)) + 1)
-    {
-      Road24_count = 0;
-      Road2_flag = 4;
       return;
     }
-    return;
-  }
-  else if (Road == 2 && Road2_flag == 4)
-  {
-    Road0_flag = 0;
-    if (whitecnt > 1200)
+    else if (Road2_flag == 4)
     {
-      Road25_count++;
-      if (Road25_count == 3)
+      Road0_flag = 0;
+      if (whitecnt > 1200)
       {
-        Road25_count = 0;
-        Road2_flag = 3;
-        return;
+        Road25_count++;
+        if (Road25_count == 3)
+        {
+          Road25_count = 0;
+          Road2_flag = 3;
+        }
       }
+      return;
     }
-    return;
-  }
-  else if (Road == 2 && Road2_flag == 3)
-  {
-    Road0_flag = 0;
-    if ((Lef_slope > 0 && Lef_slope < 0.02) || (Pixle[58][5] == 1 && Pixle[57][5] == 1 && Pixle[56][5] == 1 && Pixle[55][5] == 1 && Pixle[54][5] == 1 && Pixle[53][5] == 1)) //|| Lef_edge < 20))
+    else if (Road2_flag == 3)
     {
-      Road25_count++;
-      if (Road25_count == 4)
+      Road0_flag = 0;
+      if ((Lef_slope > 0 && Lef_slope < 0.02) || (Pixle[58][5] == 1 && Pixle[57][5] == 1 && Pixle[56][5] == 1 && Pixle[55][5] == 1 && Pixle[54][5] == 1 && Pixle[53][5] == 1)) //|| Lef_edge < 20))
       {
-        Road25_count = 0;
-        Road = 0;
-        //Road2_turnout=1;
-        Road2_flag = 0;
-        return;
+        Road25_count++;
+        if (Road25_count == 4)
+        {
+          Road25_count = 0;
+          Road = 0;
+          //Road2_turnout=1;
+          Road2_flag = 0;
+        }
       }
+      return;
     }
-    return;
   }
 
-  if (Road == 0 && whitecnt > 1700 && ((Lef_edge > 10 && Rig_edge > 10) || Lef_edge > 30 || Rig_edge > 30) && Allwhitestart < 40)
+  if (Road == 0 && whitecnt > 1700 && ((Lef_edge > 8 && Rig_edge > 8) || Lef_edge > 20 || Rig_edge > 20) && Allwhitestart < 40)
   {
     Road0_flag = 1;
   }
-  else if ((Allwhitestart > 45 && Allwhiteend < 45) || whitecnt > 1900)
+  else if ((Allwhitestart > 45 && Allwhiteend < 45) && whitecnt > 1900)
   {
     Road0_flag = 2;
   }
@@ -825,18 +852,21 @@ float L_R_Slope(char LR)
 void Allwhite_find(void)
 {
   int i;
-  Allwhitestart = Allwhiteend = Allwhitestart2 = Allwhiteend2 = 0;
+  // Allwhitestart = Allwhiteend = Allwhitestart2 = Allwhiteend2 = 0;
+  Allwhitestart = 0;
+  Allwhiteend = 0;
+
   for (i = Fir_row; i < Last_row + 1; i++)
   {
     Allwhiterow[i] = 0;
     if (Road0_flag == 1 && i < 35)
     {
-      if (abs(Lef[i] - 8) < 5 && abs(72 - Rig[i]) < 5 && Pixle[i][40] == 1 && Pixle[i][20] == 1 && Pixle[i][60] == 1)
+      if (abs(Lef[i] - 8) < 5 && abs(72 - Rig[i]) < 5 && Pixle[i][10] + Pixle[i][20] + Pixle[i][30] + Pixle[i][40] + Pixle[i][50] + Pixle[i][60] + Pixle[i][70] > 5)
       {
         Allwhiterow[i] = 1;
       }
     }
-    else if (abs(Lef[i] - Fir_col) < 5 && abs(Last_col - Rig[i]) < 5 && Pixle[i][40] == 1 && Pixle[i][20] == 1 && Pixle[i][60] == 1)
+    else if (abs(Lef[i] - Fir_col) < 5 && abs(Last_col - Rig[i]) < 5 && Pixle[i][10] + Pixle[i][20] + Pixle[i][30] + Pixle[i][40] + Pixle[i][50] + Pixle[i][60] + Pixle[i][70] > 5)
     {
       Allwhiterow[i] = 1;
     }
@@ -855,6 +885,7 @@ void Allwhite_find(void)
     i = i - 1;
   }
   Allwhiteend = i;
+  /*
   for (i = Allwhiteend - 1; i > Fir_row; i--)
   {
     if (Allwhiterow[i] == 1)
@@ -874,6 +905,7 @@ void Allwhite_find(void)
       }
     }
   }
+  */
 }
 
 /*************************************************************************
@@ -897,18 +929,18 @@ void Pic_Fix_Line(void)
   static float stat_slope;
   static float stat_slope2;
   //static char road1_flag3=1;
-  static char road1_flag1 = 1;//0±íÊ¾ÒÑ¼ÆËãÍê½øÔ²»·Ğ±ÂÊ£¬1±íÊ¾ÒÑ¾­³öÔ²»·£¬ÔÙ´Î½øÔ²»·Ê±¼ÆËã²¹ÏßĞ±ÂÊ
+  static char road1_flag1 = 1; //0±íÊ¾ÒÑ¼ÆËãÍê½øÔ²»·Ğ±ÂÊ£¬1±íÊ¾ÒÑ¾­³öÔ²»·£¬ÔÙ´Î½øÔ²»·Ê±¼ÆËã²¹ÏßĞ±ÂÊ
   static char road2_flag1 = 1;
   if (Road0_flag == 1 && Road == 0)
   {
-    for (i = 55; i > Fir_row+15; i--)
+    for (i = 55; i > Fir_row + 15; i--)
     {
       if (abs(Lef[i] - Fir_col) < 5)
         continue;
       slope = Slope(Lef[i], i, Lef[i - 5], i - 5); //Slope(int F1x,int F1y,int F2x,int F2y)
       if (slope != 999)
       {
-        for (j = i + 1; j > Fir_row+5; j--)
+        for (j = i + 1; j > Fir_row + 5; j--)
         {
           Lef[j] = (int)(Lef[i] - (i - j) / slope);
 #ifdef undistort0
@@ -921,14 +953,14 @@ void Pic_Fix_Line(void)
         break;
       }
     }
-    for (i = 55; i > Fir_row+15; i--)
+    for (i = 55; i > Fir_row + 15; i--)
     {
       if (abs(Rig[i] - Last_col) < 5)
         continue;
       slope = Slope(Rig[i], i, Rig[i - 5], i - 5); //Slope(int F1x,int F1y,int F2x,int F2y)
       if (slope != 999)
       {
-        for (j = i + 1; j > Fir_row+5; j--)
+        for (j = i + 1; j > Fir_row + 5; j--)
         {
           Rig[j] = (int)(Rig[i] - (i - j) / slope);
 #ifdef undistort0
@@ -945,7 +977,7 @@ void Pic_Fix_Line(void)
   }
   else if (Road0_flag == 2 && Road == 0)
   {
-    for (i = Fir_row+5; i < Allwhiteend; i++)
+    for (i = Fir_row + 5; i < Allwhiteend; i++)
     {
       if (abs(Lef[i] - Fir_col) < 15)
         continue;
@@ -965,7 +997,7 @@ void Pic_Fix_Line(void)
         break;
       }
     }
-    for (i = Fir_row+5; i < Allwhiteend; i++)
+    for (i = Fir_row + 5; i < Allwhiteend; i++)
     {
       if (abs(Rig[i] - Last_col) < 15)
         continue;
@@ -991,7 +1023,7 @@ void Pic_Fix_Line(void)
   //×óÔ²»·²¹Ïß´¦Àí
   if (Road == 1 && Road1_flag == 2)
   {
-    for (i = Last_row-13; i > Fir_row; i--)
+    for (i = Last_row - 13; i > Fir_row; i--)
     {
       if (road1_flag1)
       {
@@ -1003,7 +1035,7 @@ void Pic_Fix_Line(void)
 
       if (stat_slope != 999)
       {
-        for (k = Fir_row+3; k < 55; k++)
+        for (k = Fir_row + 3; k < 55; k++)
         {
           Rig[k] = (int)(60 - (57 - k) / stat_slope);
 #ifdef undistort0
@@ -1020,12 +1052,12 @@ void Pic_Fix_Line(void)
   }
   else if (Road == 1 && Road1_flag == 4)
   {
-    road1_flag1 = 1;//±íÊ¾ÒÑ¾­³öÔ²»·£¬ÔÙ´Î½øÔ²»·Ê±¼ÆËã²¹ÏßĞ±ÂÊ
+    road1_flag1 = 1; //±íÊ¾ÒÑ¾­³öÔ²»·£¬ÔÙ´Î½øÔ²»·Ê±¼ÆËã²¹ÏßĞ±ÂÊ
     return;
   }
   else if (Road == 1 && Road1_flag == 3)
   {
-    for (j = Last_row+3; j > Fir_row; j--)
+    for (j = Last_row + 3; j > Fir_row; j--)
     {
 
       if (abs(Rig[j] - Last_col) < 2)
@@ -1034,7 +1066,7 @@ void Pic_Fix_Line(void)
 
       if (stat_slope != 999)
       {
-        for (k = j + 1; k > Fir_row+5; k--)
+        for (k = j + 1; k > Fir_row + 5; k--)
         {
           Rig[k] = (int)(64 - (57 - k) / slope);
 #ifdef undistort0
@@ -1053,7 +1085,7 @@ void Pic_Fix_Line(void)
 
   if (Road == 2 && Road2_flag == 2)
   {
-    for (i = Last_row-13; i > Fir_row; i--)
+    for (i = Last_row - 13; i > Fir_row; i--)
     {
       if (road2_flag1)
       {
@@ -1065,7 +1097,7 @@ void Pic_Fix_Line(void)
 
       if (stat_slope2 != 999)
       {
-        for (k = Fir_row+3; k < 55; k++)
+        for (k = Fir_row + 3; k < 55; k++)
         {
           Lef[k] = (int)(15 - (57 - k) / stat_slope2);
 #ifdef undistort0
@@ -1087,7 +1119,7 @@ void Pic_Fix_Line(void)
   }
   else if (Road == 2 && Road2_flag == 3)
   {
-    for (j = Last_row+3; j > Fir_row; j--)
+    for (j = Last_row + 3; j > Fir_row; j--)
     {
 
       if (abs(Lef[j] - Fir_col) < 2)
@@ -1096,7 +1128,7 @@ void Pic_Fix_Line(void)
 
       if (slope2 != 999)
       {
-        for (k = j + 1; k > Fir_row+5; k--)
+        for (k = j + 1; k > Fir_row + 5; k--)
         {
           Lef[k] = (int)(15 - (57 - k) / slope2);
 #ifdef undistort0
@@ -1128,6 +1160,8 @@ void Pic_Fix_Line(void)
 void Pic_DrawMid(void)
 {
   int i = 0, j = 0, k = 0;
+  int side_search_sw[3] = {2, 5, 10};
+  int side_search_end;
   for (i = Fir_row; i < LCDH; i++) //½«×óÓÒÖÃºÚ£¨·ÀÖ¹È«°×ÏÂÎŞ·¨ÕÒÑ°Ìø±äµã£©
   {
     Rig[i] = 78;
@@ -1167,48 +1201,71 @@ void Pic_DrawMid(void)
   }
   for (i = Last_row - 1; i > Fir_row - 1; i--) //´Óµ×²ãÏòÉÏ»æÏß
   {
-    Lef_err[i] = Rig_err[i] = 0;
-    for (j = Rig[i + 1] - 10; j < Last_col + 1; j++) //ÏòÁ½±ßËÑË÷ÏÂÒ»Ìø±äµã
+    Lef_err[i] = 0;
+    Rig_err[i] = 0;
+    side_search_end = Last_col + 1;
+    for (k = 0; k < 3; ++k)
     {
-      if (Pixle[i][j] == 1 && Pixle[i][j - 1] == 1 && Pixle[i][j - 2] == 1 && Pixle[i][j - 3] == 1 && Pixle[i][j - 4] == 1 && Pixle[i][j - 5] == 1 && Pixle[i][j - 6] == 1 && Pixle[i][j + 1] == 1 && Pixle[i][j + 2] == 0)
+      if (Rig_err[i] == 1)
       {
-        Rig[i] = j + 2;
         break;
       }
-      if (j == Last_col) //ÈôÃ»ÓĞÕÒµ½Ìø±äµã£¬Ôò·Å¿í·¶Î§½øĞĞËÑË÷
+      for (j = Rig[i + 1] - side_search_sw[k]; j < side_search_end; j++) //ÏòÁ½±ßËÑË÷ÏÂÒ»Ìø±äµã
       {
-        Rig_err[i] = 1;
-        for (k = Lef[i + 1] + 5; k < Rig[i + 1] - 10; k++)
+        if (Pixle[i][j] == 1 && Pixle[i][j - 1] == 1 && Pixle[i][j - 2] == 1 && Pixle[i][j - 3] == 1 && Pixle[i][j - 4] == 1 && Pixle[i][j - 5] == 1 && Pixle[i][j - 6] == 1 && Pixle[i][j + 1] == 0 && Pixle[i][j + 2] == 0)
         {
-          if (Pixle[i][k] == 1 && Pixle[i][k - 1] == 1 && Pixle[i][k - 2] == 1 && Pixle[i][k - 3] == 1 && Pixle[i][k - 4] == 1 && Pixle[i][k - 5] == 1 && Pixle[i][k - 6] == 1 && Pixle[i][k + 1] == 0 && Pixle[i][k + 2] == 0)
-          {
-            Rig[i] = k + 2;
-            break;
-          }
+          Rig[i] = j;
+          Rig_err[i] = 1;
+          break;
+        }
+      }
+      side_search_end = Rig[i + 1] - side_search_sw[k];
+    }
+    if (Rig_err[i] == 0) //ÈôÃ»ÓĞÕÒµ½Ìø±äµã£¬Ôò·Å¿í·¶Î§½øĞĞËÑË÷
+    {
+      Rig_err[i] = 1;
+      for (j = Lef[i + 1] + 5; j < side_search_end; j++)
+      {
+        if (Pixle[i][j] == 1 && Pixle[i][j - 1] == 1 && Pixle[i][j - 2] == 1 && Pixle[i][j - 3] == 1 && Pixle[i][j - 4] == 1 && Pixle[i][j - 5] == 1 && Pixle[i][j - 6] == 1 && Pixle[i][j + 1] == 0 && Pixle[i][j + 2] == 0)
+        {
+          Rig[i] = j;
+          break;
         }
       }
     }
-    for (j = Lef[i + 1] + 10; j > Fir_col - 1; j--)
+    side_search_end = Fir_col - 1;
+    for (k = 0; k < 3; ++k)
     {
-      if (Pixle[i][j] == 1 && Pixle[i][j + 1] == 1 && Pixle[i][j + 2] == 1 && Pixle[i][j + 3] == 1 && Pixle[i][j + 4] == 1 && Pixle[i][j + 5] == 1 && Pixle[i][j + 6] == 1 && Pixle[i][j - 1] == 0 && Pixle[i][j - 2] == 0) //¼õĞ¡µÀÂ·±ßÔµµÄ°×½º´øµÄÓ°Ïì
+
+      if (Lef_err[i] == 1)
       {
-        Lef[i] = j;
         break;
       }
-      if (j == Fir_col) //ÈôÃ»ÓĞÕÒµ½£¬Ôò·Å¿í·¶Î§ËÑË÷
+      for (j = Lef[i + 1] + side_search_sw[k]; j > side_search_end; j--)
       {
-        Lef_err[i] = 1;
-        for (k = Rig[i + 1] - 5; k > Lef[i + 1] + 10; k--)
+        if (Pixle[i][j] == 1 && Pixle[i][j + 1] == 1 && Pixle[i][j + 2] == 1 && Pixle[i][j + 3] == 1 && Pixle[i][j + 4] == 1 && Pixle[i][j + 5] == 1 && Pixle[i][j + 6] == 1 && Pixle[i][j - 1] == 0 && Pixle[i][j - 2] == 0) //¼õĞ¡µÀÂ·±ßÔµµÄ°×½º´øµÄÓ°Ïì
         {
-          if (Pixle[i][k] == 1 && Pixle[i][k + 1] == 1 && Pixle[i][k + 2] == 1 && Pixle[i][k + 3] == 1 && Pixle[i][k + 4] == 1 && Pixle[i][k + 5] == 1 && Pixle[i][k + 6] == 1 && Pixle[i][k - 1] == 0 && Pixle[i][k - 2] == 0) //¼õĞ¡µÀÂ·±ßÔµµÄ°×½º´øµÄÓ°Ïì
-          {
-            Lef[i] = k;
-            break;
-          }
+          Lef[i] = j;
+          Lef_err[i] = 1;
+          break;
+        }
+        side_search_end = Lef[i + 1] + side_search_sw[k];
+      }
+    }
+    if (Lef_err[i] == 0) //ÈôÃ»ÓĞÕÒµ½£¬Ôò·Å¿í·¶Î§ËÑË÷
+    {
+      Lef_err[i] = 1;
+      for (j = Rig[i + 1] - 5; j > side_search_end; j--)
+      {
+        if (Pixle[i][j] == 1 && Pixle[i][j + 1] == 1 && Pixle[i][j + 2] == 1 && Pixle[i][j + 3] == 1 && Pixle[i][j + 4] == 1 && Pixle[i][j + 5] == 1 && Pixle[i][j + 6] == 1 && Pixle[i][j - 1] == 0 && Pixle[i][j - 2] == 0) //¼õĞ¡µÀÂ·±ßÔµµÄ°×½º´øµÄÓ°Ïì
+        {
+          Lef[i] = j;
+          break;
         }
       }
     }
   }
+
 
   for (i = Last_row; i > Fir_row - 1; i--) //Æ½¾ùÖµ·¨ÖĞĞÄÏß»æÖÆ
   {
@@ -1222,7 +1279,118 @@ void Pic_DrawMid(void)
     Mid[i] = (int)((Lef[i] + Rig[i]) / 2);
   }
 }
+/*************************************************************************
+ *  º¯ÊıÃû³Æ£ºvoid Pic_DrawMid_und(void)
+ *  ¹¦ÄÜËµÃ÷£º¼ÆËãÈ¥»û±äºóÖĞÏßÎŞ²åÖµ
+ *  ²ÎÊıËµÃ÷£ºÎŞ
+ *  º¯Êı·µ»Ø£ºÎŞ
+ *  ĞŞ¸ÄÊ±¼ä£º2020.5.31
+ *  ±¸    ×¢£º
+ * ************************************************************************/
 
+void Pic_DrawMid_und(void)
+{
+  int i;
+
+  if ((Road0_flag == 3 && Road == 0) || Road == 1)
+  {
+    for (i = 0; i < 60; i++)
+    {
+
+      if (New_Rig[i] != MIDMAP)
+      {
+        New_Mid[i] = New_Rig[i] - ROAD_HALF_WIDTH;
+      }
+      else
+      {
+        New_Mid[i] = 999;
+      }
+    }
+  }
+  else if ((Road0_flag == 4 && Road == 0) || Road == 2)
+  {
+    for (i = 0; i < 60; i++)
+    {
+
+      if (New_Lef[i] != MIDMAP)
+      {
+        New_Mid[i] = New_Lef[i] + ROAD_HALF_WIDTH;
+      }
+      else
+      {
+        New_Mid[i] = 999;
+      }
+    }
+  }
+  else
+  {
+    for (i = 0; i < 60; i++)
+    {
+
+      if (New_Lef[i] != -MIDMAP && New_Rig[i] != MIDMAP) //Mid Calculaing
+      {
+        New_Mid[i] = (int)((New_Lef[i] + New_Rig[i]) / 2.0 + 0.5);
+      }
+      else if (New_Lef[i] == -MIDMAP && New_Rig[i] != MIDMAP)
+      {
+        New_Mid[i] = New_Rig[i] - ROAD_HALF_WIDTH;
+      }
+      else if (New_Lef[i] != -MIDMAP && New_Rig[i] == MIDMAP)
+      {
+        New_Mid[i] = New_Lef[i] + ROAD_HALF_WIDTH;
+      }
+      else
+      {
+        New_Mid[i] = 999;
+      }
+    }
+  }
+  return;
+}
+/*************************************************************************
+*  º¯ÊıÃû³Æ£ºvoid Pic_offset_fig(void)
+*  ¹¦ÄÜËµÃ÷£º¼ÆËãoffset
+*  ²ÎÊıËµÃ÷£ºÎŞ
+*  º¯Êı·µ»Ø£ºÎŞ
+*  ĞŞ¸ÄÊ±¼ä£º2020.5.31_GMY
+*  ±¸    ×¢£ºCam_offsetÎª¸º£¬³µÆ«ÓÒ£¬Ïò×ó¹Õ£»
+             Cam_offsetÎªÕı£¬³µÆ«×ó£¬ÏòÓÒ¹Õ£»
+
+*************************************************************************/
+void Pic_offset_fig(void)
+{
+  int i;
+  int count = 0; // count2 = 0;
+
+  for (i = FIG_AREA_FAR; i < FIG_AREA_NEAR; ++i)
+  {
+    if (New_Rig[i] != 999)
+    {
+      Cam_offset = Cam_offset + New_Mid[i];
+      count++;
+    }
+  }
+  if (count != 0)
+  {
+    Cam_offset = Cam_offset / count;
+  }
+
+  if ((Road0_flag == 1 || Road0_flag == 2) && Road == 0)
+  {
+    Cam_offset *= 0.3;
+  }
+
+  else if (Road1_flag == 3 || Road2_flag == 3)
+    Cam_offset *= 0.8;
+
+  // if (Road == 3 || Road1_flag == 2 || Road2_flag == 2)
+  // {
+  //   Cam_offset *= 1;
+  // }
+  return;
+}
+
+#if 0 //ÕûÀí´úÌæ
 /*************************************************************************
 *  º¯ÊıÃû³Æ£ºvoid Pic_offset_fig(void)
 *  ¹¦ÄÜËµÃ÷£º¼ÆËãoffset
@@ -1237,10 +1405,11 @@ void Pic_DrawMid(void)
 void Pic_offset_fig(void)
 {
   int i;
-  int count = 0;// count2 = 0;
+  int count = 0; // count2 = 0;
 
-  for (i = Fir_row; i < 60; i++)
+  for (i = 0; i < 60; i++)
   {
+    
     //  if(Road==1&&(Road1_flag==0||Road1_flag==2))
     //  {
     //      if(New_Rig[i]!=MIDMAP)
@@ -1322,7 +1491,7 @@ void Pic_offset_fig(void)
     }
     */
   }
-  if (Road0_flag && Road == 0)
+  if ((Road0_flag==1 || Road0_flag==2) && Road == 0)
   {
     Cam_offset *= 0.3;
   }
@@ -1348,6 +1517,7 @@ void Pic_offset_fig(void)
   return;
 }
 
+#endif
 /*************************************************************************
 *  º¯ÊıÃû³Æ£ºvoid Pic_offset_filter(void)
 *  ¹¦ÄÜËµÃ÷£º·Ö¶Î¼ÆËãµÀÂ·Æ«²îÖµ¼°ÊµÏÖÂË²¨
@@ -1365,7 +1535,6 @@ void Pic_offset_filter(void)
   Cam_offset_filter[1] = Cam_offset_filter[0];
   Cam_offset_filter[0] = Cam_offset;
   Cam_offset = Cam_offset_filter[0] * 0.5 + Cam_offset_filter[1] * 0.2 + Cam_offset_filter[2] * 0.2 + Cam_offset_filter[3] * 0.1;
-  Cam_offset *= 1.1;
   //Cam_offset=Cam_offset_filter[0]*0.45+Cam_offset_filter[1]*0.15+Cam_offset_filter[2]*0.15+Cam_offset_filter[3]*0.05+Cam_offset2*0.2;
 }
 
@@ -1463,175 +1632,175 @@ void Pic_undistort(void)
  * **********************************************************************/
 void Pic_undistort(int L, int R)
 {
-    int i = 0;
-    int j = 0;
-    int const startpoint = 29;
-    int tempy;
-    int tempx;
-    int tempNewxR[60];
-    int tempNewxL[60];
-    int temp;
-    int step;
-    int Rig_New[60];
-    int Lef_New[60];
-    static const int tempNewy[60] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1188,807,602,475,387,324,276,238,208,182,161,144,128,115,103,93,84,75,68,61,55,49,44,39,35,31,27,24,20,17,14,12,9,7,4,2,0,0};
+  int i = 0;
+  int j = 0;
+  int const startpoint = 29;
+  int tempy;
+  int tempx;
+  int tempNewxR[60];
+  int tempNewxL[60];
+  int temp;
+  int step;
+  int Rig_New[60];
+  int Lef_New[60];
+  static const int tempNewy[60] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1188, 807, 602, 475, 387, 324, 276, 238, 208, 182, 161, 144, 128, 115, 103, 93, 84, 75, 68, 61, 55, 49, 44, 39, 35, 31, 27, 24, 20, 17, 14, 12, 9, 7, 4, 2, 0, 0};
 
-    /*************************Ó³Éä*******************************/
-    if (R)
+  /*************************Ó³Éä*******************************/
+  if (R)
+  {
+    for (i = startpoint; i < 59; i++)
     {
-        for (i = startpoint; i < 59; i++)
-        {
-            tempy = i;
-            tempx = Rig[i];
-            if (tempx >= Last_col)
-                tempNewxR[i] = MIDMAP;
-            else
-                tempNewxR[i] = (int)(UNDISTORT_XYK*(UNDISTORT_D * UNDISTORT_C + UNDISTORT_H) * 2 * (tempx - 39.5) / (-UNDISTORT_S * (29.5 - tempy) + UNDISTORT_D * UNDISTORT_C) + 0.5);
+      tempy = i;
+      tempx = Rig[i];
+      if (tempx >= Last_col)
+        tempNewxR[i] = MIDMAP;
+      else
+        tempNewxR[i] = (int)(UNDISTORT_XYK * (UNDISTORT_D * UNDISTORT_C + UNDISTORT_H) * 2 * (tempx - 39.5) / (-UNDISTORT_S * (29.5 - tempy) + UNDISTORT_D * UNDISTORT_C) + 0.5);
 
-            if (tempNewxR[i] > MIDMAP)
-                tempNewxR[i] = MIDMAP;
-        }
+      if (tempNewxR[i] > MIDMAP)
+        tempNewxR[i] = MIDMAP;
     }
-    if (L)
+  }
+  if (L)
+  {
+    for (i = startpoint; i < 59; i++)
     {
-        for (i = startpoint; i < 59; i++)
-        {
-            tempy = i;
-            tempx = Lef[i];
-            if (tempx <= Fir_col)
-                tempNewxL[i] = -MIDMAP;
-            else
-                tempNewxL[i] = (int)(UNDISTORT_XYK*(UNDISTORT_D * UNDISTORT_C + UNDISTORT_H) * 2 * (tempx - 39.5) / (-UNDISTORT_S * (29.5 - tempy) + UNDISTORT_D * UNDISTORT_C) + 0.5);
+      tempy = i;
+      tempx = Lef[i];
+      if (tempx <= Fir_col)
+        tempNewxL[i] = -MIDMAP;
+      else
+        tempNewxL[i] = (int)(UNDISTORT_XYK * (UNDISTORT_D * UNDISTORT_C + UNDISTORT_H) * 2 * (tempx - 39.5) / (-UNDISTORT_S * (29.5 - tempy) + UNDISTORT_D * UNDISTORT_C) + 0.5);
 
-            if (tempNewxL[i] < -MIDMAP)
-                tempNewxL[i] = -MIDMAP;
-        }
+      if (tempNewxL[i] < -MIDMAP)
+        tempNewxL[i] = -MIDMAP;
     }
-    /************************²åÖµ+Ñ¹Ëõ+µ¹Ğò*************************/
-    i = startpoint;
-    j = 59; //59£¬²»²¹×îÔ¶ĞĞ£¬58£¬²¹×îÔ¶ĞĞĞè+ÏÂÃæÁ½ĞĞ´úÂë
-    // Rig_New[0] = tempNewxR[0];
-    // Lef_New[0] = tempNewxL[0];
-    while (j >= 0)
+  }
+  /************************²åÖµ+Ñ¹Ëõ+µ¹Ğò*************************/
+  i = startpoint;
+  j = 59; //59£¬²»²¹×îÔ¶ĞĞ£¬58£¬²¹×îÔ¶ĞĞĞè+ÏÂÃæÁ½ĞĞ´úÂë
+  // Rig_New[0] = tempNewxR[0];
+  // Lef_New[0] = tempNewxL[0];
+  while (j >= 0)
+  {
+    temp = UNDISTORT_PYK * j;
+    if (tempNewy[i] >= temp && tempNewy[i + 1] <= temp)
     {
-        temp = UNDISTORT_PYK * j;
-        if (tempNewy[i] >= temp && tempNewy[i + 1] <= temp)
+      step = tempNewy[i] - tempNewy[i + 1];
+      if (R)
+      {
+        if (tempNewxR[i] != MIDMAP && tempNewxR[i + 1] != MIDMAP)
         {
-            step = tempNewy[i] - tempNewy[i + 1];
-            if (R)
-            {
-                if (tempNewxR[i] != MIDMAP && tempNewxR[i + 1] != MIDMAP)
-                {
-                    Rig_New[59 - j] = (tempNewxR[i] - tempNewxR[i + 1]) / step * (temp - tempNewy[i + 1]) + tempNewxR[i + 1];
-                }
-                else
-                {
-                    Rig_New[59 - j] = MIDMAP;
-                }
-            }
-            if (L)
-            {
-                if (tempNewxL[i] != -MIDMAP && tempNewxL[i + 1] != -MIDMAP)
-                {
-                    Lef_New[59 - j] = (tempNewxL[i] - tempNewxL[i + 1]) / step * (temp - tempNewy[i + 1]) + tempNewxL[i + 1];
-                }
-                else
-                {
-                    Lef_New[59 - j] = -MIDMAP;
-                }
-            }
-            j--;
+          Rig_New[59 - j] = (tempNewxR[i] - tempNewxR[i + 1]) / step * (temp - tempNewy[i + 1]) + tempNewxR[i + 1];
         }
         else
         {
-            i++;
+          Rig_New[59 - j] = MIDMAP;
         }
+      }
+      if (L)
+      {
+        if (tempNewxL[i] != -MIDMAP && tempNewxL[i + 1] != -MIDMAP)
+        {
+          Lef_New[59 - j] = (tempNewxL[i] - tempNewxL[i + 1]) / step * (temp - tempNewy[i + 1]) + tempNewxL[i + 1];
+        }
+        else
+        {
+          Lef_New[59 - j] = -MIDMAP;
+        }
+      }
+      j--;
     }
-    /************************ÂË²¨*************************/
-
-    if (L)
+    else
     {
-
-        for (i = 0; i < 60; i++)
-        {
-            New_Lef[i] = Lef_New[i];
-        }
-        i = 0;
-        while (i < 57)
-        {
-            if (Lef_New[i + 2] == -MIDMAP)
-            {
-                i = i + 3;
-                continue;
-            }
-            else if (Lef_New[i + 1] == -MIDMAP)
-            {
-                i = i + 2;
-                continue;
-            }
-            else if (Lef_New[i] == -MIDMAP)
-            {
-                i = i + 1;
-                continue;
-            }
-
-            New_Lef[i + 1] = (Lef_New[i] + Lef_New[i + 1] + Lef_New[i + 2]) / 3;
-            if (Lef_New[i + 3] == -MIDMAP)
-            {
-                i = i + 4;
-                continue;
-            }
-
-            while (i < 57 && Lef_New[i + 3] != -MIDMAP)
-            {
-
-                New_Lef[i + 2] = (Lef_New[i] + Lef_New[i + 1] + Lef_New[i + 2] + Lef_New[i + 3]) / 4;
-                i = i + 1;
-            }
-            i = i + 4;
-        }
+      i++;
     }
-    if (R)
+  }
+  /************************ÂË²¨*************************/
+
+  if (L)
+  {
+
+    for (i = 0; i < 60; i++)
     {
-        for (i = 0; i < 60; i++)
-        {
-            New_Rig[i] = Rig_New[i];
-        }
-        i = 0;
-        while (i < 57)
-        {
-            if (Rig_New[i + 2] == MIDMAP)
-            {
-                i = i + 3;
-                continue;
-            }
-            else if (Rig_New[i + 1] == MIDMAP)
-            {
-                i = i + 2;
-                continue;
-            }
-            else if (Rig_New[i] == MIDMAP)
-            {
-                i = i + 1;
-                continue;
-            }
-
-            New_Rig[i + 1] = (Rig_New[i] + Rig_New[i + 1] + Rig_New[i + 2]) / 3;
-            if (Rig_New[i + 3] == MIDMAP)
-            {
-                i = i + 4;
-                continue;
-            }
-
-            while (i < 57 && Rig_New[i + 3] != MIDMAP)
-            {
-
-                New_Rig[i + 2] = (Rig_New[i] + Rig_New[i + 1] + Rig_New[i + 2] + Rig_New[i + 3]) / 4;
-                i = i + 1;
-            }
-            i = i + 4;
-        }
+      New_Lef[i] = Lef_New[i];
     }
+    i = 0;
+    while (i < 57)
+    {
+      if (Lef_New[i + 2] == -MIDMAP)
+      {
+        i = i + 3;
+        continue;
+      }
+      else if (Lef_New[i + 1] == -MIDMAP)
+      {
+        i = i + 2;
+        continue;
+      }
+      else if (Lef_New[i] == -MIDMAP)
+      {
+        i = i + 1;
+        continue;
+      }
+
+      New_Lef[i + 1] = (Lef_New[i] + Lef_New[i + 1] + Lef_New[i + 2]) / 3;
+      if (Lef_New[i + 3] == -MIDMAP)
+      {
+        i = i + 4;
+        continue;
+      }
+
+      while (i < 57 && Lef_New[i + 3] != -MIDMAP)
+      {
+
+        New_Lef[i + 2] = (Lef_New[i] + Lef_New[i + 1] + Lef_New[i + 2] + Lef_New[i + 3]) / 4;
+        i = i + 1;
+      }
+      i = i + 4;
+    }
+  }
+  if (R)
+  {
+    for (i = 0; i < 60; i++)
+    {
+      New_Rig[i] = Rig_New[i];
+    }
+    i = 0;
+    while (i < 57)
+    {
+      if (Rig_New[i + 2] == MIDMAP)
+      {
+        i = i + 3;
+        continue;
+      }
+      else if (Rig_New[i + 1] == MIDMAP)
+      {
+        i = i + 2;
+        continue;
+      }
+      else if (Rig_New[i] == MIDMAP)
+      {
+        i = i + 1;
+        continue;
+      }
+
+      New_Rig[i + 1] = (Rig_New[i] + Rig_New[i + 1] + Rig_New[i + 2]) / 3;
+      if (Rig_New[i + 3] == MIDMAP)
+      {
+        i = i + 4;
+        continue;
+      }
+
+      while (i < 57 && Rig_New[i + 3] != MIDMAP)
+      {
+
+        New_Rig[i + 2] = (Rig_New[i] + Rig_New[i + 1] + Rig_New[i + 2] + Rig_New[i + 3]) / 4;
+        i = i + 1;
+      }
+      i = i + 4;
+    }
+  }
 }
 
 #endif
@@ -1651,7 +1820,7 @@ void Pic_find_circle(void)
   int i;
   Lef_circle = Rig_circle = 0;
   Lef_break_point = Rig_break_point = 0;
-  for (i = 55; i > Fir_row+11; i--) //´Ó·ÇÈ«°×ĞĞ¿ªÊ¼Ñ°ÕÒ
+  for (i = 55; i > Fir_row + 11; i--) //´Ó·ÇÈ«°×ĞĞ¿ªÊ¼Ñ°ÕÒ
   {
     if (Last_col - Rig[i] < 2 || Last_col - Rig[i - 12] < 2) //´ÓÓÒ±ßÏßÀë¿ªÓÒ±ß½ç¿ªÊ¼Ñ°ÕÒ
     {
@@ -1674,7 +1843,7 @@ void Pic_find_circle(void)
       break;
     }
   }
-  for (i = 55; i > Fir_row+11; i--)
+  for (i = 55; i > Fir_row + 11; i--)
   {
     if (Lef[i] - Fir_col < 2 || Lef[i - 12] - Fir_col < 2)
     {
@@ -1698,7 +1867,7 @@ void Pic_find_circle(void)
     }
   }
 }
-
+#if 0
 /*************************************************************************
 *  º¯ÊıÃû³Æ£ºvoid Pic_find_leap(void)
 *  ¹¦ÄÜËµÃ÷£ºÍ¼ÏñÕÒÍ»±äµã
@@ -1764,7 +1933,7 @@ void Cam_End_Detect(void) //End¼ÇÂ¼´ÓÉÏÖÁÏÂ×îºóÒ»ĞĞ±ß½çĞĞ
   Cam_End = max_block(Lef_End, Rig_End);
 }
 */
-#if 0
+
 int cnt_duanlu = 0;
 int end;
 int Road6_flag = 0;

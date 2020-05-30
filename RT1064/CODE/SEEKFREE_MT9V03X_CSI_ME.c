@@ -77,7 +77,7 @@ uint8_t GetOSTU(uint8_t tmImage[CAMERA_H][CAMERA_W])
   for (j = 0; j < 256; j++)
     HistoGram[j] = 0; //初始化灰度直方图
 
-  for (j = 0; j < CAMERA_H; j++)
+  for (j = START_LINE; j < CAMERA_H; j++)
   {
     for (i = 0; i < CAMERA_W; i++)
     {
@@ -197,14 +197,14 @@ void Pic_particular(void)
   int i;
   Lef_edge = 0;
   Rig_edge = 0;
-  for (i = Last_row; i > Fir_row - 1; i--)
+  for (i = 59; i > 0; i--)
   {
     if (New_Lef[i] == -MIDMAP)
       Lef_edge += 1;
     if (New_Rig[i] == MIDMAP)
       Rig_edge += 1;
   }
-  for (i = Last_row; i > Fir_row - 1; i--) //平均值法中心线绘制
+  for (i = 59; i > 0; i--) //平均值法中心线绘制
   {
     Mid[i] = (int)((New_Lef[i] + New_Rig[i]) / 20) + 40;
   }
@@ -230,7 +230,7 @@ void Get_pic_with_edge()
 }
 
 /*************************************************************************
-*  函数名称：void Pic_main()
+*  函数名称：void camera_dispose_main(void)
 *  功能说明：图像处理主函数
 *  参数说明：无
 *  函数返回：无
@@ -313,14 +313,14 @@ void camera_dispose_main(void) //摄像头处理主函数
 #endif
   Pic_particular();
   LR_Slope_fig();    //左右边线斜率计算
-  Allwhite_find();   //查找全白行
-  //*GMY改到这里*//
+  Allwhite_find();   //查找全白行//注释Allwhitestart2.Allwhiteend2
   Pic_find_circle(); //寻找环状黑线及拐点 
   // Pic_find_leap();   //寻找突变点//没有用到，似乎在旧的圆环状态机中使用 search.c中，函数变量都注释掉了
   //Pic_Block_Rec();
   //Cam_Break_Rec();
   Road_rec();          //利用左右边线斜率识别赛道
   Pic_Fix_Line();      //补线处理
+  Pic_DrawMid_und();//计算去畸后中线
   Pic_offset_fig();    //offset计算//注释Cam_offset2
   Pic_offset_filter(); //offset滤波
 
