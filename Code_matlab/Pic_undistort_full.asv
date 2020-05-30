@@ -3,108 +3,43 @@ global ImageH MIDMAP New_Lef New_Rig;
 % if nargin==4
     flag_canshu=0;
 % end
-% % % %% 参数
-% % % startpoint=12;%此参数小为远景。，从此开始取
-% % % D0=10cm
-% % % % RoadWidth=40.4cm
-% % % % H0=10cm%17.5cm
-% % % %n=68;
-% % % %theta=60du
-% % % % /40.4*300
-% H0=129.9504950495050;
-% H0=70.3;
-% D0=67;
-% % % D0=60;
-% n0=68*2;
-n0=77*2;
-% % % K0=300/n0;
-% % % d=sqrt((H0^2+D0^2)/K0^2-30^2);
-% % % h=(K0-1)*d;
-% % % % theta=-0.389;
-% % % theta=-(atan(D0/H0)+atan(30/d));
-% % % % theta=-0.2;
-% % % % K0=300/n0;
-% % % % d=sqrt((H0^2+D0^2)/K0^2-30^2);
-% % % % h=(K0-1)*d;
-% % % c=cos(theta);
-% % % s=sin(theta);
-% % % % clear Rig_New Lef_New;
+
 %%
-K=150/130;%0.71;% K=150*(s*-28.5+d*c)/((d*c+h)*71);
-startpoint=25;
-% H0=75;
-% D0=50;
-% n0=77*2*K;
-% K1=300/n0;
-% theta1=0;
-% d1=0;
-% while 1
-%     d0=d1;
-%     theta0=theta1;
-%     ah=H0-28.5*K*sin(theta0);
-%     ad=D0+28.5*K*cos(theta0);
-%     d1=sqrt((ah^2+ad^2)/(K1-1)^2-(28.5*K)^2);
-%     theta1=(atan(ad/ah)+atan(28.5*K/d1));
-%     if d1-d0<1e-12 && theta1-theta0<1e-6
-%         break
-%     end
-% end
-% c=cos(-theta1);
-% s=sin(-theta1);
-% h=H0;
-% d=d1;
-  
-h=55.115450159981592;d=40.979835145934850;theta1=atan(d*(71/8-1)/(71*5.5/8+28.5));
+
+startpoint=24+1;
+
+h=55.085226319160249;d=41.350059427213317;theta1=atan(d*(71/8-1)/(71*5.5/8+28.5));
 c=cos(-theta1);
 s=sin(-theta1);
-
+K=150*(s*-28.5+d*c)/((d*c+h)*70);%0.71;% K=150*(s*-28.5+d*c)/((d*c+h)*70);
 
 % clear theta0 ad ah
 %%
-% K=-0.6;
-% startpoint=20;
-% H0=75;
-% D0=82;
-% n0=77*2*K;
-% K1=300/n0;
-% theta1=0;
-% d1=0;
-% while 1
-%     d0=d1;
-%     theta0=theta1;
-%     ah=H0+28.5*K*sin(theta0);
-%     ad=D0-28.5*K*cos(theta0);
-%     d1=sqrt((ah^2+ad^2)/(K1+1)^2-(28.5*K)^2);
-%     theta1=(atan(ad/ah)+atan(-28.5*K/d1));
-%     if d1-d0<1e-12 && theta1-theta0<1e-6
-%         break
-%     end
-% end
-% c=cos(-theta1);
-% s=sin(-theta1);
-% h=H0;
-% d=-d1;
-% clear theta0 ad ah
+Pic_R_temp;Pic_L_temp;
+
+
+
 %% 去畸变
+
 tempNewy=zeros(ImageH,1);
 % 此段程序中在C中为表
 for k=1:ImageH
     
     tempy=k-1;
-    tempNewy(k)=round(((d*c+h)*(29.5-tempy)-h*d*s)/(s*(29.5-tempy)+d*c));
+    tempNewy(k)=round(((d*c+h)*tempy-h*d*s)/(s*tempy+d*c));
     % tempNewy(k)=((d*c+h)*(29.5-tempy)-h*d*s)/(s*(29.5-tempy)+d*c);
 end
-tempNewy=tempNewy-tempNewy(60);
+tempNewy=tempNewy-tempNewy(59);
 % 代码
 tempNewxR=zeros(ImageH,1);
 if R
     for k=startpoint:ImageH
         tempy=k-1;
         tempxR=Pic_R(k);
-        if tempxR==78||tempxR==79
+        if Pic_R(k)==78||Pic_R(k)==79
             tempNewxR(k)=MIDMAP;
         else
-            tempNewxR(k)=round(K*(d*c+h)*2*(tempxR-40.5)/(s*(29.5-tempy)+d*c));
+            tempNewxR(k)=round(K*(d*c+h)*2*tempxR/(s*tempyx+d*c));
         end
         if tempNewxR(k)>MIDMAP
             tempNewxR(k)=MIDMAP;
@@ -117,10 +52,10 @@ if L
 for k=startpoint:ImageH
     tempy=k-1;
     tempxL=Pic_L(k);
-    if tempxL==1||tempxL==2
+    if Pic_L(k)==1||Pic_L(k)==2
         tempNewxL(k)=-MIDMAP;
     else
-        tempNewxL(k)=round(K*(d*c+h)*2*(tempxL-40.5)/(s*(29.5-tempy)+d*c));
+        tempNewxL(k)=round(K*(d*c+h)*2*tempxL/(s*tempy+d*c));
     end
     if tempNewxL(k)<-MIDMAP
         tempNewxL(k)=-MIDMAP;

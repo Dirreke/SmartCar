@@ -25,7 +25,7 @@ extern void Pic_undistort(int L ,int R);//图像去畸变
 #endif
 //extern void Pixel_undistort(int x,int y,int LR);//像素去畸变
 extern void Pic_find_circle(void);//左右黑线寻找环状黑线
-extern void Pic_find_leap(void);
+// extern void Pic_find_leap(void);
 extern void Allwhite_find(void);
 extern void Pic_precal(void);
 extern void grow(int Pic_precal_done[60][80],int Pic_precal_flag[60][80],int i,int j);
@@ -48,8 +48,8 @@ extern int Lef[LCDH]; //道路左分离点的纵坐标
 extern int Rig[LCDH]; //道路右分离点的纵坐标
 extern int Mid[LCDH]; //道路中心点的纵坐标
 
-extern int Lef_leap[4];
-extern int Rig_leap[4];//左右变线跳变点坐标
+// extern int Lef_leap[4];
+// extern int Rig_leap[4];//左右变线跳变点坐标
 extern int Fix_line;
 extern int Road;
 extern int Road1_flag;
@@ -97,10 +97,10 @@ extern float Cam_offset;
 #ifdef undistort1
     #define MIDMAP 860  //undistort1
 
-    #define FIG_AREA_NEAR   57//50//350/*(59-tempNewy(50)/Bili)(Bili=12)
-    #define FIG_AREA_FAR   44//28//550   //逆透视变换后的图像计算区域
-    #define FIG_AREA_FAR2   44//20//600
-    #define FIG_AREA_FAR3   39//15//700
+    #define FIG_AREA_NEAR   54//50//350/*(59-tempNewy(50)/Bili)(Bili=12)
+    #define FIG_AREA_FAR   5//28//550   //逆透视变换后的图像计算区域
+    // #define FIG_AREA_FAR2   44//20//600
+    #define FIG_AREA_FAR3   5//15//700
 #endif
 
 #define ROAD_HALF_WIDTH  150  //赛道半宽
