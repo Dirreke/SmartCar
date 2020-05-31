@@ -204,10 +204,10 @@ void Pic_particular(void)
     if (New_Rig[i] == MIDMAP)
       Rig_edge += 1;
   }
-  for (i = 59; i > 0; i--) //平均值法中心线绘制
-  {
-    Mid[i] = (int)((New_Lef[i] + New_Rig[i]) / 20) + 40;
-  }
+  // for (i = 59; i > 0; i--) //平均值法中心线绘制
+  // {
+  //   Mid[i] = (int)((New_Lef[i] + New_Rig[i]) / 20) + 40;
+  // }
 }
 
 /*************************************************************************
@@ -238,32 +238,32 @@ void Get_pic_with_edge()
 *  备    注：
 *************************************************************************/
 
-int circle_set = 350;
-int circle_set2 = -350;
-int circle_flag = 0;
+// int circle_set = 350;
+// int circle_set2 = -350;
+// int circle_flag = 0;
 
 void camera_dispose_main(void) //摄像头处理主函数
 {
   // static char Road3_cnt = 0 ;
   Get_Use_Image(); //图像预处理
-  if (Road == 0)
-  {
-    circle_flag = 0;
-  }
-  if (Road == 1)
-  {
-    if (circle_set < 1) //Cam_Block_Cnt == 100)
-    {
-      Road = 0;
-    }
-  }
-  if (Road == 2)
-  {
-    if (circle_set < 1) //Cam_Block_Cnt == 100)
-    {
-      Road = 0;
-    }
-  }
+  // if (Road == 0)
+  // {
+  //   circle_flag = 0;
+  // }
+  // if (Road == 1)
+  // {
+  //   if (circle_set < 1) //Cam_Block_Cnt == 100)
+  //   {
+  //     Road = 0;
+  //   }
+  // }
+  // if (Road == 2)
+  // {
+  //   if (circle_set < 1) //Cam_Block_Cnt == 100)
+  //   {
+  //     Road = 0;
+  //   }
+  // }
 
   /*
      if(Road == 0)
@@ -303,7 +303,7 @@ void camera_dispose_main(void) //摄像头处理主函数
 //    }
     Pic_noi_elim(); //图像简单去噪点
   }
-  Pic_DrawMid(); //寻找左右边线
+  Pic_DrawLRside();//寻找左右边线
   // Cam_End_Detect();
 #ifdef undistort0
   Pic_undistort(); //图像去畸变
@@ -320,6 +320,8 @@ void camera_dispose_main(void) //摄像头处理主函数
   //Cam_Break_Rec();
   Road_rec();          //利用左右边线斜率识别赛道
   Pic_Fix_Line();      //补线处理
+  start_stop_rec();//识别起跑线
+  Pic_DrawMid();//计算去畸前中心线-仅上位机用
   Pic_DrawMid_und();//计算去畸后中线
   Pic_offset_fig();    //offset计算//注释Cam_offset2
   Pic_offset_filter(); //offset滤波
@@ -330,4 +332,28 @@ void camera_dispose_main(void) //摄像头处理主函数
   //{
 
   //}
+}
+
+void camera_simple(void) //摄像头处理主函数
+{
+  
+  Get_Use_Image(); //图像预处理
+  sobel();
+  Pic_DrawLRside();//寻找左右边线
+#ifdef undistort0
+  Pic_undistort(); //图像去畸变
+#endif
+#ifdef undistort1
+  Pic_undistort(1, 1); //图像去畸变
+#endif
+  LR_Slope_fig();    //左右边线斜率计算
+
+  Pic_DrawMid();//计算去畸前中心线
+  Pic_DrawMid_und();//计算去畸后中线
+  Pic_offset_fig();    //offset计算//注释Cam_offset2
+  Pic_offset_filter(); //offset滤波
+
+  Get_pic_with_edge(); //获得带边线灰度图
+
+
 }

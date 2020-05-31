@@ -172,8 +172,8 @@ void Send_Variable(void){
   My_Put_Char(0xaa);
   My_Put_Char(0xff);
   My_Put_Char(0x01);
-  My_Put_Char(12);
-  for(int i=0;i<12;i++)
+  My_Put_Char(13);
+  for(int i=0;i<13;i++)
   {
             temp1=Variable[i];
             ch=BYTE0(temp1);
@@ -216,15 +216,15 @@ void Variable_update(void)
   Variable[7]= EM_Value_4;
   Variable[8]= EM_offset;
   Variable[9]= Road;//speedTarget2;//Turn_Cam_Out;
-  Variable[10]=Road1_flag;
-  Variable[11]=Lef_circle;
-  Variable[12]=whitecnt;
-  //Variable[11]=Road;/*Rig_circle;*///Road6_flag ;//CarSpeed2;
-/*
+  Variable[10]=Road0_flag;
+  Variable[11]=Road1_flag;
+  Variable[12]=Road7_flag;
+  Variable[11]=Lef_circle;/*Rig_circle;*///Road6_flag ;//CarSpeed2;
+
   Variable[12]=whitecnt;//Road1_turnout;//limit_pos(EM_Value_1/1.5-EM_Value_2/3.5);//speedTarget1;//map_line[MIN(50,AllWhileStartLine)];
-  Variable[13]=EM_Value_2;//speedTarget2;//lib_active_diff_get();//map_line[MIN(50,AllWhileEndLine)];_
-  Variable[14]=EM_Value_3;//Cam_Block_State;//MotorOut1;//CarSpeed1;//(MotorOut1+MotorOut2)/2;
-  Variable[15]=ToF_distance;//EM_Value_4;//ToF_distance;//MotorOut2;//CarSpeed2;
-  */
+  // Variable[13]=EM_Value_2;//speedTarget2;//lib_active_diff_get();//map_line[MIN(50,AllWhileEndLine)];_
+  // Variable[14]=EM_Value_3;//Cam_Block_State;//MotorOut1;//CarSpeed1;//(MotorOut1+MotorOut2)/2;
+  // Variable[15]=ToF_distance;//EM_Value_4;//ToF_distance;//MotorOut2;//CarSpeed2;
+
 
 }
