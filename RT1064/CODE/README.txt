@@ -275,7 +275,7 @@ GMY
 注释search.c中无用的定义
 
 修改Draw_MId（找边线）的错误
-重写边线寻找Pic_DrawMid(void)
+重写边线寻找Pic_DrawMid(void)(左右边线函数)
 加入最小二乘转弯办法JMK改完后加入control
 
 完成起跑线识别，入库状态机初步；
