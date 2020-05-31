@@ -20,7 +20,6 @@ extern int Lef_circle;
 extern int Rig_circle;
 extern uint16 Pic_new[600];
 extern int cnt;
-extern int Road0_flag;
 extern float Turn_P_EM;
 extern int whitecnt;
 extern float speedTarget1;

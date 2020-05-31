@@ -41,7 +41,7 @@ extern uint8_t Threshold;
 extern uint8 Image_Use[CAMERA_H][CAMERA_W];
 extern uint8 imgbuff_process[CAMERA_SIZE];                       //定义存储接收图像的数组
 extern uint8 img_edg[CAMERA_SIZE*2];    
-extern int circle_flag ;
+// extern int circle_flag ;
 //extern uint8 LMR[3][CAMERA_H];
 //extern uint8 new_img;
 extern uint8 GaveValue;
@@ -55,6 +55,7 @@ void Test_V032(void);
 
 void Pic_particular(void);
 void camera_dispose_main(void);
+void camera_simple(void);
 
 
 #endif

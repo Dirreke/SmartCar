@@ -263,7 +263,7 @@ void Moto_Out()
   }
   else //·´×ª
   {
-    Motor_Duty(3, 0);
+    Motor_Duty(3, (uint32)(-MotorOut1/100)*100);
     Motor_Duty(2, 0); //(uint32)(-MotorOut1/100)*100);
   }
 
@@ -274,7 +274,7 @@ void Moto_Out()
   }
   else
   {
-    Motor_Duty(0, 0); //(uint32)(-MotorOut2/100)*100);
+    Motor_Duty(0, (uint32)(-MotorOut2/100)*100);//(uint32)(-MotorOut2/100)*100);
     Motor_Duty(1, 0);
   }
 }
