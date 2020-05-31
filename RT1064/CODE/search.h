@@ -7,10 +7,11 @@ void Pic_seedfill(void);
 // char Final_line(void);
 void Pic_seedfill_grow(uint8 flag[CAMERA_H][CAMERA_W],int i,int j);   //DFS搜索算法递归函数
 extern float KP;
+extern void Pic_DrawLRside(void);//图像绘制左右边线
 extern void Pic_DrawMid(void);//图像绘制中心线
+extern void Pic_DrawMid_und(void);//计算去畸后中心线
 extern void Pic_noi_elim(void);//图像噪点去除
 extern void Road_rec(void);
-extern void Pic_DrawMid_und(void);//计算去畸后中心线
 extern void Pic_offset_fig(void);//offset计算
 extern void Pic_offset_filter(void);//offset滤波处理
 // extern void Pic_main(void);
@@ -29,6 +30,12 @@ extern void Pic_undistort(int L ,int R);//图像去畸变
 extern void Pic_find_circle(void);//左右黑线寻找环状黑线
 // extern void Pic_find_leap(void);
 extern void Allwhite_find(void);
+
+extern void stop_program(void);
+extern void start_stop_rec(void);
+
+
+
 // extern void Pic_precal(void);
 // extern void grow(int Pic_precal_done[60][80],int Pic_precal_flag[60][80],int i,int j);
 //extern void my_key_debug();
@@ -58,6 +65,9 @@ extern int Mid[LCDH]; //道路中心点的纵坐标
 extern int Road;
 extern int Road1_flag;
 extern int Road2_flag;
+extern int Road0_flag;
+extern int Road7_flag;
+
 extern int Allwhitestart;
 extern int Allwhiteend;
 // extern int Allwhitestart2;
@@ -99,7 +109,7 @@ extern float Cam_offset;
 #endif 
 
 #ifdef undistort1
-    #define MIDMAP 860  //undistort1
+    #define MIDMAP 650  //undistort1
 
     #define FIG_AREA_NEAR   54//50//350/*(59-tempNewy(50)/Bili)(Bili=12)
     #define FIG_AREA_FAR   5//28//550   //逆透视变换后的图像计算区域

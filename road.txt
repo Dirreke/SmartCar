@@ -2,7 +2,11 @@ Road==0 正常
 Road==1 左圆环
 Road==2 右圆环
 Road==7 起跑线
-Road==8 界外
+//Road==8 界外
+Road=8 入库开始转弯
+Road=9入库停止转弯
+
+
 Lef_break_point 左圆环断点行数
 Rig_break_point 右圆环断点行数
 Lef_circle==1 找到左圆环

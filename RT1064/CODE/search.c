@@ -37,7 +37,7 @@ int Rig_break_point; //左右环状黑线拐弯点
 int Road0_flag = 0;
 int Road1_flag = 0;
 int Road2_flag = 0;
-
+int Road7_flag = 0;
 // int Lef_start = Fir_row, Rig_start = Fir_row, Rig_sep1 = Fir_row, Rig_sep2 = Fir_row, Lef_sep1 = Fir_row, Lef_sep2 = Fir_row, Lef_lose, Rig_lose; //左右赛道起始点、以及两个岔路点
 
 float Lef_slope = 0;
@@ -1146,18 +1146,18 @@ void Pic_Fix_Line(void)
 }
 
 /*************************************************************************
-*  函数名称：void Pic_DrawMid()
-*  功能说明：绘制中心线
+*  函数名称：void Pic_DrawLRside(void)
+*  功能说明：绘制左右边线线
 *  参数说明：返回符号数，正表示应右转，负表示应左转
 *  函数返回：中心线前置区域内的均值与预设值的偏差
-*  修改时间：2019.2.27
+*  修改时间：2019.2.27 2020.05.31改
 *  备    注：寻找底层黑白跳变点，逐层向上搜索每行的跳变点。(向两边搜点、范围搜点两种方法）
              将整幅图的左右5列置黑
              每一行只检测两个跳变点。
-             然后利用求平均值绘制中心线
+             ////然后利用求平均值绘制中心线，单写
 *************************************************************************/
 
-void Pic_DrawMid(void)
+void Pic_DrawLRside(void)
 {
   int i = 0, j = 0, k = 0;
   int side_search_sw[3] = {2, 5, 10};
@@ -1265,20 +1265,78 @@ void Pic_DrawMid(void)
       }
     }
   }
-
-
-  for (i = Last_row; i > Fir_row - 1; i--) //平均值法中心线绘制
-  {
-    //    if(Road0_flag==1)
-    //    {
-    //     if(Lef[i]<=8)
-    //       Lef[i]=8;
-    //     if(Rig[i]>=72)
-    //       Rig[i]=72;
-    //    }
-    Mid[i] = (int)((Lef[i] + Rig[i]) / 2);
-  }
 }
+/*************************************************************************
+*  函数名称：void Pic_DrawMid(void)
+*  功能说明：绘制左右边线线
+*  参数说明：返回符号数，正表示应右转，负表示应左转
+*  函数返回：中心线前置区域内的均值与预设值的偏差
+*  修改时间：2020.05.31
+*  备    注：寻找底层黑白跳变点，逐层向上搜索每行的跳变点。(向两边搜点、范围搜点两种方法）
+             将整幅图的左右5列置黑
+             每一行只检测两个跳变点。
+             ////然后利用求平均值绘制中心线，单写
+*************************************************************************/
+
+void Pic_DrawMid(void)
+{
+  int i = 0;
+  int road_half_width_original[40]={35,34,34,33,32,31,30,30,29,28,27,26,25,25,24,23,22,21,20,20,19,18,17,16,15,14,14,13,12,11,10,9,8,7,6,5,4,3,2,0};
+  if ((Road0_flag == 3 && Road == 0) || Road == 1)
+  {
+    for (i = Fir_row; i < Last_row+1; i++)
+    {
+
+      if (Rig[i] <Last_col)
+      {
+        Mid[i] = Rig[i] - road_half_width_original[Last_row-i];
+      }
+      else
+      {
+        Mid[i] = 40;
+      }
+    }
+  }
+  else if ((Road0_flag == 4 && Road == 0) || Road == 2)
+  {
+    for (i = Fir_row; i < Last_row+1; i++)
+    {
+
+      if (Lef[i] >Fir_col)
+      {
+        Mid[i] = Lef[i] + road_half_width_original[Last_row-i];
+      }
+      else
+      {
+        Mid[i] = 40;
+      }
+    }
+  }
+  else
+  {
+    for (i = Fir_row; i < Last_row+1; i++)
+    {
+
+      if (Lef[i] >Fir_col && Rig[i] <Last_col) //Mid Calculaing
+      {
+        Mid[i] = (int)((Lef[i] + Rig[i]) / 2.0 + 0.5);
+      }
+      else if (Lef[i] <=Fir_col && Rig[i] <Last_col)
+      {
+        Mid[i] = Rig[i] - road_half_width_original[Last_row-i];
+      }
+      else if (Lef[i] >Fir_col && Rig[i] >=Last_col)
+      {
+        Mid[i] = Lef[i] + road_half_width_original[Last_row-i];
+      }
+      else
+      {
+        Mid[i] = 40;
+      }
+    }
+  }
+  return;
+ }
 /*************************************************************************
  *  函数名称：void Pic_DrawMid_und(void)
  *  功能说明：计算去畸变后中线无插值
@@ -1655,7 +1713,7 @@ void Pic_undistort(int L, int R)
       if (tempx >= Last_col)
         tempNewxR[i] = MIDMAP;
       else
-        tempNewxR[i] = (int)(UNDISTORT_XYK * (UNDISTORT_D * UNDISTORT_C + UNDISTORT_H) * 2 * (tempx - 39.5) / (-UNDISTORT_S * (29.5 - tempy) + UNDISTORT_D * UNDISTORT_C) + 0.5);
+        tempNewxR[i] = (int)(UNDISTORT_XPK * (UNDISTORT_D * UNDISTORT_C + UNDISTORT_H) * 2 * (tempx - 39.5) / (-UNDISTORT_S * (29.5 - tempy) + UNDISTORT_D * UNDISTORT_C) + 0.5);
 
       if (tempNewxR[i] > MIDMAP)
         tempNewxR[i] = MIDMAP;
@@ -1670,7 +1728,7 @@ void Pic_undistort(int L, int R)
       if (tempx <= Fir_col)
         tempNewxL[i] = -MIDMAP;
       else
-        tempNewxL[i] = (int)(UNDISTORT_XYK * (UNDISTORT_D * UNDISTORT_C + UNDISTORT_H) * 2 * (tempx - 39.5) / (-UNDISTORT_S * (29.5 - tempy) + UNDISTORT_D * UNDISTORT_C) + 0.5);
+        tempNewxL[i] = (int)(UNDISTORT_XPK * (UNDISTORT_D * UNDISTORT_C + UNDISTORT_H) * 2 * (tempx - 39.5) / (-UNDISTORT_S * (29.5 - tempy) + UNDISTORT_D * UNDISTORT_C) + 0.5);
 
       if (tempNewxL[i] < -MIDMAP)
         tempNewxL[i] = -MIDMAP;
@@ -1867,6 +1925,174 @@ void Pic_find_circle(void)
     }
   }
 }
+
+/*************************************************************************
+*  函数名称：void start_stop_rec(void)
+*  功能说明：起跑线识别与等待
+*  参数说明：无
+*  函数返回：无
+*  修改时间：2020.05.31
+*  备    注：
+*************************************************************************/
+void start_stop_rec(void)
+{
+    static int start_stop_line = 0;
+    static int start_waited = 0;
+    static int turn_cnt = 0, stop_cnt = 0;
+    static int stop_line = Fir_row;
+    int stop_line_cnt = 0, stop_black_cnt = 0, stop_all_cnt = 0, stop_flag_cnt = 0,count = 0;
+    int i, j;
+    int avr_mid = 0;
+    int Black_line = 0;
+    int road_half_width_original[40] = {35, 34, 34, 33, 32, 31, 30, 30, 29, 28, 27, 26, 25, 25, 24, 23, 22, 21, 20, 20, 19, 18, 17, 16, 15, 14, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 0};
+
+    if (Road == 0 && Road0_flag != 0 && Road0_flag != 1) //进起跑线
+    {
+        start_waited++;
+        if (start_waited > 600 && Lef_edge > 15)
+        {
+            for (i = Fir_row + 10; i < 60; i++) //自上而下寻找有边线的开始行
+            {
+                if (Lef[i] > Fir_col)
+                {
+                    stop_line_cnt = 0;
+                    continue;
+                }
+                else
+                {
+                    stop_line_cnt++;
+                    if (stop_line_cnt >= 3)
+                    {
+                        start_stop_line = i - 2;
+                        break;
+                    }
+                }
+            }
+            if (start_stop_line != 0)
+            {
+                count = 5;
+                for (i = start_stop_line - 5; i < start_stop_line - 10; --i) //计算平均中间位置
+                {
+                    if (Lef[i] > Fir_col && Rig[i] < Last_col)
+                    {
+                        avr_mid += (int)((Lef[i] + Rig[i]) / 2.0 + 0.5);
+                    }
+                    else if (Lef[i] <= Fir_col && Rig[i] < Last_col)
+                    {
+                        avr_mid += Rig[i] - road_half_width_original[Last_row - i];
+                    }
+                    else if (Lef[i] > Fir_col && Rig[i] >= Last_col)
+                    {
+                        avr_mid += Lef[i] + road_half_width_original[Last_row - i];
+                    }
+                    else
+                    {
+                        count--;
+                        continue;
+                    }
+                }
+                if (count == 0)
+                {
+                    start_stop_line = 0;
+                    return;
+                }
+                avr_mid /= count;
+
+                for (i = start_stop_line; i <= Last_row; ++i) //搜黑白线
+                {
+                    for (j = avr_mid - road_half_width_original[Last_row - i]; j <= avr_mid + road_half_width_original[Last_row - i]; ++j)
+                    {
+                        if (Pixle[i][j] == 0)
+                        {
+                            stop_black_cnt++;
+                        }
+                        stop_all_cnt++;
+                    }
+                    if (stop_black_cnt > stop_all_cnt / 2)
+                    {
+                        stop_flag_cnt += 0.35;
+                    }
+                    else if (stop_black_cnt > stop_all_cnt / 3)
+                    {
+                        stop_flag_cnt += 0.2;
+                    }
+                    if (stop_flag_cnt >= 1)
+                    {
+                        Road = 7;
+                        return;
+                    }
+                }
+                start_stop_line = 0;
+            }
+        }
+    }
+    else if (Road == 7 & Road7_flag == 0)//等待转弯
+    {
+        for (i = start_stop_line; i < Last_row; i++)
+        {
+            if (Lef[i] > Fir_col)
+            {
+                stop_line_cnt = 0;
+                continue;
+            }
+            else
+            {
+                stop_line_cnt++;
+                if (stop_line_cnt >= 3)
+                {
+                    start_stop_line = i - 2;
+                    break;
+                }
+            }
+        }
+        if (start_stop_line > 35)
+        {
+            Road = 7;
+            Road7_flag = 1; //开始转弯
+        }
+    }
+    else if (Road7_flag == 1)//开始转弯
+    {
+        turn_cnt++;
+        Servo_Duty(-SERVO_RANGE);
+        if (turn_cnt >= (int)(5 * 100 / (get_speed() * CAMERA_FPS)) + 1)
+        {
+            Road7_flag = 2;
+        }
+    }
+    else if (Road7_flag == 2)//转弯结束停车
+    {
+        stop_cnt++;
+        stop_line = Fir_row;
+        for (i = Last_row; i < stop_line; i++)
+        {
+
+            if (Pixle[i][8] + Pixle[i][72] + Pixle[i][30] + Pixle[i][35] + Pixle[i][40] + Pixle[i][45] + Pixle[i][50] < 2)
+            {
+                Black_line++;
+                if (Black_line >= 3)
+                {
+                    stop_line = i - 2;
+                    break;
+                }
+            }
+            else
+            {
+                Black_line = 0;
+            }
+        }
+        if (stop_line > 35 || stop_cnt >= (int)(30 * 100 / (get_speed() * CAMERA_FPS)) + 1)
+        {
+            Road = 8; //停车
+            lib_set_speed(0);
+        }
+    }
+    return;
+}
+
+
+
+
 #if 0
 /*************************************************************************
 *  函数名称：void Pic_find_leap(void)
