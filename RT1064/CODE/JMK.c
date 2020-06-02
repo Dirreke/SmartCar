@@ -287,7 +287,10 @@ float car_center(){
   int car_center_start = 3;
   int car_center_end= 8;
   for(int i =car_center_start; i < car_center_end; ++i){
-    car_center_dias += New_Mid[i];
+    if(New_Mid[i]!=999)
+    {
+      car_center_dias += New_Mid[i];
+    }
   }
   car_center_dias /= (car_center_start - car_center_end);
   return car_center_dias;

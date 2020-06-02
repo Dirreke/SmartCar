@@ -693,13 +693,13 @@ void start_stop_rec(void)
     static int start_waited = 0;
     static int turn_cnt = 0, stop_cnt = 0;
     static int stop_line = Fir_row;
-    int stop_line_cnt = 0, stop_black_cnt = 0, stop_all_cnt = 0, stop_flag_cnt = 0,count = 0;
+    int stop_line_cnt = 0, stop_black_cnt = 0, stop_all_cnt = 0, stop_flag_cnt = 0, count = 0;
     int i, j;
     int avr_mid = 0;
     int Black_line = 0;
     int road_half_width_original[40] = {35, 34, 34, 33, 32, 31, 30, 30, 29, 28, 27, 26, 25, 25, 24, 23, 22, 21, 20, 20, 19, 18, 17, 16, 15, 14, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 0};
 
-    if (Road == 0 && Road0_flag != 0 && Road0_flag != 1) //进起跑线
+    if (Road == 0 && Road0_flag != 1 && Road0_flag != 2) //进起跑线
     {
         start_waited++;
         if (start_waited > 600 && Lef_edge > 15)
@@ -779,7 +779,7 @@ void start_stop_rec(void)
             }
         }
     }
-    else if (Road == 7 & Road7_flag == 0)//等待转弯
+    else if (Road == 7 & Road7_flag == 0) //等待转弯
     {
         for (i = start_stop_line; i < Last_row; i++)
         {
@@ -804,7 +804,7 @@ void start_stop_rec(void)
             Road7_flag = 1; //开始转弯
         }
     }
-    else if (Road7_flag == 1)//开始转弯
+    else if (Road7_flag == 1) //开始转弯
     {
         turn_cnt++;
         Servo_Duty(-SERVO_RANGE);
@@ -813,7 +813,7 @@ void start_stop_rec(void)
             Road7_flag = 2;
         }
     }
-    else if (Road7_flag == 2)//转弯结束停车
+    else if (Road7_flag == 2) //转弯结束停车
     {
         stop_cnt++;
         stop_line = Fir_row;
@@ -843,6 +843,270 @@ void start_stop_rec(void)
     return;
 }
 
+/*************************************************************************
+*  函数名称：void Pic_DrawLRside(void)
+*  功能说明：绘制左右边线线
+*  参数说明：返回符号数，正表示应右转，负表示应左转
+*  函数返回：中心线前置区域内的均值与预设值的偏差
+*  修改时间：2020.06.03
+*  备    注：寻找底层黑白跳变点，逐层向上搜索每行的跳变点。(向两边搜点、范围搜点两种方法）
+             将整幅图的左右5列置黑
+             每一行只检测两个跳变点。
+             ////然后利用求平均值绘制中心线，单写
+*************************************************************************/
+
+void Pic_DrawLRside(void)
+{
+    int i = 0, j = 0, k = 0;
+    int search_flag1 = 0, search_flag2 = 0;
+    int Side_flag;
+    for (i = Fir_row; i < LCDH; i++) //将左右置黑（防止全白下无法找寻跳变点）
+    {
+        Rig[i] = 78;
+        Lef[i] = 1;
+        for (j = 0; j < Fir_col; j++)
+        {
+            Pixle[i][j] = 0;
+        }
+        for (j = Last_col + 1; j < LCDW; j++)
+        {
+            Pixle[i][j] = 0;
+        }
+    }
+    //  for(i=0;i<Fir_row;i++)//将上方置黑
+    //  {
+    //    for(j=0;j<LCDW;j++)
+    //    {
+    //      Pixle[0][j]=0;
+    //    }
+    for (i = Last_row; i > Last_row - 5; i--)
+    {
+        for (j = Middle; j < Last_col + 1; j++) //末行处理
+        {
+            if (Pixle[i][j] == 1 && Pixle[i][j - 1] == 1 && Pixle[i][j - 2] == 1 && Pixle[i][j - 3] == 1 && Pixle[i][j - 4] == 1 && Pixle[i][j - 5] == 1 && Pixle[i][j - 6] == 1 && Pixle[i][j + 1] == 0 && Pixle[i][j + 2] == 0)
+            {
+                Rig[i] = j;
+                break;
+            }
+        }
+        for (j = Middle; j > Fir_col - 1; j--)
+        {
+            if (Pixle[i][j] == 1 && Pixle[i][j + 1] == 1 && Pixle[i][j + 2] == 1 && Pixle[i][j + 3] == 1 && Pixle[i][j + 4] == 1 && Pixle[i][j + 5] == 1 && Pixle[i][j + 6] == 1 && Pixle[i][j - 1] == 0 && Pixle[i][j - 2] == 0)
+            {
+                Lef[i] = j;
+                break;
+            }
+        }
+        if (Rig[i] != 78 && Lef[i] != 1)
+        {
+            break;
+        }
+    }
+    for (i; i > Fir_row - 1; i--) //从底层向上绘线
+    {
+        search_flag1 = 0, search_flag2 = 0;
+        Side_flag = 0;
+
+        if (Rig[i + 1] != 78)
+        {
+            if (Pixle[i][Rig[i + 1]] == 0 || (Pixle[i][Rig[i + 1]] == 1 && Pixle[i][Rig[i + 1] - 1] == 0 && Pixle[i][Rig[i + 1] + 1] == 0))//向内查找10个
+            {
+                for (j = Rig[i + 1]; j > Rig[i + 1] - 10 && j > Lef[i + 1] + 5; j--)
+                {
+                    if (Pixle[i][j - 1] == 1 && Pixle[i][j - 2] == 1)//两白
+                    {
+                        Rig[i] = j;
+                        Side_flag = 1;
+                        break;
+                    }
+                }
+                search_flag1 = 1;
+            }
+            else if (Pixle[i][Rig[i + 1] + 1] == 1)//向外查找8个
+            {
+                for (j = Rig[i + 1] + 1; j < Rig[i + 1] + 8 && j < Last_col + 1; j++)
+                {
+                    if (Pixle[i][j + 1] == 0 && Pixle[i][j + 2] == 0)                     //两黑
+                    {
+                        Rig[i] = j;
+                        Side_flag = 1;
+                        break;
+                    }
+                }
+                search_flag2 = 1;
+            }
+        }
+        else if (Rig[i + 2] != 78) //更严格的条件
+        {
+            for (j = Rig[i + 2]; j > Rig[i + 1] - 10 && j > Lef[i + 1] + 5; j--)  //先搜内10个
+            {
+                if (Pixle[i][j - 1] == 1 && Pixle[i][j - 2] == 1 && Pixle[i][j - 3] == 1 && Pixle[i][j - 4] == 1)
+                {
+                    Rig[i] = j;
+                    Side_flag = 1;
+                    break;
+                }
+                search_flag1 = 1;
+            }
+            if (Side_flag == 0 && Pixle[i][Rig[i + 2] - 2] == 1 && Pixle[i][Rig[i + 2] - 1] == 1 && Pixle[i][Rig[i + 2]] == 1 && Pixle[i][Rig[i + 2] + 1] == 1)//搜外8个
+            {
+                for (j = Rig[i + 2] + 1; j < Rig[i + 2] + 8 && j < Last_col + 1; j++)
+                {
+                    if (Pixle[i][j + 1] == 0 && Pixle[i][j + 2] == 0 && Pixle[i][j + 3] == 0)
+                    {
+                        Rig[i] = j;
+                        Side_flag = 1;
+                        break;
+                    }
+                }
+                search_flag2 = 1;
+            }
+        }
+
+        if (Side_flag == 0) //若没有找到跳变点，则放宽范围进行搜索
+        {
+            Side_flag = 1;
+            for (j = Lef[i + 1] + 5; j <= Rig[i + 1] - 10; j++)
+            {
+                if (Pixle[i][j] == 1 && Pixle[i][j - 1] == 1 && Pixle[i][j - 2] == 1 && Pixle[i][j - 3] == 1 && Pixle[i][j - 4] == 1 && Pixle[i][j - 5] == 1 && Pixle[i][j - 6] == 1 && Pixle[i][j + 1] == 0 && Pixle[i][j + 2] == 0)
+                {
+                    Rig[i] = j;
+                    break;
+                }
+            }
+            if (search_flag1 == 0)
+            {
+                for (j = Rig[i + 1] - 9; j < Rig[i + 1]; j++)
+                {
+                    if (Pixle[i][j] == 1 && Pixle[i][j - 1] == 1 && Pixle[i][j - 2] == 1 && Pixle[i][j - 3] == 1 && Pixle[i][j - 4] == 1 && Pixle[i][j - 5] == 1 && Pixle[i][j - 6] == 1 && Pixle[i][j + 1] == 0 && Pixle[i][j + 2] == 0)
+                    {
+                        Rig[i] = j;
+                        break;
+                    }
+                }
+            }
+            if (search_flag2 == 0)
+            {
+                for (j = Rig[i + 1]; j < Rig[i + 1] + 8; j++)
+                {
+                    if (Pixle[i][j] == 1 && Pixle[i][j - 1] == 1 && Pixle[i][j - 2] == 1 && Pixle[i][j - 3] == 1 && Pixle[i][j - 4] == 1 && Pixle[i][j - 5] == 1 && Pixle[i][j - 6] == 1 && Pixle[i][j + 1] == 0 && Pixle[i][j + 2] == 0)
+                    {
+                        Rig[i] = j;
+                        break;
+                    }
+                }
+            }
+            for (j = Rig[i + 1] + 8; j <= Last_col; j++)
+            {
+                if (Pixle[i][j] == 1 && Pixle[i][j - 1] == 1 && Pixle[i][j - 2] == 1 && Pixle[i][j - 3] == 1 && Pixle[i][j - 4] == 1 && Pixle[i][j - 5] == 1 && Pixle[i][j - 6] == 1 && Pixle[i][j + 1] == 0 && Pixle[i][j + 2] == 0)
+                {
+                    Rig[i] = j;
+                    break;
+                }
+            }
+        }
+        search_flag1 = 0, search_flag2 = 0;
+
+        if (Lef[i + 1] != 78)
+        {
+            if (Pixle[i][Lef[i + 1]] == 0 || (Pixle[i][Lef[i + 1]] == 1 && Pixle[i][Lef[i + 1] - 1] == 0 && Pixle[i][Lef[i + 1] - 1] == 0))
+            {
+                for (j = Lef[i + 1]; j < Lef[i + 1] + 10 && j < Rig[i + 1] - 5; j++)
+                {
+                    if (Pixle[i][j + 1] == 1 && Pixle[i][j + 2] == 1)
+                    {
+                        Lef[i] = j;
+                        Side_flag = 1;
+                        break;
+                    }
+                }
+                search_flag1 = 1;
+            }
+            else if (Pixle[i][Lef[i + 1] - 1] == 1)
+            {
+                for (j = Lef[i + 1] - 1; j > Lef[i + 1] - 8 && j > Fir_col - 1; j--)
+                {
+                    if (Pixle[i][j - 1] == 0 && Pixle[i][j - 2] == 0)
+                    {
+                        Lef[i] = j;
+                        Side_flag = 1;
+                        break;
+                    }
+                }
+                search_flag2 = 1;
+            }
+        }
+        else if (Lef[i + 2] != 78)
+        {
+            for (j = Lef[i + 2]; j < Lef[i + 1] + 10 && j < Rig[i + 1] + 5; j++)
+            {
+                if (Pixle[i][j + 1] == 1 && Pixle[i][j + 2] == 1 && Pixle[i][j + 3] == 1 && Pixle[i][j + 4] == 1)
+                {
+                    Lef[i] = j;
+                    Side_flag = 1;
+                    break;
+                }
+                search_flag1 = 1;
+            }
+            if (Side_flag == 0 && Pixle[i][Lef[i + 2] + 2] == 1 && Pixle[i][Lef[i + 2] + 1] == 1 && Pixle[i][Lef[i + 2]] == 1 && Pixle[i][Lef[i + 2] - 1] == 1)
+            {
+                for (j = Lef[i + 2] - 1; j > Lef[i + 2] - 8 && j > Fir_col - 1; j--)
+                {
+                    if (Pixle[i][j - 1] == 0 && Pixle[i][j - 2] == 0 && Pixle[i][j - 3] == 0)
+                    {
+                        Lef[i] = j;
+                        Side_flag = 1;
+                        break;
+                    }
+                }
+                search_flag2 = 1;
+            }
+        }
+
+        if (Side_flag == 0) //若没有找到跳变点，则放宽范围进行搜索
+        {
+            Side_flag = 1;
+            for (j = Rig[i + 1] - 5; j >= Lef[i + 1] + 10; j--)
+            {
+                if (Pixle[i][j] == 1 && Pixle[i][j + 1] == 1 && Pixle[i][j + 2] == 1 && Pixle[i][j + 3] == 1 && Pixle[i][j + 4] == 1 && Pixle[i][j + 5] == 1 && Pixle[i][j + 6] == 1 && Pixle[i][j - 1] == 0 && Pixle[i][j - 2] == 0)
+                {
+                    Lef[i] = j;
+                    break;
+                }
+            }
+            if (search_flag1 == 0)
+            {
+                for (j = Lef[i + 1] + 9; j > Lef[i + 1]; j--)
+                {
+                    if (Pixle[i][j] == 1 && Pixle[i][j + 1] == 1 && Pixle[i][j + 2] == 1 && Pixle[i][j + 3] == 1 && Pixle[i][j + 4] == 1 && Pixle[i][j + 5] == 1 && Pixle[i][j + 6] == 1 && Pixle[i][j - 1] == 0 && Pixle[i][j - 2] == 0)
+                    {
+                        Lef[i] = j;
+                        break;
+                    }
+                }
+            }
+            if (search_flag2 == 0)
+            {
+                for (j = Lef[i + 1]; j > Lef[i + 1] - 8; j--)
+                {
+                    if (Pixle[i][j] == 1 && Pixle[i][j + 1] == 1 && Pixle[i][j + 2] == 1 && Pixle[i][j + 3] == 1 && Pixle[i][j + 4] == 1 && Pixle[i][j + 5] == 1 && Pixle[i][j + 6] == 1 && Pixle[i][j - 1] == 0 && Pixle[i][j - 2] == 0)
+                    {
+                        Lef[i] = j;
+                        break;
+                    }
+                }
+            }
+            for (j = Lef[i + 1] - 8; j > Fir_col - 1; j++)
+            {
+                if (Pixle[i][j] == 1 && Pixle[i][j + 1] == 1 && Pixle[i][j + 2] == 1 && Pixle[i][j + 3] == 1 && Pixle[i][j + 4] == 1 && Pixle[i][j + 5] == 1 && Pixle[i][j + 6] == 1 && Pixle[i][j - 1] == 0 && Pixle[i][j - 2] == 0)
+                {
+                    Lef[i] = j;
+                    break;
+                }
+            }
+        }
+    }
+}
 
 void Turn_Cam_New()
 {

@@ -81,14 +81,14 @@ float offset_map[60]={(float)31/77,(float)31/77,(float)31/9	,(float)31/9	 ,(floa
 ,(float)31/42	,(float)31/44	 ,(float)31/46	 ,(float)31/46	 ,(float)31/48	  ,(float)31/48	,(float)31/48	,(float)31/50	,(float)31/51,(float)31/52,(float)31/53,(float)31/54,(float)31/54,(float)31/56,(float)31/56,(float)31/58,(float)31/58,(float)31/58,(float)31/60,(float)31/60,(float)31/61,(float)31/77};
 */
 float K0_Table[5] = {ROAD_WIDTH / 65, ROAD_WIDTH / 66, ROAD_WIDTH / 67, ROAD_WIDTH / 68, ROAD_WIDTH / 69};
-int threshold_offset = 5;
+int threshold_offset = -5;
 float zhidaosudu = 2.5;     //直道速度
 float xiaowandaosudu = 2.3; //小弯道速度
 float dawandaosudu = 2.3;   //大弯道速度
-float duanlusudu = 1.8;     //断路速度
+// float duanlusudu = 1.8;     //断路速度
 int camera_offset = 0;      //摄像头二值化阈值
-int Tof_thres = 150;        //障碍物检测阈值
-float luzhangsudu = 2.3;    //路障速度
+// int Tof_thres = 150;        //障碍物检测阈值
+// float luzhangsudu = 2.3;    //路障速度
 
 /*************************************************************************
 *  函数名称：my_key_debug()
@@ -458,7 +458,7 @@ void Road_rec(void)
   {
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////普通赛道→圆环
-    if ((Lef_break_point < 40 && Road == 0 && Rig_circle == 0 && Lef_circle == 1 && Rig_slope == 998 && Lef_slope != 998 && Rig[39] - Rig[37] < 5 && Rig[37] - Rig[35] < 5 && Rig[35] - Rig[33] < 5 && Rig[33] - Rig[31] < 5 && Rig[31] - Rig[29] < 5 && Rig[29] - Rig[27] < 5 && Rig[27] - Rig[25] < 5 && New_Lef[52] == -MIDMAP && Rig_edge < 10)) //左圆环：左边线,右边线：直通到底//&& Rig[11] != 78
+    if ((Lef_break_point < 40 && Road == 0 && Rig_circle == 0 && Lef_circle == 1 && Rig_slope == 998 && Lef_slope != 998 && Rig[39] - Rig[37] < 5 && Rig[37] - Rig[35] < 5 && Rig[35] - Rig[33] < 5 && Rig[33] - Rig[31] < 5 && Rig[31] - Rig[29] < 5 && Rig[29] - Rig[27] < 5 && Rig[27] - Rig[25] < 5 && (New_Lef[54] == -MIDMAP || New_Lef[55] == -MIDMAP || New_Lef[56] == -MIDMAP)&& Rig_edge < 10)) //左圆环：左边线,右边线：直通到底//&& Rig[11] != 78
     {
       Road0_flag = 0;
       Road11_count++;
@@ -469,7 +469,7 @@ void Road_rec(void)
       }
       return;
     }
-    else if (Rig_break_point < 40 && Road == 0 && Lef_circle == 0 && Rig_circle == 1 && Lef_slope == 998 && Rig_slope != 998 && Lef[25] - Lef[27] < 5 && Lef[27] - Lef[29] < 5 && Lef[29] - Lef[31] < 5 && Lef[31] - Lef[33] < 5 && Lef[33] - Lef[35] < 5 && Lef[35] - Lef[37] < 5 && Lef[37] - Lef[39] < 5 && New_Rig[52] == MIDMAP && Lef_edge < 10) //右圆环：右边线：突变点→拐点→突变点//&& Lef[11] != 2
+    else if (Rig_break_point < 40 && Road == 0 && Lef_circle == 0 && Rig_circle == 1 && Lef_slope == 998 && Rig_slope != 998 && Lef[25] - Lef[27] < 5 && Lef[27] - Lef[29] < 5 && Lef[29] - Lef[31] < 5 && Lef[31] - Lef[33] < 5 && Lef[33] - Lef[35] < 5 && Lef[35] - Lef[37] < 5 && Lef[37] - Lef[39] < 5 && (New_Rig[54] == MIDMAP || New_Rig[55] == MIDMAP || New_Rig[56] == MIDMAP) && Lef_edge < 10) //右圆环：右边线：突变点→拐点→突变点//&& Lef[11] != 2
     {
       Road0_flag = 0;
       Road21_count++;
@@ -687,7 +687,8 @@ void LR_Slope_fig()
 {
   int i;
   float xsum = 0, ysum = 0, xysum = 0, x2sum = 0, count = 0;
-  Lef_slope = Rig_slope = 0;
+  Lef_slope = 0;
+  Rig_slope = 0;
   int max = -800, min = 0;
   for (i = 0; i < 60; i++)
   {
@@ -725,7 +726,11 @@ void LR_Slope_fig()
   }
   max = 0;
   min = 800;
-  xsum = ysum = xysum = x2sum = count = 0;
+  xsum = 0;
+  ysum = 0;
+  xysum = 0;
+  x2sum = 0;
+  count = 0;
   for (i = 0; i < 60; i++)
   {
     if (i <= FIG_AREA_NEAR && i >= FIG_AREA_FAR3 && New_Rig[i] != MIDMAP)
@@ -1144,7 +1149,7 @@ void Pic_Fix_Line(void)
     return;
   }
 }
-
+#if 0
 /*************************************************************************
 *  函数名称：void Pic_DrawLRside(void)
 *  功能说明：绘制左右边线线
@@ -1187,7 +1192,7 @@ void Pic_DrawLRside(void)
   {
     if (Pixle[Last_row][j] == 1 && Pixle[Last_row][j - 1] == 1 && Pixle[Last_row][j - 2] == 1 && Pixle[Last_row][j - 3] == 1 && Pixle[Last_row][j - 4] == 1 && Pixle[Last_row][j - 5] == 1 && Pixle[Last_row][j - 6] == 1 && Pixle[Last_row][j + 1] == 0 && Pixle[Last_row][j + 2] == 0)
     {
-      Rig[Last_row] = j + 1;
+      Rig[Last_row] = j;
       break;
     }
   }
@@ -1216,7 +1221,7 @@ void Pic_DrawLRside(void)
         {
           if (Pixle[i][j] == 1 && Pixle[i][j - 1] == 1 && Pixle[i][j - 2] == 1 && Pixle[i][j - 3] == 1 && Pixle[i][j - 4] == 1 && Pixle[i][j - 5] == 1 && Pixle[i][j - 6] == 1 && Pixle[i][j + 1] == 0 && Pixle[i][j + 2] == 0)
           {
-            Rig[i] = j + 1;
+            Rig[i] = j;
             Rig_err[i] = 1;
             break;
           }
@@ -1236,7 +1241,7 @@ void Pic_DrawLRside(void)
         {
           if (Pixle[i][j] == 1 && Pixle[i][j - 1] == 1 && Pixle[i][j - 2] == 1 && Pixle[i][j - 3] == 1 && Pixle[i][j - 4] == 1 && Pixle[i][j - 5] == 1 && Pixle[i][j - 6] == 1 && Pixle[i][j + 1] == 0 && Pixle[i][j + 2] == 0)
           {
-            Rig[i] = j + 1;
+            Rig[i] = j;
             Rig_err[i] = 1;
             break;
           }
@@ -1313,6 +1318,273 @@ void Pic_DrawLRside(void)
     }
   }
 }
+#endif
+#if 1
+/*************************************************************************
+*  函数名称：void Pic_DrawLRside(void)
+*  功能说明：绘制左右边线线
+*  参数说明：返回符号数，正表示应右转，负表示应左转
+*  函数返回：中心线前置区域内的均值与预设值的偏差
+*  修改时间：2020.06.03
+*  备    注：寻找底层黑白跳变点，逐层向上搜索每行的跳变点。(向两边搜点、范围搜点两种方法）
+             将整幅图的左右5列置黑
+             每一行只检测两个跳变点。
+             ////然后利用求平均值绘制中心线，单写
+*************************************************************************/
+
+void Pic_DrawLRside(void)
+{
+  int i = 0, j = 0;
+  int search_flag1 = 0, search_flag2 = 0;
+  int Side_flag;
+  for (i = Fir_row; i < LCDH; i++) //将左右置黑（防止全白下无法找寻跳变点）
+  {
+    Rig[i] = 78;
+    Lef[i] = 1;
+    for (j = 0; j < Fir_col; j++)
+    {
+      Pixle[i][j] = 0;
+    }
+    for (j = Last_col + 1; j < LCDW; j++)
+    {
+      Pixle[i][j] = 0;
+    }
+  }
+  //  for(i=0;i<Fir_row;i++)//将上方置黑
+  //  {
+  //    for(j=0;j<LCDW;j++)
+  //    {
+  //      Pixle[0][j]=0;
+  //    }
+  for (i = Last_row; i > Last_row - 5; i--)
+  {
+    for (j = Middle; j < Last_col + 1; j++) //末行处理
+    {
+      if (Pixle[i][j] == 1 && Pixle[i][j - 1] == 1 && Pixle[i][j - 2] == 1 && Pixle[i][j - 3] == 1 && Pixle[i][j - 4] == 1 && Pixle[i][j - 5] == 1 && Pixle[i][j - 6] == 1 && Pixle[i][j + 1] == 0 && Pixle[i][j + 2] == 0)
+      {
+        Rig[i] = j;
+        break;
+      }
+    }
+    for (j = Middle; j > Fir_col - 1; j--)
+    {
+      if (Pixle[i][j] == 1 && Pixle[i][j + 1] == 1 && Pixle[i][j + 2] == 1 && Pixle[i][j + 3] == 1 && Pixle[i][j + 4] == 1 && Pixle[i][j + 5] == 1 && Pixle[i][j + 6] == 1 && Pixle[i][j - 1] == 0 && Pixle[i][j - 2] == 0)
+      {
+        Lef[i] = j;
+        break;
+      }
+    }
+    if (Rig[i] != 78 && Lef[i] != 1)
+    {
+      break;
+    }
+  }
+  for (; i > Fir_row - 1; i--) //从底层向上绘线
+  {
+    search_flag1 = 0, search_flag2 = 0;
+    Side_flag = 0;
+
+    if (Rig[i + 1] != 78)
+    {
+      if (Pixle[i][Rig[i + 1]] == 0 || (Pixle[i][Rig[i + 1]] == 1 && Pixle[i][Rig[i + 1] - 1] == 0 && Pixle[i][Rig[i + 1] + 1] == 0)) //向内查找10个
+      {
+        for (j = Rig[i + 1]; j > Rig[i + 1] - 10 && j > Lef[i + 1] + 5; j--)
+        {
+          if (Pixle[i][j - 1] == 1 && Pixle[i][j - 2] == 1) //两白
+          {
+            Rig[i] = j;
+            Side_flag = 1;
+            break;
+          }
+        }
+        search_flag1 = 1;
+      }
+      else if (Pixle[i][Rig[i + 1] + 1] == 1) //向外查找8个
+      {
+        for (j = Rig[i + 1] + 1; j < Rig[i + 1] + 8 && j < Last_col + 1; j++)
+        {
+          if (Pixle[i][j + 1] == 0 && Pixle[i][j + 2] == 0) //两黑
+          {
+            Rig[i] = j;
+            Side_flag = 1;
+            break;
+          }
+        }
+        search_flag2 = 1;
+      }
+    }
+    else if (Rig[i + 2] != 78) //更严格的条件
+    {
+      for (j = Rig[i + 2]; j > Rig[i + 1] - 10 && j > Lef[i + 1] + 5; j--) //先搜内10个
+      {
+        if (Pixle[i][j - 1] == 1 && Pixle[i][j - 2] == 1 && Pixle[i][j - 3] == 1 && Pixle[i][j - 4] == 1)
+        {
+          Rig[i] = j;
+          Side_flag = 1;
+          break;
+        }
+        search_flag1 = 1;
+      }
+      if (Side_flag == 0 && Pixle[i][Rig[i + 2] - 2] == 1 && Pixle[i][Rig[i + 2] - 1] == 1 && Pixle[i][Rig[i + 2]] == 1 && Pixle[i][Rig[i + 2] + 1] == 1) //搜外8个
+      {
+        for (j = Rig[i + 2] + 1; j < Rig[i + 2] + 8 && j < Last_col + 1; j++)
+        {
+          if (Pixle[i][j + 1] == 0 && Pixle[i][j + 2] == 0 && Pixle[i][j + 3] == 0)
+          {
+            Rig[i] = j;
+            Side_flag = 1;
+            break;
+          }
+        }
+        search_flag2 = 1;
+      }
+    }
+
+    if (Side_flag == 0) //若没有找到跳变点，则放宽范围进行搜索
+    {
+      Side_flag = 1;
+      for (j = Lef[i + 1] + 5; j <= Rig[i + 1] - 10; j++)
+      {
+        if (Pixle[i][j] == 1 && Pixle[i][j - 1] == 1 && Pixle[i][j - 2] == 1 && Pixle[i][j - 3] == 1 && Pixle[i][j - 4] == 1 && Pixle[i][j - 5] == 1 && Pixle[i][j - 6] == 1 && Pixle[i][j + 1] == 0 && Pixle[i][j + 2] == 0)
+        {
+          Rig[i] = j;
+          break;
+        }
+      }
+      if (search_flag1 == 0)
+      {
+        for (j = Rig[i + 1] - 9; j < Rig[i + 1]; j++)
+        {
+          if (Pixle[i][j] == 1 && Pixle[i][j - 1] == 1 && Pixle[i][j - 2] == 1 && Pixle[i][j - 3] == 1 && Pixle[i][j - 4] == 1 && Pixle[i][j - 5] == 1 && Pixle[i][j - 6] == 1 && Pixle[i][j + 1] == 0 && Pixle[i][j + 2] == 0)
+          {
+            Rig[i] = j;
+            break;
+          }
+        }
+      }
+      if (search_flag2 == 0)
+      {
+        for (j = Rig[i + 1]; j < Rig[i + 1] + 8; j++)
+        {
+          if (Pixle[i][j] == 1 && Pixle[i][j - 1] == 1 && Pixle[i][j - 2] == 1 && Pixle[i][j - 3] == 1 && Pixle[i][j - 4] == 1 && Pixle[i][j - 5] == 1 && Pixle[i][j - 6] == 1 && Pixle[i][j + 1] == 0 && Pixle[i][j + 2] == 0)
+          {
+            Rig[i] = j;
+            break;
+          }
+        }
+      }
+      for (j = Rig[i + 1] + 8; j <= Last_col; j++)
+      {
+        if (Pixle[i][j] == 1 && Pixle[i][j - 1] == 1 && Pixle[i][j - 2] == 1 && Pixle[i][j - 3] == 1 && Pixle[i][j - 4] == 1 && Pixle[i][j - 5] == 1 && Pixle[i][j - 6] == 1 && Pixle[i][j + 1] == 0 && Pixle[i][j + 2] == 0)
+        {
+          Rig[i] = j;
+          break;
+        }
+      }
+    }
+    search_flag1 = 0, search_flag2 = 0;
+
+    if (Lef[i + 1] != 78)
+    {
+      if (Pixle[i][Lef[i + 1]] == 0 || (Pixle[i][Lef[i + 1]] == 1 && Pixle[i][Lef[i + 1] - 1] == 0 && Pixle[i][Lef[i + 1] - 1] == 0))
+      {
+        for (j = Lef[i + 1]; j < Lef[i + 1] + 10 && j < Rig[i + 1] - 5; j++)
+        {
+          if (Pixle[i][j + 1] == 1 && Pixle[i][j + 2] == 1)
+          {
+            Lef[i] = j;
+            Side_flag = 1;
+            break;
+          }
+        }
+        search_flag1 = 1;
+      }
+      else if (Pixle[i][Lef[i + 1] - 1] == 1)
+      {
+        for (j = Lef[i + 1] - 1; j > Lef[i + 1] - 8 && j > Fir_col - 1; j--)
+        {
+          if (Pixle[i][j - 1] == 0 && Pixle[i][j - 2] == 0)
+          {
+            Lef[i] = j;
+            Side_flag = 1;
+            break;
+          }
+        }
+        search_flag2 = 1;
+      }
+    }
+    else if (Lef[i + 2] != 78)
+    {
+      for (j = Lef[i + 2]; j < Lef[i + 1] + 10 && j < Rig[i + 1] + 5; j++)
+      {
+        if (Pixle[i][j + 1] == 1 && Pixle[i][j + 2] == 1 && Pixle[i][j + 3] == 1 && Pixle[i][j + 4] == 1)
+        {
+          Lef[i] = j;
+          Side_flag = 1;
+          break;
+        }
+        search_flag1 = 1;
+      }
+      if (Side_flag == 0 && Pixle[i][Lef[i + 2] + 2] == 1 && Pixle[i][Lef[i + 2] + 1] == 1 && Pixle[i][Lef[i + 2]] == 1 && Pixle[i][Lef[i + 2] - 1] == 1)
+      {
+        for (j = Lef[i + 2] - 1; j > Lef[i + 2] - 8 && j > Fir_col - 1; j--)
+        {
+          if (Pixle[i][j - 1] == 0 && Pixle[i][j - 2] == 0 && Pixle[i][j - 3] == 0)
+          {
+            Lef[i] = j;
+            Side_flag = 1;
+            break;
+          }
+        }
+        search_flag2 = 1;
+      }
+    }
+
+    if (Side_flag == 0) //若没有找到跳变点，则放宽范围进行搜索
+    {
+      Side_flag = 1;
+      for (j = Rig[i + 1] - 5; j >= Lef[i + 1] + 10; j--)
+      {
+        if (Pixle[i][j] == 1 && Pixle[i][j + 1] == 1 && Pixle[i][j + 2] == 1 && Pixle[i][j + 3] == 1 && Pixle[i][j + 4] == 1 && Pixle[i][j + 5] == 1 && Pixle[i][j + 6] == 1 && Pixle[i][j - 1] == 0 && Pixle[i][j - 2] == 0)
+        {
+          Lef[i] = j;
+          break;
+        }
+      }
+      if (search_flag1 == 0)
+      {
+        for (j = Lef[i + 1] + 9; j > Lef[i + 1]; j--)
+        {
+          if (Pixle[i][j] == 1 && Pixle[i][j + 1] == 1 && Pixle[i][j + 2] == 1 && Pixle[i][j + 3] == 1 && Pixle[i][j + 4] == 1 && Pixle[i][j + 5] == 1 && Pixle[i][j + 6] == 1 && Pixle[i][j - 1] == 0 && Pixle[i][j - 2] == 0)
+          {
+            Lef[i] = j;
+            break;
+          }
+        }
+      }
+      if (search_flag2 == 0)
+      {
+        for (j = Lef[i + 1]; j > Lef[i + 1] - 8; j--)
+        {
+          if (Pixle[i][j] == 1 && Pixle[i][j + 1] == 1 && Pixle[i][j + 2] == 1 && Pixle[i][j + 3] == 1 && Pixle[i][j + 4] == 1 && Pixle[i][j + 5] == 1 && Pixle[i][j + 6] == 1 && Pixle[i][j - 1] == 0 && Pixle[i][j - 2] == 0)
+          {
+            Lef[i] = j;
+            break;
+          }
+        }
+      }
+      for (j = Lef[i + 1] - 8; j > Fir_col - 1; j++)
+      {
+        if (Pixle[i][j] == 1 && Pixle[i][j + 1] == 1 && Pixle[i][j + 2] == 1 && Pixle[i][j + 3] == 1 && Pixle[i][j + 4] == 1 && Pixle[i][j + 5] == 1 && Pixle[i][j + 6] == 1 && Pixle[i][j - 1] == 0 && Pixle[i][j - 2] == 0)
+        {
+          Lef[i] = j;
+          break;
+        }
+      }
+    }
+  }
+}
+#endif
 /*************************************************************************
 *  函数名称：void Pic_DrawMid(void)
 *  功能说明：绘制左右边线线
@@ -1469,7 +1741,7 @@ void Pic_offset_fig(void)
 
   for (i = FIG_AREA_FAR; i < FIG_AREA_NEAR; ++i)
   {
-    if (New_Rig[i] != 999)
+    if (New_Mid[i] != 999)
     {
       Cam_offset = Cam_offset + New_Mid[i];
       count++;
@@ -1923,11 +2195,13 @@ void Pic_undistort(int L, int R)
 void Pic_find_circle(void)
 {
   int i;
-  Lef_circle = Rig_circle = 0;
-  Lef_break_point = Rig_break_point = 0;
-  for (i = 55; i > Fir_row + 11; i--) //从非全白行开始寻找
+  Lef_circle = 0;
+  Rig_circle = 0;
+  Lef_break_point = 0;
+  Rig_break_point = 0;
+  for (i = 55; i > Fir_row + 12; i--) //从非全白行开始寻找
   {
-    if (Last_col - Rig[i] < 2 || Last_col - Rig[i - 12] < 2) //从右边线离开右边界开始寻找
+    if (Last_col - Rig[i] < 2 ) //从右边线离开右边界开始寻找
     {
       continue;
     }
@@ -1941,16 +2215,20 @@ void Pic_find_circle(void)
     }
     */
 
-    if (Rig[i - 2] <= Rig[i] && Rig[i - 4] <= Rig[i - 2] && Rig[i - 6] <= Rig[i - 4] && Rig[i - 8] <= Rig[i - 6] && Rig[i - 10] <= Rig[i - 8] && Rig[i - 12] > Rig[i - 10] && Rig[i - 11] > Rig[i - 9] && abs(Rig[i - 8] - Rig[i - 6]) < 4 && abs(Rig[i - 6] - Rig[i - 4]) < 4 && abs(Rig[i - 4] - Rig[i - 2]) < 4 && abs(Rig[i - 2] - Rig[i]) < 4)
+    if (Rig[i - 2] <= Rig[i] && Rig[i - 4] <= Rig[i - 2] && Rig[i - 6] <= Rig[i - 4] && Rig[i - 8] <= Rig[i - 6] && Rig[i - 10] <= Rig[i - 8] &&
+        Rig[i - 12] > Rig[i - 10] && Rig[i - 11] > Rig[i - 9] && 
+        abs(Rig[i - 10] - Rig[i - 8]) < 4 && abs(Rig[i - 8] - Rig[i - 6]) < 4 && abs(Rig[i - 6] - Rig[i - 4]) < 4 && abs(Rig[i - 4] - Rig[i - 2]) < 4 && abs(Rig[i - 2] - Rig[i]) < 4 &&
+        abs(Rig[i - 12] - Rig[i - 10]) < 8 && abs(Rig[i - 11] - Rig[i - 9]) < 8)
+      
     {
       Rig_circle = 1;
       Rig_break_point = i;
       break;
     }
   }
-  for (i = 55; i > Fir_row + 11; i--)
+  for (i = 55; i > Fir_row + 12; i--)
   {
-    if (Lef[i] - Fir_col < 2 || Lef[i - 12] - Fir_col < 2)
+    if (Lef[i] - Fir_col < 2 )
     {
       continue;
     }
@@ -1961,10 +2239,13 @@ void Pic_find_circle(void)
     {
       Lef_circle=1;
       Lef_break_point=i-5;
-      break;
+      break;t
     }
     */
-    if (Lef[i - 2] >= Lef[i] && Lef[i - 4] >= Lef[i - 2] && Lef[i - 6] >= Lef[i - 4] && Lef[i - 8] >= Lef[i - 6] && Lef[i - 10] >= Lef[i - 8] && Lef[i - 12] < Lef[i - 10] && Lef[i - 11] < Lef[i - 9] && abs(Lef[i - 8] - Lef[i - 6]) < 4 && abs(Lef[i - 6] - Lef[i - 4]) < 4 && abs(Lef[i - 4] - Lef[i - 2]) < 4 && abs(Lef[i - 2] - Lef[i]) < 4)
+    if (Lef[i - 2] >= Lef[i] && Lef[i - 4] >= Lef[i - 2] && Lef[i - 6] >= Lef[i - 4] && Lef[i - 8] >= Lef[i - 6] && Lef[i - 10] >= Lef[i - 8] &&
+        Lef[i - 12] < Lef[i - 10] && Lef[i - 11] < Lef[i - 9] &&
+         abs(Lef[i - 10] - Lef[i - 8]) < 4 && abs(Lef[i - 8] - Lef[i - 6]) < 4 && abs(Lef[i - 6] - Lef[i - 4]) < 4 && abs(Lef[i - 4] - Lef[i - 2]) < 4 && abs(Lef[i - 2] - Lef[i]) < 4 &&
+          abs(Lef[i - 12] - Lef[i - 10]) < 8 &&  abs(Lef[i - 11] - Lef[i - 9]) < 8  )
     {
       Lef_circle = 1;
       Lef_break_point = i;
@@ -1993,7 +2274,7 @@ void start_stop_rec(void)
     int Black_line = 0;
     int road_half_width_original[40] = {35, 34, 34, 33, 32, 31, 30, 30, 29, 28, 27, 26, 25, 25, 24, 23, 22, 21, 20, 20, 19, 18, 17, 16, 15, 14, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 0};
 
-    if (Road == 0 && Road0_flag != 0 && Road0_flag != 1) //进起跑线
+    if (Road == 0 && Road0_flag != 2 && Road0_flag != 1) //进起跑线
     {
         start_waited++;
         if (start_waited > 600 && Lef_edge > 15)
