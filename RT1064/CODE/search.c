@@ -1187,7 +1187,7 @@ void Pic_DrawLRside(void)
   {
     if (Pixle[Last_row][j] == 1 && Pixle[Last_row][j - 1] == 1 && Pixle[Last_row][j - 2] == 1 && Pixle[Last_row][j - 3] == 1 && Pixle[Last_row][j - 4] == 1 && Pixle[Last_row][j - 5] == 1 && Pixle[Last_row][j - 6] == 1 && Pixle[Last_row][j + 1] == 0 && Pixle[Last_row][j + 2] == 0)
     {
-      Rig[Last_row] = j + 2;
+      Rig[Last_row] = j + 1;
       break;
     }
   }
@@ -1204,22 +1204,45 @@ void Pic_DrawLRside(void)
     Lef_err[i] = 0;
     Rig_err[i] = 0;
     side_search_end = Last_col + 1;
-    for (k = 0; k < 3; ++k)
+    if (Rig[i + 1] != 78)
     {
-      if (Rig_err[i] == 1)
+      for (k = 0; k < 3; ++k)
       {
-        break;
-      }
-      for (j = Rig[i + 1] - side_search_sw[k]; j < side_search_end; j++) //向两边搜索下一跳变点
-      {
-        if (Pixle[i][j] == 1 && Pixle[i][j - 1] == 1 && Pixle[i][j - 2] == 1 && Pixle[i][j - 3] == 1 && Pixle[i][j - 4] == 1 && Pixle[i][j - 5] == 1 && Pixle[i][j - 6] == 1 && Pixle[i][j + 1] == 0 && Pixle[i][j + 2] == 0)
+        if (Rig_err[i] == 1)
         {
-          Rig[i] = j;
-          Rig_err[i] = 1;
           break;
         }
+        for (j = Rig[i + 1] - side_search_sw[k]; j < side_search_end; j++) //向两边搜索下一跳变点
+        {
+          if (Pixle[i][j] == 1 && Pixle[i][j - 1] == 1 && Pixle[i][j - 2] == 1 && Pixle[i][j - 3] == 1 && Pixle[i][j - 4] == 1 && Pixle[i][j - 5] == 1 && Pixle[i][j - 6] == 1 && Pixle[i][j + 1] == 0 && Pixle[i][j + 2] == 0)
+          {
+            Rig[i] = j + 1;
+            Rig_err[i] = 1;
+            break;
+          }
+        }
+        side_search_end = Rig[i + 1] - side_search_sw[k];
       }
-      side_search_end = Rig[i + 1] - side_search_sw[k];
+    }
+    else if (Rig[i + 2] != 78)
+    {
+      for (k = 1; k < 3; ++k)
+      {
+        if (Rig_err[i] == 1)
+        {
+          break;
+        }
+        for (j = Rig[i + 2] - side_search_sw[k]; j < side_search_end; j++) //向两边搜索下一跳变点
+        {
+          if (Pixle[i][j] == 1 && Pixle[i][j - 1] == 1 && Pixle[i][j - 2] == 1 && Pixle[i][j - 3] == 1 && Pixle[i][j - 4] == 1 && Pixle[i][j - 5] == 1 && Pixle[i][j - 6] == 1 && Pixle[i][j + 1] == 0 && Pixle[i][j + 2] == 0)
+          {
+            Rig[i] = j + 1;
+            Rig_err[i] = 1;
+            break;
+          }
+        }
+        side_search_end = Rig[i + 2] - side_search_sw[k];
+      }
     }
     if (Rig_err[i] == 0) //若没有找到跳变点，则放宽范围进行搜索
     {
@@ -1228,28 +1251,52 @@ void Pic_DrawLRside(void)
       {
         if (Pixle[i][j] == 1 && Pixle[i][j - 1] == 1 && Pixle[i][j - 2] == 1 && Pixle[i][j - 3] == 1 && Pixle[i][j - 4] == 1 && Pixle[i][j - 5] == 1 && Pixle[i][j - 6] == 1 && Pixle[i][j + 1] == 0 && Pixle[i][j + 2] == 0)
         {
-          Rig[i] = j;
+          Rig[i] = j + 1;
           break;
         }
       }
     }
     side_search_end = Fir_col - 1;
-    for (k = 0; k < 3; ++k)
+    if (Lef[i + 1] != 1)
     {
+      for (k = 0; k < 3; ++k)
+      {
 
-      if (Lef_err[i] == 1)
-      {
-        break;
-      }
-      for (j = Lef[i + 1] + side_search_sw[k]; j > side_search_end; j--)
-      {
-        if (Pixle[i][j] == 1 && Pixle[i][j + 1] == 1 && Pixle[i][j + 2] == 1 && Pixle[i][j + 3] == 1 && Pixle[i][j + 4] == 1 && Pixle[i][j + 5] == 1 && Pixle[i][j + 6] == 1 && Pixle[i][j - 1] == 0 && Pixle[i][j - 2] == 0) //减小道路边缘的白胶带的影响
+        if (Lef_err[i] == 1)
         {
-          Lef[i] = j;
-          Lef_err[i] = 1;
           break;
         }
+        for (j = Lef[i + 1] + side_search_sw[k]; j > side_search_end; j--)
+        {
+          if (Pixle[i][j] == 1 && Pixle[i][j + 1] == 1 && Pixle[i][j + 2] == 1 && Pixle[i][j + 3] == 1 && Pixle[i][j + 4] == 1 && Pixle[i][j + 5] == 1 && Pixle[i][j + 6] == 1 && Pixle[i][j - 1] == 0 && Pixle[i][j - 2] == 0) //减小道路边缘的白胶带的影响
+          {
+            Lef[i] = j;
+            Lef_err[i] = 1;
+            break;
+          }
+        }
         side_search_end = Lef[i + 1] + side_search_sw[k];
+      }
+    }
+    else if (Lef[i + 2] != 1)
+    {
+      for (k = 1; k < 3; ++k)
+      {
+
+        if (Lef_err[i] == 1)
+        {
+          break;
+        }
+        for (j = Lef[i + 2] + side_search_sw[k]; j > side_search_end; j--)
+        {
+          if (Pixle[i][j] == 1 && Pixle[i][j + 1] == 1 && Pixle[i][j + 2] == 1 && Pixle[i][j + 3] == 1 && Pixle[i][j + 4] == 1 && Pixle[i][j + 5] == 1 && Pixle[i][j + 6] == 1 && Pixle[i][j - 1] == 0 && Pixle[i][j - 2] == 0) //减小道路边缘的白胶带的影响
+          {
+            Lef[i] = j;
+            Lef_err[i] = 1;
+            break;
+          }
+        }
+        side_search_end = Lef[i + 2] + side_search_sw[k];
       }
     }
     if (Lef_err[i] == 0) //若没有找到，则放宽范围搜索
