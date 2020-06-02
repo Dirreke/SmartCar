@@ -2,7 +2,7 @@
 % 
 % name='20200516_3';
 % % mykc20200513_10cm
-% Initial();
+Initial();
 % global New_Lef New_Rig New_Mid;
 % try load(strcat('./Data/',name,'.mat'))
 % catch
