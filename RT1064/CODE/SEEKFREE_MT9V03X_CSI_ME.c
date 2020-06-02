@@ -123,7 +123,7 @@ uint8_t GetOSTU(uint8_t tmImage[CAMERA_H][CAMERA_W])
   }
   return Threshold; //返回最佳阈值;
 }
-
+#if 0
 void Get_01_Value(void)
 {
   int i = 0, j = 0;
@@ -139,7 +139,7 @@ void Get_01_Value(void)
     }
   }
 }
-
+#endif
 void swap(uint8_t *p, int a, int b)
 {
   uint8_t temp;
@@ -297,12 +297,12 @@ void camera_dispose_main(void) //摄像头处理主函数
   {
 */
   sobel();
-  if (Road == 1 && Road1_flag == 4) //||Road ==2)
-  {
+  // if (Road == 1 && Road1_flag == 4) //||Road ==2)
+  // {
       //Pic_seedfill();///种子搜索算法
 //    }
     Pic_noi_elim(); //图像简单去噪点
-  }
+  // }
   Pic_DrawLRside();//寻找左右边线
   // Cam_End_Detect();
 #ifdef undistort0
