@@ -81,7 +81,7 @@ float offset_map[60]={(float)31/77,(float)31/77,(float)31/9	,(float)31/9	 ,(floa
 ,(float)31/42	,(float)31/44	 ,(float)31/46	 ,(float)31/46	 ,(float)31/48	  ,(float)31/48	,(float)31/48	,(float)31/50	,(float)31/51,(float)31/52,(float)31/53,(float)31/54,(float)31/54,(float)31/56,(float)31/56,(float)31/58,(float)31/58,(float)31/58,(float)31/60,(float)31/60,(float)31/61,(float)31/77};
 */
 float K0_Table[5] = {ROAD_WIDTH / 65, ROAD_WIDTH / 66, ROAD_WIDTH / 67, ROAD_WIDTH / 68, ROAD_WIDTH / 69};
-int threshold_offset = -5;
+int threshold_offset = -2;
 float zhidaosudu = 2.5;     //直道速度
 float xiaowandaosudu = 2.3; //小弯道速度
 float dawandaosudu = 2.3;   //大弯道速度
@@ -448,9 +448,9 @@ char Road1_turnin(float a, float b, float c)
 char Road1_turnout = 1;
 void Road_rec(void)
 {
-  int Road03_count = 0, Road04_count = 0;
-  int Road11_count = 0, Road12_count = 0, Road13_count = 0, Road14_count = 0, Road15_count = 0;
-  int Road21_count = 0, Road22_count = 0, Road23_count = 0, Road24_count = 0, Road25_count = 0;
+  static int Road03_count = 0, Road04_count = 0;
+  static int Road11_count = 0, Road12_count = 0, Road13_count = 0, Road14_count = 0, Road15_count = 0;
+  static int Road21_count = 0, Road22_count = 0, Road23_count = 0, Road24_count = 0, Road25_count = 0;
   // static int oldwhite=5000;
   // static uint8 Road1_cnt1=0;
   // static char Road1_flag1=0;
@@ -458,7 +458,10 @@ void Road_rec(void)
   {
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////普通赛道→圆环
-    if ((Lef_break_point < 40 && Road == 0 && Rig_circle == 0 && Lef_circle == 1 && Rig_slope == 998 && Lef_slope != 998 && Rig[39] - Rig[37] < 5 && Rig[37] - Rig[35] < 5 && Rig[35] - Rig[33] < 5 && Rig[33] - Rig[31] < 5 && Rig[31] - Rig[29] < 5 && Rig[29] - Rig[27] < 5 && Rig[27] - Rig[25] < 5 && (New_Lef[54] == -MIDMAP || New_Lef[55] == -MIDMAP || New_Lef[56] == -MIDMAP)&& Rig_edge < 10)) //左圆环：左边线,右边线：直通到底//&& Rig[11] != 78
+    if ((Lef_break_point < 45 && Road == 0 && Rig_circle == 0 && Lef_circle == 1 &&  Lef_slope != 998 && Rig_slope == 998 &&
+         Rig[39] - Rig[37] < 5 && Rig[37] - Rig[35] < 5 && Rig[35] - Rig[33] < 5 && Rig[33] - Rig[31] < 5 && Rig[31] - Rig[29] < 5 && Rig[29] - Rig[27] < 5 && Rig[27] - Rig[25] < 5 && Rig[25] - Rig[23] < 5 &&
+        //  (New_Lef[54] == -MIDMAP || New_Lef[55] == -MIDMAP || New_Lef[56] == -MIDMAP)&& 
+             Rig_edge < 10)) //左圆环：左边线,右边线：直通到底//&& Rig[11] != 78
     {
       Road0_flag = 0;
       Road11_count++;
@@ -469,7 +472,10 @@ void Road_rec(void)
       }
       return;
     }
-    else if (Rig_break_point < 40 && Road == 0 && Lef_circle == 0 && Rig_circle == 1 && Lef_slope == 998 && Rig_slope != 998 && Lef[25] - Lef[27] < 5 && Lef[27] - Lef[29] < 5 && Lef[29] - Lef[31] < 5 && Lef[31] - Lef[33] < 5 && Lef[33] - Lef[35] < 5 && Lef[35] - Lef[37] < 5 && Lef[37] - Lef[39] < 5 && (New_Rig[54] == MIDMAP || New_Rig[55] == MIDMAP || New_Rig[56] == MIDMAP) && Lef_edge < 10) //右圆环：右边线：突变点→拐点→突变点//&& Lef[11] != 2
+    else if (Rig_break_point < 45 && Road == 0 && Lef_circle == 0 && Rig_circle == 1 &&Rig_slope != 998 &&  Lef_slope == 998 && 
+             Lef[25] - Lef[27] < 5 && Lef[27] - Lef[29] < 5 && Lef[29] - Lef[31] < 5 && Lef[31] - Lef[33] < 5 && Lef[33] - Lef[35] < 5 && Lef[35] - Lef[37] < 5 && Lef[37] - Lef[39] < 5 &&  Lef[23] - Lef[25] < 5 &&
+          //     (New_Rig[54] == MIDMAP || New_Rig[55] == MIDMAP || New_Rig[56] == MIDMAP) && 
+                 Lef_edge < 10) //右圆环：右边线：突变点→拐点→突变点//&& Lef[11] != 2
     {
       Road0_flag = 0;
       Road21_count++;
@@ -481,7 +487,7 @@ void Road_rec(void)
       return;
     }
     //弯道
-    else if ((Rig_break_point > 45 && Lef_circle == 0 && Rig_circle == 1 && Rig_slope != 998)) //左转弯
+    else if ((Rig_break_point > 40 && Lef_circle == 0 && Rig_circle == 1 && Rig_slope != 998)) //左转弯
     {
       Road03_count++;
       if (Road03_count == 2)
@@ -491,7 +497,7 @@ void Road_rec(void)
       }
       return;
     }
-    else if ((Lef_break_point > 45 && Rig_circle == 0 && Lef_circle == 1 && Lef_slope != 998)) //右转弯
+    else if ((Lef_break_point > 40 && Rig_circle == 0 && Lef_circle == 1 && Lef_slope != 998)) //右转弯
     {
       Road04_count++;
       if (Road04_count == 2)
@@ -659,7 +665,7 @@ void Road_rec(void)
     }
   }
 
-  if (Road == 0 && whitecnt > 1700 && ((Lef_edge > 8 && Rig_edge > 8) || Lef_edge > 20 || Rig_edge > 20) && Allwhitestart < 40)
+  if (Road == 0 && whitecnt > 1700 && ((Lef_edge > 10 && Rig_edge > 10) || Lef_edge > 30 || Rig_edge > 30) && Allwhitestart < 40)
   {
     Road0_flag = 1;
   }
@@ -866,12 +872,19 @@ void Allwhite_find(void)
     Allwhiterow[i] = 0;
     if (Road0_flag == 1 && i < 35)
     {
-      if (abs(Lef[i] - 8) < 5 && abs(72 - Rig[i]) < 5 && Pixle[i][10] + Pixle[i][20] + Pixle[i][30] + Pixle[i][40] + Pixle[i][50] + Pixle[i][60] + Pixle[i][70] > 5)
+      if (abs(Lef[i] - Fir_col) < 8 && abs(Last_col - Rig[i]) < 8 && 
+          Pixle[i][10] + Pixle[i][14] + Pixle[i][18] + Pixle[i][22] > 2 && 
+          Pixle[i][70] + Pixle[i][66] + Pixle[i][62] + Pixle[i][58] > 2 && 
+          Pixle[i][34] + Pixle[i][38] + Pixle[i][42] + Pixle[i][46] > 2 )//Pixle[i][10] + Pixle[i][20] + Pixle[i][30] + Pixle[i][40] + Pixle[i][50] + Pixle[i][60] + Pixle[i][70] > 5)
       {
         Allwhiterow[i] = 1;
       }
     }
-    else if (abs(Lef[i] - Fir_col) < 5 && abs(Last_col - Rig[i]) < 5 && Pixle[i][10] + Pixle[i][20] + Pixle[i][30] + Pixle[i][40] + Pixle[i][50] + Pixle[i][60] + Pixle[i][70] > 5)
+    else if (abs(Lef[i] - Fir_col) < 5 && abs(Last_col - Rig[i]) < 5 &&
+             Pixle[i][10] + Pixle[i][14] + Pixle[i][18] + Pixle[i][22] > 2 && 
+             Pixle[i][70] + Pixle[i][66] + Pixle[i][62] + Pixle[i][58] > 2 && 
+             Pixle[i][34] + Pixle[i][38] + Pixle[i][42] + Pixle[i][46] > 2 )
+             //Pixle[i][10] + Pixle[i][14] + Pixle[i][18] + Pixle[i][22] > 2 && Pixle[i][70] + Pixle[i][66] + Pixle[i][62] + Pixle[i][58] > 2)
     {
       Allwhiterow[i] = 1;
     }
@@ -1386,11 +1399,11 @@ void Pic_DrawLRside(void)
 
     if (Rig[i + 1] != 78)
     {
-      if (Pixle[i][Rig[i + 1]] == 0 || (Pixle[i][Rig[i + 1]] == 1 && Pixle[i][Rig[i + 1] - 1] == 0 && Pixle[i][Rig[i + 1] + 1] == 0)) //向内查找10个
+      if (Pixle[i][Rig[i + 1]] == 0 || (Pixle[i][Rig[i + 1]] == 1 && Pixle[i][Rig[i + 1] + 1] == 0 )) //向内查找10个
       {
         for (j = Rig[i + 1]; j > Rig[i + 1] - 10 && j > Lef[i + 1] + 5; j--)
         {
-          if (Pixle[i][j - 1] == 1 && Pixle[i][j - 2] == 1) //两白
+          if (Pixle[i][j] == 1 && Pixle[i][j - 1] == 1) //两白
           {
             Rig[i] = j;
             Side_flag = 1;
@@ -1417,7 +1430,7 @@ void Pic_DrawLRside(void)
     {
       for (j = Rig[i + 2]; j > Rig[i + 1] - 10 && j > Lef[i + 1] + 5; j--) //先搜内10个
       {
-        if (Pixle[i][j - 1] == 1 && Pixle[i][j - 2] == 1 && Pixle[i][j - 3] == 1 && Pixle[i][j - 4] == 1)
+        if (Pixle[i][j] == 1 && Pixle[i][j - 1] == 1 && Pixle[i][j - 2] == 1 && Pixle[i][j - 3] == 1)
         {
           Rig[i] = j;
           Side_flag = 1;
@@ -1482,15 +1495,17 @@ void Pic_DrawLRside(void)
         }
       }
     }
-    search_flag1 = 0, search_flag2 = 0;
+    search_flag1 = 0;
+    search_flag2 = 0;
+    Side_flag = 0;
 
     if (Lef[i + 1] != 78)
     {
-      if (Pixle[i][Lef[i + 1]] == 0 || (Pixle[i][Lef[i + 1]] == 1 && Pixle[i][Lef[i + 1] - 1] == 0 && Pixle[i][Lef[i + 1] - 1] == 0))
+      if (Pixle[i][Lef[i + 1]] == 0 || (Pixle[i][Lef[i + 1]] == 1 && Pixle[i][Lef[i + 1] - 1] == 0))
       {
         for (j = Lef[i + 1]; j < Lef[i + 1] + 10 && j < Rig[i + 1] - 5; j++)
         {
-          if (Pixle[i][j + 1] == 1 && Pixle[i][j + 2] == 1)
+          if (Pixle[i][j] == 1 && Pixle[i][j + 1] == 1)
           {
             Lef[i] = j;
             Side_flag = 1;
@@ -1517,7 +1532,7 @@ void Pic_DrawLRside(void)
     {
       for (j = Lef[i + 2]; j < Lef[i + 1] + 10 && j < Rig[i + 1] + 5; j++)
       {
-        if (Pixle[i][j + 1] == 1 && Pixle[i][j + 2] == 1 && Pixle[i][j + 3] == 1 && Pixle[i][j + 4] == 1)
+        if (Pixle[i][j] == 1 && Pixle[i][j + 1] == 1 && Pixle[i][j + 2] == 1 && Pixle[i][j + 3] == 1)
         {
           Lef[i] = j;
           Side_flag = 1;
@@ -2216,10 +2231,9 @@ void Pic_find_circle(void)
     */
 
     if (Rig[i - 2] <= Rig[i] && Rig[i - 4] <= Rig[i - 2] && Rig[i - 6] <= Rig[i - 4] && Rig[i - 8] <= Rig[i - 6] && Rig[i - 10] <= Rig[i - 8] &&
-        Rig[i - 12] > Rig[i - 10] && Rig[i - 11] > Rig[i - 9] && 
+        Rig[i - 12] > Rig[i - 10] && Rig[i - 11] > Rig[i - 9] && Rig[i - 13] > Rig[i - 11] && Rig[i - 14] > Rig[i - 12] && Rig[i - 15] > Rig[i - 13] &&
         abs(Rig[i - 10] - Rig[i - 8]) < 4 && abs(Rig[i - 8] - Rig[i - 6]) < 4 && abs(Rig[i - 6] - Rig[i - 4]) < 4 && abs(Rig[i - 4] - Rig[i - 2]) < 4 && abs(Rig[i - 2] - Rig[i]) < 4 &&
-        abs(Rig[i - 12] - Rig[i - 10]) < 8 && abs(Rig[i - 11] - Rig[i - 9]) < 8)
-      
+        abs(Rig[i - 12] - Rig[i - 10]) < 5 && abs(Rig[i - 11] - Rig[i - 9]) < 5 && abs(Rig[i - 13] > Rig[i - 11]) < 5 && abs(Rig[i - 14] > Rig[i - 12]) < 8 && abs(Rig[i - 15] > Rig[i - 13]) < 8)
     {
       Rig_circle = 1;
       Rig_break_point = i;
@@ -2243,9 +2257,9 @@ void Pic_find_circle(void)
     }
     */
     if (Lef[i - 2] >= Lef[i] && Lef[i - 4] >= Lef[i - 2] && Lef[i - 6] >= Lef[i - 4] && Lef[i - 8] >= Lef[i - 6] && Lef[i - 10] >= Lef[i - 8] &&
-        Lef[i - 12] < Lef[i - 10] && Lef[i - 11] < Lef[i - 9] &&
-         abs(Lef[i - 10] - Lef[i - 8]) < 4 && abs(Lef[i - 8] - Lef[i - 6]) < 4 && abs(Lef[i - 6] - Lef[i - 4]) < 4 && abs(Lef[i - 4] - Lef[i - 2]) < 4 && abs(Lef[i - 2] - Lef[i]) < 4 &&
-          abs(Lef[i - 12] - Lef[i - 10]) < 8 &&  abs(Lef[i - 11] - Lef[i - 9]) < 8  )
+        Lef[i - 12] < Lef[i - 10] && Lef[i - 11] < Lef[i - 9] && Lef[i - 13] < Lef[i - 11] && Lef[i - 14] < Lef[i - 12] && Lef[i - 15] < Lef[i - 13] &&
+        abs(Lef[i - 10] - Lef[i - 8]) < 4 && abs(Lef[i - 8] - Lef[i - 6]) < 4 && abs(Lef[i - 6] - Lef[i - 4]) < 4 && abs(Lef[i - 4] - Lef[i - 2]) < 4 && abs(Lef[i - 2] - Lef[i]) < 4 &&
+        abs(Lef[i - 12] - Lef[i - 10]) < 5 &&  abs(Lef[i - 11] - Lef[i - 9]) < 5 && abs(Lef[i - 13] - Lef[i - 11]) < 5 && abs(Lef[i - 14] - Lef[i - 12]) < 8 && abs(Lef[i - 15] - Lef[i - 13]) < 8 )
     {
       Lef_circle = 1;
       Lef_break_point = i;
@@ -2276,7 +2290,7 @@ void start_stop_rec(void)
 
     if (Road == 0 && Road0_flag != 2 && Road0_flag != 1) //进起跑线
     {
-        start_waited++;
+        start_waited = 601;//要改回去，否则无法出库
         if (start_waited > 600 && Lef_edge > 15)
         {
             for (i = Fir_row + 10; i < 60; i++) //自上而下寻找有边线的开始行
