@@ -31,7 +31,7 @@ global ImageH MIDMAP New_Lef New_Rig;
 % % % % clear Rig_New Lef_New;
 %%
 
-startpoint=24+1;
+startpoint=29+1;
 % H0=75;
 % D0=50;
 % n0=77*2*K;
