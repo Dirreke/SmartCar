@@ -909,11 +909,11 @@ void Pic_DrawLRside(void)
 
         if (Rig[i + 1] != 78)
         {
-            if (Pixle[i][Rig[i + 1]] == 0 || (Pixle[i][Rig[i + 1]] == 1 && Pixle[i][Rig[i + 1] - 1] == 0 && Pixle[i][Rig[i + 1] + 1] == 0))//向内查找10个
+            if (Pixle[i][Rig[i + 1]] == 0 || (Pixle[i][Rig[i + 1]] == 1 && Pixle[i][Rig[i + 1] - 1] == 0 && Pixle[i][Rig[i + 1] + 1] == 0)) //向内查找10个
             {
                 for (j = Rig[i + 1]; j > Rig[i + 1] - 10 && j > Lef[i + 1] + 5; j--)
                 {
-                    if (Pixle[i][j - 1] == 1 && Pixle[i][j - 2] == 1)//两白
+                    if (Pixle[i][j - 1] == 1 && Pixle[i][j - 2] == 1) //两白
                     {
                         Rig[i] = j;
                         Side_flag = 1;
@@ -922,11 +922,11 @@ void Pic_DrawLRside(void)
                 }
                 search_flag1 = 1;
             }
-            else if (Pixle[i][Rig[i + 1] + 1] == 1)//向外查找8个
+            else if (Pixle[i][Rig[i + 1] + 1] == 1) //向外查找8个
             {
                 for (j = Rig[i + 1] + 1; j < Rig[i + 1] + 8 && j < Last_col + 1; j++)
                 {
-                    if (Pixle[i][j + 1] == 0 && Pixle[i][j + 2] == 0)                     //两黑
+                    if (Pixle[i][j + 1] == 0 && Pixle[i][j + 2] == 0) //两黑
                     {
                         Rig[i] = j;
                         Side_flag = 1;
@@ -938,7 +938,7 @@ void Pic_DrawLRside(void)
         }
         else if (Rig[i + 2] != 78) //更严格的条件
         {
-            for (j = Rig[i + 2]; j > Rig[i + 1] - 10 && j > Lef[i + 1] + 5; j--)  //先搜内10个
+            for (j = Rig[i + 2]; j > Rig[i + 1] - 10 && j > Lef[i + 1] + 5; j--) //先搜内10个
             {
                 if (Pixle[i][j - 1] == 1 && Pixle[i][j - 2] == 1 && Pixle[i][j - 3] == 1 && Pixle[i][j - 4] == 1)
                 {
@@ -948,7 +948,7 @@ void Pic_DrawLRside(void)
                 }
                 search_flag1 = 1;
             }
-            if (Side_flag == 0 && Pixle[i][Rig[i + 2] - 2] == 1 && Pixle[i][Rig[i + 2] - 1] == 1 && Pixle[i][Rig[i + 2]] == 1 && Pixle[i][Rig[i + 2] + 1] == 1)//搜外8个
+            if (Side_flag == 0 && Pixle[i][Rig[i + 2] - 2] == 1 && Pixle[i][Rig[i + 2] - 1] == 1 && Pixle[i][Rig[i + 2]] == 1 && Pixle[i][Rig[i + 2] + 1] == 1) //搜外8个
             {
                 for (j = Rig[i + 2] + 1; j < Rig[i + 2] + 8 && j < Last_col + 1; j++)
                 {
@@ -1120,4 +1120,110 @@ void Turn_Cam_New()
     car_straight_PWM = PID_realize_straight(car_straight_angle * SERVO_RANGE / ANGLE_RANGE);
     Turn_Cam_Out = car_center_PWM + car_straight_PWM;
     Servo_Duty(-Turn_Cam_Out);
+}
+int turn_stop=0;
+void part()
+{
+    int dis=0;int dis1=0;
+    int i=0;
+    if (0)
+    {
+        ;
+    }
+    else if ((Rig_break_point > 45 && ((Lef_circle == 1 && Rig_circle == 0) || Road0_flag == 3) && Rig_slope != 998)) //左转弯
+    {
+        for (i = Fir_row; i < 40; ++i)
+        {
+            if (Rig[i] < 40 && Rig[i + 1] < 40 && Rig[i + 2] > 40 && Rig[i + 3] > 40 &&
+                Rig[i + 5] - Rig[i + 3] < 5 && Rig[i + 7] - Rig[i + 5] < 5 && Rig[i + 9] - Rig[i + 7] < 5 && Rig[i + 11] - Rig[i + 9] < 5)
+            {
+                break;
+            }
+        }
+        dis = Rig[i + 1] - Rig[i];
+        for (i; i > Fir_row; --i)
+        {
+            if (Rig[i - 1] > 40)
+            {
+                break;
+            }
+            dis1 = Rig[i] - Rig[i - 1];
+            if (dis1 < 0)
+            {
+                break;
+            }
+            else if (dis1 < dis)
+            {
+                continue;
+            }
+            else if (dis1 < 2 * dis)
+            {
+                dis = Rig[i] - Rig[i - 1];
+                continue;
+            }
+            else
+            {
+                break;
+            }
+        }
+        turn_stop = i;
+        if (Rig[turn_stop] < 34 && dis > 4)
+        {
+            Road03_count++;
+            if (Road03_count == 2)
+            {
+                Road0_flag = 3;   //turn left flag
+                Road03_count = 0; //reset
+            }
+            return;
+        }
+    }
+    else if ((Lef_break_point > 45 && ((Rig_circle == 1 && Lef_circle == 0) || Road0_flag == 4) && Lef_slope != 998)) //右转弯
+    {
+        for (i = Fir_row; i < 40; ++i)
+        {
+            if (Lef[i] > 40 && Lef[i + 1] > 40 && Lef[i + 2] < 40 && Lef[i + 3] < 40 &&
+                Lef[i + 3] - Lef[i + 5] < 5 && Lef[i + 5] - Lef[i + 7] < 5 && Lef[i + 7] - Lef[i + 9] < 5 && Lef[i + 9] - Lef[i + 11] < 5)
+            {
+                break;
+            }
+        }
+        dis = Lef[i] - Lef[i + 1];
+        for (i; i > Fir_row; --i)
+        {
+            if (Lef[i - 1] < 40)
+            {
+                break;
+            }
+            dis1 = Lef[i - 1] - Lef[i];
+            if (dis1 < 0)
+            {
+                break;
+            }
+            else if (dis1 < dis)
+            {
+                continue;
+            }
+            else if (dis1 < 2 * dis)
+            {
+                dis = Lef[i - 1] - Lef[i];
+                continue;
+            }
+            else
+            {
+                break;
+            }
+        }
+        turn_stop = i;
+        if (Lef[turn_stop] > 45 && dis > 4)
+        {
+            Road04_count++;
+            if (Road04_count == 2)
+            {
+                Road0_flag = 4;   //turn left flag
+                Road04_count = 0; //reset
+            }
+            return;
+        }
+    }
 }

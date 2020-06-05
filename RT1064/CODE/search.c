@@ -10,7 +10,7 @@ int Mid[LCDH]; //道路中心点的纵坐标
 int Middle = 41;
 
 float LR_slope;
-float Cam_offset_filter[4] = {0, 0, 0,0}; //offset滤波数组
+float Cam_offset_filter[4] = {0, 0, 0, 0}; //offset滤波数组
 float Cam_offset2;
 
 int area[5] = {Last_row - 8, 48, 34, Last_row - 33, Last_row}; //分区域计算偏差的边界划分
@@ -39,6 +39,7 @@ int Road1_flag = 0;
 int Road2_flag = 0;
 int Road7_flag = 0;
 // int Lef_start = Fir_row, Rig_start = Fir_row, Rig_sep1 = Fir_row, Rig_sep2 = Fir_row, Lef_sep1 = Fir_row, Lef_sep2 = Fir_row, Lef_lose, Rig_lose; //左右赛道起始点、以及两个岔路点
+int turn_stop = 0; //转弯用
 
 float Lef_slope = 0;
 float Rig_slope = 0;
@@ -86,7 +87,7 @@ float zhidaosudu = 2.5;     //直道速度
 float xiaowandaosudu = 2.3; //小弯道速度
 float dawandaosudu = 2.3;   //大弯道速度
 // float duanlusudu = 1.8;     //断路速度
-int camera_offset = 0;      //摄像头二值化阈值
+int camera_offset = 0; //摄像头二值化阈值
 // int Tof_thres = 150;        //障碍物检测阈值
 // float luzhangsudu = 2.3;    //路障速度
 
@@ -434,6 +435,7 @@ char Road1_turnin(float a, float b, float c)
     return 1;
   return 0;
 }
+#if 0
 /*************************************************************************
 *  函数名称：void Road_rec()
 *  功能说明：赛道识别
@@ -448,7 +450,7 @@ char Road1_turnin(float a, float b, float c)
 char Road1_turnout = 1;
 void Road_rec(void)
 {
-  static int Road03_count = 0, Road04_count = 0;
+  static int Road00_count = 0, Road03_count = 0, Road04_count = 0;
   static int Road11_count = 0, Road12_count = 0, Road13_count = 0, Road14_count = 0, Road15_count = 0;
   static int Road21_count = 0, Road22_count = 0, Road23_count = 0, Road24_count = 0, Road25_count = 0;
   // static int oldwhite=5000;
@@ -675,10 +677,347 @@ void Road_rec(void)
   }
   else
   {
-    Road0_flag = 0;
+    Road00_count++;
+    if (Road25_count == 3)
+    {
+      Road00_count = 0;
+      Road0_flag = 0;
+    }
   }
 }
 
+#endif
+#if 1
+/*************************************************************************
+*  函数名称：void Road_rec()
+*  功能说明：赛道识别
+*  参数说明：无
+*  函数返回：无
+*  修改时间：2019.3.23
+*  备    注：Road=0表示正常路况（即没有进入圆环及坡）
+             3.23:Road=1表示左圆环，Road=2表示右圆环
+
+*************************************************************************/
+
+char Road1_turnout = 1;
+void Road_rec(void)
+{
+  static int Road00_count = 0, Road03_count = 0, Road04_count = 0;
+  static int Road11_count = 0, Road12_count = 0, Road13_count = 0, Road14_count = 0, Road15_count = 0;
+  static int Road21_count = 0, Road22_count = 0, Road23_count = 0, Road24_count = 0, Road25_count = 0;
+  int dis = 0,dis1 = 0;
+  int i=0;
+  
+  // static int oldwhite=5000;
+  // static uint8 Road1_cnt1=0;
+  // static char Road1_flag1=0;
+  if (Road == 0)
+  {
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////普通赛道→圆环
+    if ((Lef_break_point < 45 && Road == 0 && Rig_circle == 0 && Lef_circle == 1 && Lef_slope != 998 && Rig_slope == 998 &&
+         Rig[39] - Rig[37] < 5 && Rig[37] - Rig[35] < 5 && Rig[35] - Rig[33] < 5 && Rig[33] - Rig[31] < 5 && Rig[31] - Rig[29] < 5 && Rig[29] - Rig[27] < 5 && Rig[27] - Rig[25] < 5 && Rig[25] - Rig[23] < 5 &&
+         //  (New_Lef[54] == -MIDMAP || New_Lef[55] == -MIDMAP || New_Lef[56] == -MIDMAP)&&
+         Rig_edge < 10)) //左圆环：左边线,右边线：直通到底//&& Rig[11] != 78
+    {
+      Road0_flag = 0;
+      Road11_count++;
+      if (Road11_count == 2 && Road1_flag == 0)
+      {
+        Road = 1;
+        Road11_count = 0;
+      }
+      return;
+    }
+    else if (Rig_break_point < 45 && Road == 0 && Lef_circle == 0 && Rig_circle == 1 && Rig_slope != 998 && Lef_slope == 998 &&
+             Lef[25] - Lef[27] < 5 && Lef[27] - Lef[29] < 5 && Lef[29] - Lef[31] < 5 && Lef[31] - Lef[33] < 5 && Lef[33] - Lef[35] < 5 && Lef[35] - Lef[37] < 5 && Lef[37] - Lef[39] < 5 && Lef[23] - Lef[25] < 5 &&
+             //     (New_Rig[54] == MIDMAP || New_Rig[55] == MIDMAP || New_Rig[56] == MIDMAP) &&
+             Lef_edge < 10) //右圆环：右边线：突变点→拐点→突变点//&& Lef[11] != 2
+    {
+      Road0_flag = 0;
+      Road21_count++;
+      if (Road21_count == 2 && Road2_flag == 0)
+      {
+        Road = 2;
+        Road21_count = 0;
+      }
+      return;
+    }
+    //弯道状态机
+    else if ((Rig_break_point > 45 && ((Lef_circle == 1 && Rig_circle == 0) || Road0_flag == 3) && Rig_slope != 998)) //左转弯
+    {
+      for (i = Fir_row; i < 40; ++i)
+      {
+        if (Rig[i] < 40 && Rig[i + 1] < 40 && Rig[i + 2] > 40 && Rig[i + 3] > 40 &&
+            Rig[i + 5] - Rig[i + 3] < 5 && Rig[i + 7] - Rig[i + 5] < 5 && Rig[i + 9] - Rig[i + 7] < 5 && Rig[i + 11] - Rig[i + 9] < 5)
+        {
+          break;
+        }
+      }
+      dis = Rig[i + 1] - Rig[i];
+      for (; i > Fir_row; --i)
+      {
+        if (Rig[i - 1] > 40)
+        {
+          break;
+        }
+        dis1 = Rig[i] - Rig[i - 1];
+        if (dis1 < 0)
+        {
+          break;
+        }
+        else if (dis1 < dis)
+        {
+          continue;
+        }
+        else if (dis1 < 2 * dis)
+        {
+          dis = Rig[i] - Rig[i - 1];
+          continue;
+        }
+        else
+        {
+          break;
+        }
+      }
+      turn_stop = i;
+      if (Rig[turn_stop] < 34 && dis > 4)
+      {
+        Road03_count++;
+        if (Road03_count == 2)
+        {
+          Road0_flag = 3;   //turn left flag
+          Road03_count = 0; //reset
+        }
+        return;
+      }
+    }
+    else if ((Lef_break_point > 45 && ((Rig_circle == 1 && Lef_circle == 0) || Road0_flag == 4) && Lef_slope != 998)) //右转弯
+    {
+      for (i = Fir_row; i < 40; ++i)
+      {
+        if (Lef[i] > 40 && Lef[i + 1] > 40 && Lef[i + 2] < 40 && Lef[i + 3] < 40 &&
+            Lef[i + 3] - Lef[i + 5] < 5 && Lef[i + 5] - Lef[i + 7] < 5 && Lef[i + 7] - Lef[i + 9] < 5 && Lef[i + 9] - Lef[i + 11] < 5)
+        {
+          break;
+        }
+      }
+      dis = Lef[i] - Lef[i + 1];
+      for (; i > Fir_row; --i)
+      {
+        if (Lef[i - 1] < 40)
+        {
+          break;
+        }
+        dis1 = Lef[i - 1] - Lef[i];
+        if (dis1 < 0)
+        {
+          break;
+        }
+        else if (dis1 < dis)
+        {
+          continue;
+        }
+        else if (dis1 < 2 * dis)
+        {
+          dis = Lef[i - 1] - Lef[i];
+          continue;
+        }
+        else
+        {
+          break;
+        }
+      }
+      turn_stop = i;
+      if (Lef[turn_stop] > 45 && dis > 4)
+      {
+        Road04_count++;
+        if (Road04_count == 2)
+        {
+          Road0_flag = 4;   //turn left flag
+          Road04_count = 0; //reset
+        }
+        return;
+      }
+    }
+  }
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////左圆环→普通赛道
+  else if (Road == 1)
+  {
+    if (Road1_flag == 0) //准备进左圆环
+    {
+      Road0_flag = 0;
+      // Road1_flag = 1;
+      if (EM_Value_2 + EM_Value_3 > 4.3) //弯内识别：左右两边仅有一边发生丢线
+      {
+        Road12_count++;
+        if (Road12_count == 2)
+        {
+          Road12_count = 0;
+          Road1_flag = 1; //表示已经进入左圆环
+        }
+        return;
+      }
+      return;
+    }
+    else if (Road1_flag == 1) //进左圆环1/4
+    {
+      Road0_flag = 0;
+      if (Lef_circle == 0 || (Lef_circle == 1 && Lef_break_point > 45)) //if(((Lef_circle==0||( Lef_circle ==1 && Lef_break_point>30)))&& Road1_turnin(EM_Value_2,EM_Value_3,3.8))//if(((Lef_circle==0||( Lef_circle ==1 && Lef_break_point>30))) && Rig_slope>=10)/ && Road1_turnin(EM_Value_2,EM_Value_3,3.8))    //Rig_slope<1 && (Lef_leap[0]==0||Lef_slope==999)&& Rig_leap[0]==0)
+      {
+        Road13_count++;
+        if (Road13_count == 2) //2帧后 进左圆环第一弯道
+        {
+          Road1_flag = 2;
+          //        Road1_flag1 = 1;
+          Road13_count = 0;
+          return;
+        }
+        return;
+      }
+    }
+    else if (Road1_flag == 2) //进左圆环2/4 开始补线进弯道
+    {
+      Road0_flag = 0;
+      Road14_count++;
+      if (Road14_count == (int)(DIS_IN_CIRCLE * 10000 / (get_speed() * CAMERA_FPS)) + 1) //宏定义在function.h
+      {
+        Road1_flag = 4;
+        Road14_count = 0;
+        return;
+      }
+      return;
+    }
+    else if (Road1_flag == 4) //进入圆环内 ，取消补线
+    {
+      Road0_flag = 0;
+      if (Rig_circle && whitecnt > 1200) //
+      {
+        Road14_count++;
+        if (Road14_count == 3)
+        {
+          Road1_flag = 3;
+          Road14_count = 0;
+          return;
+        }
+      }
+      return;
+    }
+    else if (Road1_flag == 3) //准备出圆环回到直路 ， 开始补线
+    {
+      Road0_flag = 0;
+      if ((Rig_slope > -0.02 && Rig_slope < 0) || (Pixle[58][74] == 1 && Pixle[57][74] == 1 && Pixle[56][74] == 1 && Pixle[55][74] == 1 && Pixle[54][74] == 1 && Pixle[53][74] == 1)) //|| Lef_edge < 20))
+      {
+        Road15_count++;
+        if (Road15_count == 4)
+        {
+          Road15_count = 0;
+          Road = 0;
+          //Road1_turnout=1;
+          Road1_flag = 0;
+          return;
+        }
+      }
+      return;
+    }
+  }
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////右圆环→普通赛道，同上左圆环，注释从简
+  else if (Road == 2)
+  {
+    if (Road2_flag == 0) //
+    {
+      Road0_flag = 0;
+      // Road2_flag = 1;
+      if (EM_Value_2 + EM_Value_3 > 4.3) //弯内识别：左右两边仅有一边发生丢线
+      {
+        Road22_count++;
+        if (Road22_count == 2)
+        {
+          Road22_count = 0;
+          Road2_flag = 1; //表示已经进入左圆环
+        }
+      }
+
+      return;
+    }
+    else if (Road2_flag == 1) //
+    {
+      Road0_flag = 0;
+      if ((Rig_circle == 0 || (Rig_circle == 1 && Rig_break_point > 45)) && Rig_slope >= 10) //if(((Rig_circle==0||( Rig_circle ==1 && Rig_break_point>30))) && Rig_slope>=10)/ && Road1_turnin(EM_Value_2,EM_Value_3,3.4))
+      {
+        Road23_count++;
+        if (Road23_count == 2) //
+        {
+
+          Road2_flag = 2;
+          Road23_count = 0;
+        }
+      }
+      return;
+    }
+    else if (Road2_flag == 2) //
+    {
+      Road0_flag = 0;
+      Road24_count++;
+      if (Road24_count == (int)(DIS_IN_CIRCLE * 10000 / (get_speed() * CAMERA_FPS)) + 1)
+      {
+        Road24_count = 0;
+        Road2_flag = 4;
+      }
+      return;
+    }
+    else if (Road2_flag == 4)
+    {
+      Road0_flag = 0;
+      if (whitecnt > 1200)
+      {
+        Road25_count++;
+        if (Road25_count == 3)
+        {
+          Road25_count = 0;
+          Road2_flag = 3;
+        }
+      }
+      return;
+    }
+    else if (Road2_flag == 3)
+    {
+      Road0_flag = 0;
+      if ((Lef_slope > 0 && Lef_slope < 0.02) || (Pixle[58][5] == 1 && Pixle[57][5] == 1 && Pixle[56][5] == 1 && Pixle[55][5] == 1 && Pixle[54][5] == 1 && Pixle[53][5] == 1)) //|| Lef_edge < 20))
+      {
+        Road25_count++;
+        if (Road25_count == 4)
+        {
+          Road25_count = 0;
+          Road = 0;
+          //Road2_turnout=1;
+          Road2_flag = 0;
+        }
+      }
+      return;
+    }
+  }
+
+  if (Road == 0 && whitecnt > 1700 && ((Lef_edge > 10 && Rig_edge > 10) || Lef_edge > 30 || Rig_edge > 30) && Allwhitestart < 40)
+  {
+    Road0_flag = 1;
+  }
+  else if ((Allwhitestart > 45 && Allwhiteend < 45) && whitecnt > 1900)
+  {
+    Road0_flag = 2;
+  }
+  else
+  {
+    Road00_count++;
+    if (Road25_count == 3)
+    {
+      Road00_count = 0;
+      Road0_flag = 0;
+    }
+  }
+}
+
+#endif
 /*************************************************************************
 *  函数名称：void Slope_fig()
 *  功能说明：赛道左右斜率计算
@@ -872,19 +1211,19 @@ void Allwhite_find(void)
     Allwhiterow[i] = 0;
     if (Road0_flag == 1 && i < 35)
     {
-      if (abs(Lef[i] - Fir_col) < 8 && abs(Last_col - Rig[i]) < 8 && 
-          Pixle[i][10] + Pixle[i][14] + Pixle[i][18] + Pixle[i][22] > 2 && 
-          Pixle[i][70] + Pixle[i][66] + Pixle[i][62] + Pixle[i][58] > 2 && 
-          Pixle[i][34] + Pixle[i][38] + Pixle[i][42] + Pixle[i][46] > 2 )//Pixle[i][10] + Pixle[i][20] + Pixle[i][30] + Pixle[i][40] + Pixle[i][50] + Pixle[i][60] + Pixle[i][70] > 5)
+      if (abs(Lef[i] - Fir_col) < 8 && abs(Last_col - Rig[i]) < 8 &&
+          Pixle[i][10] + Pixle[i][14] + Pixle[i][18] + Pixle[i][22] > 2 &&
+          Pixle[i][70] + Pixle[i][66] + Pixle[i][62] + Pixle[i][58] > 2 &&
+          Pixle[i][34] + Pixle[i][38] + Pixle[i][42] + Pixle[i][46] > 2) //Pixle[i][10] + Pixle[i][20] + Pixle[i][30] + Pixle[i][40] + Pixle[i][50] + Pixle[i][60] + Pixle[i][70] > 5)
       {
         Allwhiterow[i] = 1;
       }
     }
     else if (abs(Lef[i] - Fir_col) < 5 && abs(Last_col - Rig[i]) < 5 &&
-             Pixle[i][10] + Pixle[i][14] + Pixle[i][18] + Pixle[i][22] > 2 && 
-             Pixle[i][70] + Pixle[i][66] + Pixle[i][62] + Pixle[i][58] > 2 && 
-             Pixle[i][34] + Pixle[i][38] + Pixle[i][42] + Pixle[i][46] > 2 )
-             //Pixle[i][10] + Pixle[i][14] + Pixle[i][18] + Pixle[i][22] > 2 && Pixle[i][70] + Pixle[i][66] + Pixle[i][62] + Pixle[i][58] > 2)
+             Pixle[i][10] + Pixle[i][14] + Pixle[i][18] + Pixle[i][22] > 2 &&
+             Pixle[i][70] + Pixle[i][66] + Pixle[i][62] + Pixle[i][58] > 2 &&
+             Pixle[i][34] + Pixle[i][38] + Pixle[i][42] + Pixle[i][46] > 2)
+    //Pixle[i][10] + Pixle[i][14] + Pixle[i][18] + Pixle[i][22] > 2 && Pixle[i][70] + Pixle[i][66] + Pixle[i][62] + Pixle[i][58] > 2)
     {
       Allwhiterow[i] = 1;
     }
@@ -949,219 +1288,255 @@ void Pic_Fix_Line(void)
   //static char road1_flag3=1;
   static char road1_flag1 = 1; //0表示已计算完进圆环斜率，1表示已经出圆环，再次进圆环时计算补线斜率
   static char road2_flag1 = 1;
-  if (Road0_flag == 1 && Road == 0)
+  if (Road == 0)
   {
-    for (i = 55; i > Fir_row + 15; i--)
+    if (Road0_flag == 1)
     {
-      if (abs(Lef[i] - Fir_col) < 5)
-        continue;
-      slope = Slope(Lef[i], i, Lef[i - 5], i - 5); //Slope(int F1x,int F1y,int F2x,int F2y)
-      if (slope != 999)
+      for (i = 55; i > Fir_row + 15; i--)
       {
-        for (j = i + 1; j > Fir_row + 5; j--)
+        if (abs(Lef[i] - Fir_col) < 5)
+          continue;
+        slope = Slope(Lef[i], i, Lef[i - 5], i - 5); //Slope(int F1x,int F1y,int F2x,int F2y)
+        if (slope != 999)
         {
-          Lef[j] = (int)(Lef[i] - (i - j) / slope);
+          for (j = i + 1; j > Fir_row + 5; j--)
+          {
+            Lef[j] = (int)(Lef[i] - (i - j) / slope);
 #ifdef undistort0
-          pixel_undistort(Lef[j], j, 0); //x:Lef[i],      y:i   LR:0:左  1：右
+            pixel_undistort(Lef[j], j, 0); //x:Lef[i],      y:i   LR:0:左  1：右
 #endif
-        }
+          }
 #ifdef undistort1
-        Pic_undistort(1, 0);
+          Pic_undistort(1, 0);
 #endif
-        break;
+          break;
+        }
       }
+      for (i = 55; i > Fir_row + 15; i--)
+      {
+        if (abs(Rig[i] - Last_col) < 5)
+          continue;
+        slope = Slope(Rig[i], i, Rig[i - 5], i - 5); //Slope(int F1x,int F1y,int F2x,int F2y)
+        if (slope != 999)
+        {
+          for (j = i + 1; j > Fir_row + 5; j--)
+          {
+            Rig[j] = (int)(Rig[i] - (i - j) / slope);
+#ifdef undistort0
+            pixel_undistort(Rig[j], j, 1); //x:Lef[i],      y:i   LR:0:左  1：右
+#endif
+          }
+#ifdef undistort1
+          Pic_undistort(0, 1);
+#endif
+          break;
+        }
+      }
+      return;
     }
-    for (i = 55; i > Fir_row + 15; i--)
+    else if (Road0_flag == 2)
     {
-      if (abs(Rig[i] - Last_col) < 5)
-        continue;
-      slope = Slope(Rig[i], i, Rig[i - 5], i - 5); //Slope(int F1x,int F1y,int F2x,int F2y)
-      if (slope != 999)
+      for (i = Fir_row + 5; i < Allwhiteend; i++)
       {
-        for (j = i + 1; j > Fir_row + 5; j--)
+        if (abs(Lef[i] - Fir_col) < 15)
+          continue;
+        slope = Slope(Lef[i], i, 10, 54); //Slope(int F1x,int F1y,int F2x,int F2y)
+        if (slope != 999)
         {
-          Rig[j] = (int)(Rig[i] - (i - j) / slope);
+          for (j = i + 1; j < 55; j++)
+          {
+            Lef[j] = (int)(Lef[i] - (i - j) / slope);
 #ifdef undistort0
-          pixel_undistort(Rig[j], j, 1); //x:Lef[i],      y:i   LR:0:左  1：右
+            pixel_undistort(Lef[j], j, 0); //x:Lef[i],      y:i   LR:0:左  1：右
 #endif
-        }
+          }
 #ifdef undistort1
-        Pic_undistort(0, 1);
+          Pic_undistort(1, 0);
 #endif
-        break;
+          break;
+        }
       }
+      for (i = Fir_row + 5; i < Allwhiteend; i++)
+      {
+        if (abs(Rig[i] - Last_col) < 15)
+          continue;
+        slope = Slope(Rig[i], i, 70, 54); //Slope(int F1x,int F1y,int F2x,int F2y)
+        if (slope != 999)
+        {
+          for (j = i + 1; j < 55; j++)
+          {
+            Rig[j] = (int)(Rig[i] - (i - j) / slope);
+#ifdef undistort0
+            pixel_undistort(Rig[j], j, 1); //x:Lef[i],      y:i   LR:0:左  1：右
+#endif
+          }
+#ifdef undistort1
+          Pic_undistort(0, 1); //
+#endif
+          break;
+        }
+      }
+      return;
     }
-    return;
+    else if (Road0_flag == 3)
+    {
+      for (i = turn_stop - 1; i > Fir_row; --i)
+      {
+        Rig[i] = 78;
+#ifdef undistort0
+        pixel_undistort(Rig[j], j, 1); //x:Lef[i],      y:i   LR:0:左  1：右
+#endif
+      }
+#ifdef undistort1
+      Pic_undistort(0, 1);
+#endif
+      return;
+    }
+    else if (Road0_flag == 4)
+    {
+      for (i = turn_stop - 1; i > Fir_row; --i)
+      {
+        Lef[i] = 1;
+#ifdef undistort0
+        pixel_undistort(Rig[j], j, 1); //x:Lef[i],      y:i   LR:0:左  1：右
+#endif
+      }
+#ifdef undistort1
+      Pic_undistort(1, 0);
+#endif
+      return;
+    }
   }
-  else if (Road0_flag == 2 && Road == 0)
-  {
-    for (i = Fir_row + 5; i < Allwhiteend; i++)
-    {
-      if (abs(Lef[i] - Fir_col) < 15)
-        continue;
-      slope = Slope(Lef[i], i, 10, 54); //Slope(int F1x,int F1y,int F2x,int F2y)
-      if (slope != 999)
-      {
-        for (j = i + 1; j < 55; j++)
-        {
-          Lef[j] = (int)(Lef[i] - (i - j) / slope);
-#ifdef undistort0
-          pixel_undistort(Lef[j], j, 0); //x:Lef[i],      y:i   LR:0:左  1：右
-#endif
-        }
-#ifdef undistort1
-        Pic_undistort(1, 0);
-#endif
-        break;
-      }
-    }
-    for (i = Fir_row + 5; i < Allwhiteend; i++)
-    {
-      if (abs(Rig[i] - Last_col) < 15)
-        continue;
-      slope = Slope(Rig[i], i, 70, 54); //Slope(int F1x,int F1y,int F2x,int F2y)
-      if (slope != 999)
-      {
-        for (j = i + 1; j < 55; j++)
-        {
-          Rig[j] = (int)(Rig[i] - (i - j) / slope);
-#ifdef undistort0
-          pixel_undistort(Rig[j], j, 1); //x:Lef[i],      y:i   LR:0:左  1：右
-#endif
-        }
-#ifdef undistort1
-        Pic_undistort(0, 1); //
-#endif
-        break;
-      }
-    }
-    return;
-  }
-
   //左圆环补线处理
-  if (Road == 1 && Road1_flag == 2)
+  if (Road == 1)
   {
-    for (i = Last_row - 13; i > Fir_row; i--)
+    if (Road1_flag == 2)
     {
-      if (road1_flag1)
+      for (i = Last_row - 13; i > Fir_row; i--)
       {
-        if (abs(Lef[i] - Fir_col) < 25)
+        if (road1_flag1)
+        {
+          if (abs(Lef[i] - Fir_col) < 25)
+            continue;
+          stat_slope = Slope(Lef[i], i, 70, 55);
+          road1_flag1 = 0;
+        }
+
+        if (stat_slope != 999)
+        {
+          for (k = Fir_row + 3; k < 55; k++)
+          {
+            Rig[k] = (int)(60 - (57 - k) / stat_slope);
+#ifdef undistort0
+            pixel_undistort(Rig[k], k, 1);
+#endif
+          }
+#ifdef undistort1
+          Pic_undistort(0, 1); //
+#endif
+          break;
+        }
+      }
+      return;
+    }
+    else if (Road1_flag == 4)
+    {
+      road1_flag1 = 1; //表示已经出圆环，再次进圆环时计算补线斜率
+      return;
+    }
+    else if (Road1_flag == 3)
+    {
+      for (j = Last_row + 3; j > Fir_row; j--)
+      {
+
+        if (abs(Rig[j] - Last_col) < 2)
           continue;
-        stat_slope = Slope(Lef[i], i, 70, 55);
-        road1_flag1 = 0;
-      }
+        slope = Slope(Rig[j - 1], j - 1, Rig[j - 6], j - 6);
 
-      if (stat_slope != 999)
-      {
-        for (k = Fir_row + 3; k < 55; k++)
+        if (stat_slope != 999)
         {
-          Rig[k] = (int)(60 - (57 - k) / stat_slope);
+          for (k = j + 1; k > Fir_row + 5; k--)
+          {
+            Rig[k] = (int)(64 - (57 - k) / slope);
 #ifdef undistort0
-          pixel_undistort(Rig[k], k, 1);
+            pixel_undistort(Rig[k], k, 1);
 #endif
-        }
+          }
 #ifdef undistort1
-        Pic_undistort(0, 1); //
+          Pic_undistort(0, 1); //
 #endif
-        break;
+
+          break;
+        }
       }
+      return;
     }
-    return;
   }
-  else if (Road == 1 && Road1_flag == 4)
+  if (Road == 2)
   {
-    road1_flag1 = 1; //表示已经出圆环，再次进圆环时计算补线斜率
-    return;
-  }
-  else if (Road == 1 && Road1_flag == 3)
-  {
-    for (j = Last_row + 3; j > Fir_row; j--)
+    if (Road == 2 && Road2_flag == 2)
     {
-
-      if (abs(Rig[j] - Last_col) < 2)
-        continue;
-      slope = Slope(Rig[j - 1], j - 1, Rig[j - 6], j - 6);
-
-      if (stat_slope != 999)
+      for (i = Last_row - 13; i > Fir_row; i--)
       {
-        for (k = j + 1; k > Fir_row + 5; k--)
+        if (road2_flag1)
         {
-          Rig[k] = (int)(64 - (57 - k) / slope);
-#ifdef undistort0
-          pixel_undistort(Rig[k], k, 1);
-#endif
+          if (abs(Rig[i] - Last_col) < 25)
+            continue;
+          stat_slope2 = Slope(Rig[i], i, 10, 55);
+          road2_flag1 = 0;
         }
-#ifdef undistort1
-        Pic_undistort(0, 1); //
+
+        if (stat_slope2 != 999)
+        {
+          for (k = Fir_row + 3; k < 55; k++)
+          {
+            Lef[k] = (int)(15 - (57 - k) / stat_slope2);
+#ifdef undistort0
+            pixel_undistort(Lef[k], k, 0);
 #endif
-
-        break;
+          }
+#ifdef undistort1
+          Pic_undistort(1, 0); //
+#endif
+          break;
+        }
       }
+      return;
     }
-    return;
-  }
-
-  if (Road == 2 && Road2_flag == 2)
-  {
-    for (i = Last_row - 13; i > Fir_row; i--)
+    else if (Road == 2 && Road2_flag == 4)
     {
-      if (road2_flag1)
+      road2_flag1 = 1;
+      return;
+    }
+    else if (Road == 2 && Road2_flag == 3)
+    {
+      for (j = Last_row + 3; j > Fir_row; j--)
       {
-        if (abs(Rig[i] - Last_col) < 25)
+
+        if (abs(Lef[j] - Fir_col) < 2)
           continue;
-        stat_slope2 = Slope(Rig[i], i, 10, 55);
-        road2_flag1 = 0;
-      }
+        slope2 = Slope(Lef[j - 1], j - 1, Lef[j - 6], j - 6);
 
-      if (stat_slope2 != 999)
-      {
-        for (k = Fir_row + 3; k < 55; k++)
+        if (slope2 != 999)
         {
-          Lef[k] = (int)(15 - (57 - k) / stat_slope2);
+          for (k = j + 1; k > Fir_row + 5; k--)
+          {
+            Lef[k] = (int)(15 - (57 - k) / slope2);
 #ifdef undistort0
-          pixel_undistort(Lef[k], k, 0);
+            pixel_undistort(Lef[k], k, 0);
 #endif
-        }
+          }
 #ifdef undistort1
-        Pic_undistort(1, 0); //
+          Pic_undistort(1, 0); //
 #endif
-        break;
-      }
-    }
-    return;
-  }
-  else if (Road == 2 && Road2_flag == 4)
-  {
-    road2_flag1 = 1;
-    return;
-  }
-  else if (Road == 2 && Road2_flag == 3)
-  {
-    for (j = Last_row + 3; j > Fir_row; j--)
-    {
-
-      if (abs(Lef[j] - Fir_col) < 2)
-        continue;
-      slope2 = Slope(Lef[j - 1], j - 1, Lef[j - 6], j - 6);
-
-      if (slope2 != 999)
-      {
-        for (k = j + 1; k > Fir_row + 5; k--)
-        {
-          Lef[k] = (int)(15 - (57 - k) / slope2);
-#ifdef undistort0
-          pixel_undistort(Lef[k], k, 0);
-#endif
+          break;
         }
-#ifdef undistort1
-        Pic_undistort(1, 0); //
-#endif
-        break;
       }
+      return;
     }
-    return;
   }
 }
+
 #if 0
 /*************************************************************************
 *  函数名称：void Pic_DrawLRside(void)
@@ -1399,7 +1774,7 @@ void Pic_DrawLRside(void)
 
     if (Rig[i + 1] != 78)
     {
-      if (Pixle[i][Rig[i + 1]] == 0 || (Pixle[i][Rig[i + 1]] == 1 && Pixle[i][Rig[i + 1] + 1] == 0 )) //向内查找10个
+      if (Pixle[i][Rig[i + 1]] == 0 || (Pixle[i][Rig[i + 1]] == 1 && Pixle[i][Rig[i + 1] + 1] == 0)) //向内查找10个
       {
         for (j = Rig[i + 1]; j > Rig[i + 1] - 10 && j > Lef[i + 1] + 5; j--)
         {
@@ -1615,15 +1990,15 @@ void Pic_DrawLRside(void)
 void Pic_DrawMid(void)
 {
   int i = 0;
-  int road_half_width_original[40]={35,34,34,33,32,31,30,30,29,28,27,26,25,25,24,23,22,21,20,20,19,18,17,16,15,14,14,13,12,11,10,9,8,7,6,5,4,3,2,0};
+  int road_half_width_original[40] = {35, 34, 34, 33, 32, 31, 30, 30, 29, 28, 27, 26, 25, 25, 24, 23, 22, 21, 20, 20, 19, 18, 17, 16, 15, 14, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 0};
   if ((Road0_flag == 3 && Road == 0) || Road == 1)
   {
-    for (i = Fir_row; i < Last_row+1; i++)
+    for (i = Fir_row; i < Last_row + 1; i++)
     {
 
-      if (Rig[i] <Last_col)
+      if (Rig[i] < Last_col)
       {
-        Mid[i] = Rig[i] - road_half_width_original[Last_row-i];
+        Mid[i] = Rig[i] - road_half_width_original[Last_row - i];
       }
       else
       {
@@ -1633,12 +2008,12 @@ void Pic_DrawMid(void)
   }
   else if ((Road0_flag == 4 && Road == 0) || Road == 2)
   {
-    for (i = Fir_row; i < Last_row+1; i++)
+    for (i = Fir_row; i < Last_row + 1; i++)
     {
 
-      if (Lef[i] >Fir_col)
+      if (Lef[i] > Fir_col)
       {
-        Mid[i] = Lef[i] + road_half_width_original[Last_row-i];
+        Mid[i] = Lef[i] + road_half_width_original[Last_row - i];
       }
       else
       {
@@ -1648,20 +2023,20 @@ void Pic_DrawMid(void)
   }
   else
   {
-    for (i = Fir_row; i < Last_row+1; i++)
+    for (i = Fir_row; i < Last_row + 1; i++)
     {
 
-      if (Lef[i] >Fir_col && Rig[i] <Last_col) //Mid Calculaing
+      if (Lef[i] > Fir_col && Rig[i] < Last_col) //Mid Calculaing
       {
         Mid[i] = (int)((Lef[i] + Rig[i]) / 2.0 + 0.5);
       }
-      else if (Lef[i] <=Fir_col && Rig[i] <Last_col)
+      else if (Lef[i] <= Fir_col && Rig[i] < Last_col)
       {
-        Mid[i] = Rig[i] - road_half_width_original[Last_row-i];
+        Mid[i] = Rig[i] - road_half_width_original[Last_row - i];
       }
-      else if (Lef[i] >Fir_col && Rig[i] >=Last_col)
+      else if (Lef[i] > Fir_col && Rig[i] >= Last_col)
       {
-        Mid[i] = Lef[i] + road_half_width_original[Last_row-i];
+        Mid[i] = Lef[i] + road_half_width_original[Last_row - i];
       }
       else
       {
@@ -1670,7 +2045,7 @@ void Pic_DrawMid(void)
     }
   }
   return;
- }
+}
 /*************************************************************************
  *  函数名称：void Pic_DrawMid_und(void)
  *  功能说明：计算去畸变后中线无插值
@@ -2216,7 +2591,7 @@ void Pic_find_circle(void)
   Rig_break_point = 0;
   for (i = 55; i > Fir_row + 12; i--) //从非全白行开始寻找
   {
-    if (Last_col - Rig[i] < 2 ) //从右边线离开右边界开始寻找
+    if (Last_col - Rig[i] < 2) //从右边线离开右边界开始寻找
     {
       continue;
     }
@@ -2242,7 +2617,7 @@ void Pic_find_circle(void)
   }
   for (i = 55; i > Fir_row + 12; i--)
   {
-    if (Lef[i] - Fir_col < 2 )
+    if (Lef[i] - Fir_col < 2)
     {
       continue;
     }
@@ -2259,7 +2634,7 @@ void Pic_find_circle(void)
     if (Lef[i - 2] >= Lef[i] && Lef[i - 4] >= Lef[i - 2] && Lef[i - 6] >= Lef[i - 4] && Lef[i - 8] >= Lef[i - 6] && Lef[i - 10] >= Lef[i - 8] &&
         Lef[i - 12] < Lef[i - 10] && Lef[i - 11] < Lef[i - 9] && Lef[i - 13] < Lef[i - 11] && Lef[i - 14] < Lef[i - 12] && Lef[i - 15] < Lef[i - 13] &&
         abs(Lef[i - 10] - Lef[i - 8]) < 4 && abs(Lef[i - 8] - Lef[i - 6]) < 4 && abs(Lef[i - 6] - Lef[i - 4]) < 4 && abs(Lef[i - 4] - Lef[i - 2]) < 4 && abs(Lef[i - 2] - Lef[i]) < 4 &&
-        abs(Lef[i - 12] - Lef[i - 10]) < 5 &&  abs(Lef[i - 11] - Lef[i - 9]) < 5 && abs(Lef[i - 13] - Lef[i - 11]) < 5 && abs(Lef[i - 14] - Lef[i - 12]) < 8 && abs(Lef[i - 15] - Lef[i - 13]) < 8 )
+        abs(Lef[i - 12] - Lef[i - 10]) < 5 && abs(Lef[i - 11] - Lef[i - 9]) < 5 && abs(Lef[i - 13] - Lef[i - 11]) < 5 && abs(Lef[i - 14] - Lef[i - 12]) < 8 && abs(Lef[i - 15] - Lef[i - 13]) < 8)
     {
       Lef_circle = 1;
       Lef_break_point = i;
@@ -2278,162 +2653,159 @@ void Pic_find_circle(void)
 *************************************************************************/
 void start_stop_rec(void)
 {
-    static int start_stop_line = 0;
-    static int start_waited = 0;
-    static int turn_cnt = 0, stop_cnt = 0;
-    static int stop_line = Fir_row;
-    int stop_line_cnt = 0, stop_black_cnt = 0, stop_all_cnt = 0, stop_flag_cnt = 0,count = 0;
-    int i, j;
-    int avr_mid = 0;
-    int Black_line = 0;
-    int road_half_width_original[40] = {35, 34, 34, 33, 32, 31, 30, 30, 29, 28, 27, 26, 25, 25, 24, 23, 22, 21, 20, 20, 19, 18, 17, 16, 15, 14, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 0};
+  static int start_stop_line = 0;
+  static int start_waited = 0;
+  static int turn_cnt = 0, stop_cnt = 0;
+  static int stop_line = Fir_row;
+  int stop_line_cnt = 0, stop_black_cnt = 0, stop_all_cnt = 0, stop_flag_cnt = 0, count = 0;
+  int i, j;
+  int avr_mid = 0;
+  int Black_line = 0;
+  int road_half_width_original[40] = {35, 34, 34, 33, 32, 31, 30, 30, 29, 28, 27, 26, 25, 25, 24, 23, 22, 21, 20, 20, 19, 18, 17, 16, 15, 14, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 0};
 
-    if (Road == 0 && Road0_flag != 2 && Road0_flag != 1) //进起跑线
+  if (Road == 0 && Road0_flag != 2 && Road0_flag != 1) //进起跑线
+  {
+    start_waited = 601; //要改回去，否则无法出库
+    if (start_waited > 600 && Lef_edge > 15)
     {
-        start_waited = 601;//要改回去，否则无法出库
-        if (start_waited > 600 && Lef_edge > 15)
+      for (i = Fir_row + 10; i < 60; i++) //自上而下寻找有边线的开始行
+      {
+        if (Lef[i] > Fir_col)
         {
-            for (i = Fir_row + 10; i < 60; i++) //自上而下寻找有边线的开始行
-            {
-                if (Lef[i] > Fir_col)
-                {
-                    stop_line_cnt = 0;
-                    continue;
-                }
-                else
-                {
-                    stop_line_cnt++;
-                    if (stop_line_cnt >= 3)
-                    {
-                        start_stop_line = i - 2;
-                        break;
-                    }
-                }
-            }
-            if (start_stop_line != 0)
-            {
-                count = 5;
-                for (i = start_stop_line - 5; i < start_stop_line - 10; --i) //计算平均中间位置
-                {
-                    if (Lef[i] > Fir_col && Rig[i] < Last_col)
-                    {
-                        avr_mid += (int)((Lef[i] + Rig[i]) / 2.0 + 0.5);
-                    }
-                    else if (Lef[i] <= Fir_col && Rig[i] < Last_col)
-                    {
-                        avr_mid += Rig[i] - road_half_width_original[Last_row - i];
-                    }
-                    else if (Lef[i] > Fir_col && Rig[i] >= Last_col)
-                    {
-                        avr_mid += Lef[i] + road_half_width_original[Last_row - i];
-                    }
-                    else
-                    {
-                        count--;
-                        continue;
-                    }
-                }
-                if (count == 0)
-                {
-                    start_stop_line = 0;
-                    return;
-                }
-                avr_mid /= count;
+          stop_line_cnt = 0;
+          continue;
+        }
+        else
+        {
+          stop_line_cnt++;
+          if (stop_line_cnt >= 3)
+          {
+            start_stop_line = i - 2;
+            break;
+          }
+        }
+      }
+      if (start_stop_line != 0)
+      {
+        count = 5;
+        for (i = start_stop_line - 5; i < start_stop_line - 10; --i) //计算平均中间位置
+        {
+          if (Lef[i] > Fir_col && Rig[i] < Last_col)
+          {
+            avr_mid += (int)((Lef[i] + Rig[i]) / 2.0 + 0.5);
+          }
+          else if (Lef[i] <= Fir_col && Rig[i] < Last_col)
+          {
+            avr_mid += Rig[i] - road_half_width_original[Last_row - i];
+          }
+          else if (Lef[i] > Fir_col && Rig[i] >= Last_col)
+          {
+            avr_mid += Lef[i] + road_half_width_original[Last_row - i];
+          }
+          else
+          {
+            count--;
+            continue;
+          }
+        }
+        if (count == 0)
+        {
+          start_stop_line = 0;
+          return;
+        }
+        avr_mid /= count;
 
-                for (i = start_stop_line; i <= Last_row; ++i) //搜黑白线
-                {
-                    for (j = avr_mid - road_half_width_original[Last_row - i]; j <= avr_mid + road_half_width_original[Last_row - i]; ++j)
-                    {
-                        if (Pixle[i][j] == 0)
-                        {
-                            stop_black_cnt++;
-                        }
-                        stop_all_cnt++;
-                    }
-                    if (stop_black_cnt > stop_all_cnt / 2)
-                    {
-                        stop_flag_cnt += 0.35;
-                    }
-                    else if (stop_black_cnt > stop_all_cnt / 3)
-                    {
-                        stop_flag_cnt += 0.2;
-                    }
-                    if (stop_flag_cnt >= 1)
-                    {
-                        Road = 7;
-                        return;
-                    }
-                }
-                start_stop_line = 0;
-            }
-        }
-    }
-    else if (Road == 7 & Road7_flag == 0)//等待转弯
-    {
-        for (i = start_stop_line; i < Last_row; i++)
+        for (i = start_stop_line; i <= Last_row; ++i) //搜黑白线
         {
-            if (Lef[i] > Fir_col)
+          for (j = avr_mid - road_half_width_original[Last_row - i]; j <= avr_mid + road_half_width_original[Last_row - i]; ++j)
+          {
+            if (Pixle[i][j] == 0)
             {
-                stop_line_cnt = 0;
-                continue;
+              stop_black_cnt++;
             }
-            else
-            {
-                stop_line_cnt++;
-                if (stop_line_cnt >= 3)
-                {
-                    start_stop_line = i - 2;
-                    break;
-                }
-            }
-        }
-        if (start_stop_line > 35)
-        {
+            stop_all_cnt++;
+          }
+          if (stop_black_cnt > stop_all_cnt / 2)
+          {
+            stop_flag_cnt += 0.35;
+          }
+          else if (stop_black_cnt > stop_all_cnt / 3)
+          {
+            stop_flag_cnt += 0.2;
+          }
+          if (stop_flag_cnt >= 1)
+          {
             Road = 7;
-            Road7_flag = 1; //开始转弯
+            return;
+          }
         }
+        start_stop_line = 0;
+      }
     }
-    else if (Road7_flag == 1)//开始转弯
+  }
+  else if (Road == 7 & Road7_flag == 0) //等待转弯
+  {
+    for (i = start_stop_line; i < Last_row; i++)
     {
-        turn_cnt++;
-        Servo_Duty(-SERVO_RANGE);
-        if (turn_cnt >= (int)(5 * 100 / (get_speed() * CAMERA_FPS)) + 1)
+      if (Lef[i] > Fir_col)
+      {
+        stop_line_cnt = 0;
+        continue;
+      }
+      else
+      {
+        stop_line_cnt++;
+        if (stop_line_cnt >= 3)
         {
-            Road7_flag = 2;
+          start_stop_line = i - 2;
+          break;
         }
+      }
     }
-    else if (Road7_flag == 2)//转弯结束停车
+    if (start_stop_line > 35)
     {
-        stop_cnt++;
-        stop_line = Fir_row;
-        for (i = Last_row; i < stop_line; i++)
-        {
+      Road = 7;
+      Road7_flag = 1; //开始转弯
+    }
+  }
+  else if (Road7_flag == 1) //开始转弯
+  {
+    turn_cnt++;
+    Servo_Duty(-SERVO_RANGE);
+    if (turn_cnt >= (int)(5 * 100 / (get_speed() * CAMERA_FPS)) + 1)
+    {
+      Road7_flag = 2;
+    }
+  }
+  else if (Road7_flag == 2) //转弯结束停车
+  {
+    stop_cnt++;
+    stop_line = Fir_row;
+    for (i = Last_row; i < stop_line; i++)
+    {
 
-            if (Pixle[i][8] + Pixle[i][72] + Pixle[i][30] + Pixle[i][35] + Pixle[i][40] + Pixle[i][45] + Pixle[i][50] < 2)
-            {
-                Black_line++;
-                if (Black_line >= 3)
-                {
-                    stop_line = i - 2;
-                    break;
-                }
-            }
-            else
-            {
-                Black_line = 0;
-            }
-        }
-        if (stop_line > 35 || stop_cnt >= (int)(30 * 100 / (get_speed() * CAMERA_FPS)) + 1)
+      if (Pixle[i][8] + Pixle[i][72] + Pixle[i][30] + Pixle[i][35] + Pixle[i][40] + Pixle[i][45] + Pixle[i][50] < 2)
+      {
+        Black_line++;
+        if (Black_line >= 3)
         {
-            Road = 8; //停车
-            lib_set_speed(0);
+          stop_line = i - 2;
+          break;
         }
+      }
+      else
+      {
+        Black_line = 0;
+      }
     }
-    return;
+    if (stop_line > 35 || stop_cnt >= (int)(30 * 100 / (get_speed() * CAMERA_FPS)) + 1)
+    {
+      Road = 8; //停车
+      lib_set_speed(0);
+    }
+  }
+  return;
 }
-
-
-
 
 #if 0
 /*************************************************************************

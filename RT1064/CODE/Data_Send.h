@@ -24,7 +24,7 @@ extern float Turn_P_EM;
 extern int whitecnt;
 extern float speedTarget1;
 extern float speedTarget2;
-extern float angle_dbg_1,angle_dbg_2;
+//extern float angle_dbg_1,angle_dbg_2;//或许debug用——GMY注
 extern PID PID_SPEED;
 extern float gyroy_1;
 extern int16 icm_gyro_y;
