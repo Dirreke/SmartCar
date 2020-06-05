@@ -6,6 +6,41 @@ float EM_Value_3 = 0;
 float EM_Value_4 = 0;
 float EM_offset_buff[4]={0};
 float EM_offset = 0 ;
+int Curve_Cnt=0;
+int EM_Peak_Time_Cnt = 0;
+int EM_Ring_State = 0;
+float EM_Value_23_Sum = 0;
+float EM_Ring_Min = 6;
+float EM_Ring_Max = 0;
+float Lef_EM_Sum = 0;
+float Rig_EM_Sum = 0;
+float EM_2_Max = 0;
+float EM_3_Max = 0;
+float EM_Road2_Cnt = 0;
+float EM_Road1_Cnt = 0;
+
+
+int limit_em(int n, int lower, int higher){
+  if(n<lower){
+    return lower;
+  }
+  else if(n>higher){
+    return higher;
+  }
+  else{
+    return n;
+  }
+}
+
+float abs_f_em(float n){
+  if(n>=0) return n;
+  else return -n;
+}
+
+
+
+
+
 
 /*************************************************************************
 *  函数名称：void EM_init(void)
@@ -62,6 +97,204 @@ void EM_Get(void)
 //   }
 
 }
+
+void EM_Curve_Rec(void)//弯道识别
+{
+  if(EM_Road == 0 )//从直道到弯道的判断依据为：连续采集到三次1,4电感之差大于0.6
+  {
+    if(abs_f_em(EM_Value_1 - EM_Value_4)>0.3)
+    {
+      Curve_Cnt++;
+      if(Curve_Cnt == 30)
+      {
+        EM_Road = 4;//EM_Road=4表示弯道
+        Curve_Cnt = 0;
+      }
+    }
+    else
+    {
+      Curve_Cnt = 0;
+    }
+  }
+  else if(EM_Road == 4)//从弯道到直道的判断依据为：连续采集到30次采集到1,4电感之差小于0.6，则认为进入直道
+  {
+    if(abs_f_em(EM_Value_1 - EM_Value_4)<0.1)
+    {
+      Curve_Cnt++;
+      if(Curve_Cnt == 3)
+      {
+        EM_Road = 0;   //EM_Road=0表示直道
+        Curve_Cnt = 0;
+      }
+    }
+    else
+    {
+      Curve_Cnt = 0;
+    }
+  }
+}
+
+void EM_Ring_Rec(void){
+  EM_Peak_Time_Cnt++;
+  EM_Peak_Time_Cnt = limit_em(EM_Peak_Time_Cnt,0,1000);
+
+  EM_Value_23_Sum = EM_Value_2 + EM_Value_3;
+  if(EM_Value_23_Sum>5.2 && EM_Ring_State == 0 && (EM_Road==0 || EM_Road==4) )//2+3之和大于3.8，开始进行圆环状态机
+  {
+     EM_Ring_State = 1;
+     EM_Ring_Max = EM_Value_23_Sum;
+     EM_Peak_Time_Cnt = 0;
+     Lef_EM_Sum = 0;
+     Rig_EM_Sum = 0;
+     if(EM_Value_4>EM_Value_1  )
+    {
+      EM_Road2_Cnt += 1000 ; 
+    }
+    else if(EM_Value_1>EM_Value_4  )
+    {
+      EM_Road1_Cnt += 1000 ;
+    }
+  }
+  else if(EM_Ring_State == 1)//状态1下，若2+3大于峰值-0.2，则保持状态1，否则跳到状态2
+  {
+
+    if(EM_Value_4>EM_Value_1 && EM_Value_4>1.2 && abs_f_em(EM_offset)<100)
+    {
+      EM_Road2_Cnt += 200 - abs_f_em(EM_offset); 
+    }
+    else if(EM_Value_1>EM_Value_4 && EM_Value_1>1.2 && abs_f_em(EM_offset)<100)
+    {
+      EM_Road1_Cnt += 200 - abs_f_em(EM_offset);
+    }
+    if( EM_Value_23_Sum>EM_Ring_Max-0.4 )
+    {
+      if(EM_Value_23_Sum>EM_Ring_Max)
+      {
+        EM_Ring_Max = EM_Value_23_Sum;
+        EM_2_Max = EM_Value_2;
+        EM_3_Max = EM_Value_3;
+      }
+    }
+    else
+    {
+
+      EM_Ring_State = 2;
+      EM_Ring_Max = 0;
+      EM_Ring_Min = EM_Value_23_Sum;
+    }
+  }
+  else if(EM_Ring_State == 2) //状态2下，若2+3小于最小值+0.2，则保持状态2，否则跳到状态3
+  {
+
+    if(EM_Value_4>EM_Value_1 && EM_Value_4>1.2 && abs_f_em(EM_offset)<100)
+    {
+      EM_Road2_Cnt += 200 - abs_f_em(EM_offset); 
+    }
+    else if(EM_Value_1>EM_Value_4 && EM_Value_1>1.2 && abs_f_em(EM_offset)<100)
+    {
+      EM_Road1_Cnt += 200 - abs_f_em(EM_offset);
+    }
+    if( EM_Value_23_Sum<EM_Ring_Min+0.1)
+    {
+      if(EM_Value_23_Sum<EM_Ring_Min)
+      {
+        EM_Ring_Min = EM_Value_23_Sum;
+      }
+    }
+    else
+    {
+      if(EM_Road1_Cnt > EM_Road2_Cnt)
+      {
+        EM_Road = 1;
+        EM_Road1_Cnt = 0;
+        EM_Road2_Cnt = 0;
+      }
+      else 
+      {
+        EM_Road = 2;
+        EM_Road1_Cnt = 0;
+        EM_Road2_Cnt = 0;
+      }
+
+      EM_Ring_State = 3;
+      EM_Peak_Time_Cnt = 0;
+      EM_Ring_Min = 6;
+    }
+  }
+  else if(EM_Ring_State == 3)//状态3下，若2+3小于固定值3，则表示已经进入了圆环
+  {
+
+    if((EM_Value_23_Sum < 3.5 && EM_Road == 1 && EM_Value_1>1 && EM_Value_4<0.2)||(EM_Value_23_Sum < 3.5 && EM_Road == 2 && EM_Value_4>1 && EM_Value_1<0.2))
+    {
+      EM_Ring_State = 4;
+    }
+  }
+  else if(EM_Ring_State == 4)//状态4下，若2+3大于固定值3.5，则表示又一次进入了圆环岔道处，且处于刚出环状态5
+  {
+    if(EM_Value_23_Sum >5)
+    {
+      EM_Ring_Max = EM_Value_23_Sum;
+      if(EM_Road == 1 && EM_Value_1>EM_Value_4 && EM_Value_1>0.5)
+      {
+        EM_Ring_State = 5;
+      }
+      else if(EM_Road == 2 && EM_Value_1<EM_Value_4 && EM_Value_4>0.5)
+      {
+        EM_Ring_State = 5;
+      }
+    }
+  }
+  else if(EM_Ring_State == 5)//状态5下，若2+3小于第一个峰值减0.2，则认为已经下坡，进入状态6
+  {
+    if( EM_Value_23_Sum>EM_Ring_Max-0.2 )
+    {
+      if(EM_Value_23_Sum>EM_Ring_Max)
+      {
+        EM_Ring_Max = EM_Value_23_Sum;
+      }
+    }
+    else
+    {
+      EM_Ring_State = 6;
+      EM_Ring_Max = 0;
+      EM_Ring_Min = EM_Value_23_Sum;
+    }
+  }
+  else if(EM_Ring_State == 6)//状态6下，若2+3大于波谷+0.3，则认为爬第二个坡，进入状态7
+  {
+    if( EM_Value_23_Sum<EM_Ring_Min+0.3)
+    {
+      if(EM_Value_23_Sum<EM_Ring_Min)
+      {
+        EM_Ring_Min = EM_Value_23_Sum;
+      }
+    }
+    else
+    {
+      EM_Ring_State = 7;
+      EM_Ring_Min = 6;
+    }
+  }
+  else if(EM_Ring_State == 7)
+  {
+    if( EM_Value_23_Sum < 3.2 && EM_Value_1 < 1 && EM_Value_4 < 1)
+    {
+      EM_Ring_State = 0;
+      EM_Road = 0;
+    }
+  }
+
+}
+
+
+
+
+
+
+
+
+
+
 /*************************************************************************
 *  函数名称：void EM_offset_fig(void)
 *  功能说明：电磁中线偏差
@@ -97,9 +330,9 @@ void EM_offset_filter(void)
 void EM_main(void)
 {
   EM_Get();
-  //EM_Ring_Rec();
+  EM_Ring_Rec();
   //EM_Ramp_Rec();
-  //EM_Curve_Rec();
+  EM_Curve_Rec();
   //EM_Speed_Control();
   EM_offset_fig();
   //Block_By_Pass();
