@@ -27,5 +27,12 @@ void Speed_Control_Output();
 void TurnFuzzyPD_Cam(void);
 void Turn_Cam();
 
+//电磁
+int EM_angle_get(float lp,float l, float r,float rp);
+float limit_pos(float a);
+float EM_length_err_get(float l,float r,float pl, float pr);
+float PD_section(float err);
+float PI_section(float err,float pl,float pr);
+float non_linear(float a);
 
 #endif
