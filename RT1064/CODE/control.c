@@ -105,7 +105,7 @@ float my_limit(float a, float limit)
   return a;
 }
 ////////////////////////////////////////////
-
+#ifdef DIFF0
 /*0********************************************
 ***
 ***输入参数：角度（度）
@@ -132,7 +132,7 @@ float p_get(float angle)
 
   return p;
 }
-
+#endif
 void Speed_Control(void)
 
 {
@@ -458,9 +458,10 @@ void Turn_EM(void)
   float ctl_out;
  //EM_Value_3 = EM_Value_3 - EM_Value_2/1.88;
   //EM_Value_3 = EM_Value_3<0? 0 : EM_Value_3;
-  angle=EM_angle_get(limit_pos(EM_Value_1/1.5-EM_Value_2/3.5),EM_Value_2,EM_Value_3,limit_pos(EM_Value_4/1.5-EM_Value_3/3.5));
+  //angle=EM_angle_get(limit_pos(EM_Value_1/1.5-EM_Value_2/3.5),EM_Value_2,EM_Value_3,limit_pos(EM_Value_4/1.5-EM_Value_3/3.5));//这里换算垂直电感，平行电感这样——GMY注//似乎angle没有用到——GMY注
   //angle=-1.2*197/45*angle;		//inner loop gain Kt
-  mid_err=EM_length_err_get(EM_Value_2,EM_Value_3,EM_Value_1,EM_Value_4);
+//  mid_err=EM_length_err_get(EM_Value_2,EM_Value_3,EM_Value_1,EM_Value_4);//该函数原函数没用到pl,pr,,,,,lm,lr使用EM_angle_get函数全局变量求的，故这里暂时修改为下一行——GMY注
+ mid_err=EM_length_err_get(EM_Value_2,EM_Value_3,limit_pos(EM_Value_1/1.5-EM_Value_2/3.5),limit_pos(EM_Value_4/1.5-EM_Value_3/3.5));//左平行，右平行，左垂直，右垂直——GMY注
   mid_err=0.2/3.1415926*180*mid_err;		//outer loop gain Kl		//full range @ 70 
   ctl_out=PD_section(mid_err);//+angle;		//inner loop error
   ctl_out=my_limit(ctl_out,45);
@@ -474,15 +475,8 @@ void Turn_EM(void)
   EM_Turn_Control =  PI_section(ctl_out,EM_Value_1,EM_Value_4);//EM_offset_remap_val;//10*KP*EM_SIN_Control;//0.8 *EM_offset 
                       //+ Turn_D_EM*(EM_offset - old_EM_offset);  //转向PID控制 + Turn_I_EM*EM_offset_I
  // old_EM_offset = EM_offset;
-  if(EM_Turn_Control>=196)
-  {
-    EM_Turn_Control = 196;
-  }
-  if(EM_Turn_Control<=-196)
-  {
-    EM_Turn_Control = -196;
-  }
-  Servo_Duty((uint32)(SERVO_MIDDLE + EM_Turn_Control ));              //disable EM control servo
+
+  Servo_Duty((uint32)(EM_Turn_Control ));              //disable EM control servo
   
 }
 
@@ -510,17 +504,15 @@ float my_fabs(float a){
   return a>0? a:-a;
 }
 
-static int angle;
-static float lm,rm;		//l and r 's magnitude
-static float cos_angle;	//cos of angle
+
 
 
 float limit_pos(float a){
   return a>0? a:0;
 }
 
-float angle_dbg_1,angle_dbg_2;
 
+#if 0
 static char is_smallest(float* fp){
   char i;
   for(i=0;i<4;i++){
@@ -537,6 +529,7 @@ static char is_larger_than(float* fp,float a){
   }
   return count;
 }
+#endif
 /*
 static char is_small(float a){
   static float peak = 4.0;
@@ -560,13 +553,17 @@ static char EM_ring_stage;
 char is_small_stage_report(void){
   return EM_ring_stage;
 }
-
-int EM_angle_get(float lp,float l, float r,float rp){
+#if 0
+//float angle_dbg_1,angle_dbg_2;//或许debug用——GMY注
+int EM_angle_get(float lp,float l, float r,float rp)//应该加个衰减曲线、写成距离才合理吧，不过有困难——GMY注//似乎没用到——GMY注
+{
   char flag;		//identify is left
   float ratio;
-  
+  int angle;
+ float lm,rm;		//l and r 's magnitude  
+ /*float cos_angle;	//cos of angle   */
   lm=(float)sqrt(l*l+lp*lp);
-  rm=(float)sqrt(rp*rp+r*r);
+  rm=(float)sqrt(rp*rp+r*r);/*这样标注的是余弦计算角度的方式——GMY注*/
 
   //EM_ring_stage=is_small(lm+rm);
   
@@ -576,32 +573,35 @@ int EM_angle_get(float lp,float l, float r,float rp){
   
   if(lm>rm){
 	ratio=lp/l;
-	cos_angle=l/lm;
+/*	cos_angle=l/lm;*/
   }else{
 	ratio=rp/r;
-	cos_angle=r/rm;
+/*	cos_angle=r/rm;*/
   }
   
-  angle_dbg_1 = l/lm;
-  angle_dbg_2 = r/rm;
+  /*angle_dbg_1 = l/lm;*/
+  /*angle_dbg_2 = r/rm;*/
 	  
   if(fabs(l-r)<0.05){
 	return 0;
-  }else if(r>l){
+  }else if(r>l.3)//这里应该是车正时右平行电感的AD值——GMY注
+  {
 	flag=1;
   }else{
 	flag=0;
   }
   
   //static float tan[45] = {};		//assume approximate tanx=x when angle is smaller than 45
-  angle=  flag? -45*ratio:45*ratio;
+  angle= (int)(flag? -45*ratio:45*ratio);
   return angle;
 }
 //归一化到 cm为单位
-float err;  
+#endif
+
 float EM_mid=0;
 
 float EM_length_err_get(float l,float r,float pl, float pr){
+  float err;
   //static float max_length = 11.5*1.414/10 ;
   //static float delta = 16*16*2/16;
   
@@ -630,7 +630,17 @@ float EM_length_err_get(float l,float r,float pl, float pr){
 	}*/
   
   //now calculate the actuall distance dA
+  float lm,rm;		//l and r 's magnitude  //将全局变量改为局部变量，，部分与EM_angle_get 相同，但EM_angle_get使用值似乎没有用到；——GMY注
+ float cos_angle;	//cos of angle   
+  lm=(float)sqrt(l*l+pl*pl);
+  rm=(float)sqrt(pr*pr+r*r);
+
   
+  if(lm>rm){
+	cos_angle=l/lm;
+  }else{
+	cos_angle=r/rm;
+  }
   err=my_fabs((1.0/lm-1.0/rm)/cos_angle);
   
   if(Road1_flag==3){
@@ -638,7 +648,7 @@ float EM_length_err_get(float l,float r,float pl, float pr){
     return err;
   }
 	
-	if(l>r)		//car is near right side
+	if(r<1.3)		//car is near right side
 	  return err;
 	else			//car is near left side
 	  return -err;
@@ -676,16 +686,16 @@ float PI_section(float err,float pl,float pr){
 }
   
 	
-
+#if 0
 /*********************************
 电磁偏差重映射
 输入参数：电磁计算偏差值
 输出参数：电磁控制ref--舵机
 ***********************************/ 
 float EM_offset_remap(float a){
-	static float pa=20.0;
-	static float pb=270.0;
-	static float turn_limit=197.0;
+	const float pa=20.0;
+	const float pb=270.0;
+	//static float turn_limit=197.0;
 	float temp;
 	char flag;
 	if(a>0){
@@ -698,9 +708,9 @@ float EM_offset_remap(float a){
 	if(temp<pa){
 	  return 0;
 	}else if(temp<pb){
-	  return flag? (non_linear((temp-pa)/(pb-pa)))*turn_limit:-(non_linear((temp-pa)/(pb-pa)))*turn_limit;
+	  return flag? (non_linear((temp-pa)/(pb-pa)))*SERVO_RANGE:-(non_linear((temp-pa)/(pb-pa)))*SERVO_RANGE;
 	}else{
-	  return flag? turn_limit:-turn_limit;
+	  return flag? SERVO_RANGE:-SERVO_RANGE;
 	}
 }
 /*********************************
@@ -726,7 +736,7 @@ float non_linear(float a){
 }
 
 
-
+#endif
 
 
 

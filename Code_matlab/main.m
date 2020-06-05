@@ -1,6 +1,6 @@
 clear all;clc;close all;
 
-name='huan1';
+name='0603_1';
 % mykc20200513_10cm
 Initial();
 global New_Lef New_Rig New_Mid;
@@ -9,7 +9,7 @@ catch
     pre_fun(name);
     load(strcat('./Data/',name,'.mat'))
 end
-No=610;
+No=2127;
 
 %% ȡͼ
 

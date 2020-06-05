@@ -85,6 +85,7 @@ extern int Middle;
 extern int end;
 extern float Cam_offset;
 
+extern int turn_stop;//转弯终止线
 
 //#define Car_Speed_Str     2200   //直道速度
 //#define Car_Speed_Cur1    1800   //弯道速度1
@@ -155,7 +156,7 @@ extern float Cam_offset;
 
 //倒跑
 extern float err;
-extern int angle;
+//extern int angle;
 extern float offset_map[60];
 extern int Lef_edge,Rig_edge;
 extern int Road6_flag;
