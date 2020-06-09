@@ -82,7 +82,8 @@ float offset_map[60]={(float)31/77,(float)31/77,(float)31/9	,(float)31/9	 ,(floa
 ,(float)31/42	,(float)31/44	 ,(float)31/46	 ,(float)31/46	 ,(float)31/48	  ,(float)31/48	,(float)31/48	,(float)31/50	,(float)31/51,(float)31/52,(float)31/53,(float)31/54,(float)31/54,(float)31/56,(float)31/56,(float)31/58,(float)31/58,(float)31/58,(float)31/60,(float)31/60,(float)31/61,(float)31/77};
 */
 float K0_Table[5] = {ROAD_WIDTH / 65, ROAD_WIDTH / 66, ROAD_WIDTH / 67, ROAD_WIDTH / 68, ROAD_WIDTH / 69};
-int threshold_offset = -2;
+int threshold_offset = -5;
+int threshold_offset2 = 0;
 float zhidaosudu = 2.5;     //直道速度
 float xiaowandaosudu = 2.3; //小弯道速度
 float dawandaosudu = 2.3;   //大弯道速度
@@ -705,6 +706,7 @@ void Road_rec(void)
   static int Road00_count = 0, Road03_count = 0, Road04_count = 0;
   static int Road11_count = 0, Road12_count = 0, Road13_count = 0, Road14_count = 0, Road15_count = 0;
   static int Road21_count = 0, Road22_count = 0, Road23_count = 0, Road24_count = 0, Road25_count = 0;
+  static int turn_stop_flag=0;
   int dis = 0,dis1 = 0;
   int i=0;
   
@@ -729,7 +731,7 @@ void Road_rec(void)
       }
       return;
     }
-    else if (Rig_break_point < 45 && Road == 0 && Lef_circle == 0 && Rig_circle == 1 && Rig_slope != 998 && Lef_slope == 998 &&
+else if (Rig_break_point < 45 && Road == 0 && Lef_circle == 0 && Rig_circle == 1 && Rig_slope != 998 && Lef_slope == 998 &&
              Lef[25] - Lef[27] < 5 && Lef[27] - Lef[29] < 5 && Lef[29] - Lef[31] < 5 && Lef[31] - Lef[33] < 5 && Lef[33] - Lef[35] < 5 && Lef[35] - Lef[37] < 5 && Lef[37] - Lef[39] < 5 && Lef[23] - Lef[25] < 5 &&
              //     (New_Rig[54] == MIDMAP || New_Rig[55] == MIDMAP || New_Rig[56] == MIDMAP) &&
              Lef_edge < 10) //右圆环：右边线：突变点→拐点→突变点//&& Lef[11] != 2
@@ -746,14 +748,30 @@ void Road_rec(void)
     //弯道状态机
     else if (((Lef_break_point > 45 && Lef_circle == 1 && Rig_circle == 0) || Road0_flag == 3) && Rig_slope != 998) //左转弯
     {
+      
       for (i = Fir_row; i < 40; ++i)
       {
-        if (Rig[i] < 40 && Rig[i + 1] <= 40 && Rig[i + 2] > 40 && Rig[i + 3] > 40 &&
+        if (Rig[i] < 40 && Rig[i + 1] <= 40 && Rig[i + 2] >= 40 && Rig[i + 3] > 40 &&
             Rig[i + 5] - Rig[i + 3] < 5 && Rig[i + 7] - Rig[i + 5] < 5 && Rig[i + 9] - Rig[i + 7] < 5 && Rig[i + 11] - Rig[i + 9] < 5)
             //可能较严，（出现连续边线为40）
         {
           break;
         }
+      }
+      if(i==40 && turn_stop_flag==1)
+      {
+        Road00_count++;
+        if(Road00_count==2)
+        {
+          Road00_count=0;
+          Road0_flag=0;
+          turn_stop_flag=0;
+          return;
+        }
+      }
+      else
+      {
+        Road00_count=0;
       }
       dis = Rig[i + 1] - Rig[i];
       for (; i > Fir_row; --i)
@@ -782,6 +800,10 @@ void Road_rec(void)
         }
       }
       turn_stop = i;
+      if(turn_stop<28)
+      {
+        turn_stop_flag=1;
+      }
       if (Rig[turn_stop] < 34 && dis > 4)
       {
         Road03_count++;
@@ -797,10 +819,25 @@ void Road_rec(void)
     {
       for (i = Fir_row; i < 40; ++i)
       {
-        if (Lef[i] > 40 && Lef[i + 1] >=40 && Lef[i + 2] < 40 && Lef[i + 3] < 40 &&
+        if (Lef[i] > 40 && Lef[i + 1] >=40 && Lef[i + 2] <= 40 && Lef[i + 3] < 40 &&
             Lef[i + 3] - Lef[i + 5] < 5 && Lef[i + 5] - Lef[i + 7] < 5 && Lef[i + 7] - Lef[i + 9] < 5 && Lef[i + 9] - Lef[i + 11] < 5)
         {
           break;
+        }
+      }
+      if(i==40&& turn_stop_flag==1)
+      {
+        Road00_count++;
+        if(Road00_count==3)
+        {
+          Road00_count=0;
+          Road0_flag=0;
+          turn_stop_flag=0;
+          return;
+        }
+        else
+        {
+          Road00_count=0;
         }
       }
       dis = Lef[i] - Lef[i + 1];
@@ -999,21 +1036,24 @@ void Road_rec(void)
     }
   }
 
-  if (Road == 0 && whitecnt > 1700 && ((Lef_edge > 10 && Rig_edge > 10) || Lef_edge > 30 || Rig_edge > 30) && Allwhitestart < 40 && Allwhitestart > (Fir_row+5))
+  if (Road == 0 && whitecnt > 1700 && ((Lef_edge > 10 && Rig_edge > 10) || Lef_edge > 30 || Rig_edge > 30) && Allwhitestart <=45 && Allwhitestart > (Fir_row+5))
   {
     Road0_flag = 1;
+    threshold_offset2=-8;//十字降低阈值
   }
-  else if ((Allwhitestart > 45 && Allwhiteend < 45) && whitecnt > 1900)
+  else if ((Allwhitestart > 45 && Allwhiteend < 45) && whitecnt > 2000)
   {
     Road0_flag = 2;
+    threshold_offset2=-15;
   }
   else
   {
     Road00_count++;
-    if (Road25_count == 3)
+    if (Road00_count == 2)
     {
       Road00_count = 0;
       Road0_flag = 0;
+      threshold_offset2=0;
     }
   }
 }
@@ -1207,7 +1247,7 @@ void Allwhite_find(void)
   Allwhitestart = 0;
   Allwhiteend = 0;
 
-  for (i = Fir_row; i < Last_row + 1; i++)
+  for (i = Fir_row; i < Last_row -7; i++)
   {
     Allwhiterow[i] = 0;
     if (Road0_flag == 1 && i < 35)
@@ -1230,14 +1270,14 @@ void Allwhite_find(void)
     }
   }
   Allwhitestart = Last_row;
-  i = Last_row;
+  i = Last_row-8;
   while (Allwhiterow[i] != 1 && i > Fir_row)
   {
     i = i - 1;
   }
   Allwhitestart = i;
   Allwhiteend = Fir_row;
-  i = Allwhitestart;
+  // i = Allwhitestart;
   while (Allwhiterow[i] == 1 && i > Fir_row)
   {
     i = i - 1;
@@ -1747,17 +1787,17 @@ void Pic_DrawLRside(void)
   //    }
   for (i = Last_row; i > Last_row - 5; i--)
   {
-    for (j = Middle; j < Last_col + 1; j++) //末行处理
+    for (j = Middle; j < Last_col; j++) //末行处理
     {
-      if (Pixle[i][j] == 1 && Pixle[i][j - 1] == 1 && Pixle[i][j - 2] == 1 && Pixle[i][j - 3] == 1 && Pixle[i][j - 4] == 1 && Pixle[i][j - 5] == 1 && Pixle[i][j - 6] == 1 && Pixle[i][j + 1] == 0 && Pixle[i][j + 2] == 0)
+      if (Pixle[i][j] == 1 && Pixle[i][j - 1] == 1 && Pixle[i][j - 2] == 1 && Pixle[i][j - 3] == 1 && Pixle[i][j - 4] == 1 && Pixle[i][j - 5] == 1 && Pixle[i][j - 6] == 1 && Pixle[i][j + 1] == 0 && Pixle[i][j + 2] == 0&& Pixle[i][j + 3] == 0)
       {
         Rig[i] = j;
         break;
       }
     }
-    for (j = Middle; j > Fir_col - 1; j--)
+    for (j = Middle; j > Fir_col; j--)
     {
-      if (Pixle[i][j] == 1 && Pixle[i][j + 1] == 1 && Pixle[i][j + 2] == 1 && Pixle[i][j + 3] == 1 && Pixle[i][j + 4] == 1 && Pixle[i][j + 5] == 1 && Pixle[i][j + 6] == 1 && Pixle[i][j - 1] == 0 && Pixle[i][j - 2] == 0)
+      if (Pixle[i][j] == 1 && Pixle[i][j + 1] == 1 && Pixle[i][j + 2] == 1 && Pixle[i][j + 3] == 1 && Pixle[i][j + 4] == 1 && Pixle[i][j + 5] == 1 && Pixle[i][j + 6] == 1 && Pixle[i][j - 1] == 0 && Pixle[i][j - 2] == 0 && Pixle[i][j - 3] == 0)
       {
         Lef[i] = j;
         break;
@@ -1768,9 +1808,9 @@ void Pic_DrawLRside(void)
       break;
     }
   }
-  for (; i > Fir_row - 1; i--) //从底层向上绘线
+  for (--i; i > Fir_row - 1; i--) //从底层向上绘线
   {
-    search_flag1 = 0, search_flag2 = 0;
+    search_flag1 = 0; search_flag2 = 0;
     Side_flag = 0;
 
     if (Rig[i + 1] != 78)
@@ -1875,7 +1915,7 @@ void Pic_DrawLRside(void)
     search_flag2 = 0;
     Side_flag = 0;
 
-    if (Lef[i + 1] != 78)
+    if (Lef[i + 1] != 1)
     {
       if (Pixle[i][Lef[i + 1]] == 0 || (Pixle[i][Lef[i + 1]] == 1 && Pixle[i][Lef[i + 1] - 1] == 0))
       {
@@ -1904,7 +1944,7 @@ void Pic_DrawLRside(void)
         search_flag2 = 1;
       }
     }
-    else if (Lef[i + 2] != 78)
+    else if (Lef[i + 2] != 1)
     {
       for (j = Lef[i + 2]; j < Lef[i + 1] + 10 && j < Rig[i + 1] + 5; j++)
       {
@@ -1964,7 +2004,7 @@ void Pic_DrawLRside(void)
           }
         }
       }
-      for (j = Lef[i + 1] - 8; j > Fir_col - 1; j++)
+      for (j = Lef[i + 1] - 8; j > Fir_col - 1; j--)
       {
         if (Pixle[i][j] == 1 && Pixle[i][j + 1] == 1 && Pixle[i][j + 2] == 1 && Pixle[i][j + 3] == 1 && Pixle[i][j + 4] == 1 && Pixle[i][j + 5] == 1 && Pixle[i][j + 6] == 1 && Pixle[i][j - 1] == 0 && Pixle[i][j - 2] == 0)
         {

@@ -212,7 +212,7 @@ void Variable_update(void)
   // EM_Value_4=(float)(EM_Value_4*3.3/4096);
   Variable[4]= Road2_flag;//EM_Value_1;//Cam_offset;
   Variable[5]= Allwhitestart;
-  Variable[6]= turn_stop;
+  Variable[6]= Allwhiteend;
   Variable[7]= Rig_slope;//EM_Value_4;
   Variable[8]= Lef_slope;//EM_offset;
   Variable[9]= Road;//speedTarget2;//Turn_Cam_Out;
