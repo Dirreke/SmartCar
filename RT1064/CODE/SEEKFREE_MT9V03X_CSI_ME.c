@@ -159,7 +159,7 @@ void sobel() //Sobel±ßÑØ¼ì²â
     for (j = 1; j < LCDW - 1; j++)
     {
 
-      if (Image_Use[i][j] < threshold + threshold_offset)
+      if (Image_Use[i][j] < threshold + threshold_offset+threshold_offset2)
       {
         Pixle[i][j] = 0;
         if (j == 40)

@@ -176,3 +176,4 @@ extern int Tof_thres;//障碍物检测阈值
 extern int camera_offset ;//摄像头二值化阈值
 
 extern int threshold_offset;
+extern int threshold_offset2;
