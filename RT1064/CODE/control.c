@@ -336,7 +336,20 @@ void Turn_Cam()
   Turn_Cam_Out = Turn_Cam_P * Cam_offset + Turn_Cam_D * (Cam_offset - Cam_offset_old); //×ªÏòPID¿ØÖÆ
 
   Cam_offset_old = Cam_offset;
-
+  if(Road == 1 && Road1_flag == 5)
+  {
+    if (Turn_Cam_Out>-0.5*SERVO_RANGE)
+    {
+      Turn_Cam_Out=-0.5*SERVO_RANGE;
+    }
+  }
+  else if(Road == 2 && Road2_flag == 5)
+  {
+    if (Turn_Cam_Out<0.5*SERVO_RANGE)
+    {
+      Turn_Cam_Out=0.5*SERVO_RANGE;
+    }
+  }
   // Servo_Duty((uint32)(sever_middle - 0.8 * Turn_Cam_Out));
   Servo_Duty(-Turn_Cam_Out);
 }

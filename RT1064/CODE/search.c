@@ -704,8 +704,8 @@ char Road1_turnout = 1;
 void Road_rec(void)
 {
   static int Road00_count = 0, Road03_count = 0, Road04_count = 0;
-  static int Road11_count = 0, Road12_count = 0, Road13_count = 0, Road14_count = 0, Road15_count = 0;
-  static int Road21_count = 0, Road22_count = 0, Road23_count = 0, Road24_count = 0, Road25_count = 0;
+  static int Road11_count = 0, Road12_count = 0, Road13_count = 0, Road14_count = 0, Road15_count = 0, Road16_count = 0;
+  static int Road21_count = 0, Road22_count = 0, Road23_count = 0, Road24_count = 0, Road25_count = 0, Road26_count = 0;
   static int turn_stop_flag=0;
   int dis = 0,dis1 = 0;
   int i=0;
@@ -929,7 +929,7 @@ else if (Rig_break_point < 45 && Road == 0 && Lef_circle == 0 && Rig_circle == 1
     else if (Road1_flag == 4) //进入圆环内 ，取消补线
     {
       Road0_flag = 0;
-      if (Rig_circle && whitecnt > 1200) //
+      if (Rig_circle && whitecnt > 1200) //Rig_circlr 不好，改!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       {
         Road14_count++;
         if (Road14_count == 3)
@@ -941,15 +941,28 @@ else if (Rig_break_point < 45 && Road == 0 && Lef_circle == 0 && Rig_circle == 1
       }
       return;
     }
-    else if (Road1_flag == 3) //准备出圆环回到直路 ， 开始补线
+    else if (Road1_flag ==3)//准备出圆环，右边线补线
     {
-      Road0_flag = 0;
-      if ((Rig_slope > -0.02 && Rig_slope < 0) || (Pixle[58][74] == 1 && Pixle[57][74] == 1 && Pixle[56][74] == 1 && Pixle[55][74] == 1 && Pixle[54][74] == 1 && Pixle[53][74] == 1)) //|| Lef_edge < 20))
+      if (Allwhitestart>=45)
       {
-        Road15_count++;
-        if (Road15_count == 4)
+        Road15_count ++;
+        if(Road15_count==2)
         {
           Road15_count = 0;
+          Road1_flag=5;
+        }
+      }
+    }
+    else if (Road1_flag == 5) //右边线已经不能补线，电磁等方法跑
+    {
+      Road0_flag = 0;
+      // if ((Rig_slope > -0.02 && Rig_slope < 0) || (Pixle[58][74] == 1 && Pixle[57][74] == 1 && Pixle[56][74] == 1 && Pixle[55][74] == 1 && Pixle[54][74] == 1 && Pixle[53][74] == 1)) //|| Lef_edge < 20))
+      if(((Rig_slope<-0.1 ||Rig_slope==998)&& Allwhiteend >45) || Allwhiteend ==Fir_row)
+      {
+        Road16_count++;
+        if (Road16_count == 4)
+        {
+          Road16_count = 0;
           Road = 0;
           //Road1_turnout=1;
           Road1_flag = 0;
@@ -1007,7 +1020,7 @@ else if (Rig_break_point < 45 && Road == 0 && Lef_circle == 0 && Rig_circle == 1
     else if (Road2_flag == 4)
     {
       Road0_flag = 0;
-      if (whitecnt > 1200)
+      if (Lef_circle && whitecnt > 1200)
       {
         Road25_count++;
         if (Road25_count == 3)
@@ -1018,15 +1031,30 @@ else if (Rig_break_point < 45 && Road == 0 && Lef_circle == 0 && Rig_circle == 1
       }
       return;
     }
-    else if (Road2_flag == 3)
+
+    else if(Road2_flag == 3)
+    {
+      if(Allwhitestart>=45)
+      {
+        Road26_count++;
+        if(Road26_count==2)
+
+      {
+        Road26_count=0;
+        Road2_flag=5;
+      }
+      }
+    }
+    else if (Road2_flag == 5)
     {
       Road0_flag = 0;
-      if ((Lef_slope > 0 && Lef_slope < 0.02) || (Pixle[58][5] == 1 && Pixle[57][5] == 1 && Pixle[56][5] == 1 && Pixle[55][5] == 1 && Pixle[54][5] == 1 && Pixle[53][5] == 1)) //|| Lef_edge < 20))
+      // if ((Lef_slope > 0 && Lef_slope < 0.02) || (Pixle[58][5] == 1 && Pixle[57][5] == 1 && Pixle[56][5] == 1 && Pixle[55][5] == 1 && Pixle[54][5] == 1 && Pixle[53][5] == 1)) //|| Lef_edge < 20))
+      if(((Lef_slope>0.1 || Lef_slope==998 )&&Allwhiteend >45 )||Allwhiteend==Fir_row)
       {
-        Road25_count++;
-        if (Road25_count == 4)
+        Road26_count++;
+        if (Road26_count == 4)
         {
-          Road25_count = 0;
+          Road26_count = 0;
           Road = 0;
           //Road2_turnout=1;
           Road2_flag = 0;
@@ -1512,10 +1540,14 @@ void Pic_Fix_Line(void)
       }
       return;
     }
+    // else if (Road1_flag == 5)
+    // {
+    //   ;
+    // }
   }
   if (Road == 2)
   {
-    if (Road == 2 && Road2_flag == 2)
+    if (Road2_flag == 2)
     {
       for (i = Last_row - 13; i > Fir_row; i--)
       {
@@ -1544,12 +1576,12 @@ void Pic_Fix_Line(void)
       }
       return;
     }
-    else if (Road == 2 && Road2_flag == 4)
+    else if ( Road2_flag == 4)
     {
       road2_flag1 = 1;
       return;
     }
-    else if (Road == 2 && Road2_flag == 3)
+    else if (Road2_flag == 3)
     {
       for (j = Last_row + 3; j > Fir_row; j--)
       {
@@ -1575,6 +1607,10 @@ void Pic_Fix_Line(void)
       }
       return;
     }
+    // else if (Road2_flag == 5)
+    // {
+    //   ;
+    // }
   }
 }
 
@@ -2706,7 +2742,7 @@ void start_stop_rec(void)
 
   if (Road == 0 && Road0_flag != 2 && Road0_flag != 1) //进起跑线
   {
-    start_waited = 601; //要改回去，否则无法出库
+    start_waited = 0; //要改回去，否则无法出库
     if (start_waited > 600 && Lef_edge > 15)
     {
       for (i = Fir_row + 10; i < 60; i++) //自上而下寻找有边线的开始行
