@@ -744,12 +744,13 @@ void Road_rec(void)
       return;
     }
     //弯道状态机
-    else if ((Rig_break_point > 45 && ((Lef_circle == 1 && Rig_circle == 0) || Road0_flag == 3) && Rig_slope != 998)) //左转弯
+    else if (((Lef_break_point > 45 && Lef_circle == 1 && Rig_circle == 0) || Road0_flag == 3) && Rig_slope != 998) //左转弯
     {
       for (i = Fir_row; i < 40; ++i)
       {
-        if (Rig[i] < 40 && Rig[i + 1] < 40 && Rig[i + 2] > 40 && Rig[i + 3] > 40 &&
+        if (Rig[i] < 40 && Rig[i + 1] <= 40 && Rig[i + 2] > 40 && Rig[i + 3] > 40 &&
             Rig[i + 5] - Rig[i + 3] < 5 && Rig[i + 7] - Rig[i + 5] < 5 && Rig[i + 9] - Rig[i + 7] < 5 && Rig[i + 11] - Rig[i + 9] < 5)
+            //可能较严，（出现连续边线为40）
         {
           break;
         }
@@ -792,11 +793,11 @@ void Road_rec(void)
         return;
       }
     }
-    else if ((Lef_break_point > 45 && ((Rig_circle == 1 && Lef_circle == 0) || Road0_flag == 4) && Lef_slope != 998)) //右转弯
+    else if (((Rig_break_point > 45 && Rig_circle == 1 && Lef_circle == 0) || Road0_flag == 4) && Lef_slope != 998) //右转弯
     {
       for (i = Fir_row; i < 40; ++i)
       {
-        if (Lef[i] > 40 && Lef[i + 1] > 40 && Lef[i + 2] < 40 && Lef[i + 3] < 40 &&
+        if (Lef[i] > 40 && Lef[i + 1] >=40 && Lef[i + 2] < 40 && Lef[i + 3] < 40 &&
             Lef[i + 3] - Lef[i + 5] < 5 && Lef[i + 5] - Lef[i + 7] < 5 && Lef[i + 7] - Lef[i + 9] < 5 && Lef[i + 9] - Lef[i + 11] < 5)
         {
           break;
@@ -998,7 +999,7 @@ void Road_rec(void)
     }
   }
 
-  if (Road == 0 && whitecnt > 1700 && ((Lef_edge > 10 && Rig_edge > 10) || Lef_edge > 30 || Rig_edge > 30) && Allwhitestart < 40)
+  if (Road == 0 && whitecnt > 1700 && ((Lef_edge > 10 && Rig_edge > 10) || Lef_edge > 30 || Rig_edge > 30) && Allwhitestart < 40 && Allwhitestart > (Fir_row+5))
   {
     Road0_flag = 1;
   }
@@ -1380,7 +1381,7 @@ void Pic_Fix_Line(void)
     }
     else if (Road0_flag == 3)
     {
-      for (i = turn_stop - 1; i > Fir_row; --i)
+      for (i = turn_stop ; i >= Fir_row; --i)
       {
         Rig[i] = 78;
 #ifdef undistort0
@@ -1394,7 +1395,7 @@ void Pic_Fix_Line(void)
     }
     else if (Road0_flag == 4)
     {
-      for (i = turn_stop - 1; i > Fir_row; --i)
+      for (i = turn_stop ; i >= Fir_row; --i)
       {
         Lef[i] = 1;
 #ifdef undistort0
