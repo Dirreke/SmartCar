@@ -330,11 +330,11 @@ void EM_offset_filter(void)
 void EM_main(void)
 {
   EM_Get();
-  EM_Ring_Rec();
-  //EM_Ramp_Rec();
-  EM_Curve_Rec();
-  //EM_Speed_Control();
-  EM_offset_fig();
-  //Block_By_Pass();
-  EM_offset_filter();
+  // EM_Ring_Rec();
+  // //EM_Ramp_Rec();
+  // EM_Curve_Rec();
+  // //EM_Speed_Control();
+  // EM_offset_fig();
+  // //Block_By_Pass();
+  // EM_offset_filter();
 }
