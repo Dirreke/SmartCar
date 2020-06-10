@@ -261,10 +261,7 @@ void Pic_DrawMid_und(void)
     }
     return;
 }
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-=======
+#if 0
 /*************************************************************************
  *  函数名称：void Pic_DrawMid_und(void)
  *  功能说明：计算去畸变后中线无插值
@@ -317,7 +314,6 @@ void Pic_DrawMid_und(void)
     {
         for (i = 0; i < 60; i++)
         {
->>>>>>> 222cb59... 0531-GMY_chongxiehenduohanshu_jiaruzuixiaoerchengzhuanwan
 
             if (New_Lef[i] != -MIDMAP && New_Rig[i] != MIDMAP) //Mid Calculaing
             {
@@ -339,8 +335,8 @@ void Pic_DrawMid_und(void)
     }
     return;
 }
+#endif
 
->>>>>>> 0501c7b... GMY -zhaohui diushi daima
 /*************************************************************************
  *  函数名称：float Circle_angle_val1_calculate(void)
  *  功能说明：计算中线的曲率半径,并计算理想舵机打角
@@ -387,15 +383,7 @@ float car_straight(float car_dias)
     }
     return -angle_val1;
 }
-<<<<<<< HEAD
-=======
-
-<<<<<<< HEAD
-
-
->>>>>>> 0501c7b... GMY -zhaohui diushi daima
-=======
->>>>>>> 222cb59... 0531-GMY_chongxiehenduohanshu_jiaruzuixiaoerchengzhuanwan
+#if 0
 /************************************************************************
  * search.c 1459-
  * 修改，减少取景行
@@ -427,8 +415,7 @@ void Pic_undistort(int L, int R)
     int step;
     int Rig_New[60];
     int Lef_New[60];
-    ,
-        static const int tempNewy[60] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1188, 807, 602, 475, 387, 324, 276, 238, 208, 182, 161, 144, 128, 115, 103, 93, 84, 75, 68, 61, 55, 49, 44, 39, 35, 31, 27, 24, 20, 17, 14, 12, 9, 7, 4, 2, 0, 0};
+    static const int tempNewy[60] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1188, 807, 602, 475, 387, 324, 276, 238, 208, 182, 161, 144, 128, 115, 103, 93, 84, 75, 68, 61, 55, 49, 44, 39, 35, 31, 27, 24, 20, 17, 14, 12, 9, 7, 4, 2, 0, 0};
 
     /*************************映射*******************************/
     if (R)
@@ -440,7 +427,7 @@ void Pic_undistort(int L, int R)
             if (tempx >= Last_col)
                 tempNewxR[i] = MIDMAP;
             else
-                tempNewxR[i] = (int)((UNDISTORT_XPK*(UNDISTORT_D * UNDISTORT_C + UNDISTORT_H) * 2 * (tempx - 39.5) / (-UNDISTORT_S * (29.5 - tempy) + UNDISTORT_D * UNDISTORT_C) + 0.5);
+                tempNewxR[i] = (int)(UNDISTORT_XPK*(UNDISTORT_D * UNDISTORT_C + UNDISTORT_H) * 2 * (tempx - 39.5) / (-UNDISTORT_S * (29.5 - tempy) + UNDISTORT_D * UNDISTORT_C) + 0.5);
 
             if (tempNewxR[i] > MIDMAP)
                 tempNewxR[i] = MIDMAP;
@@ -589,7 +576,9 @@ void Pic_undistort(int L, int R)
 }
 
 #endif
+#endif
 
+#if 0
 //起跑线
 int start_waited = 0;
 int start_stop_line = 0;
@@ -842,7 +831,8 @@ void start_stop_rec(void)
     }
     return;
 }
-
+#endif
+#if 0
 /*************************************************************************
 *  函数名称：void Pic_DrawLRside(void)
 *  功能说明：绘制左右边线线
@@ -1107,6 +1097,7 @@ void Pic_DrawLRside(void)
         }
     }
 }
+#endif
 
 void Turn_Cam_New()
 {
@@ -1121,7 +1112,9 @@ void Turn_Cam_New()
     Turn_Cam_Out = car_center_PWM + car_straight_PWM;
     Servo_Duty(-Turn_Cam_Out);
 }
+#if 0
 int turn_stop=0;
+
 void part()
 {
     int dis=0;int dis1=0;
@@ -1227,3 +1220,4 @@ void part()
         }
     }
 }
+#endif

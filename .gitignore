@@ -46,18 +46,15 @@
 /RT1064/IAR/**/*.xcl
 /RT1064/IAR/**/*.reggroups
 
-/RT1064/IAR/program/RT106X.dep
-<<<<<<< HEAD
+/RT1064/IAR/program/settings/RT106X.dep
+/RT1064/IAR/program/settings/
 
-=======
-/RT1064/IAR/program/settings/RT106X.dnx
->>>>>>> c929214fdffaa3c07bc7dae357516a1165a1f922
 ## MATLAB ##
 /Code_matlab/Data/*.mat
 
 ##AD 
 
-/Circuit_Board/**/Project Logs for PCB_Project1/
+/Circuit_Board/**/Project*/
 /Circuit_Board/**/History/
 /Circuit_Board/**/__Previews/
 
