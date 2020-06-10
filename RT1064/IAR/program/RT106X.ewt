@@ -1944,6 +1944,9 @@
             <name>$PROJ_DIR$\..\..\CODE\Data_Send.c</name>
         </file>
         <file>
+            <name>$PROJ_DIR$\..\..\CODE\debug.c</name>
+        </file>
+        <file>
             <name>$PROJ_DIR$\..\..\CODE\diff.c</name>
         </file>
         <file>
@@ -1981,6 +1984,9 @@
         </file>
         <file>
             <name>$PROJ_DIR$\..\..\CODE\Data_Send.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\CODE\debug.h</name>
         </file>
         <file>
             <name>$PROJ_DIR$\..\..\CODE\diff.h</name>
