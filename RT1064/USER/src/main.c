@@ -67,7 +67,7 @@ int main(void)
     Debug_Init();
     uart_init(USART_1,1500000,UART1_TX_B12, UART1_RX_B13);
     mt9v03x_csi_init();		     //初始化摄像头	使用CSI接口
-    //ips200_init();	       		 //初始化2.0寸IPS屏幕
+    ips200_init();	       		 //初始化2.0寸IPS屏幕
     Motor_Init(); //电机初始化
     Servo_Init(); //舵机初始化
     pit_init();   //中断初始化，每2ms控制电机一次（中断的时间也许可以改到更小一些，因为主频有所提升）
@@ -93,10 +93,7 @@ int main(void)
 
             EM_main();
             Send_Data();
-<<<<<<< HEAD
-=======
             Dubug_key();
->>>>>>> 6104cf30f7b3614d4d931b87abb7395163cdd5cd
 
             //使用缩放显示函数，根据原始图像大小 以及设置需要显示的大小自动进行缩放或者放大显示。
             //总钻风采集到的图像分辨率为 188*120 ，2.0寸IPS屏显示分辨率为 320*240 ，图像拉伸全屏显示。
