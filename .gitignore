@@ -46,20 +46,37 @@
 /RT1064/IAR/**/*.xcl
 /RT1064/IAR/**/*.reggroups
 
+<<<<<<< HEAD
 /RT1064/IAR/program/RT106X.dep
 <<<<<<< HEAD
 
 =======
 /RT1064/IAR/program/settings/RT106X.dnx
 >>>>>>> c929214fdffaa3c07bc7dae357516a1165a1f922
+=======
+
+/RT1064/IAR/program/settings/RT106X.dep
+/RT1064/IAR/program/settings/
+
+/RT1064/IAR/program/RT106X.dep
+/RT1064/IAR/program/settings/RT106X.dnx
+
+>>>>>>> 6104cf30f7b3614d4d931b87abb7395163cdd5cd
 ## MATLAB ##
 /Code_matlab/Data/*.mat
 
 ##AD 
 
+<<<<<<< HEAD
 /Circuit_Board/**/Project Logs for PCB_Project1/
 /Circuit_Board/**/History/
 /Circuit_Board/**/__Previews/
+=======
+/Circuit_Board/**/Project*/
+/Circuit_Board/**/History/
+/Circuit_Board/**/__Previews/
+/Circuit_Board/**/*.PrjPCBStructure
+>>>>>>> 6104cf30f7b3614d4d931b87abb7395163cdd5cd
 
 ## 
 !/**/.gitignore

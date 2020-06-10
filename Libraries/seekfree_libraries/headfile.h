@@ -90,6 +90,6 @@
 #include "speed.h"
 #include "EM.h"
 #include "Data_Send.h"
-
+#include "debug.h"
 
 #endif

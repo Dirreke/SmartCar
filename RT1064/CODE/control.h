@@ -9,6 +9,10 @@ extern  PID PID_SPEED,PID_TURN,PID_SPEED1,PID_SPEED2;
 extern float CarSpeed1;
 extern float CarSpeed2;
 
+extern float Turn_Cam_P_Table0[15];//仅调参用
+extern float Turn_Cam_D_Table0[15];//仅调参用
+
+
 //摄像头转弯变量
 extern float offset ;
 
