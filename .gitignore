@@ -61,6 +61,7 @@
 /Circuit_Board/**/Project*/
 /Circuit_Board/**/History/
 /Circuit_Board/**/__Previews/
+/Circuit_Board/**/*.PrjPCBStructure
 
 ## 
 !/**/.gitignore
