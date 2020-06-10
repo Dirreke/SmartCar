@@ -47,7 +47,7 @@
 /RT1064/IAR/**/*.reggroups
 
 /RT1064/IAR/program/RT106X.dep
-
+/RT1064/IAR/program/settings/RT106X.dnx
 ## MATLAB ##
 /Code_matlab/Data/*.mat
 
