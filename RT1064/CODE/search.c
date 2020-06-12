@@ -82,8 +82,7 @@ float offset_map[60]={(float)31/77,(float)31/77,(float)31/9	,(float)31/9	 ,(floa
 ,(float)31/42	,(float)31/44	 ,(float)31/46	 ,(float)31/46	 ,(float)31/48	  ,(float)31/48	,(float)31/48	,(float)31/50	,(float)31/51,(float)31/52,(float)31/53,(float)31/54,(float)31/54,(float)31/56,(float)31/56,(float)31/58,(float)31/58,(float)31/58,(float)31/60,(float)31/60,(float)31/61,(float)31/77};
 */
 float K0_Table[5] = {ROAD_WIDTH / 65, ROAD_WIDTH / 66, ROAD_WIDTH / 67, ROAD_WIDTH / 68, ROAD_WIDTH / 69};
-int threshold_offset = -5;
-int threshold_offset2 = 0;
+
 float zhidaosudu = 2.5;     //直道速度
 float xiaowandaosudu = 2.3; //小弯道速度
 float dawandaosudu = 2.3;   //大弯道速度
@@ -2483,11 +2482,11 @@ void Pic_undistort(int L, int R)
   int tempx;
   int tempNewxR[60];
   int tempNewxL[60];
-  int temp;
+  float temp;
   int step;
   int Rig_New[60];
   int Lef_New[60];
-  static const int tempNewy[60] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1188, 807, 602, 475, 387, 324, 276, 238, 208, 182, 161, 144, 128, 115, 103, 93, 84, 75, 68, 61, 55, 49, 44, 39, 35, 31, 27, 24, 20, 17, 14, 12, 9, 7, 4, 2, 0, 0};
+  static const int tempNewy[60] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 261, 217, 184, 158, 138, 121, 107, 96, 86, 77, 70, 63, 57,52, 47, 43, 39, 35, 32, 29, 26, 24, 21, 19, 17, 15, 13, 12, 10, 8, 7, 6, 4, 3, 2, 1, 0, 0};
 
   /*************************映射*******************************/
   if (R)
@@ -2535,7 +2534,7 @@ void Pic_undistort(int L, int R)
       {
         if (tempNewxR[i] != MIDMAP && tempNewxR[i + 1] != MIDMAP)
         {
-          Rig_New[59 - j] = (tempNewxR[i] - tempNewxR[i + 1]) / step * (temp - tempNewy[i + 1]) + tempNewxR[i + 1];
+          Rig_New[59 - j] = (int)((tempNewxR[i] - tempNewxR[i + 1]) * (temp - tempNewy[i + 1]) / step  + tempNewxR[i + 1]+0.5);
         }
         else
         {
@@ -2546,7 +2545,7 @@ void Pic_undistort(int L, int R)
       {
         if (tempNewxL[i] != -MIDMAP && tempNewxL[i + 1] != -MIDMAP)
         {
-          Lef_New[59 - j] = (tempNewxL[i] - tempNewxL[i + 1]) / step * (temp - tempNewy[i + 1]) + tempNewxL[i + 1];
+          Lef_New[59 - j] = (int)((tempNewxL[i] - tempNewxL[i + 1])* (temp - tempNewy[i + 1])  / step + tempNewxL[i + 1]+0.5);
         }
         else
         {

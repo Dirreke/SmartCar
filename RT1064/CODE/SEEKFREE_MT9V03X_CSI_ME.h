@@ -16,8 +16,9 @@
 /** definition **/
 
 #define Sobel_Near_Far_Line 30
-#define Sobel_Threshold_Far 70
-#define Sobel_Threshold_Near 80   
+extern uint8 Sobel_Threshold_FarFar;
+extern uint8 Sobel_Threshold_Far; 
+extern uint8 Sobel_Threshold_Near;   
 
 #define IMAGEH  120  //行 HEIGHT 待采集摄像头图像高度行数
 #define IMAGEW  188  //列 WIDTH  待采集摄像头图像宽度列数
@@ -47,7 +48,7 @@ extern uint8 img_edg[CAMERA_SIZE*2];
 extern uint8 GaveValue;
 extern int thresh;
 extern uint16 Pixle[CAMERA_H][CAMERA_W]; 		//change to uint8
-extern uint16 FINAL[59];
+// extern uint16 FINAL[59];
 void Get_pic_with_edge(void);
 void Get_Use_Image(void);
 // void Get_01_Value(void);

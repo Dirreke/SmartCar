@@ -37,7 +37,6 @@ __ramfunc void Get_Use_Image(void)
     }
     row += 1;
   }
-
 }
 /***************************************************************
 *
@@ -154,34 +153,48 @@ void sobel() //Sobel边沿检测
   int tempx = 0, tempy = 0, i = 0, j = 0;
   double tempsqrt = 0;
   uint8 threshold;
+  uint8 Sobel_Threshold;
   threshold = GetOSTU(Image_Use);
   for (i = Fir_row; i < LCDH - 1; i++)
+  {
     for (j = 1; j < LCDW - 1; j++)
     {
 
-      if (Image_Use[i][j] < threshold + threshold_offset+threshold_offset2)
+      if (Image_Use[i][j] < threshold + threshold_offset + threshold_offset2)
       {
         Pixle[i][j] = 0;
-        if (j == 40)
-          FINAL[i] = 0;
+        // if (j == 40)
+        // FINAL[i] = 0;
         continue;
       }
       tempx = -Image_Use[i - 1][j - 1] - 2 * Image_Use[i][j - 1] - Image_Use[i + 1][j - 1] + Image_Use[i - 1][j + 1] + 2 * Image_Use[i][j + 1] + Image_Use[i + 1][j + 1];
       tempy = Image_Use[i + 1][j - 1] + 2 * Image_Use[i + 1][j] + Image_Use[i + 1][j + 1] - Image_Use[i - 1][j - 1] - 2 * Image_Use[i - 1][j] - Image_Use[i - 1][j + 1];
       tempsqrt = sqrt(tempx * tempx + tempy * tempy);
-      if (tempsqrt > Sobel_Threshold_Far && Image_Use[i][j] < 200)//i < Sobel_Near_Far_Line &&
+      if (i < 30)
+      {
+        Sobel_Threshold = Sobel_Threshold_FarFar;
+      }
+      else if(i < 54)
+      {
+        Sobel_Threshold = Sobel_Threshold_Far;
+      }else
+      {
+        Sobel_Threshold = Sobel_Threshold_Near;
+      }
+      if (tempsqrt > Sobel_Threshold && Image_Use[i][j] < 200) //i < Sobel_Near_Far_Line &&
       {
         Pixle[i][j] = 0;
-        if (j == 40)
-          FINAL[i] = 0;
+        // if (j == 40)
+        // FINAL[i] = 0;
       }
       else
       {
         Pixle[i][j] = 1;
-        if (j == 40)
-          FINAL[i] = 1;
+        // if (j == 40)
+        // FINAL[i] = 1;
       }
     }
+  }
 }
 /*************************************************************************
 *  函数名称：void Pic_particular()
@@ -299,12 +312,12 @@ void camera_dispose_main(void) //摄像头处理主函数
   sobel();
   // if (Road == 1 && Road1_flag == 4) //||Road ==2)
   // {
-      //Pic_seedfill();///种子搜索算法
-//    }
-    Pic_noi_elim(); //图像简单去噪点
+  //Pic_seedfill();///种子搜索算法
+  //    }
+  Pic_noi_elim(); //图像简单去噪点
   // }
-  Pic_DrawLRside();//寻找左右边线
-  // Cam_End_Detect();
+  Pic_DrawLRside(); //寻找左右边线
+                    // Cam_End_Detect();
 #ifdef undistort0
   Pic_undistort(); //图像去畸变
 #endif
@@ -314,15 +327,15 @@ void camera_dispose_main(void) //摄像头处理主函数
   Pic_particular();
   LR_Slope_fig();    //左右边线斜率计算
   Allwhite_find();   //查找全白行//注释Allwhitestart2.Allwhiteend2
-  Pic_find_circle(); //寻找环状黑线及拐点 
+  Pic_find_circle(); //寻找环状黑线及拐点
   // Pic_find_leap();   //寻找突变点//没有用到，似乎在旧的圆环状态机中使用 search.c中，函数变量都注释掉了
   //Pic_Block_Rec();
   //Cam_Break_Rec();
   Road_rec();          //利用左右边线斜率识别赛道
-  start_stop_rec();//识别起跑线
+  start_stop_rec();    //识别起跑线
   Pic_Fix_Line();      //补线处理
-  Pic_DrawMid();//计算去畸前中心线-仅上位机用
-  Pic_DrawMid_und();//计算去畸后中线
+  Pic_DrawMid();       //计算去畸前中心线-仅上位机用
+  Pic_DrawMid_und();   //计算去畸后中线
   Pic_offset_fig();    //offset计算//注释Cam_offset2
   Pic_offset_filter(); //offset滤波
 
@@ -336,24 +349,22 @@ void camera_dispose_main(void) //摄像头处理主函数
 
 void camera_simple(void) //摄像头处理主函数
 {
-  
+
   Get_Use_Image(); //图像预处理
   sobel();
-  Pic_DrawLRside();//寻找左右边线
+  Pic_DrawLRside(); //寻找左右边线
 #ifdef undistort0
   Pic_undistort(); //图像去畸变
 #endif
 #ifdef undistort1
   Pic_undistort(1, 1); //图像去畸变
 #endif
-  LR_Slope_fig();    //左右边线斜率计算
+  LR_Slope_fig(); //左右边线斜率计算
 
-  Pic_DrawMid();//计算去畸前中心线
-  Pic_DrawMid_und();//计算去畸后中线
+  Pic_DrawMid();       //计算去畸前中心线
+  Pic_DrawMid_und();   //计算去畸后中线
   Pic_offset_fig();    //offset计算//注释Cam_offset2
   Pic_offset_filter(); //offset滤波
 
   Get_pic_with_edge(); //获得带边线灰度图
-
-
 }

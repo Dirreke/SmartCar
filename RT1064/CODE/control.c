@@ -2,7 +2,7 @@
 #include "math.h"
 extern char get_diff_state(void);
 //电磁
- int  EM_Road;
+int EM_Road;
 float EM_Turn_Control;
 
 //PID控制类变量
@@ -14,7 +14,7 @@ PID PID_SPEED, PID_TURN, PID_SPEED1, PID_SPEED2;
 
 #define Cam_offset_range 235
 
-//电机输出量 
+//电机输出量
 // float MotorOut;
 float MotorOut1, MotorOut2;
 
@@ -28,17 +28,24 @@ float Turn_Cam_Out;
 float Turn_Cam_P = 2;
 float Turn_Cam_D = 1.5;
 
-float Cam_Offset_Table0[15] = {-192, -160, -130, -90, -60, -40, -20, 0, 20, 40, 60, 90, 130, 160, 192};
+// float Cam_Offset_Table0[15] = {-192, -160, -130, -90, -60, -40, -20, 0, 20, 40, 60, 90, 130, 160, 192};
 //float Cam_Offset_Table0[15] = {-300, -250, -203, -141, -94, -63, -31, 0, 31, 63, 94, 141, 203, 250, 300};
 //float Turn_Cam_P_Table0[15] = {0.625,   0.719,    0.73,   0.56,   0.32160,    0.18,   0.1,   0.08,   0.1,   0.18,    0.32,    0.56,     0.73,   0.719,   0.625 };
 //*float Turn_Cam_P_Table0[15] = {0.95,   1.05,    0.8,     0.64,    0.48,     0.28,   0.18,    0.06,   0.18,   0.28,     0.48,      0.64,      0.8,   1.05,   0.95 };
 //float Turn_Cam_P_Table0[15] = {0.95,   1.05,    0.8,     0.64,    0.48,     0.38,   0.28,    0.06,   0.28,   0.38,     0.48,      0.64,      0.8,   1.05,   0.95 };
-float Turn_Cam_P_Table0[15] = {0.95, 1.05, 0.9, 0.8, 0.68, 0.28, 0.18, 0.06, 0.18, 0.28, 0.68, 0.8, 0.9, 1.05, 0.95};
-
+// float Turn_Cam_P_Table0[15] = {0.95, 1.05, 0.9, 0.8, 0.68, 0.28, 0.18, 0.06, 0.18, 0.28, 0.68, 0.8, 0.9, 1.05, 0.95};
+//new float ===P=== {1.60, }
 //float Turn_Cam_P_Table0[15] = {0.85,   0.95,    0.7,     0.56,    0.2,     0.1,   0.08,    0.06,   0.08,   0.1,     0.2,      0.56,      0.7,   0.95,   0.85 };
 //float Turn_D_Cam_Table0[15] = {0.65,   0.85,   0.89,    1,      1.3,      1.35,   1.5,   0.25,    1.5,    1.35,   1.3,    1,    0.89,    0.85,    0.65};//{0.432,  0.46,     0.476,   0.356,    0.80,    0.130,   0.056,    0.01,  0.056,    0.13,  0.26,     0.356,      0.476,     0.46,      0.432};
-float Turn_Cam_D_Table0[15] = {0.65, 0.85, 0.89, 1.4, 1.8, 2.0, 2.3, 0.2, 2.3, 2.0, 1.8, 1.4, 0.89, 0.85, 0.65}; //{0.432,  0.46,     0.476,   0.356,    0.80,    0.130,   0.056,    0.01,  0.056,    0.13,  0.26,     0.356,      0.476,     0.46,      0.432};
+// float Turn_Cam_D_Table0[15] = {0.65, 0.85, 0.89, 1.4, 1.8, 2.0, 2.3, 0.2, 2.3, 2.0, 1.8, 1.4, 0.89, 0.85, 0.65}; //{0.432,  0.46,     0.476,   0.356,    0.80,    0.130,   0.056,    0.01,  0.056,    0.13,  0.26,     0.356,      0.476,     0.46,      0.432};
 
+float Cam_Offset_Table0[23] = {-140, -130, -110, -100, -80, -60, -50, -40, -30, -20, 0, 20, 30, 40, 50, 60, 80, 100, 110, 130, 140};
+// float Turn_Cam_P_Table0[23] = {1.29, 1.20, 1.15, 1.20, 1.20, 1.30, 1.35, 1.60, 1.5, 1.45, 1.45, 1.45, 1.5, 1.60, 1.35, 1.30, 1.20, 1.20, 1.15, 1.20, 1.29};
+float Turn_Cam_P_Table0[23] = {1.29, 1.20, 1.15, 1.20, 1.20, 1.30, 1.35, 1.60, 1.5, 1.45, 0.3,1.45, 1.5, 1.60, 1.35, 1.30, 1.20, 1.20, 1.15, 1.20, 1.29};
+float Turn_Cam_D_Table0[23] = {1.29, 1.20, 1.15, 1.20, 1.20, 1.30, 1.35, 1.60, 1.5, 1.45, 0.01, 1.45, 1.5, 1.60, 1.35, 1.30, 1.20, 1.20, 1.15, 1.20, 1.29};
+
+float Turn_P=1;
+float Turn_D=0.5;
 void Get_Speed() //获取电机的速度
 {
   int16 qd1_result;
@@ -266,7 +273,7 @@ void Moto_Out()
   }
   else //反转
   {
-    Motor_Duty(3, (uint32)(-MotorOut1/100)*100);
+    Motor_Duty(3, (uint32)(-MotorOut1 / 100) * 100);
     Motor_Duty(2, 0); //(uint32)(-MotorOut1/100)*100);
   }
 
@@ -277,7 +284,7 @@ void Moto_Out()
   }
   else
   {
-    Motor_Duty(0, (uint32)(-MotorOut2/100)*100);//(uint32)(-MotorOut2/100)*100);
+    Motor_Duty(0, (uint32)(-MotorOut2 / 100) * 100); //(uint32)(-MotorOut2/100)*100);
     Motor_Duty(1, 0);
   }
 }
@@ -286,7 +293,7 @@ void Moto_Out()
 转弯PD模糊函数------摄像头控制
 输入参数：摄像头计算偏差值
 输出参数：摄像头控制转弯PD
-***********************************/ 
+***********************************/
 
 void TurnFuzzyPD_Cam(void)
 {
@@ -330,38 +337,35 @@ void Turn_Cam()
   TurnFuzzyPD_Cam();
 
   //0.768=0.8*1.2*0.8
-  Turn_Cam_P *= 0.768; //0.85;//0.7
-  Turn_Cam_D *= 0.768; //6.5
+  Turn_Cam_P *= Turn_P; //0.85;//0.7
+  Turn_Cam_D *= Turn_D;
 
-  Turn_Cam_Out = Turn_Cam_P * Cam_offset + Turn_Cam_D * (Cam_offset - Cam_offset_old); //转向PID控制
+  Turn_Cam_Out = Turn_Cam_P * Cam_offset+ Turn_Cam_D * (Cam_offset - Cam_offset_old); //转向PID控制
 
   Cam_offset_old = Cam_offset;
-  if(Road == 1 && Road1_flag == 5)
+  if (Road == 1 && Road1_flag == 5)
   {
-    if (Turn_Cam_Out>-0.5*SERVO_RANGE)
+    if (Turn_Cam_Out > -0.5 * SERVO_RANGE)
     {
-      Turn_Cam_Out=-0.5*SERVO_RANGE;
+      Turn_Cam_Out = -0.5 * SERVO_RANGE;
     }
   }
-  else if(Road == 2 && Road2_flag == 5)
+  else if (Road == 2 && Road2_flag == 5)
   {
-    if (Turn_Cam_Out<0.5*SERVO_RANGE)
+    if (Turn_Cam_Out < 0.5 * SERVO_RANGE)
     {
-      Turn_Cam_Out=0.5*SERVO_RANGE;
+      Turn_Cam_Out = 0.5 * SERVO_RANGE;
     }
   }
   // Servo_Duty((uint32)(sever_middle - 0.8 * Turn_Cam_Out));
   Servo_Duty(-Turn_Cam_Out);
 }
 
-
-
-
 /*********************************
 转弯PD模糊函数------电磁控制
 输入参数：电磁计算偏差值
 输出参数：电磁控制转弯PD
-***********************************/ 
+***********************************/
 /*
 void TurnFuzzyPD_EM(void)
 {
@@ -438,59 +442,56 @@ void TurnFuzzyPD_EM(void)
 ***说明：偏移量offset为负说明车身相对赛道中心偏左
          偏移量offset为正说明车身相对赛道中心偏右
 *********************************************/
-float KP=17;
+float KP = 17;
 void Turn_EM(void)
 {
 
-
-
   //TurnFuzzyPD_EM();
- // TurnFuzzySIN();
+  // TurnFuzzySIN();
   //Turn_P_EM = 0.8;
- // Turn_I_EM = 0;
+  // Turn_I_EM = 0;
   //Turn_D_EM = 0;
-  //start of I 
-  //if(abs_f(EM_offset)<50){                                                            
-    //EM_offset_I *= 0.8;                                                                
-//  //}                                                                                            
-//  else{                                                                                       
-//    EM_offset_I += EM_offset*0.00043;                                               
-//  }                                                                                            
-//  EM_offset_I = limit_f(EM_offset_I,-1.5,1.5);        //累计I限幅  
-//  
+  //start of I
+  //if(abs_f(EM_offset)<50){
+  //EM_offset_I *= 0.8;
+  //  //}
+  //  else{
+  //    EM_offset_I += EM_offset*0.00043;
+  //  }
+  //  EM_offset_I = limit_f(EM_offset_I,-1.5,1.5);        //累计I限幅
+  //
   //end of I
-  
+
   //start of remapping EM_offset
   //float EM_offset_remap_val;
   //EM_offset_remap_val=EM_offset_remap(EM_offset);
   //end of remappping EM_offset
-  
+
   //start of foc control
   //caculate angle and length
   float mid_err;
   float ctl_out;
- //EM_Value_3 = EM_Value_3 - EM_Value_2/1.88;
+  //EM_Value_3 = EM_Value_3 - EM_Value_2/1.88;
   //EM_Value_3 = EM_Value_3<0? 0 : EM_Value_3;
   //angle=EM_angle_get(limit_pos(EM_Value_1/1.5-EM_Value_2/3.5),EM_Value_2,EM_Value_3,limit_pos(EM_Value_4/1.5-EM_Value_3/3.5));//这里换算垂直电感，平行电感这样——GMY注//似乎angle没有用到——GMY注
   //angle=-1.2*197/45*angle;		//inner loop gain Kt
-//  mid_err=EM_length_err_get(EM_Value_2,EM_Value_3,EM_Value_1,EM_Value_4);//该函数原函数没用到pl,pr,,,,,lm,lr使用EM_angle_get函数全局变量求的，故这里暂时修改为下一行——GMY注
- mid_err=EM_length_err_get(EM_Value_2,EM_Value_3,limit_pos(EM_Value_1/1.5-EM_Value_2/3.5),limit_pos(EM_Value_4/1.5-EM_Value_3/3.5));//左平行，右平行，左垂直，右垂直——GMY注
-  mid_err=0.2/3.1415926*180*mid_err;		//outer loop gain Kl		//full range @ 70 
-  ctl_out=PD_section(mid_err);//+angle;		//inner loop error
-  ctl_out=my_limit(ctl_out,45);
-  ctl_out=196/45.0*ctl_out;		//inner loop gain
-  
-  if(Road == 3)
+  //  mid_err=EM_length_err_get(EM_Value_2,EM_Value_3,EM_Value_1,EM_Value_4);//该函数原函数没用到pl,pr,,,,,lm,lr使用EM_angle_get函数全局变量求的，故这里暂时修改为下一行——GMY注
+  mid_err = EM_length_err_get(EM_Value_2, EM_Value_3, limit_pos(EM_Value_1 / 1.5 - EM_Value_2 / 3.5), limit_pos(EM_Value_4 / 1.5 - EM_Value_3 / 3.5)); //左平行，右平行，左垂直，右垂直——GMY注
+  mid_err = 0.2 / 3.1415926 * 180 * mid_err;                                                                                                           //outer loop gain Kl		//full range @ 70
+  ctl_out = PD_section(mid_err);                                                                                                                       //+angle;		//inner loop error
+  ctl_out = my_limit(ctl_out, 45);
+  ctl_out = 196 / 45.0 * ctl_out; //inner loop gain
+
+  if (Road == 3)
   {
-    ctl_out/=3;
+    ctl_out /= 3;
   }
   //now using pi control of remapped EM_offset
-  EM_Turn_Control =  PI_section(ctl_out,EM_Value_1,EM_Value_4);//EM_offset_remap_val;//10*KP*EM_SIN_Control;//0.8 *EM_offset 
-                      //+ Turn_D_EM*(EM_offset - old_EM_offset);  //转向PID控制 + Turn_I_EM*EM_offset_I
- // old_EM_offset = EM_offset;
+  EM_Turn_Control = PI_section(ctl_out, EM_Value_1, EM_Value_4); //EM_offset_remap_val;//10*KP*EM_SIN_Control;//0.8 *EM_offset
+                                                                 //+ Turn_D_EM*(EM_offset - old_EM_offset);  //转向PID控制 + Turn_I_EM*EM_offset_I
+                                                                 // old_EM_offset = EM_offset;
 
-  Servo_Duty((uint32)(EM_Turn_Control ));              //disable EM control servo
-  
+  Servo_Duty((uint32)(EM_Turn_Control)); //disable EM control servo
 }
 
 /*********************************
@@ -499,31 +500,28 @@ void Turn_EM(void)
 输出参数: θ&|A|
 假设四个电感    pl------l&r------pr
 假设负数为车偏左，正数为右
-***********************************/ 
-float PD_section(float err){
-  static float p=1.22;
-  static float d=1.42;
-  static float last=0;
-  
+***********************************/
+float PD_section(float err)
+{
+  static float p = 1.22;
+  static float d = 1.42;
+  static float last = 0;
+
   float sub;
-  sub=err-last;
-  last=err;
-  return (p*err+d*sub);
+  sub = err - last;
+  last = err;
+  return (p * err + d * sub);
 }
 
-
-
-float my_fabs(float a){
-  return a>0? a:-a;
+float my_fabs(float a)
+{
+  return a > 0 ? a : -a;
 }
 
-
-
-
-float limit_pos(float a){
-  return a>0? a:0;
+float limit_pos(float a)
+{
+  return a > 0 ? a : 0;
 }
-
 
 #if 0
 static char is_smallest(float* fp){
@@ -561,9 +559,10 @@ static char is_small(float a){
   return is_smallest(array)&&(is_larger_than(array,peak)>2);
 }
 */
-static char EM_ring_stage; 
+static char EM_ring_stage;
 
-char is_small_stage_report(void){
+char is_small_stage_report(void)
+{
   return EM_ring_stage;
 }
 #if 0
@@ -611,21 +610,21 @@ int EM_angle_get(float lp,float l, float r,float rp)//应该加个衰减曲线、写成距离
 //归一化到 cm为单位
 #endif
 
-float EM_mid=0;
+float EM_mid = 0;
 
-float EM_length_err_get(float l,float r,float pl, float pr){
+float EM_length_err_get(float l, float r, float pl, float pr)
+{
   float err;
   //static float max_length = 11.5*1.414/10 ;
   //static float delta = 16*16*2/16;
-  
-  
+
   //remaints of the reverse runing EM
-  
+
   //static float x_get[20]={0.0,0.01,0.05,0.12,0.27,0.31,0.42,0.49,0.54,0.60,0.67,0.73,0.75,0.79,0.81,0.83};
-  
+
   //float length;
   //float err;
-  
+
   /*length = (float)sqrt(l*l+r*r);
   
   if(length > max_length){
@@ -641,64 +640,65 @@ float EM_length_err_get(float l,float r,float pl, float pr){
 		break;
 	  }
 	}*/
-  
-  //now calculate the actuall distance dA
-  float lm,rm;		//l and r 's magnitude  //将全局变量改为局部变量，，部分与EM_angle_get 相同，但EM_angle_get使用值似乎没有用到；——GMY注
- float cos_angle;	//cos of angle   
-  lm=(float)sqrt(l*l+pl*pl);
-  rm=(float)sqrt(pr*pr+r*r);
 
-  
-  if(lm>rm){
-	cos_angle=l/lm;
-  }else{
-	cos_angle=r/rm;
+  //now calculate the actuall distance dA
+  float lm, rm;    //l and r 's magnitude  //将全局变量改为局部变量，，部分与EM_angle_get 相同，但EM_angle_get使用值似乎没有用到；——GMY注
+  float cos_angle; //cos of angle
+  lm = (float)sqrt(l * l + pl * pl);
+  rm = (float)sqrt(pr * pr + r * r);
+
+  if (lm > rm)
+  {
+    cos_angle = l / lm;
   }
-  err=my_fabs((1.0/lm-1.0/rm)/cos_angle);
-  
-  if(Road1_flag==3){
-    err = -1.21*(2.0-l); 
+  else
+  {
+    cos_angle = r / rm;
+  }
+  err = my_fabs((1.0 / lm - 1.0 / rm) / cos_angle);
+
+  if (Road1_flag == 3)
+  {
+    err = -1.21 * (2.0 - l);
     return err;
   }
-	
-	if(r<1.3)		//car is near right side
-	  return err;
-	else			//car is near left side
-	  return -err;
-  
+
+  if (r < 1.3) //car is near right side
+    return err;
+  else //car is near left side
+    return -err;
 }
- /*********************************
+/*********************************
 PID控制器
 输入参数：error
 输出参数: PID结果
-***********************************/ 
+***********************************/
 
-float PI_section(float err,float pl,float pr){
-  static float p=1.0;
-  static float i=0.000;
-  static float d=0.00;
-  static float i_limit=196*500;		//assume input limit of 196, limit ratio of 1000		valid i 0.0001
-  static float err_i=0;
-  static float err_last=0;
+float PI_section(float err, float pl, float pr)
+{
+  static float p = 1.0;
+  static float i = 0.000;
+  static float d = 0.00;
+  static float i_limit = 196 * 500; //assume input limit of 196, limit ratio of 1000		valid i 0.0001
+  static float err_i = 0;
+  static float err_last = 0;
   float err_d;
-  err_d=err-err_last;
-  err_last=err;
-  
-  if(pl>0.6&&pr>0.6&&Road1_flag!=3){
-  	err_i=0;
-	err=0;
-	err_d=0;
+  err_d = err - err_last;
+  err_last = err;
+
+  if (pl > 0.6 && pr > 0.6 && Road1_flag != 3)
+  {
+    err_i = 0;
+    err = 0;
+    err_d = 0;
   }
-  
-  err_i+=err;
-  err_i=my_limit(err_i,i_limit);
-  
-  
-  
-  return (p*err+i*err_i+d*err_d);
+
+  err_i += err;
+  err_i = my_limit(err_i, i_limit);
+
+  return (p * err + i * err_i + d * err_d);
 }
-  
-	
+
 #if 0
 /*********************************
 电磁偏差重映射
@@ -748,11 +748,4 @@ float non_linear(float a){
 	}
 }
 
-
 #endif
-
-
-
-
-
-

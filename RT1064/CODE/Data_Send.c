@@ -216,9 +216,9 @@ void Variable_update(void)
   Variable[7]= Rig_slope;//EM_Value_4;
   Variable[8]= Lef_slope;//EM_offset;
   Variable[9]= Road;//speedTarget2;//Turn_Cam_Out;
-  Variable[10]=EM_Value_3;
-  Variable[11]=Road1_flag;
-  Variable[12]=Road7_flag;
+  Variable[10]=Road0_flag+Road1_flag*10+Road7_flag*100;
+  Variable[11]=CarSpeed1;
+  Variable[12]=CarSpeed2;
   Variable[13]=Lef_circle;/*Rig_circle;*///Road6_flag ;//CarSpeed2;
   Variable[14]=Rig_circle;
   Variable[15]=whitecnt;//Road1_turnout;//limit_pos(EM_Value_1/1.5-EM_Value_2/3.5);//speedTarget1;//map_line[MIN(50,AllWhileStartLine)];

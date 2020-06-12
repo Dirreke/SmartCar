@@ -53,11 +53,15 @@ startpoint=29+1;
 % s=sin(-theta1);
 % h=H0;
 % d=d1;
-h=55.085226319160249;d=41.350059427213317;theta1=atan(d*(71/8-1)/(71*5.5/8+28.5));
+% % % % % % % % h=55.085226319160249;d=41.350059427213317;theta1=atan(d*(71/8-1)/(71*5.5/8+28.5));
+% % % % % % % % c=cos(-theta1);
+% % % % % % % % s=sin(-theta1);
+% % % % % % % % K=150*(s*-28.5+d*c)/((d*c+h)*70);%0.71;% K=150*(s*-28.5+d*c)/((d*c+h)*70);
+h=21.7060;   d=59.9915;
+theta1=atan(d*(80/15-1)/(80*5.5/15+28.5));
 c=cos(-theta1);
 s=sin(-theta1);
-K=150*(s*-28.5+d*c)/((d*c+h)*70);%0.71;% K=150*(s*-28.5+d*c)/((d*c+h)*70);
-
+K=150*(s*-28.5+d*c)/((d*c+h)*80);
 % clear theta0 ad ah
 %%
 % K=-0.6;
@@ -140,7 +144,8 @@ end
 % clear Lef_New
 k=startpoint;%Ñ°ÕÒÆðµã
 k2=59;%Bili=5
-Bili=round(tempNewy(k)/59);
+% Bili=round(tempNewy(k)/59);
+Bili=1.6;
 Rig_New=zeros(ImageH,1);
 Lef_New=zeros(ImageH,1);
 tempNewy(k)=k2*Bili;

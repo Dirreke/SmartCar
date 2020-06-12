@@ -4,29 +4,30 @@
 void Debug_Init(void)
 {
     gpio_init(D4, GPI, 1, PULLUP_22K);
-    gpio_init(D27, GPI, 1, PULLUP_22K);
-    gpio_init(C31, GPI, 1, PULLUP_22K);
-    gpio_init(C27, GPI, 1, PULLUP_22K);
-    gpio_init(C26, GPI, 1, PULLUP_22K);
+    gpio_init(D27, GPI, 1, GPIO_PIN_CONFIG);
+    gpio_init(C31, GPI, 1, GPIO_PIN_CONFIG);
+    gpio_init(C27, GPI, 1, GPIO_PIN_CONFIG);
+    gpio_init(C26, GPI, 1, GPIO_PIN_CONFIG);
+    ips200_clear(WHITE);
 }
 
 void Dubug_key(void)
 {
     static int ips_num = 0;
-    const int page_num = 2;
+    const int page_num = 4;
     if (gpio_get(DEBUG_KEY0))
     {
         return;
     }
-    //显示
-    ips_show_debug(ips_num);
+
     //翻页
-    if (!gpio_get(DEBUG_KEY1))
+    if (!gpio_get(DEBUG_KEY2))
     {
         systick_delay_ms(50);
-        if (!gpio_get(DEBUG_KEY1))
+        if (!gpio_get(DEBUG_KEY2))
         {
             ips_num++;
+            ips200_clear(WHITE);
             if (ips_num >= page_num)
             {
                 ips_num = 0;
@@ -35,13 +36,14 @@ void Dubug_key(void)
         }
     }
 
-    if (!gpio_get(DEBUG_KEY2))
+    /*    if (!gpio_get(DEBUG_KEY1))
     {
         systick_delay_ms(50);
-        if (!gpio_get(DEBUG_KEY2))
+        if (!gpio_get(DEBUG_KEY1))
         {
             // ips_clear(IPS_WHITE);
             ips_num--;
+            ips200_clear(WHITE);
             if (ips_num < 0)
             {
                 ips_num = page_num - 1;
@@ -49,6 +51,10 @@ void Dubug_key(void)
             return;
         }
     }
+*/
+    //显示
+    ips_show_debug(ips_num);
+
     //调整
     if (!gpio_get(DEBUG_KEY3))
     {
@@ -63,7 +69,25 @@ void Dubug_key(void)
             case 1:
                 lib_set_speed(get_speed() + 0.1);
                 break;
-            /* 舵机PD仅调参用*/
+                case 2:
+                Turn_P +=0.02;
+                break;
+                case 3:
+                Turn_D += 0.02;
+                break;
+
+                /*
+            case 32:
+                Sobel_Threshold_FarFar += 1;
+                break;
+            case 33:
+                Sobel_Threshold_Far += 1;
+                break;
+            case 34:
+                Sobel_Threshold_Near += 1;
+                break;
+                */
+            /* 舵机PD仅调参用
             case 2:
                 Turn_Cam_P_Table0[0] += 0.01;
                 break;
@@ -154,6 +178,7 @@ void Dubug_key(void)
             case 31:
                 Turn_Cam_D_Table0[14] += 0.01;
                 break;
+*/
             default:
                 break;
             }
@@ -173,10 +198,28 @@ void Dubug_key(void)
             case 1:
                 lib_set_speed(get_speed() - 0.1);
                 break;
-                /* 舵机PD仅调参用*/
+                  case 2:
+                Turn_P -=0.02;
+                break;
+                case 3:
+                Turn_D -= 0.02;
+                break;
+                /*
+            case 32:
+                Sobel_Threshold_FarFar -= 1;
+                break;
+            case 33:
+                Sobel_Threshold_Far -= 1;
+                break;
+            case 34:
+                Sobel_Threshold_Near -= 1;
+                break;
+                */
+                /* 舵机PD仅调参用
             case 2:
                 Turn_Cam_P_Table0[0] -= 0.01;
                 break;
+
             case 3:
                 Turn_Cam_D_Table0[0] -= 0.01;
                 break;
@@ -264,6 +307,7 @@ void Dubug_key(void)
             case 31:
                 Turn_Cam_D_Table0[14] -= 0.01;
                 break;
+                */
             default:
                 break;
             }
@@ -277,9 +321,9 @@ void ips_show_debug(int ips_num)
     const int PAGE_X = 100;
     const int PAGE_NUM_X = 200;
     /** ips show image **/
-    ips200_clear(WHITE);
-    ips200_displayimage032_zoom(Image_Use[0], 80, 40, 320, 160);
-
+    //ips200_clear(WHITE);
+    ips200_displayimage032_zoom(Image_Use[20], 80, 40, 320, 160);
+    //systick_delay_ms(300);
     ips200_showstr(PAGE_X, 14, "page");
     ips200_showuint16(PAGE_NUM_X, 14, ips_num);
     switch (ips_num)
@@ -297,11 +341,34 @@ void ips_show_debug(int ips_num)
         ips200_showstr(0, 12, "speed: "); //显示字符串
         ips200_showfloat(0, 13, get_speed(), 2, 2);
         break;
+        case 2:
+        ips200_showstr(0,12,"P");
+        ips200_showfloat(0,13,Turn_P,2,2);
+        break;
+        case 3:
+                ips200_showstr(0,12,"D");
+        ips200_showfloat(0,13,Turn_D,2,2);
+        break;
+        /*
+    case 32:
+        ips200_showstr(0, 12, "Sobel_Threshold_FarFar: ");
+        ips200_showuint8(0, 13, Sobel_Threshold_FarFar);
+        break;
+    case 33:
+        ips200_showstr(0, 12, "Sobel_Threshold_Far: ");
+        ips200_showuint8(0, 13, Sobel_Threshold_Far);
+        break;
+    case 34:
+        ips200_showstr(0, 12, "Sobel_Threshold_Near: ");
+        ips200_showuint8(0, 13, Sobel_Threshold_Near);
+        break;
+        */
     default:
-        ips_show_debug_pd(ips_num);
+        // ips_show_debug_pd(ips_num);
         break;
     }
 }
+/*
 void ips_show_debug_pd(int ips_num)
 {
     int index = ips_num / 2 - 1;
@@ -309,12 +376,13 @@ void ips_show_debug_pd(int ips_num)
     ips200_showuint16(100, 11, index);
     if (ips_num % 2)
     {
-        ips200_showstr(0, 12, "Turn_Cam_P_Table: ");
-        ips200_showfloat(0, 13, Turn_Cam_P_Table0[index], 2, 3);
-    }
-    else
-    {
         ips200_showstr(0, 12, "Turn_Cam_D_Table: ");
         ips200_showfloat(0, 13, Turn_Cam_D_Table0[index], 2, 3);
     }
+    else
+    {
+        ips200_showstr(0, 12, "Turn_Cam_P_Table: ");
+        ips200_showfloat(0, 13, Turn_Cam_P_Table0[index], 2, 3);
+    }
 }
+*/

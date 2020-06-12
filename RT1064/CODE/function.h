@@ -15,13 +15,13 @@
 //MAP_K0/(y+MAP_B)
 
 /*************************search.c去畸变2 *****************************/
-#define UNDISTORT_D 41.350059427213317
-#define UNDISTORT_H 55.085226319160249
-#define UNDISTORT_C 0.231001627837663
-#define UNDISTORT_S 0.972953363700620//程序中加了负号，故与matlab相反
-#define UNDISTORT_PYK 4
-#define UNDISTORT_XPK 1.235946609885535
-#define UNDISTORT_PWK 6.15//像素：实际
+#define UNDISTORT_D 59.9915
+#define UNDISTORT_H 21.7060
+#define UNDISTORT_C 0.2172
+#define UNDISTORT_S 0.9761//程序中加了负号，故与matlab相反
+#define UNDISTORT_PYK 1.6
+#define UNDISTORT_XPK 2.2050
+#define UNDISTORT_PWK 3.0187//像素：实际
 /********************** conrtol.c差速 ********************************/
 #define ANGLE_RANGE 0.5585 //舵机最大偏转角，单位：弧度,32du
 #define CAR_DIFF_K 0.7750//小车两轮宽比两轮长，暂设为0，此时无差速，车宽15.5，车长20

@@ -1,6 +1,10 @@
 #include "headfile.h"
 
-
+int threshold_offset = -5;
+int threshold_offset2 = 0;
+uint8 Sobel_Threshold_FarFar = 70;
+uint8 Sobel_Threshold_Far = 80;
+uint8 Sobel_Threshold_Near = 100;   
 
 void Para_Init()
 {
@@ -26,8 +30,8 @@ void Para_Init()
         lib_active_diff_set_d(0.1);
 #endif
         //¿ª²îËÙ
-        diff_on();
-     //   diff_off();
+        // diff_on();
+       diff_off();
   
   
         
