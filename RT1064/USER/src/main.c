@@ -74,6 +74,8 @@ int main(void)
     pit_interrupt_ms(PIT_CH0,PIT_TIME);
     qtimer_AB_init();//解码器初始化
     EM_Init();//ADC初始化
+    gpio_interrupt_init(C16,RISING,GPIO_INT_CONFIG);   //初始化GPIO C16 中断模式 使用默认引脚配置GPIO_INT_CONFIG
+    NVIC_SetPriority(GPIO2_Combined_16_31_IRQn,15);    //设置中断优先级 范围0-15 越小优先级越高
     Para_Init();    //各个变量初始化
     
     EnableGlobalIRQ(0);
