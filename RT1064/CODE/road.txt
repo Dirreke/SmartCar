@@ -1,11 +1,18 @@
-Road==0 正常
+Road==0 正常 
+Road0_flag=0 直线
+Road0_flag=1十字近景行补线
+Road0_flag=2十字近景行补线
+Road0_flag=4左转
+Road0_flag=5右转
+
 Road==1 左圆环
 Road==2 右圆环
 Road==7 起跑线
+Road7_flag=0 近远景行补线
+Road7_flag=1 远景行补线
+Road7_flag=2 开始转弯
 //Road==8 界外
-Road=8 入库开始转弯
-Road=9入库停止转弯
-
+Road=8 停车
 
 Lef_break_point 左圆环断点行数
 Rig_break_point 右圆环断点行数

@@ -332,7 +332,7 @@ void camera_dispose_main(void) //摄像头处理主函数
   //Pic_Block_Rec();
   //Cam_Break_Rec();
   Road_rec();          //利用左右边线斜率识别赛道
-  start_stop_rec();    //识别起跑线
+  // start_stop_rec();    //识别起跑线
   Pic_Fix_Line();      //补线处理
   fangyuejie();
   Pic_DrawMid();       //计算去畸前中心线-仅上位机用

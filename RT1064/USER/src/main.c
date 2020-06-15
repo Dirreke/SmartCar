@@ -88,7 +88,7 @@ int main(void)
         {
             mt9v03x_csi_finish_flag = 0; //清除采集完成标志位
             camera_dispose_main();
-            if (Road7_flag!= 1)
+            if (Road7_flag!= 2)
             {
                 Turn_Cam();
             }
