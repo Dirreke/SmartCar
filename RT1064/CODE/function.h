@@ -25,7 +25,7 @@
 /********************** conrtol.c差速 ********************************/
 #define ANGLE_RANGE 0.5585 //舵机最大偏转角，单位：弧度,32du
 #define CAR_DIFF_K 0.7750//小车两轮宽比两轮长，暂设为0，此时无差速，车宽15.5，车长20
-#define CAR_LENGTH 148.5149//车长
+#define CAR_LENGTH 20//车长cm
 
 #define START_LINE 19
 

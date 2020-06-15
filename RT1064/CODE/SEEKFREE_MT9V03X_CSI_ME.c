@@ -334,6 +334,7 @@ void camera_dispose_main(void) //摄像头处理主函数
   Road_rec();          //利用左右边线斜率识别赛道
   start_stop_rec();    //识别起跑线
   Pic_Fix_Line();      //补线处理
+  fangyuejie();
   Pic_DrawMid();       //计算去畸前中心线-仅上位机用
   Pic_DrawMid_und();   //计算去畸后中线
   Pic_offset_fig();    //offset计算//注释Cam_offset2
@@ -346,7 +347,7 @@ void camera_dispose_main(void) //摄像头处理主函数
 
   //}
 }
-
+/*
 void camera_simple(void) //摄像头处理主函数
 {
 
@@ -368,3 +369,4 @@ void camera_simple(void) //摄像头处理主函数
 
   Get_pic_with_edge(); //获得带边线灰度图
 }
+*/

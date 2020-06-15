@@ -34,7 +34,7 @@ extern void Allwhite_find(void);
 extern void stop_program(void);
 extern void start_stop_rec(void);
 
-
+extern void fangyuejie(void);
 
 // extern void Pic_precal(void);
 // extern void grow(int Pic_precal_done[60][80],int Pic_precal_flag[60][80],int i,int j);
@@ -177,3 +177,5 @@ extern int camera_offset ;//摄像头二值化阈值
 
 extern int threshold_offset;
 extern int threshold_offset2;
+
+extern int start_stop_line;
