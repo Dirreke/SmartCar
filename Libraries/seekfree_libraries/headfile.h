@@ -77,8 +77,10 @@
 #include "SEEKFREE_SCC8660_CSI.h"
 #include "SEEKFREE_SCC8660.h"
 
-#include "SEEKFREE_MT9V03X_CSI_ME.h"
-#include "search.h"
+//#include "SEEKFREE_MT9V03X_CSI_ME.h"
+//#include "search.h"
+#include "Picture.h"
+#include "search_new.h"
 #include "control.h"
 #include "pwm_me.h"
 #include "qtimer.h"

@@ -17,9 +17,9 @@ __ramfunc void Get_Use_Image(void);
 
 /* AT_NONCACHEABLE_SECTION_ALIGN(uint8 image[MT9V03X_CSI_H][MT9V03X_CSI_W],4); */
 uint8 Image_Use[CAMERA_H][CAMERA_W];
-uint8 imgbuff_process[CAMERA_SIZE]; //定义处理图像用的数组                        //
-uint8 GaveValue;
-uint8_t Threshold;                //OSTU大津法计算的图像阈值
+// uint8 imgbuff_process[CAMERA_SIZE]; //定义处理图像用的数组                        //
+// uint8 GaveValue;
+// uint8_t Threshold;                //OSTU大津法计算的图像阈值
 uint16 Pixle[CAMERA_H][CAMERA_W]; //二值化后用于OLED显uint16氖???//u16
 uint16 FINAL[59];
 uint16 adj_9034[5] = {20, 80, 6, 10, 0}; //kkkl 亮度 最小曝光度 数字增益 thresh*  plus
@@ -138,7 +138,7 @@ void Get_01_Value(void)
     }
   }
 }
-#endif
+
 void swap(uint8_t *p, int a, int b)
 {
   uint8_t temp;
@@ -146,7 +146,7 @@ void swap(uint8_t *p, int a, int b)
   p[a] = p[b];
   p[b] = temp;
 }
-
+#endif
 void sobel() //Sobel边沿检测
 {
 
@@ -170,11 +170,11 @@ void sobel() //Sobel边沿检测
       tempx = -Image_Use[i - 1][j - 1] - 2 * Image_Use[i][j - 1] - Image_Use[i + 1][j - 1] + Image_Use[i - 1][j + 1] + 2 * Image_Use[i][j + 1] + Image_Use[i + 1][j + 1];
       tempy = Image_Use[i + 1][j - 1] + 2 * Image_Use[i + 1][j] + Image_Use[i + 1][j + 1] - Image_Use[i - 1][j - 1] - 2 * Image_Use[i - 1][j] - Image_Use[i - 1][j + 1];
       tempsqrt = sqrt(tempx * tempx + tempy * tempy);
-      if (i < 30)
+      if (i < Sobel_Far_FarFar_Line)
       {
         Sobel_Threshold = Sobel_Threshold_FarFar;
       }
-      else if(i < 54)
+      else if(i < Sobel_Near_Far_Line)
       {
         Sobel_Threshold = Sobel_Threshold_Far;
       }else

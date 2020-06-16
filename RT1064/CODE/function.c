@@ -1,14 +1,14 @@
 #include "headfile.h"
 
-int threshold_offset = -5;
-int threshold_offset2 = 0;
+
 uint8 Sobel_Threshold_FarFar = 70;
 uint8 Sobel_Threshold_Far = 80;
 uint8 Sobel_Threshold_Near = 100;   
 
 void Para_Init()
 {
-  
+        threshold_offset = -5;
+        
   	PID_SPEED.P=0.29;//2.9;//0.50
 	PID_SPEED.I=0.25;//0.0014;
 	PID_SPEED.D=0.000;//0.030

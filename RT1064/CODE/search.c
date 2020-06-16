@@ -2,27 +2,29 @@
 
 #define max_block(a, b) ((a) > (b) ? (a) : (b))
 
+int threshold_offset = -5;
+int threshold_offset2 = 0;
+
 int Lef[LCDH];     //道路左分离点的纵坐标
 int Rig[LCDH];     //道路右分离点的纵坐标
-int Lef_err[LCDH]; //用于判断分离点是否成功，若找到，则置1
-int Rig_err[LCDH];
+// int Lef_err[LCDH]; //用于判断分离点是否成功，若找到，则置1
+// int Rig_err[LCDH];
 int Mid[LCDH]; //道路中心点的纵坐标
 int Middle = 41;
 
 float LR_slope;
-float Cam_offset_filter[4] = {0, 0, 0, 0}; //offset滤波数组
-float Cam_offset2;
+// float Cam_offset2;
 
-int area[5] = {Last_row - 8, 48, 34, Last_row - 33, Last_row}; //分区域计算偏差的边界划分
+// int area[5] = {Last_row - 8, 48, 34, Last_row - 33, Last_row}; //分区域计算偏差的边界划分
 
-int Allwhiterow[LCDH]; //全白行，1表示全白，否则为0
+
 int Allwhitestart;     //全白行开始行
 int Allwhiteend;       //全白行结束行
 // int Allwhitestart2;
 // int Allwhiteend2;
 // int Fix1x, Fix2x, Fix1y, Fix2y;
 // int Fix_line;  //补线标志位
-int Fix[LCDH]; //用于补线
+// int Fix[LCDH]; //用于补线
 
 int Lef_circle;
 int Rig_circle; //左右边线寻找环状黑线标志位
@@ -71,8 +73,8 @@ extern float EM_Road2_Cnt;
 */
 // extern int16 qd1_result;
 
-int Lef_End = 0;
-int Rig_End = 0;
+// int Lef_End = 0;
+// int Rig_End = 0;
 // int Cam_End = 0;
 // int block_flag = 1;
 
@@ -83,13 +85,13 @@ float offset_map[60]={(float)31/77,(float)31/77,(float)31/9	,(float)31/9	 ,(floa
 ,(float)31/30,(float)31/31,(float)31/31	,(float)31/33,(float)31/34,(float)31/34,(float)31/36,(float)31/36	,(float)31/36	,(float)31/38	,(float)31/40,(float)31/40,(float)31/42,(float)31/42
 ,(float)31/42	,(float)31/44	 ,(float)31/46	 ,(float)31/46	 ,(float)31/48	  ,(float)31/48	,(float)31/48	,(float)31/50	,(float)31/51,(float)31/52,(float)31/53,(float)31/54,(float)31/54,(float)31/56,(float)31/56,(float)31/58,(float)31/58,(float)31/58,(float)31/60,(float)31/60,(float)31/61,(float)31/77};
 */
-float K0_Table[5] = {ROAD_WIDTH / 65, ROAD_WIDTH / 66, ROAD_WIDTH / 67, ROAD_WIDTH / 68, ROAD_WIDTH / 69};
+// float K0_Table[5] = {ROAD_WIDTH / 65, ROAD_WIDTH / 66, ROAD_WIDTH / 67, ROAD_WIDTH / 68, ROAD_WIDTH / 69};
 
 float zhidaosudu = 2.5;     //直道速度
 float xiaowandaosudu = 2.3; //小弯道速度
 float dawandaosudu = 2.3;   //大弯道速度
 // float duanlusudu = 1.8;     //断路速度
-int camera_offset = 0; //摄像头二值化阈值
+// int camera_offset = 0; //摄像头二值化阈值
 // int Tof_thres = 150;        //障碍物检测阈值
 // float luzhangsudu = 2.3;    //路障速度
 
@@ -282,6 +284,7 @@ void my_key_debug()
 
 }
 */
+#if 0
 /*************************************************************************
 *  函数名称：void Pic_seedfill(void)
 *  功能说明：DFS搜索种子填充算法
@@ -371,7 +374,7 @@ void Pic_seedfill_grow(uint8 flag[CAMERA_H][CAMERA_W], int i, int j)
 
   return;
 }
-
+#endif
 /*************************************************************************
 *  函数名称：void Pic_noi_elim()
 *  功能说明：照片噪点消除
@@ -701,9 +704,10 @@ void Road_rec(void)
 
 *************************************************************************/
 
-char Road1_turnout = 1;
+// char Road1_turnout = 1;
 void Road_rec(void)
 {
+  static int Road0_count = 0;
   static int Road00_count = 0, Road03_count = 0, Road04_count = 0, Road05_count = 0;
   static int Road11_count = 0, Road12_count = 0, Road13_count = 0, Road14_count = 0, Road15_count = 0, Road16_count = 0;
   static int Road21_count = 0, Road22_count = 0, Road23_count = 0, Road24_count = 0, Road25_count = 0, Road26_count = 0;
@@ -714,6 +718,19 @@ void Road_rec(void)
   // static int oldwhite=5000;
   // static uint8 Road1_cnt1=0;
   // static char Road1_flag1=0;
+  if (Lef_slope == 998 && Rig_slope == 998)
+  {
+    Road0_count++;
+    if (Road0_count >= 5)
+    {
+      Road = 0;
+    }
+  }
+  else
+  {
+    Road0_count = 0;
+  }
+
   if (Road == 0)
   {
 
@@ -767,7 +784,7 @@ void Road_rec(void)
           Road00_count = 0;
           Road0_flag = 0;
           turn_stop_flag = 0;
-          threshold_offset2 = -0;
+          threshold_offset2 = -5;
           return;
         }
       }
@@ -791,7 +808,7 @@ void Road_rec(void)
         {
           continue;
         }
-        else if (dis1 <= 2 * dis+1)
+        else if (dis1 <= 2 * dis + 1)
         {
           dis = dis1;
           continue;
@@ -811,7 +828,7 @@ void Road_rec(void)
         Road04_count++;
         if (Road04_count == 2)
         {
-          Road0_flag = 4;   //turn left flag
+          Road0_flag = 4; //turn left flag
           threshold_offset2 = -5;
           Road04_count = 0; //reset
         }
@@ -836,7 +853,7 @@ void Road_rec(void)
         {
           Road00_count = 0;
           Road0_flag = 0;
-          threshold_offset2 = -0;
+          threshold_offset2 = -5;
           turn_stop_flag = 0;
           return;
         }
@@ -861,7 +878,7 @@ void Road_rec(void)
         {
           continue;
         }
-        else if (dis1 <= 2 * dis+1)
+        else if (dis1 <= 2 * dis + 1)
         {
           dis = dis1;
           continue;
@@ -877,7 +894,7 @@ void Road_rec(void)
         Road05_count++;
         if (Road05_count == 2)
         {
-          Road0_flag = 5;   //turn left flag
+          Road0_flag = 5; //turn left flag
           threshold_offset2 = -5;
           Road05_count = 0; //reset
         }
@@ -952,7 +969,7 @@ void Road_rec(void)
         {
           continue;
         }
-        else if (dis1 <= 2 * dis+1)
+        else if (dis1 <= 2 * dis + 1)
         {
           dis = dis1;
           continue;
@@ -1071,7 +1088,7 @@ void Road_rec(void)
         {
           continue;
         }
-        else if (dis1 <= 2 * dis+1)
+        else if (dis1 <= 2 * dis + 1)
         {
           dis = dis1;
           continue;
@@ -1186,7 +1203,7 @@ void LR_Slope_fig()
       count++;
     }
   }
-  if (abs(max - min) > 50)
+  if (abs(max - min) > 25)
   {
     if (count * x2sum - xsum * xsum)
     {
@@ -1333,6 +1350,7 @@ float L_R_Slope(char LR)
 
 void Allwhite_find(void)
 {
+  int Allwhiterow[LCDH]; //全白行，1表示全白，否则为0
   int i;
   // Allwhitestart = Allwhiteend = Allwhitestart2 = Allwhiteend2 = 0;
   Allwhitestart = 0;
@@ -1439,6 +1457,9 @@ void Pic_Fix_Line(void)
             pixel_undistort(Lef[j], j, 0); //x:Lef[i],      y:i   LR:0:左  1：右
 #endif
           }
+#ifdef undistort1
+          Pic_undistort(1, 0);
+#endif
           break;
         }
       }
@@ -1456,12 +1477,13 @@ void Pic_Fix_Line(void)
             pixel_undistort(Rig[j], j, 1); //x:Lef[i],      y:i   LR:0:左  1：右
 #endif
           }
+#ifdef undistort1
+          Pic_undistort(0, 1);
+#endif
           break;
         }
       }
-#ifdef undistort1
-      Pic_undistort(1, 1);
-#endif
+
       return;
     }
     else if (Road0_flag == 2)
@@ -1480,6 +1502,9 @@ void Pic_Fix_Line(void)
             pixel_undistort(Lef[j], j, 0); //x:Lef[i],      y:i   LR:0:左  1：右
 #endif
           }
+#ifdef undistort1
+          Pic_undistort(1, 0); //
+#endif
           break;
         }
       }
@@ -1497,12 +1522,13 @@ void Pic_Fix_Line(void)
             pixel_undistort(Rig[j], j, 1); //x:Lef[i],      y:i   LR:0:左  1：右
 #endif
           }
+#ifdef undistort1
+          Pic_undistort(0, 1); //
+#endif
           break;
         }
       }
-#ifdef undistort1
-      Pic_undistort(1, 1); //
-#endif
+
       return;
     }
     else if (Road0_flag == 4)
@@ -1558,12 +1584,13 @@ void Pic_Fix_Line(void)
             pixel_undistort(Rig[k], k, 1);
 #endif
           }
+#ifdef undistort1
+          Pic_undistort(0, 1); //
+#endif
           break;
         }
       }
-#ifdef undistort1
-      Pic_undistort(0, 1); //
-#endif
+
       return;
     }
     else if (Road1_flag == 4)
@@ -1599,12 +1626,13 @@ void Pic_Fix_Line(void)
             pixel_undistort(Rig[k], k, 1);
 #endif
           }
+#ifdef undistort1
+          Pic_undistort(0, 1); //
+#endif
           break;
         }
       }
-#ifdef undistort1
-      Pic_undistort(0, 1); //
-#endif
+
       return;
     }
     // else if (Road1_flag == 5)
@@ -1635,12 +1663,13 @@ void Pic_Fix_Line(void)
             pixel_undistort(Lef[k], k, 0);
 #endif
           }
+#ifdef undistort1
+          Pic_undistort(1, 0); //
+#endif
           break;
         }
       }
-#ifdef undistort1
-      Pic_undistort(1, 0); //
-#endif
+
       return;
     }
     else if (Road2_flag == 4)
@@ -1676,12 +1705,13 @@ void Pic_Fix_Line(void)
             pixel_undistort(Lef[k], k, 0);
 #endif
           }
+#ifdef undistort1
+          Pic_undistort(1, 0); //
+#endif
           break;
         }
       }
-#ifdef undistort1
-      Pic_undistort(1, 0); //
-#endif
+
       return;
     }
     // else if (Road2_flag == 5)
@@ -1721,8 +1751,11 @@ void Pic_Fix_Line(void)
               pixel_undistort(Lef[j], j, 0); //x:Lef[i],      y:i   LR:0:左  1：右
 #endif
             }
+#ifdef undistort1
+            Pic_undistort(1, 0); //
+#endif
+            break;
           }
-          break;
         }
       }
 
@@ -1755,14 +1788,14 @@ void Pic_Fix_Line(void)
               pixel_undistort(Rig[j], j, 1); //x:Lef[i],      y:i   LR:0:左  1：右
 #endif
             }
+#ifdef undistort1
+            Pic_undistort(0, 1); //
+#endif
+            break;
           }
-          break;
         }
       }
 
-#ifdef undistort1
-      Pic_undistort(1, 1); //
-#endif
       return;
     }
     else if (Road7_flag == 1)
@@ -1785,9 +1818,12 @@ void Pic_Fix_Line(void)
             pixel_undistort(Lef[j], j, 0); //x:Lef[i],      y:i   LR:0:左  1：右
 #endif
           }
+#ifdef undistort1
+          Pic_undistort(1, 0); //
+#endif
+          break;
         }
         // get_flag = 1;
-        break;
       }
       // if (get_flag == 1)
       // {
@@ -1821,9 +1857,12 @@ void Pic_Fix_Line(void)
             pixel_undistort(Rig[j], j, 1); //x:Lef[i],      y:i   LR:0:左  1：右
 #endif
           }
+#ifdef undistort1
+          Pic_undistort(0, 1); //
+#endif
+          break;
         }
         // get_flag = 1;
-        break;
       }
 
       // if (get_flag == 1)
@@ -1838,12 +1877,10 @@ void Pic_Fix_Line(void)
       //   }
       // }
 
-#ifdef undistort1
-      Pic_undistort(1, 1); //
-#endif
       return;
     }
   }
+  // fangyuejie();
 }
 void fangyuejie(void)
 {
@@ -2053,6 +2090,7 @@ void Pic_DrawLRside(void)
 
 void Pic_DrawLRside(void)
 {
+  const int Middle = 41;
   int i = 0, j = 0;
   int search_flag1 = 0, search_flag2 = 0;
   int Side_flag;
@@ -2629,6 +2667,7 @@ void Pic_offset_fig(void)
 
 void Pic_offset_filter(void)
 {
+  static float Cam_offset_filter[4] = {0, 0, 0, 0}; //offset滤波数组
   Cam_offset_filter[3] = Cam_offset_filter[2];
   Cam_offset_filter[2] = Cam_offset_filter[1];
   Cam_offset_filter[1] = Cam_offset_filter[0];
@@ -3024,15 +3063,15 @@ void start_stop_rec(void)
         count = 5;
         for (int i = start_stop_line - 5; i > start_stop_line - 10; --i) //计算平均中间位置
         {
-          if (Lef[i] > Fir_col+5 && Rig[i] < Last_col-5)
+          if (Lef[i] > Fir_col + 5 && Rig[i] < Last_col - 5)
           {
             avr_mid += (int)((Lef[i] + Rig[i]) / 2.0 + 0.5);
           }
-          else if (Lef[i] <= Fir_col+5 && Rig[i] < Last_col-5)
+          else if (Lef[i] <= Fir_col + 5 && Rig[i] < Last_col - 5)
           {
             avr_mid += Rig[i] - road_half_width_original[Last_row - i];
           }
-          else if (Lef[i] > Fir_col+5 && Rig[i] >= Last_col-5)
+          else if (Lef[i] > Fir_col + 5 && Rig[i] >= Last_col - 5)
           {
             avr_mid += Lef[i] + road_half_width_original[Last_row - i];
           }
@@ -3076,7 +3115,7 @@ void start_stop_rec(void)
       }
     }
   }
-  
+
   else if (Road == 7 & Road7_flag == 0 || Road7_flag == 1) //等待转弯
   {
     for (int i = start_stop_line - 5; i < Last_row; i++)

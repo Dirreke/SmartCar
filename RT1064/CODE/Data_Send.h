@@ -21,7 +21,6 @@ extern int Rig_circle;
 extern uint16 Pic_new[600];
 extern int cnt;
 extern float Turn_P_EM;
-extern int whitecnt;
 extern float speedTarget1;
 extern float speedTarget2;
 //extern float angle_dbg_1,angle_dbg_2;//或许debug用——GMY注

@@ -1863,16 +1863,16 @@
             <name>$PROJ_DIR$\..\..\USER\src\main.c</name>
         </file>
         <file>
+            <name>$PROJ_DIR$\..\..\CODE\Picture.c</name>
+        </file>
+        <file>
             <name>$PROJ_DIR$\..\..\CODE\pwm_me.c</name>
         </file>
         <file>
             <name>$PROJ_DIR$\..\..\CODE\qtimer.c</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\..\CODE\search.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\CODE\SEEKFREE_MT9V03X_CSI_ME.c</name>
+            <name>$PROJ_DIR$\..\..\CODE\search_new.c</name>
         </file>
         <file>
             <name>$PROJ_DIR$\..\..\CODE\speed.c</name>
@@ -1905,6 +1905,9 @@
             <name>$PROJ_DIR$\..\..\USER\inc\isr.h</name>
         </file>
         <file>
+            <name>$PROJ_DIR$\..\..\CODE\Picture.h</name>
+        </file>
+        <file>
             <name>$PROJ_DIR$\..\..\CODE\pwm_me.h</name>
         </file>
         <file>
@@ -1914,10 +1917,7 @@
             <name>$PROJ_DIR$\..\..\USER\inc\RT106X_config.h</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\..\CODE\search.h</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\CODE\SEEKFREE_MT9V03X_CSI_ME.h</name>
+            <name>$PROJ_DIR$\..\..\CODE\search_new.h</name>
         </file>
         <file>
             <name>$PROJ_DIR$\..\..\CODE\speed.h</name>

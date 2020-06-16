@@ -52,9 +52,6 @@ extern float Slope(int F1x,int F1y,int F2x,int F2y);
 
 
 
-#define LCDH    60  //OLED显示的行数
-#define LCDW    80  //OLED显示的列数
-
 extern int Lef[LCDH]; //道路左分离点的纵坐标
 extern int Rig[LCDH]; //道路右分离点的纵坐标
 extern int Mid[LCDH]; //道路中心点的纵坐标
@@ -75,17 +72,27 @@ extern int Allwhiteend;
 
 extern float Lef_slope;
 extern float Rig_slope;
-extern float LR_slope;
+// extern float LR_slope;
 extern int Lef_circle;
 extern int Rig_circle;
 extern int Lef_break_point;
 extern int Rig_break_point;
-extern int Cam_Block_State;
-extern int Middle;
-extern int end;
+// extern int Cam_Block_State;
+// extern int Middle;
+// extern int end;
 extern float Cam_offset;
 
 extern int turn_stop;//转弯终止线
+
+extern int whitecnt;
+
+
+
+
+
+
+
+
 
 //#define Car_Speed_Str     2200   //直道速度
 //#define Car_Speed_Cur1    1800   //弯道速度1
@@ -121,6 +128,8 @@ extern int turn_stop;//转弯终止线
 #define ROAD_HALF_WIDTH  150  //赛道半宽
 #define ROAD_WIDTH  300  //赛道宽
 
+#define START_LINE 19
+
 #define Fir_row      START_LINE+1        //以第7行作为最小有效行
 #define Last_row     (LCDH-2)    //以该行为最大有效行
 #define Fir_col      2         //以第7列作为最小有效列
@@ -128,8 +137,8 @@ extern int turn_stop;//转弯终止线
 //#define Middle       40        //图片视野中心位置
 
 
-#define Fir_col_cross      8        //以第7列作为最小有效列
-#define Last_col_cross     (LCDW-8)    //以该列为最大有效列
+// #define Fir_col_cross      8        //以第7列作为最小有效列
+// #define Last_col_cross     (LCDW-8)    //以该列为最大有效列
 
 
 #if 0
@@ -140,7 +149,7 @@ extern int turn_stop;//转弯终止线
 #define UNDISTORT_K1      (-0.4077)  
 #define UNDISTORT_K2      0.1326
 #endif 
-
+#if 0
 //图像DFS搜索算法起始搜索区域
 #define seed_down	55
 #define seed_up		40
@@ -151,18 +160,18 @@ extern int turn_stop;//转弯终止线
 #define RIGHT       79
 #define TOP         0
 #define BOTTOM      59
-
+#endif
 
 
 //倒跑
-extern float err;
+// extern float err;
 //extern int angle;
-extern float offset_map[60];
+// extern float offset_map[60];
 extern int Lef_edge,Rig_edge;
-extern int Road6_flag;
-extern int ramp_cnt ;
-extern int iii;
-extern int block_flag;
+// extern int Road6_flag;
+// extern int ramp_cnt ;
+// extern int iii;
+// extern int block_flag;
 #endif
 #if 0
 extern float zhidaosudu ;//直道速度
@@ -173,7 +182,7 @@ extern float luzhangsudu ;//路障速度
 extern int Tof_thres;//障碍物检测阈值
 #endif
 
-extern int camera_offset ;//摄像头二值化阈值
+// extern int camera_offset ;//摄像头二值化阈值
 
 extern int threshold_offset;
 extern int threshold_offset2;
