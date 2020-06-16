@@ -1,9 +1,16 @@
 #include "headfile.h"
 #include "EM.h"
 float EM_Value_1 = 0;
+float EM_Value_10 = 0;  //电磁1本次的值
+float EM_Value_11 = 0;  //电磁1上次的值
+float EM_Value_12 = 0;  //电磁1上上次的值
 float EM_Value_2 = 0;
 float EM_Value_3 = 0;
 float EM_Value_4 = 0;
+float EM_Value_40 = 0; 
+float EM_Value_41 = 0; 
+float EM_Value_42 = 0; 
+
 float EM_offset_buff[4]={0};
 float EM_offset = 0 ;
 int Curve_Cnt=0;
@@ -100,12 +107,21 @@ void EM_Get(void)
 
 void EM_Curve_Rec(void)//弯道识别
 {
-  if(EM_Road == 0 )//从直道到弯道的判断依据为：连续采集到三次1,4电感之差大于0.6
+  if(EM_Road == 0 )//从直道到弯道的判断依据为：连续采集到五次1,4电感之差大于0.6 且电磁1增大的同时电磁4减小 或电磁1减小的同时电磁4增大
   {
-    if(abs_f_em(EM_Value_1 - EM_Value_4)>0.3)
+    if(abs_f_em(EM_Value_1 - EM_Value_4)>0.4 && abs_f_em(EM_Value_2 - EM_Value_3)>0.3)
     {
       Curve_Cnt++;
-      if(Curve_Cnt == 30)
+      //电磁1的电感值增大4电感值减小或 1减小4增大
+      EM_Value_12=EM_Value_11;
+      EM_Value_11=EM_Value_10;
+      EM_Value_10=EM_Value_1;
+
+      EM_Value_42=EM_Value_41;
+      EM_Value_41=EM_Value_40;
+      EM_Value_40=EM_Value_4;
+
+      if(Curve_Cnt == 5 && ((EM_Value_1>EM_Value_12&& EM_Value_4<EM_Value_42)||(EM_Value_4>EM_Value_42&& EM_Value_1<EM_Value_12)))
       {
         EM_Road = 4;//EM_Road=4表示弯道
         Curve_Cnt = 0;
