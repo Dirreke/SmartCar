@@ -831,7 +831,7 @@ void Pic_DrawMid(void)
 {
     int i = 0;
     int road_half_width_original[40] = {40, 40, 40, 39, 38, 37, 36, 35, 34, 33, 32, 31, 30, 29, 28, 27, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4};
-    if ((Road0_flag == 3 && Road == 0) || Road == 1)
+    if ((Road0_flag == 4 && Road == 0) || Road == 1)
     {
         for (i = Fir_row; i < Last_row + 1; i++)
         {
@@ -846,7 +846,7 @@ void Pic_DrawMid(void)
             }
         }
     }
-    else if ((Road0_flag == 4 && Road == 0) || Road == 2)
+    else if ((Road0_flag == 5 && Road == 0) || Road == 2)
     {
         for (i = Fir_row; i < Last_row + 1; i++)
         {
@@ -899,7 +899,7 @@ void Pic_DrawMid_und(void)
 {
     int i;
 
-    if ((Road0_flag == 3 && Road == 0) || Road == 1)
+    if ((Road0_flag == 4 && Road == 0) || Road == 1)
     {
         for (i = 0; i < 60; i++)
         {
@@ -914,7 +914,7 @@ void Pic_DrawMid_und(void)
             }
         }
     }
-    else if ((Road0_flag == 4 && Road == 0) || Road == 2)
+    else if ((Road0_flag == 5 && Road == 0) || Road == 2)
     {
         for (i = 0; i < 60; i++)
         {

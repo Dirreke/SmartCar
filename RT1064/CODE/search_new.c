@@ -633,6 +633,10 @@ void Road_rec(void)
     {
         Road0_flag = 2;
     }
+    else if (whitecnt > 2300 && Allwhitestart > 35 && (Lef[Fir_row] != 1 && Lef[Fir_row + 1] != 1 && Rig[Fir_row] != 78 && Rig[Fir_row + 1] != 78))
+    {
+        Road0_flag = 3; //十字前后补
+    }
     else
     {
         Road00_count++;
@@ -833,13 +837,16 @@ void Threshold_change(void)
         case 1:
             threshold_offset2 = -8;
             break;
-        case 2: threshold_offset2 = -15;
+        case 2:
+            threshold_offset2 = -15;
             break;
-        case 4: threshold_offset2 = -5;
+        case 4:
+            threshold_offset2 = -5;
             break;
-        case 5: threshold_offset2 = -5;
+        case 5:
+            threshold_offset2 = -5;
             break;
-            default:
+        default:
             threshold_offset2 = 0;
             break;
         }
@@ -963,6 +970,41 @@ void Pic_Fix_Line(void)
                     break;
                 }
             }
+            return;
+        }
+        else if (Road0_flag == 3)
+        {
+            for (i = 55; i > Fir_row + 15; i--)
+            {
+                if (abs(Lef[i] - Fir_col) < 5)
+                    continue;
+                slope = Slope(Lef[i], i, Lef[Fir_row+1], Fir_row+1); //Slope(int F1x,int F1y,int F2x,int F2y)
+                if (slope != 999)
+                {
+                    for (j = i + 1; j > Fir_row + 1; j--)
+                    {
+                        Lef[j] = (int)(Lef[i] - (i - j) / slope);
+                    }
+                    Pic_undistort(1, 0);
+                    break;
+                }
+            }
+            for (i = 55; i > Fir_row + 15; i--)
+            {
+                if (abs(Rig[i] - Last_col) < 5)
+                    continue;
+                slope = Slope(Rig[i], i, Rig[Fir_row+1], Fir_row+1); //Slope(int F1x,int F1y,int F2x,int F2y)
+                if (slope != 999)
+                {
+                    for (j = i + 1; j > Fir_row + 5; j--)
+                    {
+                        Rig[j] = (int)(Rig[i] - (i - j) / slope);
+                    }
+                    Pic_undistort(0, 1);
+                    break;
+                }
+            }
+
             return;
         }
         else if (Road0_flag == 4)

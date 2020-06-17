@@ -2,6 +2,7 @@ Road==0 正常
 Road0_flag=0 直线
 Road0_flag=1十字近景行补线
 Road0_flag=2十字近景行补线
+Road0_flag=3十字近远景补线
 Road0_flag=4左转
 Road0_flag=5右转
 
