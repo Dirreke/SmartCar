@@ -32,9 +32,9 @@ extern float Cam_offset;
 void camera_dispose_main(void);
 void Allwhite_find(void);
 void Pic_find_circle(void);
+void start_stop_find(void);
 
 void Road_rec(void);
-void start_stop_rec(void);
 
 void Threshold_change(void);
 
@@ -44,5 +44,10 @@ void fangyuejie(void);
 void Pic_offset_fig(void);
 void Pic_offset_filter(void);
 
+void TurnLeft_Process(void)
+void TurnRight_Process(void)
+void Road1_zhuangtaiji(void)
+void Road2_zhuangtaiji(void)
+void Road7_zhuangtaiji(void)
 
 

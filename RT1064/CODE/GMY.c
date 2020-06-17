@@ -334,7 +334,6 @@ void Pic_DrawMid_und(void)
 }
 #endif
 
-
 /*************************************************************************
  *  函数名称：float Circle_angle_val1_calculate(void)
  *  功能说明：计算中线的曲率半径,并计算理想舵机打角
@@ -361,19 +360,18 @@ float car_straight(float car_dias)
     // static const float y2_origin[60] = {55696, 53824, 51984, 50176, 48400, 46656, 44944, 43264, 41616, 40000, 38416, 36864, 35344, 33856, 32400, 30976, 29584, 28224, 26896, 25600, 24336, 23104, 21904, 20736, 19600, 18496, 17424, 16384, 15376, 14400, 13456, 12544, 11664, 10816, 10000, 9216, 8464, 7744, 7056, 6400, 5776, 5184, 4624, 4096, 3600, 3136, 2704, 2304, 1936, 1600, 1296, 1024, 784, 576, 400, 256, 144, 64, 16, 0}
     // // //认为控制行高（近）行为第0行，成比例反转，即y2_origin=((control_line_min-y)*4)^2，暂定控制行3-57。
 
-    static const float y2_origin[60] = {8911.36,8611.84,8317.44,8028.16,7744,7464.96,7191.04,6922.24,6658.56,6400,6146.56,5898.24,5655.04,5416.96,5184,4956.16,4733.44,4515.84,4303.36,4096,3893.76,3696.64,3504.64,3317.76,3136,2959.36,2787.84,2621.44,2460.16,2304,2152.96,2007.04,1866.24,1730.56,1600,1474.56,1354.24,1239.04,1128.96,1024,924.16,829.44,739.84,655.36,576,501.76,432.64,368.64,309.76,256,207.36,163.84,125.44,92.16,64,40.96,23.04,10.24,2.56,0};
+    static const float y2_origin[60] = {8911.36, 8611.84, 8317.44, 8028.16, 7744, 7464.96, 7191.04, 6922.24, 6658.56, 6400, 6146.56, 5898.24, 5655.04, 5416.96, 5184, 4956.16, 4733.44, 4515.84, 4303.36, 4096, 3893.76, 3696.64, 3504.64, 3317.76, 3136, 2959.36, 2787.84, 2621.44, 2460.16, 2304, 2152.96, 2007.04, 1866.24, 1730.56, 1600, 1474.56, 1354.24, 1239.04, 1128.96, 1024, 924.16, 829.44, 739.84, 655.36, 576, 501.76, 432.64, 368.64, 309.76, 256, 207.36, 163.84, 125.44, 92.16, 64, 40.96, 23.04, 10.24, 2.56, 0};
     // // 即y2_origin=(y*1.6)^2。
     // static const float y2_origin[60] = {23839.36,23347.84,22861.44,22380.16,21904,21432.96,20967.04,20506.24,20050.56,19600,19154.56,18714.24,18279.04,17848.96,17424,17004.16,16589.44,16179.84,15775.36,15376,14981.76,14592.64,14208.64,13829.76,13456,13087.36,12723.84,12365.44,12012.16,11664,11320.96,10983.04,10650.24,10322.56,10000,9682.56,9370.24,9063.04,8760.96,8464,8172.16,7885.44,7603.84,7327.36,7056,6789.76,6528.64,6272.64,6021.76,5776,5535.36,5299.84,5069.44,4844.16,4624,4408.96,4199.04,3994.24,3794.56,3600}
     // // // 即y2_origin=(y*1.6+车中心)^2。认为第一行距车中心20cm,,即60像素。
-    
 
     for (i = 3; i < 58; i++)
     {
         if (New_Mid != 999)
         {
-            x2_temp = ((New_Mid[i] - car_dias) / UNDISTORT_XPK) *((New_Mid[i] - car_dias) / UNDISTORT_XPK) ;
+            x2_temp = ((New_Mid[i] - car_dias) / UNDISTORT_XPK) * ((New_Mid[i] - car_dias) / UNDISTORT_XPK);
             sum1 += x2_temp;
-            sum2 += (x2_temp + y2_origin[i]) * (New_Mid[i] - car_dias) ;
+            sum2 += (x2_temp + y2_origin[i]) * (New_Mid[i] - car_dias);
         }
     }
     if (sum2 == 0)
@@ -389,12 +387,12 @@ float car_straight(float car_dias)
     return -angle_val1;
 }
 
-#if 0/************************************************************************
- * search.c 1459-
- * 修改，减少取景行
- * 增加参数startpoint便于调整
- * 
- * **********************************************************************/
+#if 0 /************************************************************************ \
+       * search.c 1459-                                                         \
+       * 修改，减少取景行                                               \
+       * 增加参数startpoint便于调整                                     \
+       *                                                                        \
+       * **********************************************************************/
 #define UNDISTORT_PYK 4
 #define UNDISTORT_XPK 1.235946609885535
 #ifdef undistort1
@@ -1227,3 +1225,1027 @@ void part()
     }
 }
 #endif
+
+/*************************************************************************
+*  函数名称：void start_stop_rec(void)
+*  功能说明：起跑线识别与等待
+*  参数说明：无
+*  函数返回：无
+*  修改时间：2020.06.17
+*  备    注：
+*************************************************************************/
+void start_stop_rec(int TL, int TR)
+{
+    static int start_waited = 0;
+    static int turn_cnt = 0, stop_cnt = 0;
+    static int stop_line = Fir_row;
+    float stop_flag_cnt = 0;
+    int stop_line_cnt = 0, stop_black_cnt = 0, stop_all_cnt = 0, count = 0;
+    int j, temp;
+    int avr_mid = 0;
+    int Black_line = 0;
+    int road_half_width_original[40] = {40, 40, 40, 39, 38, 37, 36, 35, 34, 33, 32, 31, 30, 29, 28, 27, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4};
+    int Rig_end, Lef_end, Road_end;
+
+    if (Road == 0 && Road0_flag == 0)
+    {
+        start_waited = 601;
+        if (start_waited == 601)
+        {
+            start_waited = 601;
+        }
+        else
+        {
+            return;
+        }
+
+        for (int i = temp; i < Last_row; ++i)
+        {
+            if (Rig[i] <= 40 || Rig[i + 1] <= 40)
+            {
+                continue;
+            }
+        }
+        if (Road == 0 && Road0_flag == 0) //进起跑线
+        {
+            start_waited = 601; //要改回去，否则无法出库
+            if (start_waited > 600 && Lef_edge > 10)
+            {
+                start_waited = 601;
+                for (int i = Fir_row + 10; i < Last_row; i++) //自上而下寻找有边线的开始行
+                {
+                    if (Lef[i] > Fir_col + 5)
+                    {
+                        stop_line_cnt = 0;
+                        continue;
+                    }
+                    else
+                    {
+                        stop_line_cnt++;
+                        if (stop_line_cnt >= 3)
+                        {
+                            start_stop_line = i - 2;
+                            break;
+                        }
+                    }
+                }
+
+                if (start_stop_line != 0)
+                {
+                    count = 5;
+                    for (int i = start_stop_line - 5; i > start_stop_line - 10; --i) //计算平均中间位置
+                    {
+                        if (Lef[i] > Fir_col + 5 && Rig[i] < Last_col - 5)
+                        {
+                            avr_mid += (int)((Lef[i] + Rig[i]) / 2.0 + 0.5);
+                        }
+                        else if (Lef[i] <= Fir_col + 5 && Rig[i] < Last_col - 5)
+                        {
+                            avr_mid += Rig[i] - road_half_width_original[Last_row - i];
+                        }
+                        else if (Lef[i] > Fir_col + 5 && Rig[i] >= Last_col - 5)
+                        {
+                            avr_mid += Lef[i] + road_half_width_original[Last_row - i];
+                        }
+                        else
+                        {
+                            count--;
+                            continue;
+                        }
+                    }
+                    if (count == 0)
+                    {
+                        start_stop_line = 0;
+                        return;
+                    }
+                    avr_mid /= count;
+                    for (int i = start_stop_line; i <= Last_row; ++i) //搜黑白线
+                    {
+                        for (j = avr_mid - road_half_width_original[Last_row - i]; j <= avr_mid + road_half_width_original[Last_row - i]; ++j)
+                        {
+                            if (Pixle[i][j] == 0)
+                            {
+                                stop_black_cnt++;
+                            }
+                            stop_all_cnt++;
+                        }
+                        if (stop_black_cnt > stop_all_cnt / 1.5)
+                        {
+                            stop_flag_cnt += 0.35;
+                        }
+                        else if (stop_black_cnt > stop_all_cnt / 2)
+                        {
+                            stop_flag_cnt += 0.2;
+                        }
+                        if (stop_flag_cnt >= 1)
+                        {
+                            Road = 7;
+                            return;
+                        }
+                    }
+                    start_stop_line = 0;
+                }
+            }
+        }
+
+        else if (Road == 7 & Road7_flag == 0 || Road7_flag == 1) //等待转弯
+        {
+            for (int i = start_stop_line - 5; i < Last_row; i++)
+            {
+                if (Lef[i] > Fir_col + 5)
+                {
+                    stop_line_cnt = 0;
+                    continue;
+                }
+                else
+                {
+                    stop_line_cnt++;
+                    if (stop_line_cnt >= 3)
+                    {
+                        start_stop_line = i - 2;
+                        break;
+                    }
+                }
+            }
+            if (start_stop_line > 30)
+            {
+                Road = 7;
+                Road7_flag = 1; //等待转弯，远景行补线
+            }
+            if (start_stop_line > 40)
+            {
+                Road = 7;
+                Road7_flag = 2; //开始转弯
+            }
+        }
+        else if (Road7_flag == 2) //开始转弯
+        {
+            turn_cnt++;
+            Servo_Duty(SERVO_RANGE);
+            if (turn_cnt >= (int)(10 * 100 / (get_speed() * CAMERA_FPS)) + 1)
+            {
+                Road7_flag = 3;
+            }
+        }
+        else if (Road7_flag == 3) //转弯结束停车
+        {
+            turn_cnt = 0;
+            stop_cnt++;
+            stop_line = Fir_row;
+            for (int i = Last_row; i < stop_line; i++)
+            {
+
+                if (Pixle[i][8] + Pixle[i][72] + Pixle[i][30] + Pixle[i][35] + Pixle[i][40] + Pixle[i][45] + Pixle[i][50] < 2)
+                {
+                    Black_line++;
+                    if (Black_line >= 3)
+                    {
+                        stop_line = i - 2;
+                        break;
+                    }
+                }
+                else
+                {
+                    Black_line = 0;
+                }
+            }
+            if (stop_line > 35 || stop_cnt >= (int)(30 * 100 / (get_speed() * CAMERA_FPS)) + 1)
+            {
+                Road = 8; //停车
+                lib_set_speed(0);
+            }
+        }
+        return;
+    }
+}
+/*************************************************************************
+*  函数名称：void start_stop_rec(void)
+*  功能说明：起跑线识别与等待
+*  参数说明：无
+*  函数返回：无
+*  修改时间：2020.06.17
+*  备    注：
+*************************************************************************/
+int start_stop_line_flag = 0;
+void start_stop_find(void)
+{
+    static int start_waited = 0;
+    int tiaobian1 = 0;
+
+    int Rig_end, Lef_end, Road_end;
+
+    // if (Road == 0 && Road0_flag == 0)
+    // {
+    start_waited = 601;
+    if (start_waited == 601)
+    {
+        start_waited = 601;
+    }
+    else
+    {
+        return;
+    }
+    for (int i = Fir_row; i < Last_row - 4; ++i)
+    {
+        if (Rig[i] > Last_col)
+        {
+            continue;
+        }
+        if (Rig[i] > 40 && Rig[i + 2] - Rig[i] < 5 && Rig[i + 3] - Rig[i + 1] < 5 && Rig[i + 4] - Rig[i + 2] < 5)
+        {
+            Rig_end = i;
+            break;
+        }
+    }
+    for (int i = Fir_row; i < Last_row - 4; ++i)
+    {
+        if (Lef[i] < Fir_col)
+        {
+            continue;
+        }
+        if (Lef[i] < 40 && Lef[i] - Lef[i + 2] < 5 && Lef[i + 1] - Lef[i + 3] < 5 && Lef[i + 2] - Lef[i + 4] < 5)
+        {
+            Lef_end = i;
+            break;
+        }
+    }
+    Road_end = (Lef_end > Rig_end ? Lef_end : Rig_end);
+    if (Road_end < 30)
+    {
+        return;
+    }
+#ifdef TL2barn
+    for (int i = Rig_end; i < Last_row - 7; ++i)
+    {
+        if (Rig[i] > 40 && Rig[i + 2] - Rig[i] < 5 && Rig[i + 3] - Rig[i + 1] < 5 && Rig[i + 4] - Rig[i + 2] < 5)
+        {
+            continue;
+        }
+        if (Rig[i + 7] - Rig[i + 3] > 25)
+        {
+            tiaobian1 = i;
+            break;
+        }
+    }
+    if (tiaobian1)
+    {
+        for (int i = tiaobian1; i < Last_row - 4; ++i)
+        {
+            if (Lef[i] - Fir_col > 5)
+            {
+                return;
+            }
+            if (Rig[i] > 40 && Rig[i + 2] - Rig[i] < 5 && Rig[i + 3] - Rig[i + 1] < 5 && Rig[i + 4] - Rig[i + 2] < 5)
+            {
+                ;
+            }
+            else
+            {
+                continue;
+            }
+
+            if (Rig[i] - Rig[i - 3] > 25)
+            {
+                start_stop_line_flag = 1;
+                start_stop_line = tiaobian1;
+                break;
+            }
+        }
+    }
+    else
+    {
+        return;
+    }
+#endif
+#ifdef TR2barn
+    for (int i = Lef_end; i < Last_row - 7; ++i)
+    {
+        if (Lef[i] < 40 && Lef[i] - Lef[i + 2] < 5 && Lef[i + 1] - Lef[i + 3] < 5 && Lef[i + 2] - Lef[i + 4] < 5)
+        {
+            continue;
+        }
+        if (Lef[i + 3] - Lef[i + 7] > 25)
+        {
+            tiaobian1 = i;
+            break;
+        }
+    }
+    if (tiaobian1)
+    {
+        for (int i = tiaobian1; i < Last_row - 4; ++i)
+        {
+            if (Last_col - Rig[i] > 5)
+            {
+                return;
+            }
+            if (Lef[i] < 40 && Lef[i] - Lef[i + 2] < 5 && Lef[i + 1] - Lef[i + 3] < 5 && Lef[i + 2] - Lef[i + 4] < 5)
+            {
+                ;
+            }
+            else
+            {
+                continue;
+            }
+
+            if (Lef[i - 3] - Lef[i] > 25)
+            {
+                start_stop_line_flag = 1;
+                start_stop_line = tiaobian1;
+                break;
+            }
+        }
+    }
+    else
+    {
+        return;
+    }
+#endif
+    // }
+}
+int barn_line = 0;
+void part(void)
+{
+    static int Road70_count = 0;
+    if (Road == 0 && Road0_flag == 0)
+    {
+
+        if (start_stop_line_flag = 1)
+        {
+            Road70_count++;
+            if (Road70_count > 2)
+            {
+                Road70_cnt = 0;
+                Road = 7;
+                Road7_flag = 0;
+                for (int i = start_stop_line - 10; i > Last_col - 2; ++i)
+                {
+                    if (Lef[i - 4] - Lef[i - 2] < 5 && Lef[i - 3] - Lef[i - 1] < 5 && Lef[i - 2] - Lef[i] < 5)
+                    {
+                        continue;
+                    }
+                    if ((Lef[i] - Fir_col < 5 && Lef[i + 1] - Fir_col < 5 && Lef[i + 2] - Fir_col < 5) || Lef[i + 2] - Lef[i - 1] > 15)
+                    {
+                        barn_line = i - 1;
+                        break;
+                    }
+                    barn_line = start_stop_line - 5;
+                }
+                return;
+            }
+        }
+    }
+}
+
+void Road7_zhuangtaiji(void)
+{
+    static int Road73_count = 0;
+    static int Road74_count = 0;
+    if (Road7_flag == 0 || Road7_flag == 1) //等待转弯
+    {
+        for (int i = barn_line - 10; i < Last_row; i++)
+        {
+#ifdef TL2barn
+            if (Lef[i] - Fir_col < 5 && Lef[i + 1] - Fir_col < 5 && Lef[i + 2] - Fir_col < 5)
+#endif
+#ifdef TR2barn
+                if (Last_col - Rig[i] < 5 && Last_col - Rig[i + 1] < 5 && Last_col - Rig[i + 2] < 5)
+#endif
+                {
+                    barn_line = i - 2;
+                    break;
+                }
+        }
+        if (barn_line < 30)
+        {
+            Road7_flag = 0; //等待转弯，远景行补线
+        }
+        else if (barn_line < 40)
+        {
+            Road7_flag = 1;
+        }
+        else
+        {
+            Road = 7;
+            Road7_flag = 2; //开始转弯
+        }
+    }
+    else if (Road7_flag == 2) //开始转弯
+    {
+        Road73_count++;
+#ifdef TL2barn
+        Servo_Duty(SERVO_RANGE);
+#endif
+#ifdef TR2barn
+        Servo_Duty(-SERVO_RANGE);
+#endif
+        // if (Road73_count >= (int)(10 * 100 / (get_speed() * CAMERA_FPS)) + 1)
+        // {
+        // Road7_flag = 3;
+        // }
+        if (Lef_sope = 998 &&Rig_slope = 998)
+        {
+            Road73_count++;
+            if (Road73_count > 1)
+            {
+                Road73_count = 0;
+                Road7_flag = 3;
+            }
+        }
+    }
+    else if (Road7_flag == 3) //转弯结束停车
+    {
+        Road73_count = 0;
+        // Road74_count++;
+        stop_line = Fir_row;
+        for (int i = Last_row; i > stop_line; i--)
+        {
+            if (Pixle[i][8] + Pixle[i][72] + Pixle[i][30] + Pixle[i][35] + Pixle[i][40] + Pixle[i][45] + Pixle[i][50] < 3)
+            {
+                Black_line++;
+                if (Black_line > 2)
+                {
+                    stop_line = i - 2;
+                    if (stop_line > 35) // || Road74_count >= (int)(30 * 100 / (get_speed() * CAMERA_FPS)) + 1)
+                    {
+                        Road74_count++;
+                        if (Road74_count > 1)
+                        {
+                            Road7_flag = 4; //停车
+                            Road74_count = 0;
+                            lib_set_speed(0);
+                        }
+                    }
+                    break;
+                }
+            }
+            else
+            {
+                Black_line = 0;
+            }
+        }
+    }
+    return;
+}
+#if 0
+    void Road1_zhuangtaiji(void)
+    {
+        static int Road11_count = 0, Road12_count = 0, Road13_count = 0, Road14_count = 0, Road15_count = 0, Road16_count = 0;
+        if (Road1_flag == 0) //准备进左圆环
+        {
+            Road0_flag = 0;
+            if (EM_Value_2 + EM_Value_3 > 4.3) //弯内识别：左右两边仅有一边发生丢线
+            {
+                Road11_count++;
+                if (Road11_count > 1)
+                {
+                    Road11_count = 0;
+                    Road1_flag = 1; //表示已经进入左圆环
+                }
+            }
+            else
+            {
+                Road11_count = 0;
+            }
+        }
+        else if (Road1_flag == 1) //进左圆环1/4
+        {
+            if (Lef_circle == 0 || (Lef_circle == 1 && Lef_break_point > 45)) //if(((Lef_circle==0||( Lef_circle ==1 && Lef_break_point>30)))&& Road1_turnin(EM_Value_2,EM_Value_3,3.8))//if(((Lef_circle==0||( Lef_circle ==1 && Lef_break_point>30))) && Rig_slope>=10)/ && Road1_turnin(EM_Value_2,EM_Value_3,3.8))    //Rig_slope<1 && (Lef_leap[0]==0||Lef_slope==999)&& Rig_leap[0]==0)
+            {
+                Road12_count++;
+                if (Road12_count > 1) //2帧后 进左圆环第一弯道
+                {
+                    Road1_flag = 2;
+                    Road12_count = 0;
+                }
+            }
+        }
+        else if (Road1_flag == 2) //进左圆环2/4 开始补线进弯道
+        {
+            Road14_count++;
+            if (Road14_count == (int)(DIS_IN_CIRCLE * 10000 / (get_speed() * CAMERA_FPS)) + 1) //宏定义在function.h
+            {
+                Road1_flag = 4;
+                Road14_count = 0;
+            }
+        }
+        else if (Road1_flag == 4) //进入圆环内 ，取消补线
+        {
+            dis = Rig[40 + 1] - Rig[40];
+            for (int i = 40; i > Fir_row; --i)
+            {
+                dis1 = Rig[i] - Rig[i - 1];
+                if (dis1 < 0)
+                {
+                    turn_stop = i break;
+                }
+                else if (dis1 < dis)
+                {
+                    continue;
+                }
+                else if (dis1 <= 2 * dis + 1)
+                {
+                    dis = dis1;
+                    continue;
+                }
+                else
+                {
+                    turn_stop = i break;
+                }
+            }
+            if (Rig_circle && whitecnt > 1200) //Rig_circlr 不好，改!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            {
+                Road13_count++;
+                if (Road13_count == 3)
+                {
+                    Road1_flag = 3;
+                    Road13_count = 0;
+                }
+            }
+        }
+        else if (Road1_flag == 3) //准备出圆环，右边线补线
+        {
+            if (Allwhitestart >= 45)
+            {
+                Road15_count++;
+                if (Road15_count == 2)
+                {
+                    Road15_count = 0;
+                    Road1_flag = 5;
+                }
+            }
+        }
+        else if (Road1_flag == 5) //右边线已经不能补线，电磁等方法跑
+        {
+            // if ((Rig_slope > -0.02 && Rig_slope < 0) || (Pixle[58][74] == 1 && Pixle[57][74] == 1 && Pixle[56][74] == 1 && Pixle[55][74] == 1 && Pixle[54][74] == 1 && Pixle[53][74] == 1)) //|| Lef_edge < 20))
+            if (((Rig_slope < -0.1 || Rig_slope == 998) && Allwhiteend > 45) || Allwhiteend == Fir_row)
+            {
+                Road16_count++;
+                if (Road16_count == 4)
+                {
+                    Road16_count = 0;
+                    Road = 0;
+                    Road0_flag = 0;
+                    Road1_flag = 0;
+                }
+            }
+        }
+        return;
+    }
+
+void Road2_zhuagntaiji(void)
+{
+    if (Road2_flag == 0) //
+    {
+        if (EM_Value_2 + EM_Value_3 > 4.3) //弯内识别：左右两边仅有一边发生丢线
+        {
+            Road21_count++;
+            if (Road21_count > 1)
+            {
+                Road21_count = 0;
+                Road2_flag = 1; //表示已经进入左圆环
+            }
+        }
+        else
+        {
+            Road21_count = 0;
+        }
+    }
+    else if (Road2_flag == 1) //
+    {
+        if ((Rig_circle == 0 || (Rig_circle == 1 && Rig_break_point > 45)) && Rig_slope >= 10) //if(((Rig_circle==0||( Rig_circle ==1 && Rig_break_point>30))) && Rig_slope>=10)/ && Road1_turnin(EM_Value_2,EM_Value_3,3.4))
+        {
+            Road22_count++;
+            if (Road22_count > 1) //
+            {
+                Road2_flag = 2;
+                Road22_count = 0;
+            }
+        }
+        else
+        {
+            Road22_count = 0;
+        }
+    }
+    else if (Road2_flag == 2) //
+    {
+        Road24_count++;
+        if (Road24_count == (int)(DIS_IN_CIRCLE * 10000 / (get_speed() * CAMERA_FPS)) + 1)
+        {
+            Road24_count = 0;
+            Road2_flag = 4;
+        }
+    }
+    else if (Road2_flag == 4)
+    {
+        dis = Lef[40] - Lef[40 + 1];
+        for (int i = 40; i > Fir_row; --i)
+        {
+            dis1 = Lef[i - 1] - Lef[i];
+            if (dis1 < 0)
+            {
+                turn_stop = i;
+                break;
+            }
+            else if (dis1 < dis)
+            {
+                continue;
+            }
+            else if (dis1 <= 2 * dis + 1)
+            {
+                dis = dis1;
+                continue;
+            }
+            else
+            {
+                turn_stop = i;
+                break;
+            }
+        }
+
+        if (Lef_circle && whitecnt > 1200)
+        {
+            Road23_count++;
+            if (Road23_count > 2)
+            {
+                Road23_count = 0;
+                Road2_flag = 3;
+            }
+        }
+        else
+        {
+            Road23_count = 0;
+        }
+    }
+    else if (Road2_flag == 3)
+    {
+        if (Allwhitestart >= 45)
+        {
+            Road25_count++;
+            if (Road25_count > 1)
+            {
+                Road25_count = 0;
+                Road2_flag = 5;
+            }
+        }
+        else
+        {
+            Road25_count = 0;
+        }
+    }
+    else if (Road2_flag == 5)
+    {
+        // Road0_flag = 0;
+        // if ((Lef_slope > 0 && Lef_slope < 0.02) || (Pixle[58][5] == 1 && Pixle[57][5] == 1 && Pixle[56][5] == 1 && Pixle[55][5] == 1 && Pixle[54][5] == 1 && Pixle[53][5] == 1)) //|| Lef_edge < 20))
+        if (((Lef_slope > 0.1 || Lef_slope == 998) && Allwhiteend > 45) || Allwhiteend == Fir_row)
+        {
+            Road26_count++;
+            if (Road26_count > 3)
+            {
+                Road26_count = 0;
+                Road = 0;
+
+                Road2_flag = 0;
+            }
+        }
+        else
+        {
+            Road26_count = 0;
+        }
+    }
+}
+
+#endif
+
+#if 0 
+/*************************************************************************
+*  函数名称：void start_stop_rec(void)
+*  功能说明：起跑线识别与等待
+*  参数说明：无
+*  函数返回：无
+*  修改时间：2020.05.31
+*  备    注：
+*************************************************************************/
+void start_stop_rec(void)
+{
+    static int start_waited = 0;
+    static int turn_cnt = 0, stop_cnt = 0;
+    static int stop_line = Fir_row;
+    float stop_flag_cnt = 0;
+    int stop_line_cnt = 0, stop_black_cnt = 0, stop_all_cnt = 0, count = 0;
+    int j;
+    int avr_mid = 0;
+    int Black_line = 0;
+    int road_half_width_original[40] = {40, 40, 40, 39, 38, 37, 36, 35, 34, 33, 32, 31, 30, 29, 28, 27, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4};
+
+    if (Road == 0 && Road0_flag == 0) //进起跑线
+    {
+        start_waited = 601; //要改回去，否则无法出库
+        if (start_waited > 600 && Lef_edge > 10)
+        {
+            start_waited = 601;
+            for (int i = Fir_row + 10; i < Last_row; i++) //自上而下寻找有边线的开始行
+            {
+                if (Lef[i] > Fir_col + 5)
+                {
+                    stop_line_cnt = 0;
+                    continue;
+                }
+                else
+                {
+                    stop_line_cnt++;
+                    if (stop_line_cnt >= 3)
+                    {
+                        start_stop_line = i - 2;
+                        break;
+                    }
+                }
+            }
+
+            if (start_stop_line != 0)
+            {
+                count = 5;
+                for (int i = start_stop_line - 5; i > start_stop_line - 10; --i) //计算平均中间位置
+                {
+                    if (Lef[i] > Fir_col + 5 && Rig[i] < Last_col - 5)
+                    {
+                        avr_mid += (int)((Lef[i] + Rig[i]) / 2.0 + 0.5);
+                    }
+                    else if (Lef[i] <= Fir_col + 5 && Rig[i] < Last_col - 5)
+                    {
+                        avr_mid += Rig[i] - road_half_width_original[Last_row - i];
+                    }
+                    else if (Lef[i] > Fir_col + 5 && Rig[i] >= Last_col - 5)
+                    {
+                        avr_mid += Lef[i] + road_half_width_original[Last_row - i];
+                    }
+                    else
+                    {
+                        count--;
+                        continue;
+                    }
+                }
+                if (count == 0)
+                {
+                    start_stop_line = 0;
+                    return;
+                }
+                avr_mid /= count;
+                for (int i = start_stop_line; i <= Last_row; ++i) //搜黑白线
+                {
+                    for (j = avr_mid - road_half_width_original[Last_row - i]; j <= avr_mid + road_half_width_original[Last_row - i]; ++j)
+                    {
+                        if (Pixle[i][j] == 0)
+                        {
+                            stop_black_cnt++;
+                        }
+                        stop_all_cnt++;
+                    }
+                    if (stop_black_cnt > stop_all_cnt / 1.5)
+                    {
+                        stop_flag_cnt += 0.35;
+                    }
+                    else if (stop_black_cnt > stop_all_cnt / 2)
+                    {
+                        stop_flag_cnt += 0.2;
+                    }
+                    if (stop_flag_cnt >= 1)
+                    {
+                        Road = 7;
+                        return;
+                    }
+                }
+                start_stop_line = 0;
+            }
+        }
+    }
+
+    else if (Road == 7 & Road7_flag == 0 || Road7_flag == 1) //等待转弯
+    {
+        for (int i = start_stop_line - 5; i < Last_row; i++)
+        {
+            if (Lef[i] > Fir_col + 5)
+            {
+                stop_line_cnt = 0;
+                continue;
+            }
+            else
+            {
+                stop_line_cnt++;
+                if (stop_line_cnt >= 3)
+                {
+                    start_stop_line = i - 2;
+                    break;
+                }
+            }
+        }
+        if (start_stop_line > 30)
+        {
+            Road = 7;
+            Road7_flag = 1; //等待转弯，远景行补线
+        }
+        if (start_stop_line > 40)
+        {
+            Road = 7;
+            Road7_flag = 2; //开始转弯
+        }
+    }
+    else if (Road7_flag == 2) //开始转弯
+    {
+        turn_cnt++;
+        Servo_Duty(SERVO_RANGE);
+        if (turn_cnt >= (int)(10 * 100 / (get_speed() * CAMERA_FPS)) + 1)
+        {
+            Road7_flag = 3;
+        }
+    }
+    else if (Road7_flag == 3) //转弯结束停车
+    {
+        turn_cnt = 0;
+        stop_cnt++;
+        stop_line = Fir_row;
+        for (int i = Last_row; i < stop_line; i++)
+        {
+
+            if (Pixle[i][8] + Pixle[i][72] + Pixle[i][30] + Pixle[i][35] + Pixle[i][40] + Pixle[i][45] + Pixle[i][50] < 2)
+            {
+                Black_line++;
+                if (Black_line >= 3)
+                {
+                    stop_line = i - 2;
+                    break;
+                }
+            }
+            else
+            {
+                Black_line = 0;
+            }
+        }
+        if (stop_line > 35 || stop_cnt >= (int)(30 * 100 / (get_speed() * CAMERA_FPS)) + 1)
+        {
+            Road = 8; //停车
+            lib_set_speed(0);
+        }
+    }
+    return;
+}
+
+void TurnLeft_Process(void)
+{
+    static int turn_stop_flag = 0, Road04_count = 0;
+    int temp = 40;
+    int dis = 0, dis1 = 0;
+    for (int i = Fir_row; i < 40; ++i)
+    {
+        if (Rig[i] < 40 && Rig[i + 1] <= 40 && Rig[i + 2] >= 40 && Rig[i + 3] > 40 &&
+            Rig[i + 5] - Rig[i + 3] < 7 && Rig[i + 7] - Rig[i + 5] < 7 && Rig[i + 9] - Rig[i + 7] < 7 && Rig[i + 11] - Rig[i + 9] < 7)
+        //可能较严，（出现连续边线为40）
+        {
+            temp = i;
+            break;
+        }
+    }
+
+    if (temp == 40 && turn_stop_flag == 1)
+    {
+        Road00_count++;
+        if (Road00_count == 2)
+        {
+            Road00_count = 0;
+            Road0_flag = 0;
+            turn_stop_flag = 0;
+            return;
+        }
+    }
+    else
+    {
+        Road00_count = 0;
+    }
+    dis = Rig[temp + 1] - Rig[temp];
+    for (int i = temp; i > Fir_row; --i)
+    {
+        if (Rig[i - 1] > 40)
+        {
+            turn_stop = i + 1;
+            break;
+        }
+        dis1 = Rig[i] - Rig[i - 1];
+        if (dis1 < 0)
+        {
+            turn_stop = i;
+            break;
+        }
+        else if (dis1 < dis)
+        {
+            continue;
+        }
+        else if (dis1 <= 2 * dis + 1)
+        {
+            dis = dis1;
+            continue;
+        }
+        else
+        {
+            turn_stop = i;
+            break;
+        }
+    }
+
+    if (turn_stop < 28)
+    {
+        turn_stop_flag = 1;
+    }
+    if (Road0_flag != 4 && Rig[turn_stop] < 34 && dis > 4)
+    {
+        Road04_count++;
+        if (Road04_count == 2)
+        {
+            Road0_flag = 4; //turn left flag
+            threshold_offset2 = -5;
+            Road04_count = 0; //reset
+        }
+    }
+    else
+    {
+        Road04_count = 0;
+    }
+
+    return;
+}
+
+
+void TurnRight_process()
+{
+    static int turn_stop_flag = 0, Road05_count = 0,Road00_count = 0;
+    int temp = 40;
+    int dis = 0, dis1 = 0;
+    for (int i = Fir_row; i < 40; ++i)
+    {
+        if (Lef[i] > 40 && Lef[i + 1] >= 40 && Lef[i + 2] <= 40 && Lef[i + 3] < 40 &&
+            Lef[i + 3] - Lef[i + 5] < 7 && Lef[i + 5] - Lef[i + 7] < 7 && Lef[i + 7] - Lef[i + 9] < 7 && Lef[i + 9] - Lef[i + 11] < 7)
+        {
+            temp = i;
+            break;
+        }
+    }
+    if (temp == 40 && turn_stop_flag == 1)
+    {
+        Road00_count++;
+        if (Road00_count == 3)
+        {
+            Road00_count = 0;
+            Road0_flag = 0;
+            turn_stop_flag = 0;
+            return;
+        }
+        else
+        {
+            Road00_count = 0;
+        }
+    }
+    dis = Lef[temp] - Lef[temp + 1];
+    for (int i = temp; i > Fir_row; --i)
+    {
+        if (Lef[i - 1] < 40)
+        {
+            turn_stop = i + 4;
+            break;
+        }
+        dis1 = Lef[i - 1] - Lef[i];
+        if (dis1 < 0)
+        {
+            turn_stop = i;
+            break;
+        }
+        else if (dis1 < dis)
+        {
+            continue;
+        }
+        else if (dis1 <= 2 * dis + 1)
+        {
+            dis = dis1;
+            continue;
+        }
+        else
+        {
+            turn_stop = i;
+            break;
+        }
+    }
+
+    if (Road0_flag != 5 && Lef[turn_stop] > 45 && dis > 4)
+    {
+        Road05_count++;
+        if (Road05_count == 2)
+        {
+            Road0_flag = 5; //turn left flag
+            threshold_offset2 = -5;
+            Road05_count = 0; //reset
+        }
+    }
+    else
+    {
+        Road05_count = 0;
+    }
+    return;
+}
+#end if
