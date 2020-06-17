@@ -1,6 +1,7 @@
 #ifndef __FUNCTION_H__
 #define __FUNCTION_H__
 
+#define TL2barn
 
 #define PIT_TIME 2
 #define SERVO_MIDDLE 1320  //1.36*20000/20;1140-1500 （1120打死）

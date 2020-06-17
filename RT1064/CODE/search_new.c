@@ -337,9 +337,9 @@ void start_stop_find(void)
 void Road_rec(void)
 {
     static int Road0_count = 0;
-    static int Road00_count = 0, Road03_count = 0, Road04_count = 0, Road05_count = 0;
-    static int Road10_count = 0, Road20_count = 0, Road70_count;
-    int i = 0;
+    static int Road00_count = 0;
+    static int Road10_count = 0, Road20_count = 0, Road70_count = 0;
+    //int i = 0;
 
     // static int oldwhite=5000;
     // static uint8 Road1_cnt1=0;
@@ -360,12 +360,12 @@ void Road_rec(void)
     if (Road == 0 && Road0_flag == 0)
     {
 
-        if (start_stop_line_flag = 1)
+        if (start_stop_line_flag == 1)
         {
             Road70_count++;
             if (Road70_count > 2)
             {
-                Road70_cnt = 0;
+                Road70_count = 0;
                 Road = 7;
                 Road7_flag = 0;
                 for (int i = start_stop_line - 10; i > Last_col - 2; ++i)
@@ -427,7 +427,7 @@ void Road_rec(void)
         }
         else if (((Rig_break_point > 35 && Rig_circle == 1 && Lef_circle == 0) || Road0_flag == 5) && Lef_slope != 998) //右转弯
         {
-            TurnRight_process();
+            TurnRight_Process();
             return;
         }
     }
@@ -575,7 +575,7 @@ void TurnLeft_Process(void)
 *  修改时间：2020.06.17
 *  备    注：
 *************************************************************************/
-void TurnRight_process(void)
+void TurnRight_Process(void)
 {
     static int turn_stop_flag = 0, Road05_count = 0,Road00_count = 0;
     int temp = 40;
@@ -714,7 +714,8 @@ void Road1_zhuangtaiji(void)
             dis1 = Rig[i] - Rig[i - 1];
             if (dis1 < 0)
             {
-                turn_stop = i break;
+                turn_stop = i ;
+                  break;
             }
             else if (dis1 < dis)
             {
@@ -727,7 +728,7 @@ void Road1_zhuangtaiji(void)
             }
             else
             {
-                turn_stop = i break;
+                turn_stop = i; break;
             }
         }
         if (Rig_circle && whitecnt > 1200) //Rig_circlr 不好，改!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -790,7 +791,7 @@ void Road1_zhuangtaiji(void)
 *  备    注：
 *************************************************************************/
 
-void Road2_zhuagntaiji(void)
+void Road2_zhuangtaiji(void)
 {
     static int Road21_count = 0, Road22_count = 0, Road23_count = 0, Road24_count = 0, Road25_count = 0, Road26_count = 0;
     int dis = 0, dis1 = 0;
@@ -926,6 +927,8 @@ void Road7_zhuangtaiji(void)
 {
     static int Road73_count = 0;
     static int Road74_count = 0;
+    static int stop_line = Fir_row;
+    int Black_line = 0;
     if (Road7_flag == 0 || Road7_flag == 1) //等待转弯
     {
         for (int i = barn_line - 5; i < Last_row; i++)
@@ -968,7 +971,7 @@ void Road7_zhuangtaiji(void)
         // {
         // Road7_flag = 3;
         // }
-        if (Lef_sope = 998 &&Rig_slope = 998)
+        if (Lef_slope == 998 &&Rig_slope == 998)
         {
             Road73_count++;
             if (Road73_count > 1)
@@ -982,8 +985,7 @@ void Road7_zhuangtaiji(void)
     {
         Road73_count = 0;
         // Road74_count++;
-        stop_line = Fir_row;
-        for (int i = Last_row; i > stop_line; i--)
+        for (int i = Last_row; i > stop_line-5; i--)
         {
             if (Pixle[i][8] + Pixle[i][72] + Pixle[i][30] + Pixle[i][35] + Pixle[i][40] + Pixle[i][45] + Pixle[i][50] < 3)
             {
@@ -999,6 +1001,7 @@ void Road7_zhuangtaiji(void)
                             Road7_flag = 4; //停车
                             Road74_count = 0;
                             lib_set_speed(0);
+                            stop_line=Fir_row;
                         }
                     }
                     break;
