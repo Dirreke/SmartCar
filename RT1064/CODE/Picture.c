@@ -1,19 +1,19 @@
 #include "Picture.h"
 #include "math.h"
 uint8 Image_Use[CAMERA_H][CAMERA_W];
-uint16 Pixle[CAMERA_H][CAMERA_W]; //äºŒå€¼åŒ–åç”¨äºOLEDæ˜¾uint16æ°–???//u16
+uint16 Pixle[CAMERA_H][CAMERA_W]; //¶şÖµ»¯ºóÓÃÓÚOLEDÏÔuint16ÄÊ???//u16
 
 int threshold_offset = -5;
 int threshold_offset2 = 0;
 
 int whitecnt = 0;
 
-int Lef[LCDH]; //é“è·¯å·¦åˆ†ç¦»ç‚¹çš„çºµåæ ‡
-int Rig[LCDH]; //é“è·¯å³åˆ†ç¦»ç‚¹çš„çºµåæ ‡
-int Mid[LCDH]; //é“è·¯ä¸­å¿ƒç‚¹çš„çºµåæ ‡
+int Lef[LCDH]; //µÀÂ·×ó·ÖÀëµãµÄ×İ×ø±ê
+int Rig[LCDH]; //µÀÂ·ÓÒ·ÖÀëµãµÄ×İ×ø±ê
+int Mid[LCDH]; //µÀÂ·ÖĞĞÄµãµÄ×İ×ø±ê
 
 int New_Lef[60];
-int New_Rig[60]; //ç”¨äºå­˜å‚¨é€†é€è§†å˜æ¢åçš„æ¨ªåæ ‡
+int New_Rig[60]; //ÓÃÓÚ´æ´¢ÄæÍ¸ÊÓ±ä»»ºóµÄºá×ø±ê
 int New_Mid[60];
 
 int Lef_edge = 0, Rig_edge = 0;
@@ -25,9 +25,9 @@ __ramfunc void Get_Use_Image(void)
     int i = 0, j = 0;
     int row = 0;
 
-    for (i = 20; i < 80; i += 1) //60è¡Œ
+    for (i = 20; i < 80; i += 1) //60ĞĞ
     {
-        for (j = 15; j < 174; j += 2) //188ï¼Œå–94åˆ—
+        for (j = 15; j < 174; j += 2) //188£¬È¡94ÁĞ
         {
             Image_Use[row][(j - 15) >> 1] = mt9v03x_csi_image[i][j];
         }
@@ -37,24 +37,24 @@ __ramfunc void Get_Use_Image(void)
 
 /***************************************************************
 *
-* å‡½æ•°åç§°ï¼šuint8_t GetOSTU(uint8_t tmImage[IMAGEH][IMAGEW])
-* åŠŸèƒ½è¯´æ˜ï¼šæ±‚é˜ˆå€¼å¤§å°
-* å‚æ•°è¯´æ˜ï¼š
-* å‡½æ•°è¿”å›ï¼šé˜ˆå€¼å¤§å°
-* ä¿®æ”¹æ—¶é—´ï¼š2018å¹´3æœˆ27æ—¥
-* å¤‡ æ³¨ï¼š
-å‚è€ƒï¼šhttps://blog.csdn.net/zyzhangyue/article/details/45841255
+* º¯ÊıÃû³Æ£ºuint8_t GetOSTU(uint8_t tmImage[IMAGEH][IMAGEW])
+* ¹¦ÄÜËµÃ÷£ºÇóãĞÖµ´óĞ¡
+* ²ÎÊıËµÃ÷£º
+* º¯Êı·µ»Ø£ºãĞÖµ´óĞ¡
+* ĞŞ¸ÄÊ±¼ä£º2018Äê3ÔÂ27ÈÕ
+* ±¸ ×¢£º
+²Î¿¼£ºhttps://blog.csdn.net/zyzhangyue/article/details/45841255
       https://www.cnblogs.com/moon1992/p/5092726.html
       https://www.cnblogs.com/zhonghuasong/p/7250540.html
-Ostuæ–¹æ³•åˆåæœ€å¤§ç±»é—´å·®æ–¹æ³•ï¼Œé€šè¿‡ç»Ÿè®¡æ•´ä¸ªå›¾åƒçš„ç›´æ–¹å›¾ç‰¹æ€§æ¥å®ç°å…¨å±€é˜ˆå€¼Tçš„è‡ªåŠ¨é€‰å–ï¼Œå…¶ç®—æ³•æ­¥éª¤ä¸ºï¼š
-1) å…ˆè®¡ç®—å›¾åƒçš„ç›´æ–¹å›¾ï¼Œå³å°†å›¾åƒæ‰€æœ‰çš„åƒç´ ç‚¹æŒ‰ç…§0~255å…±256ä¸ªbinï¼Œç»Ÿè®¡è½åœ¨æ¯ä¸ªbinçš„åƒç´ ç‚¹æ•°é‡
-2) å½’ä¸€åŒ–ç›´æ–¹å›¾ï¼Œä¹Ÿå³å°†æ¯ä¸ªbinä¸­åƒç´ ç‚¹æ•°é‡é™¤ä»¥æ€»çš„åƒç´ ç‚¹
-3) iè¡¨ç¤ºåˆ†ç±»çš„é˜ˆå€¼ï¼Œä¹Ÿå³ä¸€ä¸ªç°åº¦çº§ï¼Œä»0å¼€å§‹è¿­ä»£
-4) é€šè¿‡å½’ä¸€åŒ–çš„ç›´æ–¹å›¾ï¼Œç»Ÿè®¡0~i ç°åº¦çº§çš„åƒç´ (å‡è®¾åƒç´ å€¼åœ¨æ­¤èŒƒå›´çš„åƒç´ å«åšå‰æ™¯åƒç´ ) æ‰€å æ•´å¹…å›¾åƒçš„æ¯”ä¾‹w0ï¼Œå¹¶ç»Ÿè®¡å‰æ™¯åƒç´ çš„å¹³å‡ç°åº¦u0ï¼›ç»Ÿè®¡i~255ç°åº¦çº§çš„åƒç´ (å‡è®¾åƒç´ å€¼åœ¨æ­¤èŒƒå›´çš„åƒç´ å«åšèƒŒæ™¯åƒç´ ) æ‰€å æ•´å¹…å›¾åƒçš„æ¯”ä¾‹w1ï¼Œå¹¶ç»Ÿè®¡èƒŒæ™¯åƒç´ çš„å¹³å‡ç°åº¦u1ï¼›
-5) è®¡ç®—å‰æ™¯åƒç´ å’ŒèƒŒæ™¯åƒç´ çš„æ–¹å·® g = w0*w1*(u0-u1) (u0-u1)
-6) i++ï¼›è½¬åˆ°4)ï¼Œç›´åˆ°iä¸º256æ—¶ç»“æŸè¿­ä»£
-7ï¼‰å°†æœ€å¤§gç›¸åº”çš„iå€¼ä½œä¸ºå›¾åƒçš„å…¨å±€é˜ˆå€¼
-ç¼ºé™·:OSTUç®—æ³•åœ¨å¤„ç†å…‰ç…§ä¸å‡åŒ€çš„å›¾åƒçš„æ—¶å€™ï¼Œæ•ˆæœä¼šæ˜æ˜¾ä¸å¥½ï¼Œå› ä¸ºåˆ©ç”¨çš„æ˜¯å…¨å±€åƒç´ ä¿¡æ¯ã€‚
+Ostu·½·¨ÓÖÃû×î´óÀà¼ä²î·½·¨£¬Í¨¹ıÍ³¼ÆÕû¸öÍ¼ÏñµÄÖ±·½Í¼ÌØĞÔÀ´ÊµÏÖÈ«¾ÖãĞÖµTµÄ×Ô¶¯Ñ¡È¡£¬ÆäËã·¨²½ÖèÎª£º
+1) ÏÈ¼ÆËãÍ¼ÏñµÄÖ±·½Í¼£¬¼´½«Í¼ÏñËùÓĞµÄÏñËØµã°´ÕÕ0~255¹²256¸öbin£¬Í³¼ÆÂäÔÚÃ¿¸öbinµÄÏñËØµãÊıÁ¿
+2) ¹éÒ»»¯Ö±·½Í¼£¬Ò²¼´½«Ã¿¸öbinÖĞÏñËØµãÊıÁ¿³ıÒÔ×ÜµÄÏñËØµã
+3) i±íÊ¾·ÖÀàµÄãĞÖµ£¬Ò²¼´Ò»¸ö»Ò¶È¼¶£¬´Ó0¿ªÊ¼µü´ú
+4) Í¨¹ı¹éÒ»»¯µÄÖ±·½Í¼£¬Í³¼Æ0~i »Ò¶È¼¶µÄÏñËØ(¼ÙÉèÏñËØÖµÔÚ´Ë·¶Î§µÄÏñËØ½Ğ×öÇ°¾°ÏñËØ) ËùÕ¼Õû·ùÍ¼ÏñµÄ±ÈÀıw0£¬²¢Í³¼ÆÇ°¾°ÏñËØµÄÆ½¾ù»Ò¶Èu0£»Í³¼Æi~255»Ò¶È¼¶µÄÏñËØ(¼ÙÉèÏñËØÖµÔÚ´Ë·¶Î§µÄÏñËØ½Ğ×ö±³¾°ÏñËØ) ËùÕ¼Õû·ùÍ¼ÏñµÄ±ÈÀıw1£¬²¢Í³¼Æ±³¾°ÏñËØµÄÆ½¾ù»Ò¶Èu1£»
+5) ¼ÆËãÇ°¾°ÏñËØºÍ±³¾°ÏñËØµÄ·½²î g = w0*w1*(u0-u1) (u0-u1)
+6) i++£»×ªµ½4)£¬Ö±µ½iÎª256Ê±½áÊøµü´ú
+7£©½«×î´ógÏàÓ¦µÄiÖµ×÷ÎªÍ¼ÏñµÄÈ«¾ÖãĞÖµ
+È±Ïİ:OSTUËã·¨ÔÚ´¦Àí¹âÕÕ²»¾ùÔÈµÄÍ¼ÏñµÄÊ±ºò£¬Ğ§¹û»áÃ÷ÏÔ²»ºÃ£¬ÒòÎªÀûÓÃµÄÊÇÈ«¾ÖÏñËØĞÅÏ¢¡£
 ***************************************************************/
 uint8_t GetOSTU(uint8_t tmImage[CAMERA_H][CAMERA_W])
 {
@@ -65,30 +65,30 @@ uint8_t GetOSTU(uint8_t tmImage[CAMERA_H][CAMERA_W])
     uint32_t PixelIntegral = 0;
     int32_t PixelIntegralFore = 0;
     int32_t PixelFore = 0;
-    double OmegaBack, OmegaFore, MicroBack, MicroFore, SigmaB, Sigma; // ç±»é—´æ–¹å·®;
+    double OmegaBack, OmegaFore, MicroBack, MicroFore, SigmaB, Sigma; // Àà¼ä·½²î;
     int16_t MinValue, MaxValue;
     uint8_t Threshold = 0;
     uint16 HistoGram[256]; //
 
     for (j = 0; j < 256; j++)
     {
-        HistoGram[j] = 0; //åˆå§‹åŒ–ç°åº¦ç›´æ–¹å›¾
+        HistoGram[j] = 0; //³õÊ¼»¯»Ò¶ÈÖ±·½Í¼
     }
 
     for (j = START_LINE; j < CAMERA_H; j++)
     {
         for (i = 0; i < CAMERA_W; i++)
         {
-            HistoGram[tmImage[j][i]]++; //ç»Ÿè®¡ç°åº¦çº§ä¸­æ¯ä¸ªåƒç´ åœ¨æ•´å¹…å›¾åƒä¸­çš„ä¸ªæ•°
+            HistoGram[tmImage[j][i]]++; //Í³¼Æ»Ò¶È¼¶ÖĞÃ¿¸öÏñËØÔÚÕû·ùÍ¼ÏñÖĞµÄ¸öÊı
         }
     }
 
-    //è·å–æœ€å°ç°åº¦çš„å€¼
+    //»ñÈ¡×îĞ¡»Ò¶ÈµÄÖµ
     for (MinValue = 0; MinValue < 256 && HistoGram[MinValue] == 0; MinValue++)
     {
         ;
     }
-    //è·å–æœ€å¤§ç°åº¦çš„å€¼
+    //»ñÈ¡×î´ó»Ò¶ÈµÄÖµ
     for (MaxValue = 255; MaxValue > MinValue && HistoGram[MaxValue] == 0; MaxValue--)
     {
         ;
@@ -96,48 +96,48 @@ uint8_t GetOSTU(uint8_t tmImage[CAMERA_H][CAMERA_W])
 
     if (MaxValue == MinValue)
     {
-        return MaxValue; // å›¾åƒä¸­åªæœ‰ä¸€ä¸ªé¢œè‰²
+        return MaxValue; // Í¼ÏñÖĞÖ»ÓĞÒ»¸öÑÕÉ«
     }
 
     if (MinValue + 1 == MaxValue)
     {
-        return MinValue; // å›¾åƒä¸­åªæœ‰äºŒä¸ªé¢œè‰²
+        return MinValue; // Í¼ÏñÖĞÖ»ÓĞ¶ş¸öÑÕÉ«
     }
 
     for (j = MinValue; j <= MaxValue; j++)
     {
-        Amount += HistoGram[j]; //  åƒç´ æ€»æ•°
+        Amount += HistoGram[j]; //  ÏñËØ×ÜÊı
     }
 
     PixelIntegral = 0;
     for (j = MinValue; j <= MaxValue; j++)
     {
-        PixelIntegral += HistoGram[j] * j; //ç°åº¦å€¼æ€»æ•°
+        PixelIntegral += HistoGram[j] * j; //»Ò¶ÈÖµ×ÜÊı
     }
 
     SigmaB = -1;
 
     for (j = MinValue; j < MaxValue; j++)
     {
-        PixelBack = PixelBack + HistoGram[j];                                              //å‰æ™¯åƒç´ ç‚¹æ•°
-        PixelFore = Amount - PixelBack;                                                    //èƒŒæ™¯åƒç´ ç‚¹æ•°
-        OmegaBack = (double)PixelBack / Amount;                                            //å‰æ™¯åƒç´ ç™¾åˆ†æ¯”
-        OmegaFore = (double)PixelFore / Amount;                                            //èƒŒæ™¯åƒç´ ç™¾åˆ†æ¯”
-        PixelIntegralBack += HistoGram[j] * j;                                             //å‰æ™¯ç°åº¦å€¼
-        PixelIntegralFore = PixelIntegral - PixelIntegralBack;                             //èƒŒæ™¯ç°åº¦å€¼
-        MicroBack = (double)PixelIntegralBack / PixelBack;                                 //å‰æ™¯ç°åº¦ç™¾åˆ†æ¯”
-        MicroFore = (double)PixelIntegralFore / PixelFore;                                 //èƒŒæ™¯ç°åº¦ç™¾åˆ†æ¯”
-        Sigma = OmegaBack * OmegaFore * (MicroBack - MicroFore) * (MicroBack - MicroFore); //è®¡ç®—ç±»é—´æ–¹å·®
-        if (Sigma > SigmaB)                                                                //éå†æœ€å¤§çš„ç±»é—´æ–¹å·®g //æ‰¾å‡ºæœ€å¤§ç±»é—´æ–¹å·®ä»¥åŠå¯¹åº”çš„é˜ˆå€¼
+        PixelBack = PixelBack + HistoGram[j];                                              //Ç°¾°ÏñËØµãÊı
+        PixelFore = Amount - PixelBack;                                                    //±³¾°ÏñËØµãÊı
+        OmegaBack = (double)PixelBack / Amount;                                            //Ç°¾°ÏñËØ°Ù·Ö±È
+        OmegaFore = (double)PixelFore / Amount;                                            //±³¾°ÏñËØ°Ù·Ö±È
+        PixelIntegralBack += HistoGram[j] * j;                                             //Ç°¾°»Ò¶ÈÖµ
+        PixelIntegralFore = PixelIntegral - PixelIntegralBack;                             //±³¾°»Ò¶ÈÖµ
+        MicroBack = (double)PixelIntegralBack / PixelBack;                                 //Ç°¾°»Ò¶È°Ù·Ö±È
+        MicroFore = (double)PixelIntegralFore / PixelFore;                                 //±³¾°»Ò¶È°Ù·Ö±È
+        Sigma = OmegaBack * OmegaFore * (MicroBack - MicroFore) * (MicroBack - MicroFore); //¼ÆËãÀà¼ä·½²î
+        if (Sigma > SigmaB)                                                                //±éÀú×î´óµÄÀà¼ä·½²îg //ÕÒ³ö×î´óÀà¼ä·½²îÒÔ¼°¶ÔÓ¦µÄãĞÖµ
         {
             SigmaB = Sigma;
             Threshold = j;
         }
     }
-    return Threshold; //è¿”å›æœ€ä½³é˜ˆå€¼;
+    return Threshold; //·µ»Ø×î¼ÑãĞÖµ;
 }
 
-void sobel(void) //Sobelè¾¹æ²¿æ£€æµ‹
+void sobel(void) //Sobel±ßÑØ¼ì²â
 {
 
     int tempx = 0, tempy = 0, i = 0, j = 0;
@@ -157,13 +157,13 @@ void sobel(void) //Sobelè¾¹æ²¿æ£€æµ‹
                 // FINAL[i] = 0;
                 continue;
             }
-            
+
             tempx = -Image_Use[i - 1][j - 1] - 2 * Image_Use[i][j - 1] - Image_Use[i + 1][j - 1] + Image_Use[i - 1][j + 1] + 2 * Image_Use[i][j + 1] + Image_Use[i + 1][j + 1];
-            
+
             tempy = Image_Use[i + 1][j - 1] + 2 * Image_Use[i + 1][j] + Image_Use[i + 1][j + 1] - Image_Use[i - 1][j - 1] - 2 * Image_Use[i - 1][j] - Image_Use[i - 1][j + 1];
 
             tempsqrt = sqrt(tempx * tempx + tempy * tempy);
-            
+
             if (i < Sobel_Far_FarFar_Line)
             {
                 Sobel_Threshold = Sobel_Threshold_FarFar;
@@ -193,17 +193,17 @@ void sobel(void) //Sobelè¾¹æ²¿æ£€æµ‹
 }
 
 /*************************************************************************
-*  å‡½æ•°åç§°ï¼švoid Pic_noi_elim()
-*  åŠŸèƒ½è¯´æ˜ï¼šç…§ç‰‡å™ªç‚¹æ¶ˆé™¤
-*  å‚æ•°è¯´æ˜ï¼šæ— 
-*  å‡½æ•°è¿”å›ï¼šæ— 
-*  ä¿®æ”¹æ—¶é—´ï¼š2019.2.20
-*  å¤‡    æ³¨ï¼šæŸç‚¹ä¸‰é¢ç›¸åè§†ä¸ºå™ªç‚¹
+*  º¯ÊıÃû³Æ£ºvoid Pic_noi_elim()
+*  ¹¦ÄÜËµÃ÷£ºÕÕÆ¬ÔëµãÏû³ı
+*  ²ÎÊıËµÃ÷£ºÎŞ
+*  º¯Êı·µ»Ø£ºÎŞ
+*  ĞŞ¸ÄÊ±¼ä£º2019.2.20
+*  ±¸    ×¢£ºÄ³µãÈıÃæÏà·´ÊÓÎªÔëµã
 *************************************************************************/
 void Pic_noi_elim(void)
 {
-    int nr; //è¡Œ
-    int nc; //åˆ—
+    int nr; //ĞĞ
+    int nc; //ÁĞ
     whitecnt = 0;
     for (nr = Fir_row; nr < LCDH - 1; nr++)
     {
@@ -224,15 +224,15 @@ void Pic_noi_elim(void)
 }
 
 /*************************************************************************
-*  å‡½æ•°åç§°ï¼švoid Pic_DrawLRside(void)
-*  åŠŸèƒ½è¯´æ˜ï¼šç»˜åˆ¶å·¦å³è¾¹çº¿çº¿
-*  å‚æ•°è¯´æ˜ï¼šè¿”å›ç¬¦å·æ•°ï¼Œæ­£è¡¨ç¤ºåº”å³è½¬ï¼Œè´Ÿè¡¨ç¤ºåº”å·¦è½¬
-*  å‡½æ•°è¿”å›ï¼šä¸­å¿ƒçº¿å‰ç½®åŒºåŸŸå†…çš„å‡å€¼ä¸é¢„è®¾å€¼çš„åå·®
-*  ä¿®æ”¹æ—¶é—´ï¼š2020.06.03
-*  å¤‡    æ³¨ï¼šå¯»æ‰¾åº•å±‚é»‘ç™½è·³å˜ç‚¹ï¼Œé€å±‚å‘ä¸Šæœç´¢æ¯è¡Œçš„è·³å˜ç‚¹ã€‚(å‘ä¸¤è¾¹æœç‚¹ã€èŒƒå›´æœç‚¹ä¸¤ç§æ–¹æ³•ï¼‰
-             å°†æ•´å¹…å›¾çš„å·¦å³5åˆ—ç½®é»‘
-             æ¯ä¸€è¡Œåªæ£€æµ‹ä¸¤ä¸ªè·³å˜ç‚¹ã€‚
-             ////ç„¶ååˆ©ç”¨æ±‚å¹³å‡å€¼ç»˜åˆ¶ä¸­å¿ƒçº¿ï¼Œå•å†™
+*  º¯ÊıÃû³Æ£ºvoid Pic_DrawLRside(void)
+*  ¹¦ÄÜËµÃ÷£º»æÖÆ×óÓÒ±ßÏßÏß
+*  ²ÎÊıËµÃ÷£º·µ»Ø·ûºÅÊı£¬Õı±íÊ¾Ó¦ÓÒ×ª£¬¸º±íÊ¾Ó¦×ó×ª
+*  º¯Êı·µ»Ø£ºÖĞĞÄÏßÇ°ÖÃÇøÓòÄÚµÄ¾ùÖµÓëÔ¤ÉèÖµµÄÆ«²î
+*  ĞŞ¸ÄÊ±¼ä£º2020.06.03
+*  ±¸    ×¢£ºÑ°ÕÒµ×²ãºÚ°×Ìø±äµã£¬Öğ²ãÏòÉÏËÑË÷Ã¿ĞĞµÄÌø±äµã¡£(ÏòÁ½±ßËÑµã¡¢·¶Î§ËÑµãÁ½ÖÖ·½·¨£©
+             ½«Õû·ùÍ¼µÄ×óÓÒ5ÁĞÖÃºÚ
+             Ã¿Ò»ĞĞÖ»¼ì²âÁ½¸öÌø±äµã¡£
+             ////È»ºóÀûÓÃÇóÆ½¾ùÖµ»æÖÆÖĞĞÄÏß£¬µ¥Ğ´
 *************************************************************************/
 
 void Pic_DrawLRside(void)
@@ -241,7 +241,7 @@ void Pic_DrawLRside(void)
     int i = 0, j = 0;
     int search_flag1 = 0, search_flag2 = 0;
     int Side_flag;
-    for (i = Fir_row; i < LCDH; i++) //å°†å·¦å³ç½®é»‘ï¼ˆé˜²æ­¢å…¨ç™½ä¸‹æ— æ³•æ‰¾å¯»è·³å˜ç‚¹ï¼‰
+    for (i = Fir_row; i < LCDH; i++)
     {
         Rig[i] = 78;
         Lef[i] = 1;
@@ -254,15 +254,11 @@ void Pic_DrawLRside(void)
             Pixle[i][j] = 0;
         }
     }
-    //  for(i=0;i<Fir_row;i++)//å°†ä¸Šæ–¹ç½®é»‘
-    //  {
-    //    for(j=0;j<LCDW;j++)
-    //    {
-    //      Pixle[0][j]=0;
-    //    }
+
     for (i = Last_row; i > Last_row - 5; i--)
     {
-        for (j = Middle; j < Last_col; j++) //æœ«è¡Œå¤„ç†
+
+        for (j = Middle; j < Last_col; j++) 
         {
             if (Pixle[i][j] == 1 && Pixle[i][j - 1] == 1 && Pixle[i][j - 2] == 1 && Pixle[i][j - 3] == 1 && Pixle[i][j - 4] == 1 && Pixle[i][j - 5] == 1 && Pixle[i][j - 6] == 1 && Pixle[i][j + 1] == 0 && Pixle[i][j + 2] == 0 && Pixle[i][j + 3] == 0)
             {
@@ -280,22 +276,25 @@ void Pic_DrawLRside(void)
         }
         if (Rig[i] != 78 && Lef[i] != 1)
         {
+            --i;
             break;
         }
     }
-    for (--i; i > Fir_row - 1; i--) //ä»åº•å±‚å‘ä¸Šç»˜çº¿
+    
+    
+    for (; i > Fir_row - 1; i--) //´Óµ×²ãÏòÉÏ»æÏß
     {
         search_flag1 = 0;
         search_flag2 = 0;
         Side_flag = 0;
 
-        if (Rig[i + 1] != 78)
+        if (Rig[i + 1] < 77)
         {
-            if (Pixle[i][Rig[i + 1]] == 0 || (Pixle[i][Rig[i + 1]] == 1 && Pixle[i][Rig[i + 1] + 1] == 0)) //å‘å†…æŸ¥æ‰¾10ä¸ª
+            if (Pixle[i][Rig[i + 1]] == 0 || (Pixle[i][Rig[i + 1]] == 1 && Pixle[i][Rig[i + 1] + 1] == 0)) //ÏòÄÚ²éÕÒ10¸ö
             {
                 for (j = Rig[i + 1]; j > Rig[i + 1] - 10 && j > Lef[i + 1] + 5; j--)
                 {
-                    if (Pixle[i][j] == 1 && Pixle[i][j - 1] == 1) //ä¸¤ç™½
+                    if (Pixle[i][j] == 1 && Pixle[i][j - 1] == 1) //Á½°×
                     {
                         Rig[i] = j;
                         Side_flag = 1;
@@ -304,11 +303,11 @@ void Pic_DrawLRside(void)
                 }
                 search_flag1 = 1;
             }
-            else if (Pixle[i][Rig[i + 1] + 1] == 1) //å‘å¤–æŸ¥æ‰¾8ä¸ª
+            else if (Pixle[i][Rig[i + 1] + 1] == 1) //ÏòÍâ²éÕÒ8¸ö
             {
                 for (j = Rig[i + 1] + 1; j < Rig[i + 1] + 8 && j < Last_col + 1; j++)
                 {
-                    if (Pixle[i][j + 1] == 0 && Pixle[i][j + 2] == 0) //ä¸¤é»‘
+                    if (Pixle[i][j + 1] == 0 && Pixle[i][j + 2] == 0) //Á½ºÚ
                     {
                         Rig[i] = j;
                         Side_flag = 1;
@@ -318,11 +317,11 @@ void Pic_DrawLRside(void)
                 search_flag2 = 1;
             }
         }
-        else if (Rig[i + 2] != 78) //æ›´ä¸¥æ ¼çš„æ¡ä»¶
+        else if (Rig[i + 2] < 77) //¸üÑÏ¸ñµÄÌõ¼ş
         {
-            for (j = Rig[i + 2]; j > Rig[i + 1] - 10 && j > Lef[i + 1] + 5; j--) //å…ˆæœå†…10ä¸ª
+            for (j = Rig[i + 2]; j > Rig[i + 1] - 10 && j > Lef[i + 1] + 5; j--) //ÏÈËÑÄÚ10¸ö
             {
-                if (Pixle[i][j] == 1 && Pixle[i][j - 1] == 1 && Pixle[i][j - 2] == 1 && Pixle[i][j - 3] == 1)
+                if (Pixle[i][j + 1] = 0 && Pixle[i][j] == 1 && Pixle[i][j - 1] == 1 && Pixle[i][j - 2] == 1 && Pixle[i][j - 3] == 1)
                 {
                     Rig[i] = j;
                     Side_flag = 1;
@@ -330,7 +329,7 @@ void Pic_DrawLRside(void)
                 }
                 search_flag1 = 1;
             }
-            if (Side_flag == 0 && Pixle[i][Rig[i + 2] - 2] == 1 && Pixle[i][Rig[i + 2] - 1] == 1 && Pixle[i][Rig[i + 2]] == 1 && Pixle[i][Rig[i + 2] + 1] == 1) //æœå¤–8ä¸ª
+            if (Side_flag == 0 && Pixle[i][Rig[i + 2] - 2] == 1 && Pixle[i][Rig[i + 2] - 1] == 1 && Pixle[i][Rig[i + 2]] == 1 && Pixle[i][Rig[i + 2] + 1] == 1) //ËÑÍâ8¸ö
             {
                 for (j = Rig[i + 2] + 1; j < Rig[i + 2] + 8 && j < Last_col + 1; j++)
                 {
@@ -344,18 +343,21 @@ void Pic_DrawLRside(void)
                 search_flag2 = 1;
             }
         }
-
-        if (Side_flag == 0) //è‹¥æ²¡æœ‰æ‰¾åˆ°è·³å˜ç‚¹ï¼Œåˆ™æ”¾å®½èŒƒå›´è¿›è¡Œæœç´¢
+        if (Side_flag == 0) //ÈôÃ»ÓĞÕÒµ½Ìø±äµã£¬Ôò·Å¿í·¶Î§½øĞĞËÑË÷
         {
-            Side_flag = 1;
+
             for (j = Lef[i + 1] + 5; j <= Rig[i + 1] - 10; j++)
             {
                 if (Pixle[i][j] == 1 && Pixle[i][j - 1] == 1 && Pixle[i][j - 2] == 1 && Pixle[i][j - 3] == 1 && Pixle[i][j - 4] == 1 && Pixle[i][j - 5] == 1 && Pixle[i][j - 6] == 1 && Pixle[i][j + 1] == 0 && Pixle[i][j + 2] == 0)
                 {
                     Rig[i] = j;
+                    Side_flag = 1;
                     break;
                 }
             }
+        }
+        if (Side_flag == 0) //ÈôÃ»ÓĞÕÒµ½Ìø±äµã£¬Ôò·Å¿í·¶Î§½øĞĞËÑË÷
+        {
             if (search_flag1 == 0)
             {
                 for (j = Rig[i + 1] - 9; j < Rig[i + 1]; j++)
@@ -363,10 +365,14 @@ void Pic_DrawLRside(void)
                     if (Pixle[i][j] == 1 && Pixle[i][j - 1] == 1 && Pixle[i][j - 2] == 1 && Pixle[i][j - 3] == 1 && Pixle[i][j - 4] == 1 && Pixle[i][j - 5] == 1 && Pixle[i][j - 6] == 1 && Pixle[i][j + 1] == 0 && Pixle[i][j + 2] == 0)
                     {
                         Rig[i] = j;
+                        Side_flag = 1;
                         break;
                     }
                 }
             }
+        }
+        if (Side_flag == 0) //ÈôÃ»ÓĞÕÒµ½Ìø±äµã£¬Ôò·Å¿í·¶Î§½øĞĞËÑË÷
+        {
             if (search_flag2 == 0)
             {
                 for (j = Rig[i + 1]; j < Rig[i + 1] + 8; j++)
@@ -374,24 +380,30 @@ void Pic_DrawLRside(void)
                     if (Pixle[i][j] == 1 && Pixle[i][j - 1] == 1 && Pixle[i][j - 2] == 1 && Pixle[i][j - 3] == 1 && Pixle[i][j - 4] == 1 && Pixle[i][j - 5] == 1 && Pixle[i][j - 6] == 1 && Pixle[i][j + 1] == 0 && Pixle[i][j + 2] == 0)
                     {
                         Rig[i] = j;
+                        Side_flag = 1;
                         break;
                     }
                 }
             }
+        }
+        if (Side_flag == 0) //ÈôÃ»ÓĞÕÒµ½Ìø±äµã£¬Ôò·Å¿í·¶Î§½øĞĞËÑË÷
+        {
             for (j = Rig[i + 1] + 8; j <= Last_col; j++)
             {
                 if (Pixle[i][j] == 1 && Pixle[i][j - 1] == 1 && Pixle[i][j - 2] == 1 && Pixle[i][j - 3] == 1 && Pixle[i][j - 4] == 1 && Pixle[i][j - 5] == 1 && Pixle[i][j - 6] == 1 && Pixle[i][j + 1] == 0 && Pixle[i][j + 2] == 0)
                 {
                     Rig[i] = j;
+                    Side_flag = 1;
                     break;
                 }
             }
         }
+
         search_flag1 = 0;
         search_flag2 = 0;
         Side_flag = 0;
 
-        if (Lef[i + 1] != 1)
+        if (Lef[i + 1] > 2)
         {
             if (Pixle[i][Lef[i + 1]] == 0 || (Pixle[i][Lef[i + 1]] == 1 && Pixle[i][Lef[i + 1] - 1] == 0))
             {
@@ -420,11 +432,11 @@ void Pic_DrawLRside(void)
                 search_flag2 = 1;
             }
         }
-        else if (Lef[i + 2] != 1)
+        else if (Lef[i + 2] > 2)
         {
             for (j = Lef[i + 2]; j < Lef[i + 1] + 10 && j < Rig[i + 1] + 5; j++)
             {
-                if (Pixle[i][j] == 1 && Pixle[i][j + 1] == 1 && Pixle[i][j + 2] == 1 && Pixle[i][j + 3] == 1)
+                if (Pixle[i][j - 1] == 0 && Pixle[i][j] == 1 && Pixle[i][j + 1] == 1 && Pixle[i][j + 2] == 1 && Pixle[i][j + 3] == 1)
                 {
                     Lef[i] = j;
                     Side_flag = 1;
@@ -447,7 +459,7 @@ void Pic_DrawLRside(void)
             }
         }
 
-        if (Side_flag == 0) //è‹¥æ²¡æœ‰æ‰¾åˆ°è·³å˜ç‚¹ï¼Œåˆ™æ”¾å®½èŒƒå›´è¿›è¡Œæœç´¢
+        if (Side_flag == 0) //ÈôÃ»ÓĞÕÒµ½Ìø±äµã£¬Ôò·Å¿í·¶Î§½øĞĞËÑË÷
         {
             Side_flag = 1;
             for (j = Rig[i + 1] - 5; j >= Lef[i + 1] + 10; j--)
@@ -455,9 +467,13 @@ void Pic_DrawLRside(void)
                 if (Pixle[i][j] == 1 && Pixle[i][j + 1] == 1 && Pixle[i][j + 2] == 1 && Pixle[i][j + 3] == 1 && Pixle[i][j + 4] == 1 && Pixle[i][j + 5] == 1 && Pixle[i][j + 6] == 1 && Pixle[i][j - 1] == 0 && Pixle[i][j - 2] == 0)
                 {
                     Lef[i] = j;
+                    Side_flag = 1;
                     break;
                 }
             }
+        }
+        if (Side_flag == 0) //ÈôÃ»ÓĞÕÒµ½Ìø±äµã£¬Ôò·Å¿í·¶Î§½øĞĞËÑË÷
+        {
             if (search_flag1 == 0)
             {
                 for (j = Lef[i + 1] + 9; j > Lef[i + 1]; j--)
@@ -465,10 +481,14 @@ void Pic_DrawLRside(void)
                     if (Pixle[i][j] == 1 && Pixle[i][j + 1] == 1 && Pixle[i][j + 2] == 1 && Pixle[i][j + 3] == 1 && Pixle[i][j + 4] == 1 && Pixle[i][j + 5] == 1 && Pixle[i][j + 6] == 1 && Pixle[i][j - 1] == 0 && Pixle[i][j - 2] == 0)
                     {
                         Lef[i] = j;
+                        Side_flag = 1;
                         break;
                     }
                 }
             }
+        }
+        if (Side_flag == 0) //ÈôÃ»ÓĞÕÒµ½Ìø±äµã£¬Ôò·Å¿í·¶Î§½øĞĞËÑË÷
+        {
             if (search_flag2 == 0)
             {
                 for (j = Lef[i + 1]; j > Lef[i + 1] - 8; j--)
@@ -476,15 +496,20 @@ void Pic_DrawLRside(void)
                     if (Pixle[i][j] == 1 && Pixle[i][j + 1] == 1 && Pixle[i][j + 2] == 1 && Pixle[i][j + 3] == 1 && Pixle[i][j + 4] == 1 && Pixle[i][j + 5] == 1 && Pixle[i][j + 6] == 1 && Pixle[i][j - 1] == 0 && Pixle[i][j - 2] == 0)
                     {
                         Lef[i] = j;
+                        Side_flag = 1;
                         break;
                     }
                 }
             }
+        }
+        if (Side_flag == 0) //ÈôÃ»ÓĞÕÒµ½Ìø±äµã£¬Ôò·Å¿í·¶Î§½øĞĞËÑË÷
+        {
             for (j = Lef[i + 1] - 8; j > Fir_col - 1; j--)
             {
                 if (Pixle[i][j] == 1 && Pixle[i][j + 1] == 1 && Pixle[i][j + 2] == 1 && Pixle[i][j + 3] == 1 && Pixle[i][j + 4] == 1 && Pixle[i][j + 5] == 1 && Pixle[i][j + 6] == 1 && Pixle[i][j - 1] == 0 && Pixle[i][j - 2] == 0)
                 {
                     Lef[i] = j;
+                    Side_flag = 1;
                     break;
                 }
             }
@@ -492,12 +517,12 @@ void Pic_DrawLRside(void)
     }
 }
 /*************************************************************************
- *  å‡½æ•°åç§°ï¼švoid Pic_undistort(int L, int R)
- *  åŠŸèƒ½è¯´æ˜ï¼šå›¾åƒå»ç•¸å˜
- *  å‚æ•°è¯´æ˜ï¼šæ— 
- *  å‡½æ•°è¿”å›ï¼šæ— 
- *  ä¿®æ”¹æ—¶é—´ï¼š2020.05.30
- *  å¤‡    æ³¨ï¼šå¯¹Lefã€Rigè¿›è¡Œæ˜ å°„å¤„ç†
+ *  º¯ÊıÃû³Æ£ºvoid Pic_undistort(int L, int R)
+ *  ¹¦ÄÜËµÃ÷£ºÍ¼ÏñÈ¥»û±ä
+ *  ²ÎÊıËµÃ÷£ºÎŞ
+ *  º¯Êı·µ»Ø£ºÎŞ
+ *  ĞŞ¸ÄÊ±¼ä£º2020.05.30
+ *  ±¸    ×¢£º¶ÔLef¡¢Rig½øĞĞÓ³Éä´¦Àí
  * **********************************************************************/
 void Pic_undistort(int L, int R)
 {
@@ -514,7 +539,7 @@ void Pic_undistort(int L, int R)
     int Lef_New[60];
     static const int tempNewy[60] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 261, 217, 184, 158, 138, 121, 107, 96, 86, 77, 70, 63, 57, 52, 47, 43, 39, 35, 32, 29, 26, 24, 21, 19, 17, 15, 13, 12, 10, 8, 7, 6, 4, 3, 2, 1, 0, 0};
 
-    /*************************æ˜ å°„*******************************/
+    /*************************Ó³Éä*******************************/
     if (R)
     {
         for (i = startpoint; i < 59; i++)
@@ -545,9 +570,9 @@ void Pic_undistort(int L, int R)
                 tempNewxL[i] = -MIDMAP;
         }
     }
-    /************************æ’å€¼+å‹ç¼©+å€’åº*************************/
+    /************************²åÖµ+Ñ¹Ëõ+µ¹Ğò*************************/
     i = startpoint;
-    j = 59; //59ï¼Œä¸è¡¥æœ€è¿œè¡Œï¼Œ58ï¼Œè¡¥æœ€è¿œè¡Œéœ€+ä¸‹é¢ä¸¤è¡Œä»£ç 
+    j = 59; //59£¬²»²¹×îÔ¶ĞĞ£¬58£¬²¹×îÔ¶ĞĞĞè+ÏÂÃæÁ½ĞĞ´úÂë
     // Rig_New[0] = tempNewxR[0];
     // Lef_New[0] = tempNewxL[0];
     while (j >= 0)
@@ -585,7 +610,7 @@ void Pic_undistort(int L, int R)
             i++;
         }
     }
-    /************************æ»¤æ³¢*************************/
+    /************************ÂË²¨*************************/
 
     if (L)
     {
@@ -673,12 +698,12 @@ void Pic_undistort(int L, int R)
 }
 
 /*************************************************************************
-*  å‡½æ•°åç§°ï¼švoid Pic_particular()
-*  åŠŸèƒ½è¯´æ˜ï¼šå›¾åƒç‰¹æ®Šå¤„ç†
-*  å‚æ•°è¯´æ˜ï¼šæ— 
-*  å‡½æ•°è¿”å›ï¼šæ— 
-*  ä¿®æ”¹æ—¶é—´ï¼š2019.7.7
-*  å¤‡    æ³¨ï¼š
+*  º¯ÊıÃû³Æ£ºvoid Pic_particular()
+*  ¹¦ÄÜËµÃ÷£ºÍ¼ÏñÌØÊâ´¦Àí
+*  ²ÎÊıËµÃ÷£ºÎŞ
+*  º¯Êı·µ»Ø£ºÎŞ
+*  ĞŞ¸ÄÊ±¼ä£º2019.7.7
+*  ±¸    ×¢£º
 *************************************************************************/
 
 void Pic_particular(void)
@@ -686,26 +711,26 @@ void Pic_particular(void)
     int i;
     Lef_edge = 0;
     Rig_edge = 0;
-    for (i = 59; i > 0; i--)
+    for (i = 59; i > Fir_row; i--)
     {
-        if (New_Lef[i] == -MIDMAP)
+        if (Lef[i] <= Fir_col)
             Lef_edge += 1;
-        if (New_Rig[i] == MIDMAP)
+        if (Rig[i] >= Last_col)
             Rig_edge += 1;
     }
-    // for (i = 59; i > 0; i--) //å¹³å‡å€¼æ³•ä¸­å¿ƒçº¿ç»˜åˆ¶
+    // for (i = 59; i > 0; i--) //Æ½¾ùÖµ·¨ÖĞĞÄÏß»æÖÆ
     // {
     //   Mid[i] = (int)((New_Lef[i] + New_Rig[i]) / 20) + 40;
     // }
 }
 
 /*************************************************************************
-*  å‡½æ•°åç§°ï¼švoid Slope_fig()
-*  åŠŸèƒ½è¯´æ˜ï¼šèµ›é“å·¦å³æ–œç‡è®¡ç®—
-*  å‚æ•°è¯´æ˜ï¼šæ— 
-*  å‡½æ•°è¿”å›ï¼šæ— 
-*  ä¿®æ”¹æ—¶é—´ï¼š2019.3.21
-*  å¤‡    æ³¨ï¼šæœ€å°äºŒä¹˜æ³•æ‹ŸåˆFIG_AREAåŒºåŸŸå†…ä¸ä¸º0çš„æ–œç‡
+*  º¯ÊıÃû³Æ£ºvoid Slope_fig()
+*  ¹¦ÄÜËµÃ÷£ºÈüµÀ×óÓÒĞ±ÂÊ¼ÆËã
+*  ²ÎÊıËµÃ÷£ºÎŞ
+*  º¯Êı·µ»Ø£ºÎŞ
+*  ĞŞ¸ÄÊ±¼ä£º2019.3.21
+*  ±¸    ×¢£º×îĞ¡¶ş³Ë·¨ÄâºÏFIG_AREAÇøÓòÄÚ²»Îª0µÄĞ±ÂÊ
 
 *************************************************************************/
 
@@ -776,7 +801,7 @@ void LR_Slope_fig()
             count++;
         }
     }
-    if (abs(max - min) > 50)
+    if (abs(max - min) > 30)
     {
         if (count * x2sum - xsum * xsum)
         {
@@ -795,12 +820,12 @@ void LR_Slope_fig()
 }
 
 /*************************************************************************
-*  å‡½æ•°åç§°ï¼šfloat Slope(int F1x,int F1y,int F2x,int F2y)
-*  åŠŸèƒ½è¯´æ˜ï¼šæ–œç‡å‡½æ•°
-*  å‚æ•°è¯´æ˜ï¼šæ— 
-*  å‡½æ•°è¿”å›ï¼šæ— 
-*  ä¿®æ”¹æ—¶é—´ï¼š2019.3.21
-*  å¤‡    æ³¨ï¼šâ–³y/â–³x
+*  º¯ÊıÃû³Æ£ºfloat Slope(int F1x,int F1y,int F2x,int F2y)
+*  ¹¦ÄÜËµÃ÷£ºĞ±ÂÊº¯Êı
+*  ²ÎÊıËµÃ÷£ºÎŞ
+*  º¯Êı·µ»Ø£ºÎŞ
+*  ĞŞ¸ÄÊ±¼ä£º2019.3.21
+*  ±¸    ×¢£º¡÷y/¡÷x
 
 *************************************************************************/
 
@@ -816,15 +841,15 @@ float Slope(int F1x, int F1y, int F2x, int F2y)
 }
 
 /*************************************************************************
-*  å‡½æ•°åç§°ï¼švoid Pic_DrawMid(void)
-*  åŠŸèƒ½è¯´æ˜ï¼šç»˜åˆ¶å·¦å³è¾¹çº¿çº¿
-*  å‚æ•°è¯´æ˜ï¼šè¿”å›ç¬¦å·æ•°ï¼Œæ­£è¡¨ç¤ºåº”å³è½¬ï¼Œè´Ÿè¡¨ç¤ºåº”å·¦è½¬
-*  å‡½æ•°è¿”å›ï¼šä¸­å¿ƒçº¿å‰ç½®åŒºåŸŸå†…çš„å‡å€¼ä¸é¢„è®¾å€¼çš„åå·®
-*  ä¿®æ”¹æ—¶é—´ï¼š2020.05.31
-*  å¤‡    æ³¨ï¼šå¯»æ‰¾åº•å±‚é»‘ç™½è·³å˜ç‚¹ï¼Œé€å±‚å‘ä¸Šæœç´¢æ¯è¡Œçš„è·³å˜ç‚¹ã€‚(å‘ä¸¤è¾¹æœç‚¹ã€èŒƒå›´æœç‚¹ä¸¤ç§æ–¹æ³•ï¼‰
-             å°†æ•´å¹…å›¾çš„å·¦å³5åˆ—ç½®é»‘
-             æ¯ä¸€è¡Œåªæ£€æµ‹ä¸¤ä¸ªè·³å˜ç‚¹ã€‚
-             ////ç„¶ååˆ©ç”¨æ±‚å¹³å‡å€¼ç»˜åˆ¶ä¸­å¿ƒçº¿ï¼Œå•å†™
+*  º¯ÊıÃû³Æ£ºvoid Pic_DrawMid(void)
+*  ¹¦ÄÜËµÃ÷£º»æÖÆ×óÓÒ±ßÏßÏß
+*  ²ÎÊıËµÃ÷£º·µ»Ø·ûºÅÊı£¬Õı±íÊ¾Ó¦ÓÒ×ª£¬¸º±íÊ¾Ó¦×ó×ª
+*  º¯Êı·µ»Ø£ºÖĞĞÄÏßÇ°ÖÃÇøÓòÄÚµÄ¾ùÖµÓëÔ¤ÉèÖµµÄÆ«²î
+*  ĞŞ¸ÄÊ±¼ä£º2020.05.31
+*  ±¸    ×¢£ºÑ°ÕÒµ×²ãºÚ°×Ìø±äµã£¬Öğ²ãÏòÉÏËÑË÷Ã¿ĞĞµÄÌø±äµã¡£(ÏòÁ½±ßËÑµã¡¢·¶Î§ËÑµãÁ½ÖÖ·½·¨£©
+             ½«Õû·ùÍ¼µÄ×óÓÒ5ÁĞÖÃºÚ
+             Ã¿Ò»ĞĞÖ»¼ì²âÁ½¸öÌø±äµã¡£
+             ////È»ºóÀûÓÃÇóÆ½¾ùÖµ»æÖÆÖĞĞÄÏß£¬µ¥Ğ´
 *************************************************************************/
 
 void Pic_DrawMid(void)
@@ -887,12 +912,12 @@ void Pic_DrawMid(void)
     return;
 }
 /*************************************************************************
- *  å‡½æ•°åç§°ï¼švoid Pic_DrawMid_und(void)
- *  åŠŸèƒ½è¯´æ˜ï¼šè®¡ç®—å»ç•¸å˜åä¸­çº¿æ— æ’å€¼
- *  å‚æ•°è¯´æ˜ï¼šæ— 
- *  å‡½æ•°è¿”å›ï¼šæ— 
- *  ä¿®æ”¹æ—¶é—´ï¼š2020.5.31
- *  å¤‡    æ³¨ï¼š
+ *  º¯ÊıÃû³Æ£ºvoid Pic_DrawMid_und(void)
+ *  ¹¦ÄÜËµÃ÷£º¼ÆËãÈ¥»û±äºóÖĞÏßÎŞ²åÖµ
+ *  ²ÎÊıËµÃ÷£ºÎŞ
+ *  º¯Êı·µ»Ø£ºÎŞ
+ *  ĞŞ¸ÄÊ±¼ä£º2020.5.31
+ *  ±¸    ×¢£º
  * ************************************************************************/
 
 void Pic_DrawMid_und(void)
@@ -956,12 +981,12 @@ void Pic_DrawMid_und(void)
 }
 
 /*************************************************************************
-*  å‡½æ•°åç§°ï¼švoid Get_pic_with_edge()
-*  åŠŸèƒ½è¯´æ˜ï¼šå¸¦è¾¹çº¿ç°åº¦å›¾
-*  å‚æ•°è¯´æ˜ï¼šæ— 
-*  å‡½æ•°è¿”å›ï¼šæ— 
-*  ä¿®æ”¹æ—¶é—´ï¼š2019.12.12
-*  å¤‡    æ³¨ï¼š
+*  º¯ÊıÃû³Æ£ºvoid Get_pic_with_edge()
+*  ¹¦ÄÜËµÃ÷£º´ø±ßÏß»Ò¶ÈÍ¼
+*  ²ÎÊıËµÃ÷£ºÎŞ
+*  º¯Êı·µ»Ø£ºÎŞ
+*  ĞŞ¸ÄÊ±¼ä£º2019.12.12
+*  ±¸    ×¢£º
 *************************************************************************/
 void Get_pic_with_edge()
 {
@@ -976,12 +1001,12 @@ void Get_pic_with_edge()
 
 #if 0
 /*************************************************************************
-*  å‡½æ•°åç§°ï¼švoid Pic_seedfill(void)
-*  åŠŸèƒ½è¯´æ˜ï¼šDFSæœç´¢ç§å­å¡«å……ç®—æ³•
-*  å‚æ•°è¯´æ˜ï¼šæ— 
-*  å‡½æ•°è¿”å›ï¼šå°†Sobelè¾¹ç¼˜æå–åçš„å›¾åƒè¿›è¡Œå¡«å……ä»¥åŠå¹²æ‰°çš„å»é™¤
-*  ä¿®æ”¹æ—¶é—´ï¼š2019.5.27
-*  å¤‡    æ³¨ï¼šå­å‡½æ•°grow()ä¸ºé€’å½’å‡½æ•°ã€‚
+*  º¯ÊıÃû³Æ£ºvoid Pic_seedfill(void)
+*  ¹¦ÄÜËµÃ÷£ºDFSËÑË÷ÖÖ×ÓÌî³äËã·¨
+*  ²ÎÊıËµÃ÷£ºÎŞ
+*  º¯Êı·µ»Ø£º½«Sobel±ßÔµÌáÈ¡ºóµÄÍ¼Ïñ½øĞĞÌî³äÒÔ¼°¸ÉÈÅµÄÈ¥³ı
+*  ĞŞ¸ÄÊ±¼ä£º2019.5.27
+*  ±¸    ×¢£º×Óº¯Êıgrow()Îªµİ¹éº¯Êı¡£
 *************************************************************************/
 
 void Pic_seedfill(void)
@@ -990,7 +1015,7 @@ void Pic_seedfill(void)
   int i, j;
   int seed_flag = 0, seed_i = -1, seed_j = -1;
 
-  //è®¾å®šåŸºå‡†å›¢(ç‚¹)
+  //Éè¶¨»ù×¼ÍÅ(µã)
   for (i = seed_down; i >= seed_up; i = i - 3)
   {
     for (j = seed_left; j <= seed_right; j = j + 3)
@@ -1006,7 +1031,7 @@ void Pic_seedfill(void)
     if (seed_flag == 1)
       break;
   }
-  if (seed_flag == 0) //æ²¡æ‰¾åˆ°åŸºå‡†å›¢,è¿”å›-1
+  if (seed_flag == 0) //Ã»ÕÒµ½»ù×¼ÍÅ,·µ»Ø-1
     return;
   if (Lef_slope == 999 && Rig_slope < 900 && Road != 2)
   {
@@ -1018,7 +1043,7 @@ void Pic_seedfill(void)
     seed_i = 55;
     seed_j = 10;
   }
-  //ç”Ÿé•¿å¡«å……
+  //Éú³¤Ìî³ä
   Pic_seedfill_grow(flag, seed_i, seed_j);
 
   for (i = CAMERA_H - 1; i >= 0; i--)
@@ -1035,7 +1060,7 @@ void Pic_seedfill(void)
 
 void Pic_seedfill_grow(uint8 flag[CAMERA_H][CAMERA_W], int i, int j)
 {
-  //åˆ¤å®š æ·±åº¦ä¼˜å…ˆæœç´¢ æ–¹å‘ä¸‹å·¦å³ä¸Š å¸¦è¾¹ç•Œæ¡ä»¶
+  //ÅĞ¶¨ Éî¶ÈÓÅÏÈËÑË÷ ·½ÏòÏÂ×óÓÒÉÏ ´ø±ß½çÌõ¼ş
   int grow_i, grow_j;
 
   for (grow_i = i - 1; grow_i <= i + 1; grow_i++)
@@ -1043,13 +1068,13 @@ void Pic_seedfill_grow(uint8 flag[CAMERA_H][CAMERA_W], int i, int j)
       if (Pixle[grow_i][grow_j] == 1)
         flag[grow_i][grow_j] = 1;
       else
-        flag[grow_i][grow_j] = 2; //2è¡¨æ˜åŸå›¾åƒä¸ºé»‘è‰²0ï¼Œä¸”å·²æœè¿‡
+        flag[grow_i][grow_j] = 2; //2±íÃ÷Ô­Í¼ÏñÎªºÚÉ«0£¬ÇÒÒÑËÑ¹ı
 
   // if(Pixle[i][j]==1)
   // 	flag[i][j]=1;
 
   //down
-  if (Pixle[i + 1][j] == 1 && Pixle[i + 2][j] == 1 && flag[i + 3][j] == 0 && i < BOTTOM - 3) //æ¡ä»¶ï¼š1ã€ä¹å®«æ ¼ä¸‹ä¸­å¿ƒä¸‹ä¸€ä¸‹äºŒå‡ä¸ºç™½ 2ã€ä¸‹ä¸‰æ²¡æœè¿‡ 3ã€ä¸‹ä¸‰å°äºè¾¹ç•Œ  //ä¼šå¿½ç•¥æ‰æœ€åä¸€è¡Œæˆ–ä¸¤è¡Œ
+  if (Pixle[i + 1][j] == 1 && Pixle[i + 2][j] == 1 && flag[i + 3][j] == 0 && i < BOTTOM - 3) //Ìõ¼ş£º1¡¢¾Å¹¬¸ñÏÂÖĞĞÄÏÂÒ»ÏÂ¶ş¾ùÎª°× 2¡¢ÏÂÈıÃ»ËÑ¹ı 3¡¢ÏÂÈıĞ¡ÓÚ±ß½ç  //»áºöÂÔµô×îºóÒ»ĞĞ»òÁ½ĞĞ
     Pic_seedfill_grow(flag, i + 3, j);
 
   //left

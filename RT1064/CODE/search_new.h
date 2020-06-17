@@ -16,7 +16,7 @@ extern int Road2_flag;
 extern int Road0_flag;
 extern int Road7_flag;
 
-extern int turn_stop;//è½¬å¼¯ç»ˆæ­¢çº¿
+extern int turn_stop;//×ªÍäÖÕÖ¹Ïß
 
 extern float Lef_slope;
 extern float Rig_slope;

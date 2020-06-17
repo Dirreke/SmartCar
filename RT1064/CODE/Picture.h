@@ -9,21 +9,21 @@
 #define MIDMAP 650  //undistort1
 
 #define FIG_AREA_NEAR   54//50//350/*(59-tempNewy(50)/Bili)(Bili=12)
-#define FIG_AREA_FAR   5//28//550   //é€†é€è§†å˜æ¢åçš„å›¾åƒè®¡ç®—åŒºåŸŸ
+#define FIG_AREA_FAR   5//28//550   //ÄæÍ¸ÊÓ±ä»»ºóµÄÍ¼Ïñ¼ÆËãÇøÓò
 
-#define ROAD_HALF_WIDTH  150  //èµ›é“åŠå®½
-#define ROAD_WIDTH  300  //èµ›é“å®½
+#define ROAD_HALF_WIDTH  150  //ÈüµÀ°ë¿í
+#define ROAD_WIDTH  300  //ÈüµÀ¿í
 
 #define START_LINE 19
 
-#define Fir_row      START_LINE+1        //ä»¥ç¬¬7è¡Œä½œä¸ºæœ€å°æœ‰æ•ˆè¡Œ
-#define Last_row     (LCDH-2)    //ä»¥è¯¥è¡Œä¸ºæœ€å¤§æœ‰æ•ˆè¡Œ
-#define Fir_col      2         //ä»¥ç¬¬7åˆ—ä½œä¸ºæœ€å°æœ‰æ•ˆåˆ—
-#define Last_col     (LCDW-3)    //ä»¥è¯¥åˆ—ä¸ºæœ€å¤§æœ‰æ•ˆåˆ—
+#define Fir_row      START_LINE+1        //ÒÔµÚ7ĞĞ×÷Îª×îĞ¡ÓĞĞ§ĞĞ
+#define Last_row     (LCDH-2)    //ÒÔ¸ÃĞĞÎª×î´óÓĞĞ§ĞĞ
+#define Fir_col      2         //ÒÔµÚ7ÁĞ×÷Îª×îĞ¡ÓĞĞ§ÁĞ
+#define Last_col     (LCDW-3)    //ÒÔ¸ÃÁĞÎª×î´óÓĞĞ§ÁĞ
 
 
 #if 0
-//å›¾åƒDFSæœç´¢ç®—æ³•èµ·å§‹æœç´¢åŒºåŸŸ
+//Í¼ÏñDFSËÑË÷Ëã·¨ÆğÊ¼ËÑË÷ÇøÓò
 #define seed_down	55
 #define seed_up		40
 #define seed_left	30
@@ -45,7 +45,7 @@ extern uint8 Sobel_Threshold_Near;
 __ramfunc void Get_Use_Image(void);
 
 uint8_t GetOSTU(uint8_t tmImage[CAMERA_H][CAMERA_W]);
-void sobel(void); //Sobelè¾¹æ²¿æ£€æµ‹
+void sobel(void); //Sobel±ßÑØ¼ì²â
 
 void Pic_noi_elim(void);
 
@@ -68,19 +68,19 @@ void Pic_seedfill_grow(uint8 flag[CAMERA_H][CAMERA_W], int i, int j);
 #endif 
 
 extern uint8 Image_Use[CAMERA_H][CAMERA_W];
-extern uint16 Pixle[CAMERA_H][CAMERA_W]; //äºŒå€¼åŒ–åç”¨äºOLEDæ˜¾uint16æ°–???//u16
+extern uint16 Pixle[CAMERA_H][CAMERA_W]; //¶şÖµ»¯ºóÓÃÓÚOLEDÏÔuint16ÄÊ???//u16
 
 extern int threshold_offset;
 extern int threshold_offset2;
 
 extern int whitecnt;
 
-extern int Lef[LCDH];     //é“è·¯å·¦åˆ†ç¦»ç‚¹çš„çºµåæ ‡
-extern int Rig[LCDH];     //é“è·¯å³åˆ†ç¦»ç‚¹çš„çºµåæ ‡
-extern int Mid[LCDH]; //é“è·¯ä¸­å¿ƒç‚¹çš„çºµåæ ‡
+extern int Lef[LCDH];     //µÀÂ·×ó·ÖÀëµãµÄ×İ×ø±ê
+extern int Rig[LCDH];     //µÀÂ·ÓÒ·ÖÀëµãµÄ×İ×ø±ê
+extern int Mid[LCDH]; //µÀÂ·ÖĞĞÄµãµÄ×İ×ø±ê
 
 extern int New_Lef[60];
-extern int New_Rig[60]; //ç”¨äºå­˜å‚¨é€†é€è§†å˜æ¢åçš„æ¨ªåæ ‡
+extern int New_Rig[60]; //ÓÃÓÚ´æ´¢ÄæÍ¸ÊÓ±ä»»ºóµÄºá×ø±ê
 extern int New_Mid[60];
 
 extern int Lef_edge, Rig_edge;
