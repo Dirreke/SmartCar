@@ -12,14 +12,13 @@ void Para_Init()
   	PID_SPEED.P=0.29;//2.9;//0.50
 	PID_SPEED.I=0.25;//0.0014;
 	PID_SPEED.D=0.000;//0.030
-  	PID_TURN.P=0.0102*325;//0.0118;//0.0112;//
-	PID_TURN.D=-0.0042*325;//-0.0053;//-0.004//3.7йт╦д-0.0035;
-  
-        PID_SPEED1.OUT=0;
-        PID_SPEED2.OUT=0;
+  	// PID_TURN.P=0.0102*325;//0.0118;//0.0112;//
+	// PID_TURN.D=-0.0042*325;//-0.0053;//-0.004//3.7йт╦д-0.0035;
+        PID_TURN_CAM_EXT.P = 0.85;
+        PID_TURN_CAM_EXT.P = 0.8;
+        MotorOut1=0;
+        MotorOut2=0;
 
-  	SetSpeed1=0.4;
-	SetSpeed2=0.4;
 //diff.h and speed.h init
         lib_speed_init();
 

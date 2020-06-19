@@ -70,10 +70,10 @@ void Dubug_key(void)
                 lib_set_speed(get_speed() + 0.1);
                 break;
                 case 2:
-                Turn_P +=0.02;
+                PID_TURN_CAM_EXT.P +=0.02;
                 break;
                 case 3:
-                Turn_D += 0.02;
+                PID_TURN_CAM_EXT.D += 0.02;
                 break;
 
                 /*
@@ -199,10 +199,10 @@ void Dubug_key(void)
                 lib_set_speed(get_speed() - 0.1);
                 break;
                   case 2:
-                Turn_P -=0.02;
+                PID_TURN_CAM_EXT.P -=0.02;
                 break;
                 case 3:
-                Turn_D -= 0.02;
+                PID_TURN_CAM_EXT.D -= 0.02;
                 break;
                 /*
             case 32:
@@ -343,11 +343,11 @@ void ips_show_debug(int ips_num)
         break;
         case 2:
         ips200_showstr(0,12,"P");
-        ips200_showfloat(0,13,Turn_P,2,2);
+        ips200_showfloat(0,13,PID_TURN_CAM_EXT.P,2,2);
         break;
         case 3:
                 ips200_showstr(0,12,"D");
-        ips200_showfloat(0,13,Turn_D,2,2);
+        ips200_showfloat(0,13,PID_TURN_CAM_EXT.D,2,2);
         break;
         /*
     case 32:

@@ -23,7 +23,7 @@ void Motor_Duty(uint16 Motno, uint32 duty)
 {
   //归一化为0--500--1000
   //if(duty<1001)
-  {
+  // {
     /** if new main_board **/
     /*
     switch (Motno)
@@ -61,7 +61,7 @@ void Motor_Duty(uint16 Motno, uint32 duty)
       break;    
     default:
       break;
-    }
+    // }
   }
 }
 
@@ -99,4 +99,48 @@ void Servo_Duty(float duty)
 
 */
   //}
+}
+/*************************************************************************
+*  函数名称：void Moto_Out(float MotorOut1，float MotorOut2)
+*  功能说明：电机输出
+*  参数说明：左轮PWM，右轮PWM
+*  函数返回：
+*  修改时间：2020.06.20
+*  备    注：其中限幅过程会影响PD调节过程
+
+*************************************************************************/
+void Moto_Out(float MotorOut1,float MotorOut2)
+{
+  
+  //速度控制输出限幅
+  if (MotorOut1> 18000) //如果车子前倾，则车模的速度控制输出为正，反之为负
+    MotorOut1 = 18000;
+  if (MotorOut1 < -18000)
+    MotorOut1 = -18000;
+  if (MotorOut2 > 18000) //如果车子前倾，则车模的速度控制输出为正，反之为负
+    MotorOut2 = 18000;
+  if (MotorOut2 < -18000)
+    MotorOut2 = -18000;
+
+  if (MotorOut1 >= 0) //正转
+  {
+    Motor_Duty(3, 0);
+    Motor_Duty(2, (uint32)MotorOut1);
+  }
+  else //反转
+  {
+    Motor_Duty(3, (uint32)-MotorOut1);
+    Motor_Duty(2, 0); 
+  }
+
+  if (MotorOut2 >= 0)
+  {
+    Motor_Duty(1, 0);
+    Motor_Duty(0, (uint32)MotorOut2);
+  }
+  else
+  {
+    Motor_Duty(0, (uint32)-MotorOut2 );
+    Motor_Duty(1, 0);
+  }
 }

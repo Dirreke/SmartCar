@@ -36,9 +36,8 @@ void PIT_IRQHandler(void)
 
 
        Get_Speed();
+       SpeedTarget_fig();
        Speed_Control();
-       Speed_Control_Output();
-       Moto_Out();
 
     }
 

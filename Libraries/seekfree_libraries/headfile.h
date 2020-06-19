@@ -1,16 +1,16 @@
 /*********************************************************************************************************************
  * COPYRIGHT NOTICE
- * Copyright (c) 2019,���ɿƼ�
+ * Copyright (c) 2019,??????
  * All rights reserved.
- * ��������QQȺ��һȺ��179029047(����)  ��Ⱥ��244861897
+ * ????????QQ???????179029047(????)  ?????244861897
  *
- * �����������ݰ�Ȩ�������ɿƼ����У�δ����������������ҵ��;��
- * ��ӭ��λʹ�ò��������������޸�����ʱ���뱣�����ɿƼ��İ�Ȩ������
+ * ???????????????????????????��?��??????????????????????
+ * ?????��??��???????????????????????????????????????????
  *
  * @file       		headfile
- * @company	   		�ɶ����ɿƼ����޹�˾
- * @author     		���ɿƼ�(QQ3184284598)
- * @version    		�鿴doc��version�ļ� �汾˵��
+ * @company	   		???????????????
+ * @author     		??????(QQ3184284598)
+ * @version    		??doc??version??? ?��???
  * @Software 		IAR 8.3 or MDK 5.24
  * @Target core		NXP RT1064DVL6A
  * @Taobao   		https://seekfree.taobao.com/
@@ -39,7 +39,7 @@
 #include "SEEKFREE_PRINTF.h"
 
 
-//------���ɿƼ���Ƭ����������ͷ�ļ�
+//------???????????????????????
 #include "zf_gpio.h"
 #include "zf_iomuxc.h"
 #include "zf_pit.h"
@@ -56,7 +56,7 @@
 #include "zf_rom_api.h"
 #include "zf_usb_cdc.h"
 
-//------���ɿƼ���Ʒ����ͷ�ļ�
+//------?????????????????
 #include "SEEKFREE_FONT.h"
 #include "SEEKFREE_18TFT.h"
 #include "SEEKFREE_IPS114_SPI.h"
@@ -78,18 +78,15 @@
 #include "SEEKFREE_SCC8660.h"
 
 //#include "SEEKFREE_MT9V03X_CSI_ME.h"
-//#include "search.h"
-#include "Picture.h"
-#include "search_new.h"
-#include "control.h"
-#include "pwm_me.h"
-#include "qtimer.h"
-
-
-
-#include "diff.h"
+#include "search.h"
 #include "function.h"
-#include "speed.h"
+#include "Picture.h"
+#include "control.h"
+#include"speed.h"
+#include "pwm.h"
+// #include "qtimer.h"
+// #include "diff.h"
+#include "speed_old.h"
 #include "EM.h"
 #include "Data_Send.h"
 #include "debug.h"

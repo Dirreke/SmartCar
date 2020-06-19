@@ -1,160 +1,59 @@
 #include "headfile.h"
 
-static float speed;
-#ifdef DIFF0
-static int active_diff_val;		//>0:active turn left;<0 active turn right
-static float diff_bias = 0.3;
-#endif
+float CarSpeed1 = 0, CarSpeed2 = 0;
 
-#define diff_throttle_ratio 2.0   //lib_speed_utility
 
-typedef enum{
-  ramp_speed_,
-  ramp_speed_hold_,
-  ramp_speed_reset_,
-  off
-} utility_typedef;
 
-static struct {
-  //function type
-  utility_typedef utility_type;
-  //control block
-  char start;
-  char stop;
-  char unused;
-  
-  //RAMP CONTROL
-  int ramp_count;
-  int ramp_reload_val;
-  float ramp_to;
-  float ramp_step;
-  int ramp_count_back;
-  
-  
-} utility_s;
-#ifdef DIFF0
-static struct {
-  float p;
-  float d;
-} diff_pid;
-
-//basic speed ctl
-/*0****************************************************
-***左右轮速度
-***输入参数：LIB_TIRE_LEFT/LIB_TIRE_RIGHT
-***输出参数：速度
-***说明：(active_diff_val)*speed/active_diff_val_range，右轮比左轮快。
-          diff_bias+speed 速度+偏置
-********************************************/
-
-float lib_get_speed(tire_type a)
+/*************************************************************************
+*  函数名称：void qtimer_AB_init(void)
+*  功能说明：编码器初始化
+*  参数说明：无
+*  函数返回：无
+*  修改时间：2020.06.20
+*  备    注：
+*************************************************************************/
+void qtimer_AB_init(void)
 {
-  return (a==LIB_TIRE_LEFT)? (diff_bias+speed-(float)(active_diff_val)*speed/2.0/active_diff_val_range):(diff_bias+speed+(float)(active_diff_val)*speed/2.0/active_diff_val_range);
+     //初始化 QTIMER_1 A相使用QTIMER1_TIMER0_D0 B相使用QTIMER1_TIMER1_D1
+    qtimer_quad_init(QTIMER_1,QTIMER1_TIMER0_C0,QTIMER1_TIMER1_C1);
+    //初始化 QTIMER_1 A相使用QTIMER1_TIMER2_D2 B相使用QTIMER1_TIMER3_D3
+    qtimer_quad_init(QTIMER_1,QTIMER1_TIMER2_C2,QTIMER1_TIMER3_C24);
 }
-#endif
 
-void lib_set_speed(float a)
+/*************************************************************************
+*  函数名称：void Get_Speed(void) 
+*  功能说明：获取电机的速度
+*  参数说明：无
+*  函数返回：无
+*  修改时间：2020.06.20
+*  备    注：
+*************************************************************************/
+void Get_Speed(void) 
 {
-  utility_s.start=0;
-  utility_s.stop=1;
-  speed = a;
-  #ifdef DIFF0
-  diff_bias = -active_diff_val*speed/active_diff_val_range/diff_throttle_ratio;//a/5;
-  #endif 
-  
-}
-#ifdef DIFF1
-float get_speed()
-{
-  return speed;
-}
-#endif 
+  int16 qd1_result;
+  int16 qd2_result;
 
-#ifdef DIFF0
-float get_speed()
-{
-  return speed+diff_bias;
-}
-//active diff function
-void lib_active_diff_init(void){
-	lib_active_diff_set(0);
-	diff_pid.p=1;
-	diff_pid.d=0.01;
-}
+  static float Speed10 = 0, Speed11 = 0, Speed12 = 0, Speed13 = 0;
+  static float Speed20 = 0, Speed21 = 0, Speed22 = 0, Speed23 = 0;
 
-void lib_active_diff_set(int a){
-	active_diff_val = a;
-}
+  qd1_result = -qtimer_quad_get(QTIMER_1, QTIMER1_TIMER0_C0);
+  qd2_result = qtimer_quad_get(QTIMER_1, QTIMER1_TIMER2_C2);
+  qtimer_quad_clear(QTIMER_1, QTIMER1_TIMER0_C0);
+  qtimer_quad_clear(QTIMER_1, QTIMER1_TIMER2_C2);
 
+  CarSpeed1 = qd1_result / (5.7 * PIT_TIME);
+  CarSpeed2 = qd2_result / (5.7 * PIT_TIME);
 
-void lib_active_diff_input(int a)
-{
-  static int last_diff;
-  lib_active_diff_set((int)(diff_pid.p * a + (a - last_diff) * diff_pid.d));
-  last_diff = a;
-}
-
-
-void lib_active_diff_set_p(float a){
-  diff_pid.p=a;
-}
-
-void lib_active_diff_set_d(float a){
-  diff_pid.d=a;
-}
-#endif
-
-/////////////////////////////////////////
-//speed lib init
-void lib_speed_init(void){
-    utility_s.ramp_count=0;
-    utility_s.ramp_step=0;
-    utility_s.ramp_to=0;
-    utility_s.start=0;
-    utility_s.stop=1;
-    utility_s.utility_type=off;
-    utility_s.ramp_reload_val=0;
-}
-
-void lib_speed_utility(void){
-  
-  if(utility_s.start==1){
-    switch(utility_s.utility_type){
-    case ramp_speed_:{
-      if(utility_s.ramp_count==0){
-        //utility_s.stop=1;
-        //utility_s.start=0;
-        utility_s.utility_type=off;
-      }
-      else{
-        speed=(utility_s.ramp_to-utility_s.ramp_step*utility_s.ramp_count);
-        #ifdef DIFF0
-        diff_bias = -active_diff_val*speed/active_diff_val_range/diff_throttle_ratio;//a/5;
-        #endif
-        utility_s.ramp_count = utility_s.ramp_count - 1;
-      }
-    }break;
-    case ramp_speed_hold_:{
-      //utility_s.ramp_count = utility_s.ramp_reload_val;
-      if(utility_s.ramp_reload_val>=utility_s.ramp_count) utility_s.ramp_count+=utility_s.ramp_count_back;          //decrease speed by 2 steps
-      utility_s.utility_type=ramp_speed_;               //go back to speed up mode
-      speed=(utility_s.ramp_to-utility_s.ramp_step*utility_s.ramp_count);
-      #ifdef DIFF0
-      diff_bias = -active_diff_val*speed/active_diff_val_range/diff_throttle_ratio;//a/5;
-      #endif
-    }break;
-    case ramp_speed_reset_:{
-       utility_s.ramp_count=utility_s.ramp_reload_val;
-        speed=(utility_s.ramp_to-utility_s.ramp_step*utility_s.ramp_count);
-        #ifdef DIFF0
-        diff_bias = -active_diff_val*speed/active_diff_val_range/diff_throttle_ratio;//a/5;
-        #endif
-        utility_s.utility_type=ramp_speed_;
-    }break;
-    case off:break;
-    default: break;
-    }
-  }
+  Speed13 = Speed12;
+  Speed12 = Speed11;
+  Speed11 = Speed10;
+  Speed10 = CarSpeed1;
+  Speed23 = Speed22;
+  Speed22 = Speed21;
+  Speed21 = Speed20;
+  Speed20 = CarSpeed2;
+  CarSpeed1 = (Speed10 + Speed11 + Speed12 + Speed13) / 4;
+  CarSpeed2 = (Speed20 + Speed21 + Speed22 + Speed23) / 4;
 }
 
 
@@ -165,3 +64,29 @@ void lib_speed_utility(void){
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//得到差速状态
+char get_diff_state(void){
+  return diff_state;
+}
+//开关差速
+void diff_on(void){
+  diff_state = DIFF_ON_VAL;
+}
+
+void diff_off(void){
+  diff_state = DIFF_OFF_VAL;
+}

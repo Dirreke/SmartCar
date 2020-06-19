@@ -57,6 +57,10 @@ void Pic_particular(void);
 void LR_Slope_fig(void);
 float Slope(int F1x, int F1y, int F2x, int F2y);
 
+void Threshold_change(void);
+void Pic_Fix_Line(void);
+void fangyuejie(void);
+
 void Pic_DrawMid(void);
 void Pic_DrawMid_und(void);
 

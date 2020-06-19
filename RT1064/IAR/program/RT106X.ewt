@@ -1947,9 +1947,6 @@
             <name>$PROJ_DIR$\..\..\CODE\debug.c</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\..\CODE\diff.c</name>
-        </file>
-        <file>
             <name>$PROJ_DIR$\..\..\CODE\EM.c</name>
         </file>
         <file>
@@ -1965,16 +1962,16 @@
             <name>$PROJ_DIR$\..\..\CODE\Picture.c</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\..\CODE\pwm_me.c</name>
+            <name>$PROJ_DIR$\..\..\CODE\pwm.c</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\..\CODE\qtimer.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\CODE\search_new.c</name>
+            <name>$PROJ_DIR$\..\..\CODE\search.c</name>
         </file>
         <file>
             <name>$PROJ_DIR$\..\..\CODE\speed.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\CODE\speed_old.c</name>
         </file>
     </group>
     <group>
@@ -1987,9 +1984,6 @@
         </file>
         <file>
             <name>$PROJ_DIR$\..\..\CODE\debug.h</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\CODE\diff.h</name>
         </file>
         <file>
             <name>$PROJ_DIR$\..\..\CODE\EM.h</name>
@@ -2007,19 +2001,19 @@
             <name>$PROJ_DIR$\..\..\CODE\Picture.h</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\..\CODE\pwm_me.h</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\CODE\qtimer.h</name>
+            <name>$PROJ_DIR$\..\..\CODE\pwm.h</name>
         </file>
         <file>
             <name>$PROJ_DIR$\..\..\USER\inc\RT106X_config.h</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\..\CODE\search_new.h</name>
+            <name>$PROJ_DIR$\..\..\CODE\search.h</name>
         </file>
         <file>
             <name>$PROJ_DIR$\..\..\CODE\speed.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\CODE\speed_old.h</name>
         </file>
     </group>
     <group>

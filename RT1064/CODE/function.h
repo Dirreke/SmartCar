@@ -39,7 +39,6 @@
 // undistort0Ô­£¬undistort1¸Ä
 /*********************************************************************/
 void Para_Init();
-extern float SetSpeed1,SetSpeed2;
-
+typedef struct PID{float P,I,D,OUT;}PID;
 
 #endif
