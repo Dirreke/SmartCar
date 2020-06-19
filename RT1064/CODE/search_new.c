@@ -638,7 +638,10 @@ void TurnRight_Process(void)
             break;
         }
     }
-
+    if(turn_stop < 28)
+    {
+        turn_stop_flag = 1;
+    }
     if (Road0_flag != 5 && Lef[turn_stop] > 45 && dis > 4)
     {
         Road05_count++;

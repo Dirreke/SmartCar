@@ -375,7 +375,7 @@ void Pic_DrawLRside(void)
         {
             if (search_flag2 == 0)
             {
-                for (j = Rig[i + 1]; j < Rig[i + 1] + 8; j++)
+                for (j = Rig[i + 1]; j < Rig[i + 1] + 8 && j < Last_col+1 ; j++)
                 {
                     if (Pixle[i][j] == 1 && Pixle[i][j - 1] == 1 && Pixle[i][j - 2] == 1 && Pixle[i][j - 3] == 1 && Pixle[i][j - 4] == 1 && Pixle[i][j - 5] == 1 && Pixle[i][j - 6] == 1 && Pixle[i][j + 1] == 0 && Pixle[i][j + 2] == 0)
                     {
@@ -388,7 +388,7 @@ void Pic_DrawLRside(void)
         }
         if (Side_flag == 0) //若没有找到跳变点，则放宽范围进行搜索
         {
-            for (j = Rig[i + 1] + 8; j <= Last_col; j++)
+            for (j = Rig[i + 1] + 8; j < Last_col + 1 ; j++)
             {
                 if (Pixle[i][j] == 1 && Pixle[i][j - 1] == 1 && Pixle[i][j - 2] == 1 && Pixle[i][j - 3] == 1 && Pixle[i][j - 4] == 1 && Pixle[i][j - 5] == 1 && Pixle[i][j - 6] == 1 && Pixle[i][j + 1] == 0 && Pixle[i][j + 2] == 0)
                 {
@@ -491,7 +491,7 @@ void Pic_DrawLRside(void)
         {
             if (search_flag2 == 0)
             {
-                for (j = Lef[i + 1]; j > Lef[i + 1] - 8; j--)
+                for (j = Lef[i + 1]; j > Lef[i + 1] - 8 && j > Fir_col-1; j--)
                 {
                     if (Pixle[i][j] == 1 && Pixle[i][j + 1] == 1 && Pixle[i][j + 2] == 1 && Pixle[i][j + 3] == 1 && Pixle[i][j + 4] == 1 && Pixle[i][j + 5] == 1 && Pixle[i][j + 6] == 1 && Pixle[i][j - 1] == 0 && Pixle[i][j - 2] == 0)
                     {
