@@ -9,17 +9,21 @@ extern  PID PID_SPEED,PID_TURN,PID_SPEED1,PID_SPEED2;
 extern float CarSpeed1;
 extern float CarSpeed2;
 
-extern float Turn_Cam_P_Table0[23];//ä»…è°ƒå‚ç”¨
-extern float Turn_Cam_D_Table0[23];//ä»…è°ƒå‚ç”¨
+extern float Turn_Cam_P_Table0[23];//½öµ÷²ÎÓÃ
+extern float Turn_Cam_D_Table0[23];//½öµ÷²ÎÓÃ
 extern float Turn_P;
 extern float Turn_D;
 
-//æ‘„åƒå¤´è½¬å¼¯å˜é‡
+//ÉãÏñÍ·×ªÍä±äÁ¿
 extern float offset ;
 
 extern float Turn_Cam_Out;
 extern float Turn_Cam_P;
 extern float Turn_Cam_D;
+
+extern float Turn_EM_Out;
+extern float Turn_EM_P;
+extern float Turn_EM_D;
 
 float limit_f(float n, float lower, float higher);
 float my_limit(float a, float limit);
@@ -28,11 +32,11 @@ void Get_Speed();
 void Moto_Out();
 void Speed_Control();
 void Speed_Control_Output();
-//æ‘„åƒå¤´è½¬å¼¯ç¨‹åº
+//ÉãÏñÍ·×ªÍä³ÌĞò
 void TurnFuzzyPD_Cam(void);
 void Turn_Cam();
 
-//ç”µç£
+//µç´Å
 int EM_angle_get(float lp,float l, float r,float rp);
 float limit_pos(float a);
 float EM_length_err_get(float l,float r,float pl, float pr);

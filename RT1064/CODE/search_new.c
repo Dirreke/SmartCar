@@ -41,6 +41,7 @@ void camera_dispose_main(void) //摄像头处理主函数
     LR_Slope_fig();    //左右边线斜率计算
     Allwhite_find();   //查找全白行//注释Allwhitestart2.Allwhiteend2
     Pic_find_circle(); //寻找环状黑线及拐点
+    start_stop_find();
     Road_rec();        //利用左右边线斜率识别赛道
     // start_stop_rec();    //识别起跑线
     Threshold_change();
@@ -497,7 +498,8 @@ void TurnLeft_Process(void)
     for (int i = Fir_row; i < 40; ++i)
     {
         if (Rig[i] < 40 && Rig[i + 1] <= 40 && Rig[i + 2] >= 40 && Rig[i + 3] > 40 &&
-            Rig[i + 5] - Rig[i + 3] < 7 && Rig[i + 7] - Rig[i + 5] < 7 && Rig[i + 9] - Rig[i + 7] < 7 && Rig[i + 11] - Rig[i + 9] < 7)
+            Rig[i + 5] - Rig[i + 3] < 7 && Rig[i + 7] - Rig[i + 5] < 7 && Rig[i + 9] - Rig[i + 7] < 7 && Rig[i + 11] - Rig[i + 9] < 7 &&
+             Rig[i+2]-Rig[i]<10)
         //可能较严，（出现连续边线为40）
         {
             temp = i;
@@ -588,7 +590,8 @@ void TurnRight_Process(void)
     for (int i = Fir_row; i < 40; ++i)
     {
         if (Lef[i] > 40 && Lef[i + 1] >= 40 && Lef[i + 2] <= 40 && Lef[i + 3] < 40 &&
-            Lef[i + 3] - Lef[i + 5] < 7 && Lef[i + 5] - Lef[i + 7] < 7 && Lef[i + 7] - Lef[i + 9] < 7 && Lef[i + 9] - Lef[i + 11] < 7)
+            Lef[i + 3] - Lef[i + 5] < 7 && Lef[i + 5] - Lef[i + 7] < 7 && Lef[i + 7] - Lef[i + 9] < 7 && Lef[i + 9] - Lef[i + 11] < 7 &&
+            Lef[i]- Lef[i+2] <10)
         {
             temp = i;
             break;

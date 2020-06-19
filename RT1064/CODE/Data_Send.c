@@ -204,20 +204,35 @@ void Variable_update(void)
 {
   Variable[0]= Cam_offset;//cntt;//ToF_distance;
   Variable[1]= Turn_Cam_Out;//cnt;//Turn_Cam_Out;//;//stat_slope;//gyroy_1;//Turn_Cam_Out;//Car_W;
-  Variable[2]= Lef_break_point;//Allwhiteend;//CarSpeed1;//speedTarget1; //Allwhiteend;
-  Variable[3]= Rig_break_point;//Allwhitestart;//CarSpeed2;//whitecnt;
+  Variable[2]= EM_offset;//Allwhiteend;//CarSpeed1;//speedTarget1; //Allwhiteend;
+  Variable[3]= Turn_EM_Out;//Allwhitestart;//CarSpeed2;//whitecnt;
   //  EM_Value_1=(float)(EM_Value_1*3.3/4096);
   // EM_Value_2=(float)(EM_Value_2*3.3/4096);
   // EM_Value_3=(float)(EM_Value_3*3.3/4096);
   // EM_Value_4=(float)(EM_Value_4*3.3/4096);
-  Variable[4]= Road2_flag;//EM_Value_1;//Cam_offset;
-  Variable[5]= Allwhitestart;
+  Variable[4]= Road;//EM_Value_1;//Cam_offset;
+  if(Road == 0)
+  {
+    Variable[5]= Road0_flag;
+  }
+  else if(Road == 1)
+  {
+    Variable[5]= Road1_flag;
+  }
+  else if(Road == 2)
+  {
+    Variable[5]= Road2_flag;
+  }
+  else if(Road == 7)
+  {
+    Variable[5]= Road7_flag;
+  }
   Variable[6]= turn_stop;
-  Variable[7]= Rig_slope;//EM_Value_4;
-  Variable[8]= Lef_slope;//EM_offset;
-  Variable[9]= Road;//speedTarget2;//Turn_Cam_Out;
-  Variable[10]=Road0_flag+Road1_flag*10+Road7_flag*100;
-  Variable[11]=CarSpeed1;
+  Variable[7]= Lef_slope;//EM_Value_4;
+  Variable[8]= Rig_slope;//EM_offset;
+  Variable[9]= Lef_break_point;//speedTarget2;//Turn_Cam_Out;
+  Variable[10]=Rig_break_point;
+  Variable[11]=Allwhitestart;
   Variable[12]=Allwhiteend;
   Variable[13]=Lef_circle;/*Rig_circle;*///Road6_flag ;//CarSpeed2;
   Variable[14]=Rig_circle;

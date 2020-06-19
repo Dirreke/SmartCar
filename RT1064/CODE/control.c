@@ -25,8 +25,12 @@ float CarSpeed1 = 0, CarSpeed2 = 0;
  * PD
  ********************************/
 float Turn_Cam_Out;
-float Turn_Cam_P = 2;
-float Turn_Cam_D = 1.5;
+float Turn_Cam_P = 0.85;
+float Turn_Cam_D = 0.8;
+
+float Turn_EM_Out;
+float Turn_EM_P = 0.8;
+float Turn_EM_D = 0.8;
 
 // float Cam_Offset_Table0[15] = {-192, -160, -130, -90, -60, -40, -20, 0, 20, 40, 60, 90, 130, 160, 192};
 //float Cam_Offset_Table0[15] = {-300, -250, -203, -141, -94, -63, -31, 0, 31, 63, 94, 141, 203, 250, 300};
