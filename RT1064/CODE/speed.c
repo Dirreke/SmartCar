@@ -1,7 +1,7 @@
 #include "headfile.h"
 
 float CarSpeed1 = 0, CarSpeed2 = 0;
-
+float SpeedGoal = 0;
 
 
 /*************************************************************************

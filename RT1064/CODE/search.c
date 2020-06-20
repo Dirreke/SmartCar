@@ -710,7 +710,7 @@ void Road1_zhuangtaiji(void)
     else if (Road1_flag == 2) //进左圆环2/4 开始补线进弯道
     {
         Road14_count++;
-        if (Road14_count > (int)(DIS_IN_CIRCLE * 10000 / (get_speed() * CAMERA_FPS)) + 1) //宏定义在function.h
+        if (Road14_count > (int)(DIS_IN_CIRCLE * 10000 / (SpeedGoal * CAMERA_FPS)) + 1) //宏定义在function.h
         {
             Road1_flag = 4;
             Road14_count = 0;
@@ -841,7 +841,7 @@ void Road2_zhuangtaiji(void)
     else if (Road2_flag == 2) //
     {
         Road24_count++;
-        if (Road24_count == (int)(DIS_IN_CIRCLE * 10000 / (get_speed() * CAMERA_FPS)) + 1)
+        if (Road24_count == (int)(DIS_IN_CIRCLE * 10000 / (SpeedGoal * CAMERA_FPS)) + 1)
         {
             Road24_count = 0;
             Road2_flag = 4;
@@ -1011,7 +1011,7 @@ void Road7_zhuangtaiji(void)
                         {
                             Road7_flag = 4; //停车
                             Road74_count = 0;
-                            lib_set_speed(0);
+                            SpeedGoal = 0;
                             stop_line = Fir_row;
                         }
                     }

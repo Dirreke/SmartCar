@@ -67,7 +67,7 @@ void Dubug_key(void)
                 threshold_offset += 1;
                 break;
             case 1:
-                lib_set_speed(get_speed() + 0.1);
+                SpeedGoal += 0.1;
                 break;
                 case 2:
                 PID_TURN_CAM_EXT.P +=0.02;
@@ -196,7 +196,7 @@ void Dubug_key(void)
                 threshold_offset -= 1;
                 break;
             case 1:
-                lib_set_speed(get_speed() - 0.1);
+                SpeedGoal -= 0.1;
                 break;
                   case 2:
                 PID_TURN_CAM_EXT.P -=0.02;
@@ -339,7 +339,7 @@ void ips_show_debug(int ips_num)
         break;
     case 1:
         ips200_showstr(0, 12, "speed: "); //显示字符串
-        ips200_showfloat(0, 13, get_speed(), 2, 2);
+        ips200_showfloat(0, 13, SpeedGoal, 2, 2);
         break;
         case 2:
         ips200_showstr(0,12,"P");

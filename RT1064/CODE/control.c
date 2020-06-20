@@ -111,8 +111,8 @@ void SpeedTarget_fig(void)
     diff_K0 = 0;
   }
 
-  speedTarget1 = get_speed() * (1 + diff_K0 / 2); //左侧车轮
-  speedTarget2 = get_speed() * (1 - diff_K0 / 2); //右侧车轮
+  speedTarget1 = SpeedGoal * (1 + diff_K0 / 2); //左侧车轮
+  speedTarget2 = SpeedGoal * (1 - diff_K0 / 2); //右侧车轮
 //后面可加上下坡部分
 }
 
