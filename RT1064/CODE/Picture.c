@@ -3,8 +3,9 @@
 uint8 Image_Use[CAMERA_H][CAMERA_W];
 uint16 Pixle[CAMERA_H][CAMERA_W]; //¶þÖµ»¯ºóÓÃÓÚOLEDÏÔuint16ÄÊ???//u16
 
-int threshold_offset = -5;
+int threshold_offset = 0;
 int threshold_offset2 = 0;
+int threshold_offset3 = -10;
 
 int whitecnt = 0;
 
@@ -15,6 +16,9 @@ int Mid[LCDH]; //µÀÂ·ÖÐÐÄµãµÄ×Ý×ø±ê
 int New_Lef[60];
 int New_Rig[60]; //ÓÃÓÚ´æ´¢ÄæÍ¸ÊÓ±ä»»ºóµÄºá×ø±ê
 int New_Mid[60];
+
+int Lef_circle_point = 0;
+int Rig_circle_point = 0;
 
 int Lef_edge = 0, Rig_edge = 0;
 
@@ -37,11 +41,11 @@ __ramfunc void Get_Use_Image(void)
 
 /***************************************************************
 *
-* º¯ÊýÃû³Æ£ºuint8_t GetOSTU(uint8_t tmImage[IMAGEH][IMAGEW])
+* º¯ÊýÃû³Æ£ºuint8_t GetOSTU(void)
 * ¹¦ÄÜËµÃ÷£ºÇóãÐÖµ´óÐ¡
 * ²ÎÊýËµÃ÷£º
 * º¯Êý·µ»Ø£ºãÐÖµ´óÐ¡
-* ÐÞ¸ÄÊ±¼ä£º2018Äê3ÔÂ27ÈÕ
+* ÐÞ¸ÄÊ±¼ä£º2020Äê6ÔÂ21ÈÕ
 * ±¸ ×¢£º
 ²Î¿¼£ºhttps://blog.csdn.net/zyzhangyue/article/details/45841255
       https://www.cnblogs.com/moon1992/p/5092726.html
@@ -55,8 +59,14 @@ Ostu·½·¨ÓÖÃû×î´óÀà¼ä²î·½·¨£¬Í¨¹ýÍ³¼ÆÕû¸öÍ¼ÏñµÄÖ±·½Í¼ÌØÐÔÀ´ÊµÏÖÈ«¾ÖãÐÖµTµÄ×Ô¶¯Ñ¡È
 6) i++£»×ªµ½4)£¬Ö±µ½iÎª256Ê±½áÊøµü´ú
 7£©½«×î´ógÏàÓ¦µÄiÖµ×÷ÎªÍ¼ÏñµÄÈ«¾ÖãÐÖµ
 È±ÏÝ:OSTUËã·¨ÔÚ´¦Àí¹âÕÕ²»¾ùÔÈµÄÍ¼ÏñµÄÊ±ºò£¬Ð§¹û»áÃ÷ÏÔ²»ºÃ£¬ÒòÎªÀûÓÃµÄÊÇÈ«¾ÖÏñËØÐÅÏ¢¡£
+
+¸Ä£º
+1. ¼ÆËãÖ±·½Í¼Ê±ÂËµô×îÐ¡¡¢×î´ó»Ò¶ÈÏñËØ½ÏÉÙµÄÀà±ð£¬¸ü¼Ó¾ùÔÈ
+2. ¹ýÁÁµÄµã£¨·´¹âµã£©ÖÃÎª1ÖÐËÑË÷µ½µÄÏñËØµã½Ï¶àµÄ×î´ó»Ò¶È-offset£¨ÈôÆä»Ò¶È¸ü´ó£©£¬±ÜÃâsobel½«ÆäÖÜ±ßÖÃºÚ
+3. TODO ·´¹âµãÃÜ¼¯ÇÒ¶àÊ±Ê§Ð§
+4. TODO ·´¹âµã²»ÁÁµ«ÅÔ±ß½Ï°µÊ±Ê§Ð§
 ***************************************************************/
-uint8_t GetOSTU(uint8_t tmImage[CAMERA_H][CAMERA_W])
+uint8_t GetOSTU(void)
 {
     int16_t i, j;
     uint32_t Amount = 0;
@@ -69,6 +79,7 @@ uint8_t GetOSTU(uint8_t tmImage[CAMERA_H][CAMERA_W])
     int16_t MinValue, MaxValue;
     uint8_t Threshold = 0;
     uint16 HistoGram[256]; //
+    int16_t Mincount = 0, Maxcount = 0;
 
     for (j = 0; j < 256; j++)
     {
@@ -79,21 +90,37 @@ uint8_t GetOSTU(uint8_t tmImage[CAMERA_H][CAMERA_W])
     {
         for (i = 0; i < CAMERA_W; i++)
         {
-            HistoGram[tmImage[j][i]]++; //Í³¼Æ»Ò¶È¼¶ÖÐÃ¿¸öÏñËØÔÚÕû·ùÍ¼ÏñÖÐµÄ¸öÊý
+            HistoGram[Image_Use[j][i]]++; //Í³¼Æ»Ò¶È¼¶ÖÐÃ¿¸öÏñËØÔÚÕû·ùÍ¼ÏñÖÐµÄ¸öÊý
         }
     }
 
     //»ñÈ¡×îÐ¡»Ò¶ÈµÄÖµ
-    for (MinValue = 0; MinValue < 256 && HistoGram[MinValue] == 0; MinValue++)
+    for (MinValue = 0; MinValue < 256 && HistoGram[MinValue] <= 5; MinValue++)
     {
-        ;
+        Mincount += HistoGram[MinValue];
+        HistoGram[MinValue] = 0;
     }
     //»ñÈ¡×î´ó»Ò¶ÈµÄÖµ
-    for (MaxValue = 255; MaxValue > MinValue && HistoGram[MaxValue] == 0; MaxValue--)
+    for (MaxValue = 255; MaxValue > MinValue && HistoGram[MaxValue] <= 15; MaxValue--)
     {
-        ;
+        Maxcount += HistoGram[MaxValue];
+        HistoGram[MaxValue] = 0;
+    }
+    //ÂË³ý·´¹âµã
+    for (j = START_LINE; j < CAMERA_H; j++)
+    {
+        for (i = 1; i < CAMERA_W; i++)
+        {
+            if (Image_Use[j][i] > MaxValue - 8)
+            {
+                Image_Use[j][i] = MaxValue - 8;
+            }
+        }
     }
 
+
+    HistoGram[MaxValue] += Maxcount;
+    HistoGram[MinValue] += Mincount;
     if (MaxValue == MinValue)
     {
         return MaxValue; // Í¼ÏñÖÐÖ»ÓÐÒ»¸öÑÕÉ«
@@ -144,17 +171,23 @@ void sobel(void) //Sobel±ßÑØ¼ì²â
     double tempsqrt = 0;
     uint8 threshold;
     uint8 Sobel_Threshold;
-    threshold = GetOSTU(Image_Use);
+    int threshold_temp;
+    threshold = GetOSTU();
     for (i = Fir_row; i < LCDH - 1; i++)
     {
         for (j = 1; j < LCDW - 1; j++)
         {
-
-            if (Image_Use[i][j] < threshold + threshold_offset + threshold_offset2)
+            if (j < 11 || j > 69)
+            {
+                threshold_temp = threshold + threshold_offset + threshold_offset2 + threshold_offset3;
+            }
+            else
+            {
+                threshold_temp = threshold + threshold_offset + threshold_offset2;
+            }
+            if (Image_Use[i][j] < threshold_temp)
             {
                 Pixle[i][j] = 0;
-                // if (j == 40)
-                // FINAL[i] = 0;
                 continue;
             }
 
@@ -239,8 +272,11 @@ void Pic_DrawLRside(void)
 {
     const int Middle = 41;
     int i = 0, j = 0;
-    int search_flag1 = 0, search_flag2 = 0;
-    int Side_flag;
+    bool search_flag1 = 0, search_flag2 = 0;
+    bool Side_flag;
+    bool Side_true = 0;
+    Lef_circle_point = 0;
+    Rig_circle_point = 0;
     for (i = Fir_row; i < LCDH; i++)
     {
         Rig[i] = 78;
@@ -258,7 +294,7 @@ void Pic_DrawLRside(void)
     for (i = Last_row; i > Last_row - 5; i--)
     {
 
-        for (j = Middle; j < Last_col; j++) 
+        for (j = Middle; j < Last_col; j++)
         {
             if (Pixle[i][j] == 1 && Pixle[i][j - 1] == 1 && Pixle[i][j - 2] == 1 && Pixle[i][j - 3] == 1 && Pixle[i][j - 4] == 1 && Pixle[i][j - 5] == 1 && Pixle[i][j - 6] == 1 && Pixle[i][j + 1] == 0 && Pixle[i][j + 2] == 0 && Pixle[i][j + 3] == 0)
             {
@@ -280,8 +316,7 @@ void Pic_DrawLRside(void)
             break;
         }
     }
-    
-    
+
     for (; i > Fir_row - 1; i--) //´Óµ×²ãÏòÉÏ»æÏß
     {
         search_flag1 = 0;
@@ -348,7 +383,7 @@ void Pic_DrawLRside(void)
 
             for (j = Lef[i + 1] + 5; j <= Rig[i + 1] - 10; j++)
             {
-                if (Pixle[i][j] == 1 && Pixle[i][j - 1] == 1 && Pixle[i][j - 2] == 1 && Pixle[i][j - 3] == 1 && Pixle[i][j - 4] == 1 && Pixle[i][j - 5] == 1 && Pixle[i][j - 6] == 1 && Pixle[i][j + 1] == 0 && Pixle[i][j + 2] == 0)
+                if (Pixle[i][j] == 1 && Pixle[i][j - 1] == 1 && Pixle[i][j - 2] == 1 && Pixle[i][j - 3] == 1 && Pixle[i][j - 4] == 1 && Pixle[i][j - 5] == 1 && Pixle[i][j - 6] == 1 && Pixle[i][j + 1] == 0 && Pixle[i][j + 2] == 0 && Pixle[i][j + 3] == 0)
                 {
                     Rig[i] = j;
                     Side_flag = 1;
@@ -360,9 +395,9 @@ void Pic_DrawLRside(void)
         {
             if (search_flag1 == 0)
             {
-                for (j = Rig[i + 1] - 9; j < Rig[i + 1]; j++)
+                for (j = Rig[i + 1] - 9; j < Rig[i + 1] && j < Last_col; j++)
                 {
-                    if (Pixle[i][j] == 1 && Pixle[i][j - 1] == 1 && Pixle[i][j - 2] == 1 && Pixle[i][j - 3] == 1 && Pixle[i][j - 4] == 1 && Pixle[i][j - 5] == 1 && Pixle[i][j - 6] == 1 && Pixle[i][j + 1] == 0 && Pixle[i][j + 2] == 0)
+                    if (Pixle[i][j] == 1 && Pixle[i][j - 1] == 1 && Pixle[i][j - 2] == 1 && Pixle[i][j - 3] == 1 && Pixle[i][j - 4] == 1 && Pixle[i][j - 5] == 1 && Pixle[i][j - 6] == 1 && Pixle[i][j + 1] == 0 && Pixle[i][j + 2] == 0 && Pixle[i][j + 3] == 0)
                     {
                         Rig[i] = j;
                         Side_flag = 1;
@@ -375,9 +410,9 @@ void Pic_DrawLRside(void)
         {
             if (search_flag2 == 0)
             {
-                for (j = Rig[i + 1]; j < Rig[i + 1] + 8 && j < Last_col+1 ; j++)
+                for (j = Rig[i + 1]; j < Rig[i + 1] + 8 && j < Last_col; j++)
                 {
-                    if (Pixle[i][j] == 1 && Pixle[i][j - 1] == 1 && Pixle[i][j - 2] == 1 && Pixle[i][j - 3] == 1 && Pixle[i][j - 4] == 1 && Pixle[i][j - 5] == 1 && Pixle[i][j - 6] == 1 && Pixle[i][j + 1] == 0 && Pixle[i][j + 2] == 0)
+                    if (Pixle[i][j] == 1 && Pixle[i][j - 1] == 1 && Pixle[i][j - 2] == 1 && Pixle[i][j - 3] == 1 && Pixle[i][j - 4] == 1 && Pixle[i][j - 5] == 1 && Pixle[i][j - 6] == 1 && Pixle[i][j + 1] == 0 && Pixle[i][j + 2] == 0 && Pixle[i][j + 3] == 0)
                     {
                         Rig[i] = j;
                         Side_flag = 1;
@@ -388,9 +423,9 @@ void Pic_DrawLRside(void)
         }
         if (Side_flag == 0) //ÈôÃ»ÓÐÕÒµ½Ìø±äµã£¬Ôò·Å¿í·¶Î§½øÐÐËÑË÷
         {
-            for (j = Rig[i + 1] + 8; j < Last_col + 1 ; j++)
+            for (j = Rig[i + 1] + 8; j < Last_col; j++)
             {
-                if (Pixle[i][j] == 1 && Pixle[i][j - 1] == 1 && Pixle[i][j - 2] == 1 && Pixle[i][j - 3] == 1 && Pixle[i][j - 4] == 1 && Pixle[i][j - 5] == 1 && Pixle[i][j - 6] == 1 && Pixle[i][j + 1] == 0 && Pixle[i][j + 2] == 0)
+                if (Pixle[i][j] == 1 && Pixle[i][j - 1] == 1 && Pixle[i][j - 2] == 1 && Pixle[i][j - 3] == 1 && Pixle[i][j - 4] == 1 && Pixle[i][j - 5] == 1 && Pixle[i][j - 6] == 1 && Pixle[i][j + 1] == 0 && Pixle[i][j + 2] == 0 && Pixle[i][j + 3] == 0)
                 {
                     Rig[i] = j;
                     Side_flag = 1;
@@ -463,7 +498,7 @@ void Pic_DrawLRside(void)
         {
             for (j = Rig[i + 1] - 5; j >= Lef[i + 1] + 10; j--)
             {
-                if (Pixle[i][j] == 1 && Pixle[i][j + 1] == 1 && Pixle[i][j + 2] == 1 && Pixle[i][j + 3] == 1 && Pixle[i][j + 4] == 1 && Pixle[i][j + 5] == 1 && Pixle[i][j + 6] == 1 && Pixle[i][j - 1] == 0 && Pixle[i][j - 2] == 0)
+                if (Pixle[i][j] == 1 && Pixle[i][j + 1] == 1 && Pixle[i][j + 2] == 1 && Pixle[i][j + 3] == 1 && Pixle[i][j + 4] == 1 && Pixle[i][j + 5] == 1 && Pixle[i][j + 6] == 1 && Pixle[i][j - 1] == 0 && Pixle[i][j - 2] == 0 && Pixle[i][j - 3] == 0)
                 {
                     Lef[i] = j;
                     Side_flag = 1;
@@ -475,9 +510,9 @@ void Pic_DrawLRside(void)
         {
             if (search_flag1 == 0)
             {
-                for (j = Lef[i + 1] + 9; j > Lef[i + 1]; j--)
+                for (j = Lef[i + 1] + 9; j > Lef[i + 1] && j > Fir_col; j--)
                 {
-                    if (Pixle[i][j] == 1 && Pixle[i][j + 1] == 1 && Pixle[i][j + 2] == 1 && Pixle[i][j + 3] == 1 && Pixle[i][j + 4] == 1 && Pixle[i][j + 5] == 1 && Pixle[i][j + 6] == 1 && Pixle[i][j - 1] == 0 && Pixle[i][j - 2] == 0)
+                    if (Pixle[i][j] == 1 && Pixle[i][j + 1] == 1 && Pixle[i][j + 2] == 1 && Pixle[i][j + 3] == 1 && Pixle[i][j + 4] == 1 && Pixle[i][j + 5] == 1 && Pixle[i][j + 6] == 1 && Pixle[i][j - 1] == 0 && Pixle[i][j - 2] == 0 && Pixle[i][j - 3] == 0)
                     {
                         Lef[i] = j;
                         Side_flag = 1;
@@ -490,9 +525,9 @@ void Pic_DrawLRside(void)
         {
             if (search_flag2 == 0)
             {
-                for (j = Lef[i + 1]; j > Lef[i + 1] - 8 && j > Fir_col-1; j--)
+                for (j = Lef[i + 1]; j > Lef[i + 1] - 8 && j > Fir_col; j--)
                 {
-                    if (Pixle[i][j] == 1 && Pixle[i][j + 1] == 1 && Pixle[i][j + 2] == 1 && Pixle[i][j + 3] == 1 && Pixle[i][j + 4] == 1 && Pixle[i][j + 5] == 1 && Pixle[i][j + 6] == 1 && Pixle[i][j - 1] == 0 && Pixle[i][j - 2] == 0)
+                    if (Pixle[i][j] == 1 && Pixle[i][j + 1] == 1 && Pixle[i][j + 2] == 1 && Pixle[i][j + 3] == 1 && Pixle[i][j + 4] == 1 && Pixle[i][j + 5] == 1 && Pixle[i][j + 6] == 1 && Pixle[i][j - 1] == 0 && Pixle[i][j - 2] == 0 && Pixle[i][j - 3] == 0)
                     {
                         Lef[i] = j;
                         Side_flag = 1;
@@ -503,12 +538,160 @@ void Pic_DrawLRside(void)
         }
         if (Side_flag == 0) //ÈôÃ»ÓÐÕÒµ½Ìø±äµã£¬Ôò·Å¿í·¶Î§½øÐÐËÑË÷
         {
-            for (j = Lef[i + 1] - 8; j > Fir_col - 1; j--)
+            for (j = Lef[i + 1] - 8; j > Fir_col; j--)
             {
-                if (Pixle[i][j] == 1 && Pixle[i][j + 1] == 1 && Pixle[i][j + 2] == 1 && Pixle[i][j + 3] == 1 && Pixle[i][j + 4] == 1 && Pixle[i][j + 5] == 1 && Pixle[i][j + 6] == 1 && Pixle[i][j - 1] == 0 && Pixle[i][j - 2] == 0)
+                if (Pixle[i][j] == 1 && Pixle[i][j + 1] == 1 && Pixle[i][j + 2] == 1 && Pixle[i][j + 3] == 1 && Pixle[i][j + 4] == 1 && Pixle[i][j + 5] == 1 && Pixle[i][j + 6] == 1 && Pixle[i][j - 1] == 0 && Pixle[i][j - 2] == 0 && Pixle[i][j - 3] == 0)
                 {
                     Lef[i] = j;
                     Side_flag = 1;
+                    break;
+                }
+            }
+        }
+
+        if (Lef[i] >= Rig[i])
+        {
+            Lef[i] = 1;
+            Rig[i] = 78;
+        }
+    }
+
+    if (Road1_flag == 1 || Road1_flag == 2)
+    {
+        // for (i = Fir_row; i < Last_row - 4 && Lef[i] - Fir_col < 2 && Lef[i] - Lef[i + 2] < 5 && Lef[i + 2] - Lef[i + 4] < 5; ++i)
+        // {
+        //     ;
+        // }
+        // if (i == Last_row - 4)
+        // {
+        //     return;
+        // }
+        // ++i;
+        // for (; i < Last_row; ++i)
+        // {
+        //     if (Lef[i - 1] > 2)
+        //     {
+
+        //     }
+        // }
+        for (i = Fir_row; i < Last_row - 28; ++i)
+        {
+            if (Lef[i] - Fir_col > 10 || Lef[i + 1] - Fir_col > 10)
+            {
+                continue;
+            }
+            for (j = Lef[i]; j < 40; j++)
+            {
+                if (Pixle[i][j] == 1 && Pixle[i][j - 1] == 1 && Pixle[i][j - 2] == 1 && Pixle[i][j - 3] == 1 && Pixle[i][j - 4] == 1 && Pixle[i][j - 5] == 1 && Pixle[i][j - 6] == 1 && Pixle[i][j + 1] == 0 && Pixle[i][j + 2] == 0 && Pixle[i][j + 3] == 0)
+                {
+                    Rig[i] = j;
+                    Side_true = 1;
+                    break;
+                }
+            }
+            if (Side_true == 1)
+            {
+                Side_true = 0;
+                for (j = Lef[i + 1]; j < 40; j++)
+                {
+                    if (Pixle[i + 1][j] == 1 && Pixle[i + 1][j - 1] == 1 && Pixle[i + 1][j - 2] == 1 && Pixle[i + 1][j - 3] == 1 && Pixle[i + 1][j - 4] == 1 && Pixle[i + 1][j - 5] == 1 && Pixle[i + 1][j - 6] == 1 && Pixle[i + 1][j + 1] == 0 && Pixle[i + 1][j + 2] == 0 && Pixle[i + 1][j + 3] == 0)
+                    {
+                        Rig[i + 1] = j;
+                        Side_true = 1;
+                        break;
+                    }
+                }
+            }
+
+            if (Side_true && Rig[i + 1] - Rig[i] < 10)
+            {
+                Side_true = 1;
+                break;
+            }
+            else
+            {
+                Side_true = 0;
+            }
+        }
+        if (Side_true == 1)
+        {
+            i += 2;
+            for (; i < Last_row; ++i)
+            {
+                for (j = Rig[i - 1]; j < Rig[i - 1] + 10; ++j)
+                {
+                    if (Pixle[i][j + 1] == 0 && Pixle[i][j + 2] == 0) //Á½Hei
+                    {
+                        Rig[i] = j;
+                        Lef_circle_point = i;
+                        break;
+                    }
+                }
+                if (j == Rig[i - 1] + 10)
+                {
+                    break;
+                }
+            }
+        }
+    }
+    Side_true = 0;
+    if (Road2_flag == 1 || Road2_flag == 2)
+    {
+        for (i = Fir_row; i < Last_row - 28; ++i)
+        {
+            if (Last_col - Rig[i] > 10 || Last_col - Rig[i + 1] > 10)
+            {
+                continue;
+            }
+            for (j = Rig[i]; j > 40; j--)
+            {
+                if (Pixle[i][j] == 1 && Pixle[i][j + 1] == 1 && Pixle[i][j + 2] == 1 && Pixle[i][j + 3] == 1 && Pixle[i][j + 4] == 1 && Pixle[i][j + 5] == 1 && Pixle[i][j + 6] == 1 && Pixle[i][j - 1] == 0 && Pixle[i][j - 2] == 0 && Pixle[i][j - 3] == 0)
+                {
+                    Lef[i] = j;
+                    Side_true = 1;
+                    break;
+                }
+            }
+            if (Side_true == 1)
+            {
+                Side_true = 0;
+                for (j = Rig[i + 1]; j > 40; j--)
+                {
+                    if (Pixle[i + 1][j] == 1 && Pixle[i + 1][j + 1] == 1 && Pixle[i + 1][j + 2] == 1 && Pixle[i + 1][j + 3] == 1 && Pixle[i + 1][j + 4] == 1 && Pixle[i + 1][j + 5] == 1 && Pixle[i + 1][j + 6] == 1 && Pixle[i + 1][j - 1] == 0 && Pixle[i + 1][j - 2] == 0 && Pixle[i + 1][j - 3] == 0)
+                    {
+                        Lef[i + 1] = j;
+                        Side_true = 1;
+                        break;
+                    }
+                }
+            }
+
+            if (Side_true && Lef[i] - Lef[i + 1] < 10)
+            {
+                Side_true = 1;
+                break;
+            }
+            else
+            {
+                Side_true = 0;
+            }
+        }
+        if (Side_true == 1)
+        {
+            i += 2;
+            for (; i < Last_row; ++i)
+            {
+                for (j = Lef[i - 1]; j > Lef[i - 1] - 10; --j)
+                {
+                    if (Pixle[i][j - 1] == 0 && Pixle[i][j - 2] == 0) //Á½Hei
+                    {
+                        Lef[i] = j;
+                        Rig_circle_point = i;
+                        break;
+                    }
+                }
+                if (j == Lef[i - 1] - 10)
+                {
                     break;
                 }
             }
@@ -712,9 +895,9 @@ void Pic_particular(void)
     Rig_edge = 0;
     for (i = 59; i > Fir_row; i--)
     {
-        if (Lef[i] <= Fir_col)
+        if (Lef[i] - Fir_col < 3)
             Lef_edge += 1;
-        if (Rig[i] >= Last_col)
+        if (Last_col - Rig[i] < 3)
             Rig_edge += 1;
     }
     // for (i = 59; i > 0; i--) //Æ½¾ùÖµ·¨ÖÐÐÄÏß»æÖÆ
@@ -872,29 +1055,37 @@ void Threshold_change(void)
     }
     else if (Road == 1)
     {
-        switch (Road1_flag)
-        {
-        case 4:
-            threshold_offset2 = -5;
-            break;
+        // switch (Road1_flag)
+        // {
+        // case 4:
+        //     threshold_offset2 = -5;
+        //     break;
+        //     // case 5:
 
-        default:
-            threshold_offset2 = 0;
-            break;
-        }
+        // case 3:
+        //     threshold_offset2 = -5;
+        //     break;
+        // default:
+        //     threshold_offset2 = 0;
+        //     break;
+        // }
+        threshold_offset2 = -5;
     }
     else if (Road == 2)
     {
-        switch (Road2_flag)
-        {
-        case 4:
-            threshold_offset2 = -5;
-            break;
-
-        default:
-            threshold_offset2 = 0;
-            break;
-        }
+        // switch (Road2_flag)
+        // {
+        // case 4:
+        //     threshold_offset2 = -5;
+        //     break;
+        // case 3:
+        //     threshold_offset2 = -5;
+        //     break;
+        // default:
+        //     threshold_offset2 = 0;
+        //     break;
+        // }
+        threshold_offset2 = -5;
     }
 }
 /*************************************************************************
@@ -912,14 +1103,18 @@ void Pic_Fix_Line(void)
 {
     float slope;
     float slope2;
+    static float slope_static;
     // int i;
     // int j;
     // int k;
     int xtemp, ytemp, get_flag = 0;
-    static float stat_slope;
-    static float stat_slope2;
-    static char road1_flag1 = 1; //0±íÊ¾ÒÑ¼ÆËãÍê½øÔ²»·Ð±ÂÊ£¬1±íÊ¾ÒÑ¾­³öÔ²»·£¬ÔÙ´Î½øÔ²»·Ê±¼ÆËã²¹ÏßÐ±ÂÊ
-    static char road2_flag1 = 1;
+    //static float stat_slope;
+    //static float stat_slope2;
+    //static char road1_flag1 = 1; //0±íÊ¾ÒÑ¼ÆËãÍê½øÔ²»·Ð±ÂÊ£¬1±íÊ¾ÒÑ¾­³öÔ²»·£¬ÔÙ´Î½øÔ²»·Ê±¼ÆËã²¹ÏßÐ±ÂÊ
+    //static char road2_flag1 = 1;
+    //bool road1_flag2 = 0, road2_flag2 = 0;
+    //static bool road1_flag3 = 0, road2_flag3 = 0;
+    static bool road1_flag4, road2_flag4;
     if (Road == 0)
     {
         if (Road0_flag == 1)
@@ -985,14 +1180,14 @@ void Pic_Fix_Line(void)
                     }
                 }
             }
-            get_flag=0;
+            get_flag = 0;
             for (int i = Fir_row; i < Allwhiteend; ++i)
             {
                 if (Rig[i] >= Last_col)
                 {
                     continue;
                 }
-                if (Rig[i] - 40 < 20 && Rig[i+2] - Rig[i] < 5 && Rig[i + 3] - Rig[i + 1] < 5 && Rig[i+2] - Rig[i] >  0 && Rig[i + 3] - Rig[i + 1] > 0)
+                if (Rig[i] - 40 < 20 && Rig[i + 2] - Rig[i] < 5 && Rig[i + 3] - Rig[i + 1] < 5 && Rig[i + 2] - Rig[i] > 0 && Rig[i + 3] - Rig[i + 1] > 0)
                 {
                     xtemp = Rig[i];
                     ytemp = i;
@@ -1009,7 +1204,7 @@ void Pic_Fix_Line(void)
                         continue;
                     }
 
-                    if (Rig[i] - Rig[i-2] < 5 && Rig[i - 1] - Rig[i - 3] < 5 && Rig[i] - Rig[i-2] > 0 && Rig[i - 1] - Rig[i - 3] > 0)
+                    if (Rig[i] - Rig[i - 2] < 5 && Rig[i - 1] - Rig[i - 3] < 5 && Rig[i] - Rig[i - 2] > 0 && Rig[i - 1] - Rig[i - 3] > 0)
                     {
                         slope = Slope(Rig[i], i, xtemp, ytemp); //Slope(int F1x,int F1y,int F2x,int F2y)
                         if (slope != 999)
@@ -1028,11 +1223,11 @@ void Pic_Fix_Line(void)
             {
                 for (int i = 55; i > Allwhitestart; i--)
                 {
-                    if ( Last_col - Rig[i]< 5)
+                    if (Last_col - Rig[i] < 5)
                     {
                         continue;
                     }
-                    if (Rig[i - 1] - Rig[i - 3] < 5 && Rig[i - 3] - Rig[i - 5] < 5 &&Rig[i - 1] - Rig[i - 3] > 0 && Rig[i - 3] - Rig[i - 5] > 0 )
+                    if (Rig[i - 1] - Rig[i - 3] < 5 && Rig[i - 3] - Rig[i - 5] < 5 && Rig[i - 1] - Rig[i - 3] > 0 && Rig[i - 3] - Rig[i - 5] > 0)
                     {
                         slope = Slope(Rig[i], i, Rig[i - 5], i - 5); //Slope(int F1x,int F1y,int F2x,int F2y)
                         if (slope != 999)
@@ -1047,7 +1242,6 @@ void Pic_Fix_Line(void)
                     }
                 }
             }
-
         }
         else if (Road0_flag == 2)
         {
@@ -1136,38 +1330,82 @@ void Pic_Fix_Line(void)
             Pic_undistort(1, 0);
             return;
         }
-    
     }
-    
+
     //×óÔ²»·²¹Ïß´¦Àí
     else if (Road == 1)
     {
-        if (Road1_flag == 2)
+        if (Road1_flag == 1)
         {
-            for (int i = Last_row - 13; i > Fir_row; i--)
+            if (road1_flag4 == 0)
             {
-                if (road1_flag1)
+                slope_static = 999;
+                road1_flag4 = 1;
+            }
+            // road1_flag2 = 0;
+            for (int i = Fir_row; i < Last_row - 20; i++)
+            {
+                if (Lef[i] - Fir_col < 2)
                 {
-                    if (abs(Lef[i] - Fir_col) < 25)
-                        continue;
-                    stat_slope = Slope(Lef[i], i, 75, 54);
-                    road1_flag1 = 0;
+                    continue;
                 }
-
-                if (stat_slope != 999)
+                if (Lef[i - 4] - Lef[i - 2] < 5 && Lef[i - 2] - Lef[i] < 5 && Lef[i] - Lef[i + 1] > 15 && Pixle[i + 2][Lef[i] - 5] == 1)
                 {
-                    for (int k = Fir_row + 3; k < 55; k++)
-                    {
-                        Rig[k] = (int)(60 - (57 - k) / stat_slope);
-                    }
-                    Pic_undistort(0, 1);
+
+                    slope_static = Slope(Lef[i], i, 75, 54);
+                    // road1_flag2 = 1;
                     break;
                 }
             }
+            if (slope_static != 999)
+            {
+                for (int k = Fir_row + 3; k < 55; k++)
+                {
+                    Rig[k] = (int)(75 - (54 - k) / slope_static);
+                }
+                Pic_undistort(0, 1);
+            }
+        }
+
+        else if (Road1_flag == 2)
+        {
+            road1_flag4 = 0;
+            slope = Slope(Rig[Lef_circle_point], Lef_circle_point, 75, 54);
+            if (slope != 999)
+            {
+                for (int k = Lef_circle_point; k < 55; k++)
+                {
+                    Rig[k] = (int)(75 - (54 - k) / slope);
+                }
+                Pic_undistort(0, 1);
+            }
+
+            // for (int i = Last_row - 13; i > Fir_row; i--)
+            // {
+            //     if (road1_flag1)
+            //     {
+            //         if (abs(Lef[i] - Fir_col) < 25)
+            //             continue;
+            //         stat_slope = Slope(Lef[i], i, 75, 54);
+            //         road1_flag1 = 0;
+            //     }
+
+            //     if (stat_slope != 999)
+            //     {
+            //         for (int k = Fir_row + 3; k < 55; k++)
+            //         {
+            //             Rig[k] = (int)(75 - (54 - k) / stat_slope);
+            //         }
+            //         Pic_undistort(0, 1);
+            //         break;
+            //     }
+            // }
         }
         else if (Road1_flag == 4)
         {
-            road1_flag1 = 1; //±íÊ¾ÒÑ¾­³öÔ²»·£¬ÔÙ´Î½øÔ²»·Ê±¼ÆËã²¹ÏßÐ±ÂÊ
+            //road1_flag3 = 0;
+            //road1_flag4 = 0;
+            // road1_flag1 = 1; //±íÊ¾ÒÑ¾­³öÔ²»·£¬ÔÙ´Î½øÔ²»·Ê±¼ÆËã²¹ÏßÐ±ÂÊ
             for (int i = turn_stop; i >= Fir_row; --i)
             {
                 Rig[i] = 78;
@@ -1176,18 +1414,18 @@ void Pic_Fix_Line(void)
         }
         else if (Road1_flag == 3)
         {
-            for (int j = Last_row + 3; j > Fir_row; j--)
+            for (int j = Last_row - 3; j > Fir_row; j--)
             {
 
-                if (abs(Rig[j] - Last_col) < 2)
+                if (abs(Rig[j] - Last_col) < 2 || Rig[j] - Rig[j - 2] >= 5 || Rig[j - 2] - Rig[j - 4] >= 5 || Rig[j - 4] - Rig[j - 6] >= 5 || Rig[j] - Rig[j - 2] < 0 || Rig[j - 2] - Rig[j - 4] < 0 || Rig[j - 4] - Rig[j - 6] < 0)
                     continue;
                 slope = Slope(Rig[j - 1], j - 1, Rig[j - 6], j - 6);
 
-                if (stat_slope != 999)
+                if (slope != 999)
                 {
                     for (int k = j + 1; k > Fir_row + 5; k--)
                     {
-                        Rig[k] = (int)(64 - (57 - k) / slope);
+                        Rig[k] = (int)(Rig[j] - (j - k) / slope);
                     }
                     Pic_undistort(0, 1);
                     break;
@@ -1201,32 +1439,80 @@ void Pic_Fix_Line(void)
     }
     else if (Road == 2)
     {
-        if (Road2_flag == 2)
+        if (Road2_flag == 1)
         {
-            for (int i = Last_row - 13; i > Fir_row; i--)
+            if (road2_flag4 == 0)
             {
-                if (road2_flag1)
+                slope_static = 999;
+                road2_flag4 = 1;
+            }
+            // road2_flag2 = 0;
+            for (int i = Fir_row; i < Last_row - 20; i++)
+            {
+                if (Last_col - Rig[i] < 2)
                 {
-                    if (abs(Rig[i] - Last_col) < 25)
-                        continue;
-                    stat_slope2 = Slope(Rig[i], i, 4, 54);
-                    road2_flag1 = 0;
+                    continue;
                 }
-
-                if (stat_slope2 != 999)
+                if (Rig[i] - Rig[i - 2] < 5 && Rig[i - 2] - Rig[i - 4] < 5 && Rig[i + 1] - Rig[i] > 15 && Pixle[i + 2][Rig[i] + 5] == 1)
                 {
-                    for (int k = Fir_row + 3; k < 55; k++)
-                    {
-                        Lef[k] = (int)(15 - (57 - k) / stat_slope2);
-                    }
-                    Pic_undistort(1, 0);
+                    slope_static = Slope(Rig[i], i, 4, 54);
+                    // road2_flag2 = 1;
+                    // road2_flag3 = 1;
                     break;
                 }
             }
+            // if (Rig_circle_point == 0)
+            // {
+            //     road2_flag2 = 1;
+            // }
+            if (slope_static != 999)
+            {
+                for (int k = Fir_row + 3; k < 55; k++)
+                {
+                    Lef[k] = (int)(4 - (54 - k) / slope_static);
+                }
+                Pic_undistort(1, 0);
+            }
+        }
+        else if (Road2_flag == 2)
+        {
+            road2_flag4 = 0;
+            slope = Slope(Lef[Rig_circle_point], Rig_circle_point, 4, 54);
+            if (slope != 999)
+            {
+                for (int k = Rig_circle_point; k < 55; k++)
+                {
+                    Lef[k] = (int)(4 - (54 - k) / slope);
+                }
+                Pic_undistort(1, 0);
+            }
+
+            // for (int i = Last_row - 13; i > Fir_row; i--)
+            // {
+            //     if (road2_flag1)
+            //     {
+            //         if (abs(Rig[i] - Last_col) < 25)
+            //             continue;
+            //         stat_slope2 = Slope(Rig[i], i, 4, 54);
+            //         road2_flag1 = 0;
+            //     }
+
+            //     if (stat_slope2 != 999)
+            //     {
+            //         for (int k = Fir_row + 3; k < 55; k++)
+            //         {
+            //             Lef[k] = (int)(15 - (57 - k) / stat_slope2);
+            //         }
+            //         Pic_undistort(1, 0);
+            //         break;
+            //     }
+            // }
         }
         else if (Road2_flag == 4)
         {
-            road2_flag1 = 1;
+            // road2_flag3 = 0;
+            // road2_flag4 = 0;
+            // road2_flag1 = 1;
             for (int i = turn_stop; i >= Fir_row; --i)
             {
                 Lef[i] = 1;
@@ -1235,10 +1521,10 @@ void Pic_Fix_Line(void)
         }
         else if (Road2_flag == 3)
         {
-            for (int j = Last_row + 3; j > Fir_row; j--)
+            for (int j = Last_row - 3; j > Fir_row; j--)
             {
 
-                if (abs(Lef[j] - Fir_col) < 2)
+                if (abs(Lef[j] - Fir_col) < 2 || Lef[j - 2] - Lef[j] >= 5 || Lef[j - 4] - Lef[j - 2] >= 5 || Lef[j - 6] - Lef[j - 4] >= 5 || Lef[j - 2] - Lef[j] < 0 || Lef[j - 4] - Lef[j - 2] < 0 || Lef[j - 6] - Lef[j - 4] < 0)
                     continue;
                 slope2 = Slope(Lef[j - 1], j - 1, Lef[j - 6], j - 6);
 
@@ -1246,7 +1532,7 @@ void Pic_Fix_Line(void)
                 {
                     for (int k = j + 1; k > Fir_row + 5; k--)
                     {
-                        Lef[k] = (int)(15 - (57 - k) / slope2);
+                        Lef[k] = (int)(Lef[j] - (j - k) / slope2);
                     }
                     Pic_undistort(1, 0);
                     break;
@@ -1421,7 +1707,6 @@ void fangyuejie(void)
     }
 }
 
-
 /*************************************************************************
 *  º¯ÊýÃû³Æ£ºvoid Pic_DrawMid(void)
 *  ¹¦ÄÜËµÃ÷£º»æÖÆ×óÓÒ±ßÏßÏß
@@ -1526,7 +1811,7 @@ void Pic_DrawMid_und(void)
         for (i = 0; i < 60; i++)
         {
 
-            if (New_Lef[i] != MIDMAP)
+            if (New_Lef[i] != -MIDMAP)
             {
                 New_Mid[i] = New_Lef[i] + ROAD_HALF_WIDTH;
             }

@@ -1970,9 +1970,6 @@
         <file>
             <name>$PROJ_DIR$\..\..\CODE\speed.c</name>
         </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\CODE\speed_old.c</name>
-        </file>
     </group>
     <group>
         <name>user_h</name>
@@ -2011,9 +2008,6 @@
         </file>
         <file>
             <name>$PROJ_DIR$\..\..\CODE\speed.h</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\CODE\speed_old.h</name>
         </file>
     </group>
     <group>

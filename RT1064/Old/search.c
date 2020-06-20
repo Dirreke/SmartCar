@@ -2,8 +2,8 @@
 
 #define max_block(a, b) ((a) > (b) ? (a) : (b))
 
-int threshold_offset = -5;
-int threshold_offset2 = 0;
+// int threshold_offset = -5;
+// int threshold_offset2 = 0;
 
 int Lef[LCDH];     //道路左分离点的纵坐标
 int Rig[LCDH];     //道路右分离点的纵坐标

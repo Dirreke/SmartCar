@@ -56,23 +56,23 @@ void Turn_Cam(void)
 PID TurnFuzzyPD_Cam(void)
 {
     PID PID_TURN_CAM;
-    static const float Cam_Offset_Table0[23] = {-140, -130, -110, -100, -80, -60, -50, -40, -30, -20, 0, 20, 30, 40, 50, 60, 80, 100, 110, 130, 140};
-    static const float Turn_Cam_P_Table0[23] = {1.29, 1.20, 1.15, 1.20, 1.20, 1.30, 1.35, 1.60, 1.5, 1.45, 0.3, 1.45, 1.5, 1.60, 1.35, 1.30, 1.20, 1.20, 1.15, 1.20, 1.29};
-    static const float Turn_Cam_D_Table0[23] = {1.29, 1.20, 1.15, 1.20, 1.20, 1.30, 1.35, 1.60, 1.5, 1.45, 0.01, 1.45, 1.5, 1.60, 1.35, 1.30, 1.20, 1.20, 1.15, 1.20, 1.29};
+    static const float Cam_Offset_Table0[21] = {-140, -130, -110, -100, -80, -60, -50, -40, -30, -20, 0, 20, 30, 40, 50, 60, 80, 100, 110, 130, 140};
+    static const float Turn_Cam_P_Table0[21] = {1.29, 1.20, 1.15, 1.20, 1.20, 1.30, 1.35, 1.60, 1.5, 1.45, 0.3, 1.45, 1.5, 1.60, 1.35, 1.30, 1.20, 1.20, 1.15, 1.20, 1.29};
+    static const float Turn_Cam_D_Table0[21] = {1.29, 1.20, 1.15, 1.20, 1.20, 1.30, 1.35, 1.60, 1.5, 1.45, 0.01, 1.45, 1.5, 1.60, 1.35, 1.30, 1.20, 1.20, 1.15, 1.20, 1.29};
 
     if (Cam_offset <= Cam_Offset_Table0[0])
     {
         PID_TURN_CAM.P = Turn_Cam_P_Table0[0];
         PID_TURN_CAM.D = Turn_Cam_D_Table0[0];
     }
-    else if (Cam_offset >= Cam_Offset_Table0[22])
+    else if (Cam_offset >= Cam_Offset_Table0[20])
     {
-        PID_TURN_CAM.P = Turn_Cam_P_Table0[22];
-        PID_TURN_CAM.D = Turn_Cam_D_Table0[22];
+        PID_TURN_CAM.P = Turn_Cam_P_Table0[20];
+        PID_TURN_CAM.D = Turn_Cam_D_Table0[20];
     }
     else
     {
-        for (int i = 0; i < 22; i++)
+        for (int i = 0; i < 20; i++)
         {
             if (Cam_offset >= Cam_Offset_Table0[i] && Cam_offset < Cam_Offset_Table0[i + 1])
             {

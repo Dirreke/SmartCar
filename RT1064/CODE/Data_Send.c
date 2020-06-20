@@ -5,24 +5,19 @@
 
 uint16 Pic_new[600];
 int cnt;
-int cntt=1;
-uint8 ch=0;
-float temp1=0;
+int cntt = 1;
+uint8 ch = 0;
+float temp1 = 0;
 float Variable[20];
 
-
-void Send_Data(void){
-    Pic_send_new();
-    Variable_update();
-    Send_Begin();
-    Send_Variable();
-    Send_Img();
+void Send_Data(void)
+{
+  Pic_send_new();
+  Variable_update();
+  Send_Begin();
+  Send_Variable();
+  Send_Img();
 }
-
-
-
-
-
 
 /*************************************************************************
 *  函数名称：void Send_Begin(void)
@@ -50,106 +45,107 @@ void Send_Begin(void)
 
 *************************************************************************/
 
-
 void Send_Img(void)
 {
 
-    uint16 i=0,num;
-    My_Put_Char(0x55);
-    My_Put_Char(0xaa);
-    My_Put_Char(0xff);
-    My_Put_Char(0xa2);
-    My_Put_Char(0x01); //小锟斤拷状态
+  uint16 i = 0, num;
+  My_Put_Char(0x55);
+  My_Put_Char(0xaa);
+  My_Put_Char(0xff);
+  My_Put_Char(0xa2);
+  My_Put_Char(0x01); //小锟斤拷状态
 
-    num = cnt + 2 +180;//4+4*2
-    //num = cnt+2+180;
-    //num=cont+2+180+36;
-    //统计将要传输的数据量 2是因为要传输关键字即0xf0和0xf2   (0xf2 所有数据结束，0xf0图像数据结束，180=60*3)
-    //180是边线的位 36是变量的位 如果不传输就不要加上！
+  num = cnt + 2 + 180; //4+4*2
+  //num = cnt+2+180;
+  //num=cont+2+180+36;
+  //统计将要传输的数据量 2是因为要传输关键字即0xf0和0xf2   (0xf2 所有数据结束，0xf0图像数据结束，180=60*3)
+  //180是边线的位 36是变量的位 如果不传输就不要加上！
 
-    My_Put_Char(BYTE0(num));
-    My_Put_Char(BYTE1(num));
-    for(i=0;i<cnt;i++)
-    {
-      My_Put_Char(Pic_new[i]);
-    }
-//    for(i=0;i< 60;i++)
-//    {
-//            My_Put_Char(Lef[i]);
-//            My_Put_Char(Rig[i]);
-//            My_Put_Char(0xff);
-//    }
-    My_Put_Char(0xf0);  //代表图像数据发完了
-    /******************星号围起来的可以不传输*******************/
+  My_Put_Char(BYTE0(num));
+  My_Put_Char(BYTE1(num));
+  for (i = 0; i < cnt; i++)
+  {
+    My_Put_Char(Pic_new[i]);
+  }
+  //    for(i=0;i< 60;i++)
+  //    {
+  //            My_Put_Char(Lef[i]);
+  //            My_Put_Char(Rig[i]);
+  //            My_Put_Char(0xff);
+  //    }
+  My_Put_Char(0xf0); //代表图像数据发完了
+  /******************星号围起来的可以不传输*******************/
 
-    ////////////////////////传输左右边线和计算得到的中线///////////
-    for(i=0;i<60;i++){
-      My_Put_Char(Lef[i]);//New_Lef[i]/10+40);
-    }
-    for(i=0;i<60;i++){
-      My_Put_Char(Mid[i]);
-    }
-    for(i=0;i<60;i++){
-      My_Put_Char(Rig[i]+1);//New_Rig[i]/10+40);
-    }
+  ////////////////////////传输左右边线和计算得到的中线///////////
+  for (i = 0; i < 60; i++)
+  {
+    My_Put_Char(Lef[i]); //New_Lef[i]/10+40);
+  }
+  for (i = 0; i < 60; i++)
+  {
+    My_Put_Char(Mid[i]);
+  }
+  for (i = 0; i < 60; i++)
+  {
+    My_Put_Char(Rig[i] + 1); //New_Rig[i]/10+40);
+  }
 
-    /*****************************************************/
-    My_Put_Char(0xf2); //代表整个数据都发完了
-
-
+  /*****************************************************/
+  My_Put_Char(0xf2); //代表整个数据都发完了
 }
 
 void Pic_send_new(void)
 {
   int i;
   int j;
-  cnt=0;
+  cnt = 0;
 #ifdef ori_pic
-  for(i=0;i<60;i++)
+  for (i = 0; i < 60; i++)
   {
-    if(Pixle[i][0]==1)
+    if (Pixle[i][0] == 1)
     {
-      Pic_new[cnt]=0;
+      Pic_new[cnt] = 0;
       cnt++;
     }
-    for(j=1;j<80;j++)
+    for (j = 1; j < 80; j++)
     {
-      if(Pixle[i][j]!=Pixle[i][j-1])
+      if (Pixle[i][j] != Pixle[i][j - 1])
       {
-        Pic_new[cnt]=j;
+        Pic_new[cnt] = j;
         cnt++;
       }
     }
-    Pic_new[cnt]=0xff;
+    Pic_new[cnt] = 0xff;
     cnt++;
   }
 #endif
 
 #ifdef und_pic
-    for(i=0;i<60;i++)
+  for (i = 0; i < 60; i++)
   {
-    if((int)(New_Lef[i]+450)*0.089 <= 0)
+    if ((int)(New_Lef[i] + 450) * 0.089 <= 0)
     {
-     Pic_new[cnt]=0;
-     cnt++;
-     Pic_new[cnt]=1;
-     cnt++;
-    }else{
-    Pic_new[cnt]=(int)(New_Lef[i]+450)*0.089;
-    cnt++;
-    Pic_new[cnt]=(int)(New_Lef[i]+450)*0.089+1;
-    cnt++;
+      Pic_new[cnt] = 0;
+      cnt++;
+      Pic_new[cnt] = 1;
+      cnt++;
+    }
+    else
+    {
+      Pic_new[cnt] = (int)(New_Lef[i] + 450) * 0.089;
+      cnt++;
+      Pic_new[cnt] = (int)(New_Lef[i] + 450) * 0.089 + 1;
+      cnt++;
     }
 
-    Pic_new[cnt]=(int)(New_Rig[i]+450)*0.089;
+    Pic_new[cnt] = (int)(New_Rig[i] + 450) * 0.089;
     cnt++;
-    Pic_new[cnt]=(int)(New_Rig[i]+450)*0.089+1;
+    Pic_new[cnt] = (int)(New_Rig[i] + 450) * 0.089 + 1;
     cnt++;
-    Pic_new[cnt]=0xff;
+    Pic_new[cnt] = 0xff;
     cnt++;
   }
 #endif
-
 }
 /*************************************************************************
 *  函数名称：void My_Put_Char(void)
@@ -163,32 +159,31 @@ void Pic_send_new(void)
 
 void My_Put_Char(char tmp)
 {
-    uart_putchar(USART_1,tmp);//根据实际的串口号来修改
+  uart_putchar(USART_1, tmp); //根据实际的串口号来修改
 }
 
-void Send_Variable(void){
+void Send_Variable(void)
+{
 
   My_Put_Char(0x55);
   My_Put_Char(0xaa);
   My_Put_Char(0xff);
   My_Put_Char(0x01);
   My_Put_Char(16);
-  for(int i=0;i<16;i++)
+  for (int i = 0; i < 16; i++)
   {
-            temp1=Variable[i];
-            ch=BYTE0(temp1);
-            My_Put_Char(ch);
-            ch=BYTE1(temp1);
-            My_Put_Char(ch);
-            ch=BYTE2(temp1);
-            My_Put_Char(ch);
-            ch=BYTE3(temp1);
-            My_Put_Char(ch);
+    temp1 = Variable[i];
+    ch = BYTE0(temp1);
+    My_Put_Char(ch);
+    ch = BYTE1(temp1);
+    My_Put_Char(ch);
+    ch = BYTE2(temp1);
+    My_Put_Char(ch);
+    ch = BYTE3(temp1);
+    My_Put_Char(ch);
   }
   My_Put_Char(0x01);
-
 }
-
 
 /*************************************************************************
 *  函数名称：void Variable_update(void)
@@ -202,44 +197,39 @@ void Send_Variable(void){
 
 void Variable_update(void)
 {
-  Variable[0]= Cam_offset;//cntt;//ToF_distance;
-  Variable[1]= Turn_Cam_Out;//cnt;//Turn_Cam_Out;//;//stat_slope;//gyroy_1;//Turn_Cam_Out;//Car_W;
-  Variable[2]= EM_offset;//Allwhiteend;//CarSpeed1;//speedTarget1; //Allwhiteend;
-  Variable[3]= Turn_EM_Out;//Allwhitestart;//CarSpeed2;//whitecnt;
-  //  EM_Value_1=(float)(EM_Value_1*3.3/4096);
-  // EM_Value_2=(float)(EM_Value_2*3.3/4096);
-  // EM_Value_3=(float)(EM_Value_3*3.3/4096);
-  // EM_Value_4=(float)(EM_Value_4*3.3/4096);
-  Variable[4]= Road;//EM_Value_1;//Cam_offset;
-  if(Road == 0)
+  Variable[0] = Cam_offset;   //EM_Value_1;// Cam_offset;//cntt;//ToF_distance;
+  Variable[1] = Turn_Cam_Out; //EM_Value_2; //Turn_Cam_Out;//cnt;//Turn_Cam_Out;//;//stat_slope;//gyroy_1;//Turn_Cam_Out;//Car_W;
+  Variable[2] = Road;         //EM_Value_1;//Cam_offset;
+  if (Road == 0)
   {
-    Variable[5]= Road0_flag;
+    Variable[3] = Road0_flag;
   }
-  else if(Road == 1)
+  else if (Road == 1)
   {
-    Variable[5]= Road1_flag;
+    Variable[3] = Road1_flag;
   }
-  else if(Road == 2)
+  else if (Road == 2)
   {
-    Variable[5]= Road2_flag;
+    Variable[3] = Road2_flag;
   }
-  else if(Road == 7)
+  else if (Road == 7)
   {
-    Variable[5]= Road7_flag;
+    Variable[3] = Road7_flag;
   }
-  Variable[6]= turn_stop;
-  Variable[7]= Lef_slope;//EM_Value_4;
-  Variable[8]= Rig_slope;//EM_offset;
-  Variable[9]= Lef_break_point;//speedTarget2;//Turn_Cam_Out;
-  Variable[10]=Rig_break_point;
-  Variable[11]=Allwhitestart;
-  Variable[12]=Allwhiteend;
-  Variable[13]=Lef_circle;/*Rig_circle;*///Road6_flag ;//CarSpeed2;
-  Variable[14]=Rig_circle;
-  Variable[15]=whitecnt;//Road1_turnout;//limit_pos(EM_Value_1/1.5-EM_Value_2/3.5);//speedTarget1;//map_line[MIN(50,AllWhileStartLine)];
+  Variable[4] = EM_Value_1;//speedTarget1; //Allwhiteend;
+  Variable[5] = EM_Value_2; //
+  Variable[6] = EM_Value_3;
+  Variable[7] = EM_Value_4; //EM_Value_4;
+
+  Variable[8] = CarSpeed1; //EM_offset;
+  Variable[9] = Lef_slope; //speedTarget2;//Turn_Cam_Out;
+  Variable[10] = Rig_slope;
+  Variable[11] = Lef_break_point;
+  Variable[12] = Rig_break_point;
+  Variable[13] = Allwhitestart; /*Rig_circle;*/ //Road6_flag ;//CarSpeed2;
+  Variable[14] = Allwhiteend;
+  Variable[15] = 100 + Lef_circle * 10 + Rig_circle; //whitecnt;//Road1_turnout;//limit_pos(EM_Value_1/1.5-EM_Value_2/3.5);//speedTarget1;//map_line[MIN(50,AllWhileStartLine)];
   // Variable[13]=EM_Value_2;//speedTarget2;//lib_active_diff_get();//map_line[MIN(50,AllWhileEndLine)];_
   // Variable[14]=EM_Value_3;//Cam_Block_State;//MotorOut1;//CarSpeed1;//(MotorOut1+MotorOut2)/2;
   // Variable[15]=ToF_distance;//EM_Value_4;//ToF_distance;//MotorOut2;//CarSpeed2;
-
-
 }

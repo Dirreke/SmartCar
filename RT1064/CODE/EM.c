@@ -81,8 +81,8 @@ void EM_Get(void)
 {
   EM_Value_1=(int)adc_mean_filter(ADC_1,ADC1_CH3_B14 ,5);
   EM_Value_2=(int)adc_mean_filter(ADC_1,ADC1_CH4_B15 ,5);
-  EM_Value_3=(int)adc_mean_filter(ADC_1,ADC1_CH10_B21,5);
-  EM_Value_4=(int)adc_mean_filter(ADC_1,ADC1_CH12_B23,5);
+  EM_Value_4=(int)adc_mean_filter(ADC_1,ADC1_CH10_B21,5);
+  EM_Value_3=(int)adc_mean_filter(ADC_1,ADC1_CH12_B23,5);
 
 
   EM_Value_1=(float)(EM_Value_1*3.3/4096);

@@ -44,7 +44,7 @@ extern uint8 Sobel_Threshold_Near;
 
 __ramfunc void Get_Use_Image(void);
 
-uint8_t GetOSTU(uint8_t tmImage[CAMERA_H][CAMERA_W]);
+uint8_t GetOSTU(void);
 void sobel(void); //Sobel边沿检测
 
 void Pic_noi_elim(void);
@@ -76,6 +76,8 @@ extern uint16 Pixle[CAMERA_H][CAMERA_W]; //二值化后用于OLED显uint16氖???//u16
 
 extern int threshold_offset;
 extern int threshold_offset2;
+extern int threshold_offset3;
+
 
 extern int whitecnt;
 
@@ -86,6 +88,9 @@ extern int Mid[LCDH]; //道路中心点的纵坐标
 extern int New_Lef[60];
 extern int New_Rig[60]; //用于存储逆透视变换后的横坐标
 extern int New_Mid[60];
+
+extern int Lef_circle_point;
+extern int Rig_circle_point;
 
 extern int Lef_edge, Rig_edge;
 
