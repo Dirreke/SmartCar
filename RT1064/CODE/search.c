@@ -229,8 +229,8 @@ void start_stop_find(void)
             break;
         }
     }
-    Road_end = (Lef_end > Rig_end ? Lef_end : Rig_end);
-    if (Road_end < 30)
+    Road_end = (Lef_end < Rig_end ? Lef_end : Rig_end);
+    if (Road_end > 30)
     {
         return;
     }
@@ -241,7 +241,7 @@ void start_stop_find(void)
         {
             continue;
         }
-        if (Rig[i + 7] - Rig[i + 3] > 25)
+        if (Rig[i + 3] - Rig[i + 7] > 25)
         {
             tiaobian1 = i;
             break;
@@ -284,7 +284,7 @@ void start_stop_find(void)
         {
             continue;
         }
-        if (Lef[i + 3] - Lef[i + 7] > 25)
+        if (Lef[i + 7] - Lef[i + 3] > 25)
         {
             tiaobian1 = i;
             break;
