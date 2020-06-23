@@ -8,6 +8,10 @@ extern void My_Put_Char(char tmp);
 extern void Send_Begin(void);
 extern void Send_Img(void);
 extern void Pic_send_new(void);
+
+extern void Send_Img2(void);
+extern void Pic_send_new2(void);
+
 extern void Send_Variable(void);
 extern void Variable_update(void);
 extern void Send_Data(void);
