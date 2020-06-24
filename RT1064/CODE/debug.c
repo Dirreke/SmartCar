@@ -14,7 +14,7 @@ void Debug_Init(void)
 void Dubug_key(void)
 {
     static int ips_num = 0;
-    const int page_num = 4;
+    const int page_num = 6;
     if (gpio_get(DEBUG_KEY0))
     {
         return;
@@ -69,11 +69,17 @@ void Dubug_key(void)
             case 1:
                 SpeedGoal += 0.1;
                 break;
-                case 2:
-                PID_TURN_CAM_EXT.P +=0.02;
+            case 2:
+                PID_TURN_CAM_EXT.P += 0.02;
                 break;
-                case 3:
+            case 3:
                 PID_TURN_CAM_EXT.D += 0.02;
+                break;
+            case 4:
+                PID_STRAIGHT_EM.P += 0.01;
+                break;
+            case 5:
+                PID_STRAIGHT_EM.D += 0.01;
                 break;
 
                 /*
@@ -198,11 +204,17 @@ void Dubug_key(void)
             case 1:
                 SpeedGoal -= 0.1;
                 break;
-                  case 2:
-                PID_TURN_CAM_EXT.P -=0.02;
+            case 2:
+                PID_TURN_CAM_EXT.P -= 0.02;
                 break;
-                case 3:
+            case 3:
                 PID_TURN_CAM_EXT.D -= 0.02;
+                break;
+            case 4:
+                PID_STRAIGHT_EM.P -= 0.01;
+                break;
+            case 5:
+                PID_STRAIGHT_EM.D -= 0.01;
                 break;
                 /*
             case 32:
@@ -341,13 +353,21 @@ void ips_show_debug(int ips_num)
         ips200_showstr(0, 12, "speed: "); //显示字符串
         ips200_showfloat(0, 13, SpeedGoal, 2, 2);
         break;
-        case 2:
-        ips200_showstr(0,12,"P");
-        ips200_showfloat(0,13,PID_TURN_CAM_EXT.P,2,2);
+    case 2:
+        ips200_showstr(0, 12, "P_CAM");
+        ips200_showfloat(0, 13, PID_TURN_CAM_EXT.P, 2, 2);
         break;
-        case 3:
-                ips200_showstr(0,12,"D");
-        ips200_showfloat(0,13,PID_TURN_CAM_EXT.D,2,2);
+    case 3:
+        ips200_showstr(0, 12, "D_CAM");
+        ips200_showfloat(0, 13, PID_TURN_CAM_EXT.D, 2, 2);
+        break;
+    case 4:
+        ips200_showstr(0, 12, "P_EM");
+        ips200_showfloat(0, 13, PID_STRAIGHT_EM.P, 2, 2);
+        break;
+    case 5:
+        ips200_showstr(0, 12, "D_EM");
+        ips200_showfloat(0, 13, PID_STRAIGHT_EM.D, 2, 2);
         break;
         /*
     case 32:

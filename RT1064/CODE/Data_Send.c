@@ -224,10 +224,10 @@ void Variable_update(void)
   Variable[8] = CarSpeed1; //EM_offset;
   Variable[9] = Lef_slope; //speedTarget2;//Turn_Cam_Out;
   Variable[10] = Rig_slope;
-  Variable[11] = Lef_break_point;
-  Variable[12] = Rig_break_point;
-  Variable[13] = Allwhitestart; /*Rig_circle;*/ //Road6_flag ;//CarSpeed2;
-  Variable[14] = Allwhiteend;
+  Variable[11] = Turn_EM_Out;  //Lef_break_point*100+Rig_break_point;
+  Variable[12] = EM_center_offset;
+  Variable[13] = EM_straight_offset; /*Rig_circle;*/ //Road6_flag ;//CarSpeed2;
+  Variable[14] = Allwhitestart * 100 +Allwhiteend;
   Variable[15] = 100 + Lef_circle * 10 + Rig_circle; //whitecnt;//Road1_turnout;//limit_pos(EM_Value_1/1.5-EM_Value_2/3.5);//speedTarget1;//map_line[MIN(50,AllWhileStartLine)];
   // Variable[13]=EM_Value_2;//speedTarget2;//lib_active_diff_get();//map_line[MIN(50,AllWhileEndLine)];_
   // Variable[14]=EM_Value_3;//Cam_Block_State;//MotorOut1;//CarSpeed1;//(MotorOut1+MotorOut2)/2;
@@ -240,7 +240,7 @@ void Pic_send_new2(void)
     int j;
     cnt = 0;
 #ifdef ori_pic
-    for (i = 0 : i < 20; ++i)
+    for (i = 0 ; i < 20; ++i)
     {
         j = i * 2.5 + 5;
         if (New_Lef[j] < -395)
@@ -368,7 +368,7 @@ void Send_Img2(void)
     /******************星号围起来的可以不传输*******************/
 
     ////////////////////////传输左右边线和计算得到的中线///////////
-    for (i = 0 : i < 20; ++i)
+    for (i = 0 ; i < 20; ++i)
     {
         j = i * 2.5 + 5;
         if (New_Lef[j] < -395)
@@ -381,7 +381,7 @@ void Send_Img2(void)
         }
         else
         {
-            My_Put_Char(New_Lef[j]);
+            My_Put_Char((New_Lef[j]+395)/10);
         }
     }
     for (i = 20; i < 60; i++)
@@ -389,7 +389,7 @@ void Send_Img2(void)
         My_Put_Char(Lef[i]); //New_Lef[i]/10+40);
     }
 
-    for (i = 0 : i < 20; ++i)
+    for (i = 0 ; i < 20; ++i)
     {
         j = i * 2.5 + 5;
         if (New_Mid[j] < -395)
@@ -402,7 +402,7 @@ void Send_Img2(void)
         }
         else
         {
-            My_Put_Char(New_Mid[j]);
+            My_Put_Char((New_Mid[j]+395)/10);
         }
     }
     for (i = 20; i < 60; i++)
@@ -410,20 +410,20 @@ void Send_Img2(void)
         My_Put_Char(Mid[i]);
     }
 
-    for (i = 0 : i < 20; ++i)
+    for (i = 0 ; i < 20; ++i)
     {
         j = i * 2.5 + 5;
         if (New_Rig[j] < -395)
         {
             My_Put_Char(0);
         }
-        else if (New_Rig[j] > 385)
+        else if (New_Rig[j] > 395)
         {
             My_Put_Char(79);
         }
         else
         {
-            My_Put_Char(New_Rig[j]+1);
+            My_Put_Char((New_Rig[j]+395)/10);
         }
     }
 

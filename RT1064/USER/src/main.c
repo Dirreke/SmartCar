@@ -94,6 +94,7 @@ int main(void)
             }
 
             EM_main();
+            Turn_EM();
             Send_Data();
             Dubug_key();
 

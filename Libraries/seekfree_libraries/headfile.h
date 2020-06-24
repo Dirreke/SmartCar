@@ -77,7 +77,9 @@
 #include "SEEKFREE_SCC8660_CSI.h"
 #include "SEEKFREE_SCC8660.h"
 
+#include "math.h"
 //#include "SEEKFREE_MT9V03X_CSI_ME.h"
+
 #include "search.h"
 #include "function.h"
 #include "Picture.h"

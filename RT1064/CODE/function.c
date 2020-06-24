@@ -16,6 +16,11 @@ void Para_Init()
 	// PID_TURN.D=-0.0042*325;//-0.0053;//-0.004//3.7йт╦д-0.0035;
         PID_TURN_CAM_EXT.P = 0.85;
         PID_TURN_CAM_EXT.D = 0.8;
+        PID_CENTER_EM.P = 9;//4
+        PID_CENTER_EM.D = 12;//9
+        PID_STRAIGHT_EM.P = 0.3;
+        PID_STRAIGHT_EM.D = 0.7;
+        
         MotorOut1=0;
         MotorOut2=0;
 

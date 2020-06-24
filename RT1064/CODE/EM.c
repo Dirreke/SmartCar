@@ -1,32 +1,27 @@
 #include "headfile.h"
 #include "EM.h"
 float EM_Value_1 = 0;
-float EM_Value_10 = 0;  //电磁1本次的值
-float EM_Value_11 = 0;  //电磁1上次的值
-float EM_Value_12 = 0;  //电磁1上上次的值
+
 float EM_Value_2 = 0;
 float EM_Value_3 = 0;
 float EM_Value_4 = 0;
-float EM_Value_40 = 0; 
-float EM_Value_41 = 0; 
-float EM_Value_42 = 0; 
 
-float EM_offset_buff[4]={0};
-float EM_offset = 0 ;
-int Curve_Cnt=0;
-int EM_Peak_Time_Cnt = 0;
-int EM_Ring_State = 0;
-float EM_Value_23_Sum = 0;
-float EM_Ring_Min = 6;
-float EM_Ring_Max = 0;
-float Lef_EM_Sum = 0;
-float Rig_EM_Sum = 0;
-float EM_2_Max = 0;
-float EM_3_Max = 0;
-float EM_Road2_Cnt = 0;
-float EM_Road1_Cnt = 0;
+float EM_center_offset = 0;
+float EM_straight_offset = 0;
+// int Curve_Cnt = 0;
+// int EM_Peak_Time_Cnt = 0;
+// int EM_Ring_State = 0;
+// float EM_Value_23_Sum = 0;
+// float EM_Ring_Min = 6;
+// float EM_Ring_Max = 0;
+// float Lef_EM_Sum = 0;
+// float Rig_EM_Sum = 0;
+// float EM_2_Max = 0;
+// float EM_3_Max = 0;
+// float EM_Road2_Cnt = 0;
+// float EM_Road1_Cnt = 0;
 
-
+#if 0
 int limit_em(int n, int lower, int higher){
   if(n<lower){
     return lower;
@@ -43,11 +38,7 @@ float abs_f_em(float n){
   if(n>=0) return n;
   else return -n;
 }
-
-
-
-
-
+#endif
 
 /*************************************************************************
 *  函数名称：void EM_init(void)
@@ -61,10 +52,10 @@ float abs_f_em(float n){
 *************************************************************************/
 void EM_Init(void)
 {
-  adc_init(ADC_1,ADC1_CH3_B14 ,ADC_12BIT);//同一个ADC模块分辨率应该设置为一样的，如果设置不一样，则最后一个初始化时设置的分辨率生效
-  adc_init(ADC_1,ADC1_CH4_B15 ,ADC_12BIT);
-  adc_init(ADC_1,ADC1_CH10_B21,ADC_12BIT);
-  adc_init(ADC_1,ADC1_CH12_B23,ADC_12BIT);
+  adc_init(ADC_1, ADC1_CH3_B14, ADC_12BIT); //同一个ADC模块分辨率应该设置为一样的，如果设置不一样，则最后一个初始化时设置的分辨率生效
+  adc_init(ADC_1, ADC1_CH4_B15, ADC_12BIT);
+  adc_init(ADC_1, ADC1_CH10_B21, ADC_12BIT);
+  adc_init(ADC_1, ADC1_CH12_B23, ADC_12BIT);
 }
 
 /*************************************************************************
@@ -79,34 +70,169 @@ void EM_Init(void)
 // int stop_cnt;
 void EM_Get(void)
 {
-  EM_Value_1=(int)adc_mean_filter(ADC_1,ADC1_CH3_B14 ,5);
-  EM_Value_2=(int)adc_mean_filter(ADC_1,ADC1_CH4_B15 ,5);
-  EM_Value_4=(int)adc_mean_filter(ADC_1,ADC1_CH10_B21,5);
-  EM_Value_3=(int)adc_mean_filter(ADC_1,ADC1_CH12_B23,5);
+  EM_Value_1 = (int)adc_mean_filter(ADC_1, ADC1_CH3_B14, 5);
+  EM_Value_2 = (int)adc_mean_filter(ADC_1, ADC1_CH4_B15, 5);
+  EM_Value_4 = (int)adc_mean_filter(ADC_1, ADC1_CH10_B21, 5);
+  EM_Value_3 = (int)adc_mean_filter(ADC_1, ADC1_CH12_B23, 5);
 
+  EM_Value_1 = (float)(EM_Value_1 * 3.3 / 4096);
+  EM_Value_2 = (float)(EM_Value_2 * 3.3 / 4096);
+  EM_Value_3 = (float)(EM_Value_3 * 3.3 / 4096);
+  EM_Value_4 = (float)(EM_Value_4 * 3.3 / 4096);
+  //   if(EM_Value_1 < 0.1 && EM_Value_2 < 0.1 && EM_Value_3 < 0.1 && EM_Value_4 < 0.1 && Road != 5 && Road != 3)
+  //   {
+  //     stop_cnt++;
 
-  EM_Value_1=(float)(EM_Value_1*3.3/4096);
-  EM_Value_2=(float)(EM_Value_2*3.3/4096);
-  EM_Value_3=(float)(EM_Value_3*3.3/4096);
-  EM_Value_4=(float)(EM_Value_4*3.3/4096);
-//   if(EM_Value_1 < 0.1 && EM_Value_2 < 0.1 && EM_Value_3 < 0.1 && EM_Value_4 < 0.1 && Road != 5 && Road != 3)
-//   {
-//     stop_cnt++;
-   
-//   }
-//   else
-//   {
-//     stop_cnt = 0;
-//   }
-//   if(stop_cnt > 5)
-//   {
-//     Road = 8;
-//   }
-
+  //   }
+  //   else
+  //   {
+  //     stop_cnt = 0;
+  //   }
+  //   if(stop_cnt > 5)
+  //   {
+  //     Road = 8;
+  //   }
 }
+
+/*************************************************************************
+*  函数名称：void EM_offset_fig(void)
+*  功能说明：电磁中线偏差
+*  参数说明：无
+*  函数返回：无
+*  修改时间：2020.6.23
+*  备    注：
+
+*************************************************************************/
+void EM_center_offset_fig(void)
+{
+  if (EM_Value_2 < 2.85 && EM_Value_3 < 2.85)
+  {
+    EM_center_offset = ((5.05 * EM_Value_3 - 7.56) / (EM_Value_3 + 0.4901) - (5.05 * EM_Value_2 - 7.56) / (EM_Value_2 + 0.4901)) / 2;
+  }
+  else if (EM_Value_2 >= 2.85 && EM_Value_3 < 2.85)
+  {
+    EM_center_offset = (5.05 * EM_Value_3 - 7.56) / (EM_Value_3 + 0.4901);
+  }
+  else if (EM_Value_3 >= 2.85 && EM_Value_2 < 2.85)
+  {
+    EM_center_offset = -(5.05 * EM_Value_2 - 7.56) / (EM_Value_2 + 0.4901);
+  }
+  else
+  {
+    EM_center_offset = 999;
+  }
+}
+
+void EM_center_offset_filter(void)
+{
+  static float EM_center_offset_buff[4];
+  EM_center_offset_buff[3] = EM_center_offset_buff[2];
+  EM_center_offset_buff[2] = EM_center_offset_buff[1];
+  EM_center_offset_buff[1] = EM_center_offset_buff[0];
+  EM_center_offset_buff[0] = EM_center_offset;
+  EM_center_offset = EM_center_offset_buff[0] * 0.5 + EM_center_offset_buff[1] * 0.2 + EM_center_offset_buff[2] * 0.2 + EM_center_offset_buff[3] * 0.1;
+}
+
+void EM_straight_offset_fig(void)
+{
+  float l = EM_Value_2;
+  float r = EM_Value_3;
+  float pl = EM_Value_1;
+  float pr = EM_Value_4;
+  const float temp = 0.35;
+  float EM_straight_offset1,EM_straight_offset2;
+
+  //now calculate the actuall distance dA
+  float lm, rm;    //l and r 's magnitude  //将全局变量改为局部变量，，部分与EM_angle_get 相同，但EM_angle_get使用值似乎没有用到；——GMY注
+  float cos_angle; //cos of angle
+
+  lm = (float)sqrt(l * l + EM2EM1K2 * pl * pl);
+  rm = (float)sqrt(EM2EM1K2 * pr * pr + r * r);
+
+  if (lm >rm + temp)
+  {
+    if (l > 2.85 && pl <= 2.85)
+    {
+      mix_choice = 2;
+    }
+    else if (pl > 2.85 && l <= 2.85)
+    {
+      mix_choice = 1;
+    }
+    else if (pl > 2.85 && l > 2.85)
+    {
+      mix_choice = 3;
+    }
+    cos_angle = l / lm;
+    EM_straight_offset = -acos(cos_angle) / ANGLE_RANGE * SERVO_RANGE;
+    //    err = (lm-rm);
+  }
+  else if(lm<rm - temp)
+  {
+    if (r > 2.85 && pr <= 2.85)
+    {
+      mix_choice = 2;
+    }
+    else if (pr > 2.85 && r <= 2.85)
+    {
+      mix_choice = 1;
+    }
+    else if (pr > 2.85 && r > 2.85)
+    {
+      mix_choice = 3;
+    }
+    cos_angle = r / rm;
+    EM_straight_offset = acos(cos_angle) / ANGLE_RANGE * SERVO_RANGE;
+    //    err = (rm-lm);
+  }
+  else
+  {
+    EM_straight_offset1 = -acos(cos_angle) / ANGLE_RANGE * SERVO_RANGE;
+    EM_straight_offset2 = acos(cos_angle) / ANGLE_RANGE * SERVO_RANGE;
+    // EM_straight_offset = (EM_straight_offset1 * (lm-rm) + EM_straight_offset2* (rm-lm)) /2/temp;
+    // EM_straight_offset = (EM_straight_offset1-EM_straight_offset2)/2/temp*(lm-rm);
+    EM_straight_offset = (EM_straight_offset1 -EM_straight_offset2)/2/temp*(lm-rm-temp)+EM_straight_offset1;
+  }
+
+  // 单条件判定时使用
+  //   if (l>r) //car is near right side
+  //     return err;
+  //   else //car is near left side
+  //     return -err;
+  
+}
+
+void EM_straight_offset_filter(void)
+{
+  static float EM_straight_offset_buff[4];
+  EM_straight_offset_buff[3] = EM_straight_offset_buff[2];
+  EM_straight_offset_buff[2] = EM_straight_offset_buff[1];
+  EM_straight_offset_buff[1] = EM_straight_offset_buff[0];
+  EM_straight_offset_buff[0] = EM_straight_offset;
+  EM_straight_offset = EM_straight_offset_buff[0] * 0.5 + EM_straight_offset_buff[1] * 0.2 + EM_straight_offset_buff[2] * 0.2 + EM_straight_offset_buff[3] * 0.1;
+}
+
+#if 0
+void EM_offset_filter(void)
+{
+  EM_offset_buff[3]=EM_offset_buff[2];
+  EM_offset_buff[2]=EM_offset_buff[1];
+  EM_offset_buff[1]=EM_offset_buff[0];
+  EM_offset_buff[0]=EM_offset;
+  EM_offset=EM_offset_buff[0]*0.5+EM_offset_buff[1]*0.2+EM_offset_buff[2]*0.2+EM_offset_buff[3]*0.1;
+}
+
+
+
 
 void EM_Curve_Rec(void)//弯道识别
 {
+  static float EM_Value_10 = 0;  //电磁1本次的值
+static float EM_Value_11 = 0;  //电磁1上次的值
+static float EM_Value_12 = 0;  //电磁1上上次的值
+static float EM_Value_40 = 0;  //电磁4本次的值
+static float EM_Value_41 = 0;  //电磁4上次的值
+static float EM_Value_42 = 0;  //电磁4上上次的值
   if(EM_Road == 0 )//从直道到弯道的判断依据为：连续采集到五次1,4电感之差大于0.6 且电磁1增大的同时电磁4减小 或电磁1减小的同时电磁4增大
   {
     if(abs_f_em(EM_Value_1 - EM_Value_4)>0.4 && abs_f_em(EM_Value_2 - EM_Value_3)>0.3)
@@ -301,40 +427,8 @@ void EM_Ring_Rec(void){
   }
 
 }
+#endif
 
-
-
-
-
-
-
-
-
-
-/*************************************************************************
-*  函数名称：void EM_offset_fig(void)
-*  功能说明：电磁中线偏差
-*  参数说明：无
-*  函数返回：无
-*  修改时间：2020.5.24
-*  备    注：
-
-*************************************************************************/
-void EM_offset_fig(void){
-        EM_offset=(EM_Value_3-EM_Value_2)*100;
-//可加限幅
-       return ;
-        
-}
-
-void EM_offset_filter(void)
-{
-  EM_offset_buff[3]=EM_offset_buff[2];
-  EM_offset_buff[2]=EM_offset_buff[1];
-  EM_offset_buff[1]=EM_offset_buff[0];
-  EM_offset_buff[0]=EM_offset;
-  EM_offset=EM_offset_buff[0]*0.5+EM_offset_buff[1]*0.2+EM_offset_buff[2]*0.2+EM_offset_buff[3]*0.1;
-}
 /*************************************************************************
 *  函数名称：void EM_main(void)
 *  功能说明：电磁主函数
@@ -346,6 +440,11 @@ void EM_offset_filter(void)
 void EM_main(void)
 {
   EM_Get();
+  EM_center_offset_fig();
+  EM_center_offset_filter();
+  EM_straight_offset_fig();
+  EM_straight_offset_filter();
+
   // EM_Ring_Rec();
   // //EM_Ramp_Rec();
   // EM_Curve_Rec();

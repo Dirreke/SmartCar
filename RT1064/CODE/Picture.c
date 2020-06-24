@@ -1,5 +1,5 @@
 #include "Picture.h"
-#include "math.h"
+// #include "math.h"
 uint8 Image_Use[CAMERA_H][CAMERA_W];
 uint16 Pixle[CAMERA_H][CAMERA_W]; //二值化后用于OLED显uint16氖???//u16
 
@@ -117,7 +117,6 @@ uint8_t GetOSTU(void)
             }
         }
     }
-
 
     HistoGram[MaxValue] += Maxcount;
     HistoGram[MinValue] += Mincount;
@@ -1266,7 +1265,7 @@ void Pic_Fix_Line(void)
             }
             if (get_flag == 1)
             {
-                for (int i = Allwgiteend - 1; i > ytemp; --i)
+                for (int i = Allwhiteend - 1; i > ytemp; --i)
                 {
                     if (Lef[i] - Fir_col < 5)
                     {
@@ -1320,7 +1319,7 @@ void Pic_Fix_Line(void)
             }
             if (get_flag == 1)
             {
-                for (int i = Allwgiteend - 1; i > ytemp; --i)
+                for (int i = Allwhiteend - 1; i > ytemp; --i)
                 {
                     if (Rig[i] >= Last_col - 5)
                     {
@@ -1446,12 +1445,12 @@ void Pic_Fix_Line(void)
             {
                 for (int k = Fir_row + 3; k < ytemp_static; k++)
                 {
-                    // Rig[k] = (int)((xtemp_static - (ytemp_static - k) / slope_static) / 2) + xtemp_static / 2;
-                    Rig[k] = (int)((k - ytemp_static) / slope_static / 2) + xtemp_static;
+                    Rig[k] = (int)(xtemp_static - (ytemp_static - k) / slope_static);
                 }
                 for (int k = ytemp_static; k < 55; k++)
                 {
-                    Rig[k] = (int)(xtemp_static - (ytemp_static - k) / slope_static);
+                    // Rig[k] = (int)((xtemp_static - (ytemp_static - k) / slope_static) / 2) + xtemp_static / 2;
+                    Rig[k] = (int)((k - ytemp_static) / slope_static / 3) + xtemp_static;
                 }
 
                 Pic_undistort(0, 1);
@@ -1576,11 +1575,12 @@ void Pic_Fix_Line(void)
             {
                 for (int k = Fir_row + 3; k < ytemp_static; k++)
                 {
-                    Lef[k] = (int)((k - ytemp_static) / slope_static / 2) + xtemp_static;
+                    Lef[k] = (int)(xtemp_static - (ytemp_static - k) / slope_static);
                 }
                 for (int k = ytemp_static; k < 55; k++)
                 {
-                    Lef[k] = (int)(xtemp_static - (ytemp_static - k) / slope_static);
+
+                    Lef[k] = (int)((k - ytemp_static) / slope_static / 2) + xtemp_static;
                 }
                 Pic_undistort(1, 0);
             }

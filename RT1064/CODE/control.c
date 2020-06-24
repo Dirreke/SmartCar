@@ -1,12 +1,15 @@
 #include "headfile.h"
-
 float Turn_Cam_Out;
 float Turn_EM_Out;
-float MotorOut1,MotorOut2;
-float speedTarget1,speedTarget2;
+float MotorOut1, MotorOut2;
+float speedTarget1, speedTarget2;
 float Turn_P_EM;
 float Turn_D_EM;
 
+float Turn_EM_Out1 = 0, Turn_EM_Out2 = 0, Turn_EM_Out = 0;
+PID PID_CENTER_EM, PID_STRAIGHT_EM;
+
+int mix_choice = 0; //1电磁为最小打角，2电磁为最大打角，3电磁不可信，0电磁中心；
 /*************************************************************************
 *  函数名称：void Turn_Cam(void)
 *  功能说明：摄像头转弯控制程序，根据中心偏移量计算舵机输出量
@@ -20,32 +23,32 @@ float Turn_D_EM;
 PID PID_TURN_CAM_EXT;
 void Turn_Cam(void)
 {
-    PID PID_TURN_CAM;
-    static float Cam_offset_old = 0;
-    PID_TURN_CAM = TurnFuzzyPD_Cam();
+  PID PID_TURN_CAM;
+  static float Cam_offset_old = 0;
+  PID_TURN_CAM = TurnFuzzyPD_Cam();
 
-    //0.768=0.8*1.2*0.8
-    PID_TURN_CAM.P *= PID_TURN_CAM_EXT.P; //0.85;//0.7
-    PID_TURN_CAM.D *= PID_TURN_CAM_EXT.D;
+  //0.768=0.8*1.2*0.8
+  PID_TURN_CAM.P *= PID_TURN_CAM_EXT.P; //0.85;//0.7
+  PID_TURN_CAM.D *= PID_TURN_CAM_EXT.D;
 
-    Turn_Cam_Out = PID_TURN_CAM.P * Cam_offset + PID_TURN_CAM.D * (Cam_offset - Cam_offset_old); //转向PID控制
+  Turn_Cam_Out = PID_TURN_CAM.P * Cam_offset + PID_TURN_CAM.D * (Cam_offset - Cam_offset_old); //转向PID控制
 
-    Cam_offset_old = Cam_offset;
-    if (Road == 1 && Road1_flag == 5)
+  Cam_offset_old = Cam_offset;
+  if (Road == 1 && Road1_flag == 5)
+  {
+    if (Turn_Cam_Out > -0.5 * SERVO_RANGE)
     {
-        if (Turn_Cam_Out > -0.5 * SERVO_RANGE)
-        {
-            Turn_Cam_Out = -0.5 * SERVO_RANGE;
-        }
+      Turn_Cam_Out = -0.5 * SERVO_RANGE;
     }
-    else if (Road == 2 && Road2_flag == 5)
+  }
+  else if (Road == 2 && Road2_flag == 5)
+  {
+    if (Turn_Cam_Out < 0.5 * SERVO_RANGE)
     {
-        if (Turn_Cam_Out < 0.5 * SERVO_RANGE)
-        {
-            Turn_Cam_Out = 0.5 * SERVO_RANGE;
-        }
+      Turn_Cam_Out = 0.5 * SERVO_RANGE;
     }
-    Servo_Duty(-Turn_Cam_Out);
+  }
+  //Servo_Duty(-Turn_Cam_Out);
 }
 /*************************************************************************
 *  函数名称：void TurnFuzzyPD_Cam(void)
@@ -57,36 +60,35 @@ void Turn_Cam(void)
 *************************************************************************/
 PID TurnFuzzyPD_Cam(void)
 {
-    PID PID_TURN_CAM;
-    static const float Cam_Offset_Table0[21] = {-140, -130, -110, -100, -80, -60, -50, -40, -30, -20, 0, 20, 30, 40, 50, 60, 80, 100, 110, 130, 140};
-    static const float Turn_Cam_P_Table0[21] = {1.29, 1.20, 1.15, 1.20, 1.20, 1.30, 1.35, 1.60, 1.5, 1.45, 0.3, 1.45, 1.5, 1.60, 1.35, 1.30, 1.20, 1.20, 1.15, 1.20, 1.29};
-    static const float Turn_Cam_D_Table0[21] = {1.29, 1.20, 1.15, 1.20, 1.20, 1.30, 1.35, 1.60, 1.5, 1.45, 0.01, 1.45, 1.5, 1.60, 1.35, 1.30, 1.20, 1.20, 1.15, 1.20, 1.29};
+  PID PID_TURN_CAM;
+  static const float Cam_Offset_Table0[21] = {-140, -130, -110, -100, -80, -60, -50, -40, -30, -20, 0, 20, 30, 40, 50, 60, 80, 100, 110, 130, 140};
+  static const float Turn_Cam_P_Table0[21] = {1.29, 1.20, 1.15, 1.20, 1.20, 1.30, 1.35, 1.60, 1.5, 1.45, 0.3, 1.45, 1.5, 1.60, 1.35, 1.30, 1.20, 1.20, 1.15, 1.20, 1.29};
+  static const float Turn_Cam_D_Table0[21] = {1.29, 1.20, 1.15, 1.20, 1.20, 1.30, 1.35, 1.60, 1.5, 1.45, 0.01, 1.45, 1.5, 1.60, 1.35, 1.30, 1.20, 1.20, 1.15, 1.20, 1.29};
 
-    if (Cam_offset <= Cam_Offset_Table0[0])
+  if (Cam_offset <= Cam_Offset_Table0[0])
+  {
+    PID_TURN_CAM.P = Turn_Cam_P_Table0[0];
+    PID_TURN_CAM.D = Turn_Cam_D_Table0[0];
+  }
+  else if (Cam_offset >= Cam_Offset_Table0[20])
+  {
+    PID_TURN_CAM.P = Turn_Cam_P_Table0[20];
+    PID_TURN_CAM.D = Turn_Cam_D_Table0[20];
+  }
+  else
+  {
+    for (int i = 0; i < 20; i++)
     {
-        PID_TURN_CAM.P = Turn_Cam_P_Table0[0];
-        PID_TURN_CAM.D = Turn_Cam_D_Table0[0];
+      if (Cam_offset >= Cam_Offset_Table0[i] && Cam_offset < Cam_Offset_Table0[i + 1])
+      {
+        PID_TURN_CAM.P = Turn_Cam_P_Table0[i] + (Cam_offset - Cam_Offset_Table0[i]) * (Turn_Cam_P_Table0[i + 1] - Turn_Cam_P_Table0[i]) / (Cam_Offset_Table0[i + 1] - Cam_Offset_Table0[i]); //线性
+        PID_TURN_CAM.D = Turn_Cam_D_Table0[i] + (Cam_offset - Cam_Offset_Table0[i]) * (Turn_Cam_D_Table0[i + 1] - Turn_Cam_D_Table0[i]) / (Cam_Offset_Table0[i + 1] - Cam_Offset_Table0[i]);
+        break;
+      }
     }
-    else if (Cam_offset >= Cam_Offset_Table0[20])
-    {
-        PID_TURN_CAM.P = Turn_Cam_P_Table0[20];
-        PID_TURN_CAM.D = Turn_Cam_D_Table0[20];
-    }
-    else
-    {
-        for (int i = 0; i < 20; i++)
-        {
-            if (Cam_offset >= Cam_Offset_Table0[i] && Cam_offset < Cam_Offset_Table0[i + 1])
-            {
-                PID_TURN_CAM.P = Turn_Cam_P_Table0[i] + (Cam_offset - Cam_Offset_Table0[i]) * (Turn_Cam_P_Table0[i + 1] - Turn_Cam_P_Table0[i]) / (Cam_Offset_Table0[i + 1] - Cam_Offset_Table0[i]); //线性
-                PID_TURN_CAM.D = Turn_Cam_D_Table0[i] + (Cam_offset - Cam_Offset_Table0[i]) * (Turn_Cam_D_Table0[i + 1] - Turn_Cam_D_Table0[i]) / (Cam_Offset_Table0[i + 1] - Cam_Offset_Table0[i]);
-                break;
-            }
-        }
-    }
-    return PID_TURN_CAM;
+  }
+  return PID_TURN_CAM;
 }
-
 
 /*********************************************
 ***函数名称：电磁转弯程序
@@ -96,159 +98,122 @@ PID TurnFuzzyPD_Cam(void)
 
 *********************************************/
 
-
-void Turn_EM(void){
-  float mid_err;
-  float mid_length;
-  float mid_length_err;
-  float EM_angle;
-  float EM_offset1;
-  float EM_Turn_Control1,EM_Turn_Control2,EM_Turn_Control;
-  float length_EM_23=0.17;
-
-  mid_err= EM_Value_2-EM_Value_3;
-  mid_length =  -0.000572*mid_err*mid_err*mid_err*mid_err*mid_err+0.008346*mid_err*mid_err*mid_err-0.05759*mid_err+0.085;
-  mid_length_err = mid_length-length_EM_23/2;
-  EM_offset1 = mid_length_err/8.5*350; 
-  EM_angle =  EM_err_cal(EM_Value_2,EM_Value_3,EM_Value_1,EM_Value_4); //左平行，右平行，左垂直，右垂直 得到转角
-  TurnFuzzyPD_EM();  //根据偏移写模糊PD 
-  EM_offset1 *=Turn_P_EM;
-  EM_Turn_Control1 = PD_section(EM_offset);
- 
-  EM_Turn_Control2 = PD_section1(EM_angle);
-  EM_Turn_Control = 1.0*EM_Turn_Control1+1.0*EM_Turn_Control2;
-  Servo_Duty((uint32)(EM_Turn_Control)); //舵机控制
-
-}
-
-float EM_err_cal(float l,float r,float pl, float pr){
-
-  //now calculate the actuall distance dA
-  float lm, rm;    //l and r 's magnitude  //将全局变量改为局部变量，，部分与EM_angle_get 相同，但EM_angle_get使用值似乎没有用到；——GMY注
-  float cos_angle; //cos of angle
-  float K1=1.5;   //垂直电感和平行电感的系数不同，垂直电感偏小，因此加系数
-  float K2=1.5;
-//  float err;
-
-  lm = (float)sqrt(l * l + K1*pl * pl);
-  rm = (float)sqrt(K2*pr * pr + r * r);
-
-  if (lm > rm)
+#if 1
+void Turn_EM(void)
+{
+  // float mid_err;
+  // float mid_length;
+  // float mid_length_err;
+  // float EM_angle;
+  // float EM_offset1;
+  // float EM_Turn_Control1, EM_Turn_Control2, EM_Turn_Control;
+  // float length_EM_23 = 0.17;
+  static float EM_center_offset_last = 0;
+  static float EM_straight_offset_last = 0;
+  // EM_offset1 = mid_length_err / 8.5 * 350;
+  // EM_straight_offset = EM_err_cal(EM_Value_2, EM_Value_3, EM_Value_1, EM_Value_4); //左平行，右平行，左垂直，右垂直 得到转角
+  // TurnFuzzyPD_EM();                                                      //根据偏移写模糊PD
+  // EM_offset1 *= Turn_P_EM;
+  if (EM_center_offset == 999)
   {
-    cos_angle = l / lm;
-//    err = (lm-rm);
+    Turn_EM_Out1 = 0;
   }
   else
   {
-    cos_angle = r / rm;
-//    err = (rm-lm);
+    Turn_EM_Out1 = EM_center_offset * PID_CENTER_EM.P + (EM_center_offset - EM_center_offset_last) * PID_CENTER_EM.D;
+    EM_center_offset_last = EM_center_offset;
   }
 
-// 单条件判定时使用
-//   if (l>r) //car is near right side
-//     return err;
-//   else //car is near left side
-//     return -err;
-   return(acos(cos_angle));
+  Turn_EM_Out2 = EM_straight_offset * PID_STRAIGHT_EM.P + (EM_straight_offset - EM_straight_offset_last) * PID_STRAIGHT_EM.D;
+  EM_straight_offset_last = EM_straight_offset;
   
+  // EM_Turn_Control2 = PD_section1(EM_angle);
+
+  Turn_EM_Out = 1.0 * Turn_EM_Out1 + 1.0 * Turn_EM_Out2;
+
+  Servo_Duty(-Turn_EM_Out); //舵机控制
 }
 
-
+#endif
+#if 0
 /*********************************
 转弯PD模糊函数------电磁控制
 输入参数：电磁计算偏差值
 输出参数：电磁控制转弯PD
-***********************************/ 
-
+***********************************/
 
 void TurnFuzzyPD_EM(void)
 {
-  int i=0;
+  int i = 0;
 
-  static float EM_Offset_Table[15] = {-350,     -200,      -150,     -100,       -60,      -40,     -20,       0,       20,          40,       60,       100,       150,    200,     350 };
-  static float Turn_P_EM_Table0[15] = {0.56,   0.86,   0.76,     0.66,   0.58,   0.48,   0.45,    0.03,     0.45,  0.48,  0.58,   0.66,   0.76, 0.86 ,0.56};
-  static float Turn_D_EM_Table0[15] = {0.6,       0.45,     0.44,    0.64,      0.82,      0.9,   1.2,   0.35,    1.20,    0.9,   0.82,    0.64,    0.45,    0.25,    0.6};
-                               //弯道
-  static float Turn_P_EM_Table1[15] = {1.5,   1.06,   0.86,     0.76,   0.68,   0.48,   0.45,    0.03,     0.45,  0.48,  0.68,   0.76,   0.86, 1.06 ,0.56};
-  static float Turn_D_EM_Table1[15] = {0.4,       0.32,     0.5,    0.7,      0.9,      1.0,   1.40,   0.40,    1.40,       1.0,    0.9,       0.7,      0.5,    0.3,    0.1};
-
-
-
-
+  static float EM_Offset_Table[15] = {-350, -200, -150, -100, -60, -40, -20, 0, 20, 40, 60, 100, 150, 200, 350};
+  static float Turn_P_EM_Table0[15] = {0.56, 0.86, 0.76, 0.66, 0.58, 0.48, 0.45, 0.03, 0.45, 0.48, 0.58, 0.66, 0.76, 0.86, 0.56};
+  static float Turn_D_EM_Table0[15] = {0.6, 0.45, 0.44, 0.64, 0.82, 0.9, 1.2, 0.35, 1.20, 0.9, 0.82, 0.64, 0.45, 0.25, 0.6};
+  //弯道
+  static float Turn_P_EM_Table1[15] = {1.5, 1.06, 0.86, 0.76, 0.68, 0.48, 0.45, 0.03, 0.45, 0.48, 0.68, 0.76, 0.86, 1.06, 0.56};
+  static float Turn_D_EM_Table1[15] = {0.4, 0.32, 0.5, 0.7, 0.9, 1.0, 1.40, 0.40, 1.40, 1.0, 0.9, 0.7, 0.5, 0.3, 0.1};
 
   /***********fuzzy***********/
-         if(EM_Road==4)  //弯道
-        {
-            if(EM_offset <= EM_Offset_Table[0])
-              {
-                Turn_P_EM = Turn_P_EM_Table0[0];
-                Turn_D_EM = Turn_D_EM_Table0[0];
-                return;
-              }
-              else if(EM_offset >= EM_Offset_Table[14])
-              {
-                Turn_P_EM = Turn_P_EM_Table0[14];
-                Turn_D_EM = Turn_D_EM_Table0[14];
-                return;
-              }
-            
-        }
-        else
-        {
-          if(EM_offset <= EM_Offset_Table[0])
-              {
-                Turn_P_EM = Turn_P_EM_Table1[0];
-                Turn_D_EM = Turn_D_EM_Table1[0];
-                return;
-              }
-              else if(EM_offset >= EM_Offset_Table[14])
-              {
-                Turn_P_EM = Turn_P_EM_Table1[14];
-                Turn_D_EM = Turn_D_EM_Table1[14];
-                return;
-              }                                  
-      for(i=0;i<14;i++)
-      {
-       
-        }
-          if(EM_offset >= EM_Offset_Table[i] && EM_offset < EM_Offset_Table[i+1])
-          {
-            if(EM_Road==4){  //弯道
-              Turn_P_EM=Turn_P_EM_Table0[i]+(EM_offset-EM_Offset_Table[i])
-                        *(Turn_P_EM_Table0[i+1]-Turn_P_EM_Table0[i])
-                         /(EM_Offset_Table[i+1]-EM_Offset_Table[i]);
-              Turn_D_EM=Turn_D_EM_Table0[i]+(EM_offset - EM_Offset_Table[i])
-                      *(Turn_D_EM_Table0[i+1] - Turn_D_EM_Table0[i])
-                       /(EM_Offset_Table[i+1] - EM_Offset_Table[i]);
-            
-              } 
-            
-            else{               //直道
-              Turn_P_EM=Turn_P_EM_Table1[i]+(EM_offset-EM_Offset_Table[i])
-                        *(Turn_P_EM_Table1[i+1]-Turn_P_EM_Table1[i])
-                         /(EM_Offset_Table[i+1]-EM_Offset_Table[i]);
-              Turn_D_EM=Turn_D_EM_Table1[i]+(EM_offset - EM_Offset_Table[i])
-                      *(Turn_D_EM_Table1[i+1] - Turn_D_EM_Table1[i])
-                       /(EM_Offset_Table[i+1] - EM_Offset_Table[i]);
-              
-            
-            }
-            
-          }
+  if (EM_Road == 4) //弯道
+  {
+    if (EM_center_offset <= EM_Offset_Table[0])
+    {
+      Turn_P_EM = Turn_P_EM_Table0[0];
+      Turn_D_EM = Turn_D_EM_Table0[0];
+      return;
+    }
+    else if (EM_center_offset >= EM_Offset_Table[14])
+    {
+      Turn_P_EM = Turn_P_EM_Table0[14];
+      Turn_D_EM = Turn_D_EM_Table0[14];
+      return;
+    }
+  }
+  else
+  {
+    if (EM_center_offset <= EM_Offset_Table[0])
+    {
+      Turn_P_EM = Turn_P_EM_Table1[0];
+      Turn_D_EM = Turn_D_EM_Table1[0];
+      return;
+    }
+    else if (EM_offset >= EM_Offset_Table[14])
+    {
+      Turn_P_EM = Turn_P_EM_Table1[14];
+      Turn_D_EM = Turn_D_EM_Table1[14];
+      return;
+    }
+    for (i = 0; i < 14; i++)
+    {
+    }
+    if (EM_offset >= EM_Offset_Table[i] && EM_offset < EM_Offset_Table[i + 1])
+    {
+      if (EM_Road == 4)
+      { //弯道
+        Turn_P_EM = Turn_P_EM_Table0[i] + (EM_offset - EM_Offset_Table[i]) * (Turn_P_EM_Table0[i + 1] - Turn_P_EM_Table0[i]) / (EM_Offset_Table[i + 1] - EM_Offset_Table[i]);
+        Turn_D_EM = Turn_D_EM_Table0[i] + (EM_offset - EM_Offset_Table[i]) * (Turn_D_EM_Table0[i + 1] - Turn_D_EM_Table0[i]) / (EM_Offset_Table[i + 1] - EM_Offset_Table[i]);
       }
-} 
 
+      else
+      { //直道
+        Turn_P_EM = Turn_P_EM_Table1[i] + (EM_offset - EM_Offset_Table[i]) * (Turn_P_EM_Table1[i + 1] - Turn_P_EM_Table1[i]) / (EM_Offset_Table[i + 1] - EM_Offset_Table[i]);
+        Turn_D_EM = Turn_D_EM_Table1[i] + (EM_offset - EM_Offset_Table[i]) * (Turn_D_EM_Table1[i + 1] - Turn_D_EM_Table1[i]) / (EM_Offset_Table[i + 1] - EM_Offset_Table[i]);
+      }
+    }
+  }
+}
 
-float PD_section(float err){
+float PD_section(float err)
+{
   static float last;
   float sub;
   float p;
   float out;
-  p=1.0;
+  p = 1.0;
   sub = err - last;
   last = err;
-  out=p* err + Turn_D_EM * sub;
-//加限幅
+  out = p * err + Turn_D_EM * sub;
+  //加限幅
 
   return (out);
 }
@@ -260,19 +225,16 @@ float PD_section1(float err)
   float p;
   float d;
   float out;
-  p=1.0;
-  d=1.0;
+  p = 1.0;
+  d = 1.0;
   sub = err - last;
   last = err;
-  out=p* err + d * sub;
-//加限幅
+  out = p * err + d * sub;
+  //加限幅
 
   return (out);
 }
-
-
-
-
+#endif
 /*************************************************************************
 *  函数名称：void SpeedTarget_fig(void)
 *  功能说明：计算速度目标量
@@ -301,7 +263,7 @@ void SpeedTarget_fig(void)
 
   speedTarget1 = SpeedGoal * (1 + diff_K0 / 2); //左侧车轮
   speedTarget2 = SpeedGoal * (1 - diff_K0 / 2); //右侧车轮
-//后面可加上下坡部分
+  //后面可加上下坡部分
 }
 
 /*************************************************************************
@@ -315,37 +277,37 @@ void SpeedTarget_fig(void)
 PID PID_SPEED;
 void Speed_Control(void)
 {
-    int SpeedE1, SpeedE2;
-    static int OldE1, OldE2;
-    int SpeedEE1,SpeedEE2;
-    float Speed_kP1,Speed_kP2,Speed_kI1,Speed_kI2;
-    float SpeedControlOutE1,SpeedControlOutE2; 
-    SpeedE1 = (int)((speedTarget1 - CarSpeed1) * 100.0);
-    SpeedE2 = (int)((speedTarget2 - CarSpeed2) * 100.0);
+  int SpeedE1, SpeedE2;
+  static int OldE1, OldE2;
+  int SpeedEE1, SpeedEE2;
+  float Speed_kP1, Speed_kP2, Speed_kI1, Speed_kI2;
+  float SpeedControlOutE1, SpeedControlOutE2;
+  SpeedE1 = (int)((speedTarget1 - CarSpeed1) * 100.0);
+  SpeedE2 = (int)((speedTarget2 - CarSpeed2) * 100.0);
 
-    //kp
-    Speed_kP1 = PID_SPEED.P;
-    Speed_kP2 = PID_SPEED.P;
-    //ki
-    SpeedEE1 = SpeedE1 - OldE1;
-    SpeedEE2 = SpeedE2 - OldE2;
-////////////////////////////////////////////////////////////////////////////////
-    if (abs(SpeedE1) < 15)
-        Speed_kI1 = 0;
-    else
-        Speed_kI1 = PID_SPEED.I;
-    if (abs(SpeedE2) < 15)
-        Speed_kI2 = 0;
-    else
-        Speed_kI2 = PID_SPEED.I;
-///////////////////////////////////////////////////////////////////////////////
-    SpeedControlOutE1 = (Speed_kP1 * SpeedEE1 + Speed_kI1 * SpeedE1);
-    SpeedControlOutE2 = (Speed_kP2 * SpeedEE2 + Speed_kI2 * SpeedE2);
-    OldE1 = SpeedE1;
-    OldE2 = SpeedE2;
+  //kp
+  Speed_kP1 = PID_SPEED.P;
+  Speed_kP2 = PID_SPEED.P;
+  //ki
+  SpeedEE1 = SpeedE1 - OldE1;
+  SpeedEE2 = SpeedE2 - OldE2;
+  ////////////////////////////////////////////////////////////////////////////////
+  if (abs(SpeedE1) < 15)
+    Speed_kI1 = 0;
+  else
+    Speed_kI1 = PID_SPEED.I;
+  if (abs(SpeedE2) < 15)
+    Speed_kI2 = 0;
+  else
+    Speed_kI2 = PID_SPEED.I;
+  ///////////////////////////////////////////////////////////////////////////////
+  SpeedControlOutE1 = (Speed_kP1 * SpeedEE1 + Speed_kI1 * SpeedE1);
+  SpeedControlOutE2 = (Speed_kP2 * SpeedEE2 + Speed_kI2 * SpeedE2);
+  OldE1 = SpeedE1;
+  OldE2 = SpeedE2;
 
-    MotorOut1+=SpeedControlOutE1;
-    MotorOut2+=SpeedControlOutE2;
-    
-    Moto_Out(MotorOut1,MotorOut2);// (uint32)(MotorOut1 / 100) * 100要先分+-
+  MotorOut1 += SpeedControlOutE1;
+  MotorOut2 += SpeedControlOutE2;
+
+  Moto_Out(MotorOut1, MotorOut1); // (uint32)(MotorOut1 / 100) * 100要先分+-
 }
