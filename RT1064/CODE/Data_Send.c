@@ -224,9 +224,9 @@ void Variable_update(void)
   Variable[8] = CarSpeed1; //EM_offset;
   Variable[9] = Lef_slope; //speedTarget2;//Turn_Cam_Out;
   Variable[10] = Rig_slope;
-  Variable[11] = Turn_EM_Out;  //Lef_break_point*100+Rig_break_point;
-  Variable[12] = EM_center_offset;
-  Variable[13] = EM_straight_offset; /*Rig_circle;*/ //Road6_flag ;//CarSpeed2;
+  Variable[11] = EM_straight_offset;//Turn_EM_Out;  //Lef_break_point*100+Rig_break_point;
+  Variable[12] = Turn_EM_Out;
+  Variable[13] = Turn_Out; /*Rig_circle;*/ //Road6_flag ;//CarSpeed2;
   Variable[14] = Allwhitestart * 100 +Allwhiteend;
   Variable[15] = 100 + Lef_circle * 10 + Rig_circle; //whitecnt;//Road1_turnout;//limit_pos(EM_Value_1/1.5-EM_Value_2/3.5);//speedTarget1;//map_line[MIN(50,AllWhileStartLine)];
   // Variable[13]=EM_Value_2;//speedTarget2;//lib_active_diff_get();//map_line[MIN(50,AllWhileEndLine)];_
@@ -242,7 +242,7 @@ void Pic_send_new2(void)
 #ifdef ori_pic
     for (i = 0 ; i < 20; ++i)
     {
-        j = i * 2.5 + 5;
+        j =(int)( i * 2.5 + 5);
         if (New_Lef[j] < -395)
         {
             Pic_new[cnt] = 0;
@@ -370,7 +370,7 @@ void Send_Img2(void)
     ////////////////////////传输左右边线和计算得到的中线///////////
     for (i = 0 ; i < 20; ++i)
     {
-        j = i * 2.5 + 5;
+        j =(int)( i * 2.5 + 5);
         if (New_Lef[j] < -395)
         {
             My_Put_Char(0);
@@ -391,7 +391,7 @@ void Send_Img2(void)
 
     for (i = 0 ; i < 20; ++i)
     {
-        j = i * 2.5 + 5;
+        j =(int)( i * 2.5 + 5);
         if (New_Mid[j] < -395)
         {
             My_Put_Char(0);
@@ -412,7 +412,7 @@ void Send_Img2(void)
 
     for (i = 0 ; i < 20; ++i)
     {
-        j = i * 2.5 + 5;
+        j =(int)( i * 2.5 + 5);
         if (New_Rig[j] < -395)
         {
             My_Put_Char(0);

@@ -1,6 +1,7 @@
 #include "headfile.h"
 float Turn_Cam_Out;
 float Turn_EM_Out;
+float Turn_Out;
 float MotorOut1, MotorOut2;
 float speedTarget1, speedTarget2;
 float Turn_P_EM;
@@ -10,6 +11,7 @@ float Turn_EM_Out1 = 0, Turn_EM_Out2 = 0, Turn_EM_Out = 0;
 PID PID_CENTER_EM, PID_STRAIGHT_EM;
 
 int mix_choice = 0; //1电磁为最小打角，2电磁为最大打角，3电磁不可信，0电磁中心；
+
 /*************************************************************************
 *  函数名称：void Turn_Cam(void)
 *  功能说明：摄像头转弯控制程序，根据中心偏移量计算舵机输出量
@@ -97,8 +99,6 @@ PID TurnFuzzyPD_Cam(void)
 ***说明：
 
 *********************************************/
-
-#if 1
 void Turn_EM(void)
 {
   // float mid_err;
@@ -126,15 +126,40 @@ void Turn_EM(void)
 
   Turn_EM_Out2 = EM_straight_offset * PID_STRAIGHT_EM.P + (EM_straight_offset - EM_straight_offset_last) * PID_STRAIGHT_EM.D;
   EM_straight_offset_last = EM_straight_offset;
-  
+
   // EM_Turn_Control2 = PD_section1(EM_angle);
 
   Turn_EM_Out = 1.0 * Turn_EM_Out1 + 1.0 * Turn_EM_Out2;
-
-  Servo_Duty(-Turn_EM_Out); //舵机控制
 }
 
-#endif
+/*********************************************
+***函数名称：转弯程序
+***输入参数：摄像头打角，电磁打角
+***输出参数：舵机打角
+***说明：
+*********************************************/
+void Turn_Servo()
+{
+  if (Road == 0 && (Road0_flag == 1 || Road0_flag == 2))
+  {
+    Turn_Out = Turn_Cam_Out;
+  }
+  else if (Road == 1 || Road == 2)
+  {
+    Turn_Out = Turn_Cam_Out;
+  }
+  else if(EM_edge > 2)
+  {
+    Turn_Out = Turn_Cam_Out;
+  }
+  else
+  {
+    Turn_Out = Turn_EM_Out;
+  }
+
+  Servo_Duty(-Turn_Out); //舵机控制
+}
+
 #if 0
 /*********************************
 转弯PD模糊函数------电磁控制

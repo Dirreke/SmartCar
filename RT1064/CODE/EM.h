@@ -10,7 +10,7 @@ extern float EM_Value_4;
 extern float EM_center_offset;
 extern float EM_straight_offset;
 // extern int  EM_Road;
-
+extern int EM_edge;
 
 void EM_main(void);
 void EM_Init(void);
