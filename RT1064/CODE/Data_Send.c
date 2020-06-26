@@ -197,7 +197,7 @@ void Send_Variable(void)
 
 void Variable_update(void)
 {
-  Variable[0] = Road_Half_Width_change; //Cam_offset;   //EM_Value_1;// Cam_offset;//cntt;//ToF_distance;
+  Variable[0] = ganhuangguan_flag; //Cam_offset;   //EM_Value_1;// Cam_offset;//cntt;//ToF_distance;
   Variable[1] = Turn_Cam_Out;           //EM_Value_2; //Turn_Cam_Out;//cnt;//Turn_Cam_Out;//;//stat_slope;//gyroy_1;//Turn_Cam_Out;//Car_W;
   Variable[2] = Road;                   //EM_Value_1;//Cam_offset;
   if (Road == 0)
@@ -225,7 +225,7 @@ void Variable_update(void)
   Variable[6] = EM_Value_3;
   Variable[7] = EM_Value_4; //EM_Value_4;
 
-  Variable[8] = CarSpeed1; //EM_offset;
+  Variable[8] = CarSpeed2; //EM_offset;
   Variable[9] = Lef_slope; //speedTarget2;//Turn_Cam_Out;
   Variable[10] = Rig_slope;
   Variable[11] = EM_straight_offset; //Turn_EM_Out;  //Lef_break_point*100+Rig_break_point;

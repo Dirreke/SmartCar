@@ -36,20 +36,7 @@ void Turn_Cam(void)
   Turn_Cam_Out = PID_TURN_CAM.P * Cam_offset + PID_TURN_CAM.D * (Cam_offset - Cam_offset_old); //转向PID控制
 
   Cam_offset_old = Cam_offset;
-  if (Road == 1 && Road1_flag == 5)
-  {
-    if (Turn_Cam_Out > -0.5 * SERVO_RANGE)
-    {
-      Turn_Cam_Out = -0.5 * SERVO_RANGE;
-    }
-  }
-  else if (Road == 2 && Road2_flag == 5)
-  {
-    if (Turn_Cam_Out < 0.5 * SERVO_RANGE)
-    {
-      Turn_Cam_Out = 0.5 * SERVO_RANGE;
-    }
-  }
+
   //Servo_Duty(-Turn_Cam_Out);
 }
 /*************************************************************************
@@ -140,126 +127,91 @@ void Turn_EM(void)
 *********************************************/
 void Turn_Servo()
 {
-  if (Road == 0 && (Road0_flag == 1 || Road0_flag == 2))
+  if (Road == 7)
+  {
+    if (Road7_flag == 2)
+    {
+#ifdef TL2barn
+      Turn_Out = -SERVO_RANGE;
+#endif
+#ifdef TR2barn
+      Turn_Out = SERVO_RANGE;
+#endif
+    }
+    else if (Road7_flag == 3)
+    {
+      Turn_Out = Turn_Cam_Out;
+    }
+    else if (Road7_flag == 4)
+    {
+      Turn_Out = 0;
+    }
+  }
+  
+  else if (Road == 1)
+  {
+    if (Road1_flag == 5)
+    {
+      // if (Turn_Cam_Out > -0.5 * SERVO_RANGE)
+      // {
+      //   Turn_Cam_Out = -0.5 * SERVO_RANGE;
+      // }
+      Turn_Out = -SERVO_RANGE;
+    }
+    else if (Road1_flag == 4)
+    {
+      Turn_Out = Turn_EM_Out;
+    }
+    else
+    {
+      Turn_Out = Turn_Cam_Out;
+    }
+  }
+  
+  else if (Road == 2)
+  {
+    if (Road2_flag == 5)
+    {
+      // if (Turn_Cam_Out < 0.5 * SERVO_RANGE)
+      // {
+      //   Turn_Cam_Out = 0.5 * SERVO_RANGE;
+      // }
+      Turn_Out = SERVO_RANGE;
+    }
+    else if (Road2_flag == 4)
+    {
+      Turn_Out = Turn_EM_Out;
+    }
+    else
+    {
+      Turn_Out = Turn_Cam_Out;
+    }
+  }
+  
+  else if (Road == 3)
   {
     Turn_Out = Turn_Cam_Out;
   }
-  else if (Road == 1 || Road == 2)
-  {
-    Turn_Out = Turn_Cam_Out;
-  }
-  else if(EM_edge > 2)
-  {
-    Turn_Out = Turn_Cam_Out;
-  }
+  
   else
   {
-    Turn_Out = Turn_EM_Out;
+    if (Road0_flag == 1 || Road0_flag == 2)
+    {
+      Turn_Out = Turn_Cam_Out;
+    }
+    else if (EM_edge > 2)
+    {
+      Turn_Out = Turn_Cam_Out;
+    }
+    else
+    {
+      Turn_Out = Turn_EM_Out;
+    }
   }
 
   Servo_Duty(-Turn_Out); //舵机控制
 }
 
-#if 0
-/*********************************
-转弯PD模糊函数------电磁控制
-输入参数：电磁计算偏差值
-输出参数：电磁控制转弯PD
-***********************************/
-
-void TurnFuzzyPD_EM(void)
-{
-  int i = 0;
-
-  static float EM_Offset_Table[15] = {-350, -200, -150, -100, -60, -40, -20, 0, 20, 40, 60, 100, 150, 200, 350};
-  static float Turn_P_EM_Table0[15] = {0.56, 0.86, 0.76, 0.66, 0.58, 0.48, 0.45, 0.03, 0.45, 0.48, 0.58, 0.66, 0.76, 0.86, 0.56};
-  static float Turn_D_EM_Table0[15] = {0.6, 0.45, 0.44, 0.64, 0.82, 0.9, 1.2, 0.35, 1.20, 0.9, 0.82, 0.64, 0.45, 0.25, 0.6};
-  //弯道
-  static float Turn_P_EM_Table1[15] = {1.5, 1.06, 0.86, 0.76, 0.68, 0.48, 0.45, 0.03, 0.45, 0.48, 0.68, 0.76, 0.86, 1.06, 0.56};
-  static float Turn_D_EM_Table1[15] = {0.4, 0.32, 0.5, 0.7, 0.9, 1.0, 1.40, 0.40, 1.40, 1.0, 0.9, 0.7, 0.5, 0.3, 0.1};
-
-  /***********fuzzy***********/
-  if (EM_Road == 4) //弯道
-  {
-    if (EM_center_offset <= EM_Offset_Table[0])
-    {
-      Turn_P_EM = Turn_P_EM_Table0[0];
-      Turn_D_EM = Turn_D_EM_Table0[0];
-      return;
-    }
-    else if (EM_center_offset >= EM_Offset_Table[14])
-    {
-      Turn_P_EM = Turn_P_EM_Table0[14];
-      Turn_D_EM = Turn_D_EM_Table0[14];
-      return;
-    }
-  }
-  else
-  {
-    if (EM_center_offset <= EM_Offset_Table[0])
-    {
-      Turn_P_EM = Turn_P_EM_Table1[0];
-      Turn_D_EM = Turn_D_EM_Table1[0];
-      return;
-    }
-    else if (EM_offset >= EM_Offset_Table[14])
-    {
-      Turn_P_EM = Turn_P_EM_Table1[14];
-      Turn_D_EM = Turn_D_EM_Table1[14];
-      return;
-    }
-    for (i = 0; i < 14; i++)
-    {
-    }
-    if (EM_offset >= EM_Offset_Table[i] && EM_offset < EM_Offset_Table[i + 1])
-    {
-      if (EM_Road == 4)
-      { //弯道
-        Turn_P_EM = Turn_P_EM_Table0[i] + (EM_offset - EM_Offset_Table[i]) * (Turn_P_EM_Table0[i + 1] - Turn_P_EM_Table0[i]) / (EM_Offset_Table[i + 1] - EM_Offset_Table[i]);
-        Turn_D_EM = Turn_D_EM_Table0[i] + (EM_offset - EM_Offset_Table[i]) * (Turn_D_EM_Table0[i + 1] - Turn_D_EM_Table0[i]) / (EM_Offset_Table[i + 1] - EM_Offset_Table[i]);
-      }
-
-      else
-      { //直道
-        Turn_P_EM = Turn_P_EM_Table1[i] + (EM_offset - EM_Offset_Table[i]) * (Turn_P_EM_Table1[i + 1] - Turn_P_EM_Table1[i]) / (EM_Offset_Table[i + 1] - EM_Offset_Table[i]);
-        Turn_D_EM = Turn_D_EM_Table1[i] + (EM_offset - EM_Offset_Table[i]) * (Turn_D_EM_Table1[i + 1] - Turn_D_EM_Table1[i]) / (EM_Offset_Table[i + 1] - EM_Offset_Table[i]);
-      }
-    }
-  }
-}
-
-float PD_section(float err)
-{
-  static float last;
-  float sub;
-  float p;
-  float out;
-  p = 1.0;
-  sub = err - last;
-  last = err;
-  out = p * err + Turn_D_EM * sub;
-  //加限幅
-
-  return (out);
-}
-
-float PD_section1(float err)
-{
-  static float last;
-  float sub;
-  float p;
-  float d;
-  float out;
-  p = 1.0;
-  d = 1.0;
-  sub = err - last;
-  last = err;
-  out = p * err + d * sub;
-  //加限幅
-
-  return (out);
-}
-#endif
 /*************************************************************************
 *  函数名称：void SpeedTarget_fig(void)
 *  功能说明：计算速度目标量
@@ -289,6 +241,14 @@ void SpeedTarget_fig(void)
   speedTarget1 = SpeedGoal * (1 + diff_K0 / 2); //左侧车轮
   speedTarget2 = SpeedGoal * (1 - diff_K0 / 2); //右侧车轮
   //后面可加上下坡部分
+
+  if (barn_reset_flag == 1)
+  {
+    if (CarSpeed1 >= 3 || CarSpeed2 >= 3)
+    {
+      SpeedGoal = 0;
+    }
+  }
 }
 
 /*************************************************************************

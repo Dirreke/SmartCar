@@ -32,12 +32,8 @@ void PIT_IRQHandler(void)
     if(PIT_FLAG_GET(PIT_CH0))
     {
         PIT_FLAG_CLEAR(PIT_CH0);
-    EM_main();
-    if (Road7_flag != 2)
-        {
-            Turn_Servo();
-        }
-
+      EM_main();
+      Turn_Servo();
 
        Get_Speed();
        SpeedTarget_fig();

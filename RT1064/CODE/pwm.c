@@ -140,7 +140,7 @@ void Moto_Out(float MotorOut1,float MotorOut2)
   }
   else
   {
-    Motor_Duty(0, (uint32)-MotorOut2 );
-    Motor_Duty(1, 0);
+    Motor_Duty(1, (uint32)-MotorOut2 );
+    Motor_Duty(0, 0);
   }
 }

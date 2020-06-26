@@ -1547,7 +1547,7 @@ void Pic_Fix_Line(void)
                 {
                     continue;
                 }
-                if (Lef[i] - Lef[i + 2] < 5 && Lef[i + 2] - Lef[i + 4] < 5 && Lef[i] - Lef[i + 2] > 0 && Lef[i + 2] - Lef[i + 4] > 0)
+                if (Lef[i] - Lef[i + 2] < 5 && Lef[i + 2] - Lef[i + 4] < 5 && Lef[i] - Lef[i + 2] >= 0 && Lef[i + 2] - Lef[i + 4] >= 0)
                 {
                     xtemp = Lef[i];
                     ytemp = i;
@@ -1557,23 +1557,18 @@ void Pic_Fix_Line(void)
             }
             if (get_flag == 1)
             {
-                for (int i = ytemp; i < Last_row - 5; ++i)
+                for (int i = ytemp+1; i < Last_row - 5; ++i)
                 {
-                    if (Lef[i] - Fir_col <= 5 || Lef[i] > 40)
+                    if (Lef[i] - Lef[i + 2] < 5 && Lef[i + 2] - Lef[i + 4] < 5 && Lef[i] - Lef[i + 2] >= 0 && Lef[i + 2] - Lef[i + 4] >= 0)
                     {
                         continue;
                     }
-                    if (Lef[i - 2] - Lef[i] < 5 && Lef[i - 4] - Lef[i - 2] < 5 && Lef[i - 5] - Lef[i - 3] < 5 &&
-                        Lef[i - 2] - Lef[i] >= 0 && Lef[i - 4] - Lef[i - 2] >= 0 && Lef[i - 5] - Lef[i - 3] >= 0)
+                    else if ((i + 3 - ytemp) > 4)
                     {
-                        continue;
-                    }
-                    else if ((i - 1 - ytemp) > 4)
-                    {
-                        slope = Slope(Lef[i - 1], i - 1, xtemp, ytemp); //Slope(int F1x,int F1y,int F2x,int F2y)
+                        slope = Slope(Lef[i + 3], i + 3, xtemp, ytemp); //Slope(int F1x,int F1y,int F2x,int F2y)
                         if (slope != 999)
                         {
-                            for (int j = i + 1; j < 55; j++)
+                            for (int j = i + 4; j < 55; j++)
                             {
                                 Lef[j] = (int)(Lef[i] - (i - j) / slope);
                             }
@@ -1721,7 +1716,7 @@ void Pic_Fix_Line(void)
                 {
                     continue;
                 }
-                if (Rig[i + 2] - Rig[i] < 5 && Rig[i + 4] - Rig[i + 2] < 5 && Rig[i + 2] - Rig[i] > 0 && Rig[i + 4] - Rig[i + 2] > 0)
+                if (Rig[i + 2] - Rig[i] < 5 && Rig[i + 4] - Rig[i + 2] < 5 && Rig[i + 2] - Rig[i] >= 0 && Rig[i + 4] - Rig[i + 2] >= 0)
                 {
                     xtemp = Rig[i];
                     ytemp = i;
@@ -1731,23 +1726,18 @@ void Pic_Fix_Line(void)
             }
             if (get_flag == 1)
             {
-                for (int i = ytemp; i < Last_row - 5; ++i)
+                for (int i = ytemp+1; i < Last_row - 5; ++i)
                 {
-                    if (Rig[i] >= Last_col - 5 || Rig[i] < 40)
+                    if (Rig[i + 2] - Rig[i] < 5 && Rig[i + 4] - Rig[i + 2] < 5 && Rig[i + 2] - Rig[i] >= 0 && Rig[i + 4] - Rig[i + 2] >= 0)
                     {
                         continue;
                     }
-                    if (Rig[i] - Rig[i - 2] < 5 && Rig[i - 2] - Rig[i - 4] < 5 && Rig[i - 3] - Rig[i - 5] < 5 &&
-                        Rig[i] - Rig[i - 2] >= 0 && Rig[i - 2] - Rig[i - 4] >= 0 && Rig[i - 3] - Rig[i - 5] >= 0)
+                    else if ((i +3 - ytemp) > 4)
                     {
-                        continue;
-                    }
-                    else if ((i - 1 - ytemp) > 4)
-                    {
-                        slope = Slope(Rig[i], i, xtemp, ytemp); //Slope(int F1x,int F1y,int F2x,int F2y)
+                        slope = Slope(Rig[i+3], i+3, xtemp, ytemp); //Slope(int F1x,int F1y,int F2x,int F2y)
                         if (slope != 999)
                         {
-                            for (int j = i + 1; j < 55; j++)
+                            for (int j = i + 4; j < 55; j++)
                             {
                                 Rig[j] = (int)(Rig[i] - (i - j) / slope);
                             }
