@@ -4,7 +4,7 @@
 int Road03_count = 0, Road04_count = 0;
 float centerAngle;
 
-// èµ›é“è¯†åˆ«
+// ÈüµÀÊ¶±ğ
 #if 0
 char Road1_turnout = 1;
 void Road_rec(void)
@@ -13,11 +13,11 @@ void Road_rec(void)
   // static int oldwhite=5000;
   // static uint8 Road1_cnt1=0;
   // static char Road1_flag1=0;
-  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////ï¿½ï¿½Í¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô²ï¿½ï¿½
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////????????????
 
   //if road=0 : straight line/turn left/turn right
   if(Road == 0){
-    if((Rig_break_point > 30 && Lef_circle == 0 && Rig_circle == 1 && Rig_slope != 998 )) //å·¦è½¬å¼¯
+    if((Rig_break_point > 30 && Lef_circle == 0 && Rig_circle == 1 && Rig_slope != 998 )) //×ó×ªÍä
     {
       Road03_count++;
       if (Road03_count == 2){
@@ -25,7 +25,7 @@ void Road_rec(void)
         Road03_count = 0;//reset
       }
     }
-    else if ((Lef_break_point > 30 && Rig_circle == 0 && Lef_circle == 1 && Lef_slope != 998 )) //å³è½¬å¼¯
+    else if ((Lef_break_point > 30 && Rig_circle == 0 && Lef_circle == 1 && Lef_slope != 998 )) //ÓÒ×ªÍä
     {
       Road04_count++;
       if (Road04_count == 2){
@@ -33,7 +33,7 @@ void Road_rec(void)
         Road04_count = 0;//reset
       }
     }
-    else if ((Lef_break_point < 20 && Rig_circle == 0 && Lef_circle == 1 && Rig_slope == 998 && Lef_slope != 998 && Rig[13] - Rig[11] < 5 && Rig[11] - Rig[9] < 5 && Rig[9] - Rig[7] < 5 && Rig[7] - Rig[5] < 5 && Rig[5] - Rig[3] < 5 && Rig[11] != 78 && New_Lef[50] == -MIDMAP && Rig_edge < 10)) //ï¿½ï¿½Ô²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½Ò±ï¿½ï¿½ß£ï¿½Ö±Í¨ï¿½ï¿½ï¿½ï¿½
+    else if ((Lef_break_point < 20 && Rig_circle == 0 && Lef_circle == 1 && Rig_slope == 998 && Lef_slope != 998 && Rig[13] - Rig[11] < 5 && Rig[11] - Rig[9] < 5 && Rig[9] - Rig[7] < 5 && Rig[7] - Rig[5] < 5 && Rig[5] - Rig[3] < 5 && Rig[11] != 78 && New_Lef[50] == -MIDMAP && Rig_edge < 10)) //?????????????,????????????
     {
       Road0_flag = 0;
       Road11_count++;
@@ -45,7 +45,7 @@ void Road_rec(void)
       }
       return;
     }
-    else if (Rig_break_point < 20 && Lef_circle == 0 && Rig_circle == 1 && Lef_slope == 998 && Rig_slope != 998 && Lef[3] - Lef[5] < 5 && Lef[5] - Lef[7] < 5 && Lef[7] - Lef[9] < 5 && Lef[9] - Lef[11] < 5 && Lef[11] - Lef[13] < 5 && Lef[11] != 2 && New_Rig[50] == MIDMAP && Lef_edge < 10) //ï¿½ï¿½Ô²ï¿½ï¿½ï¿½ï¿½ï¿½Ò±ï¿½ï¿½ß£ï¿½Í»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Õµï¿½ï¿½ï¿½Í»ï¿½ï¿½ï¿½ï¿½
+    else if (Rig_break_point < 20 && Lef_circle == 0 && Rig_circle == 1 && Lef_slope == 998 && Rig_slope != 998 && Lef[3] - Lef[5] < 5 && Lef[5] - Lef[7] < 5 && Lef[7] - Lef[9] < 5 && Lef[9] - Lef[11] < 5 && Lef[11] - Lef[13] < 5 && Lef[11] != 2 && New_Rig[50] == MIDMAP && Lef_edge < 10) //??????????????????????????????
     {
       Road0_flag = 0;
       Road21_count++;
@@ -58,35 +58,35 @@ void Road_rec(void)
       return;
     }
   }
-  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////ï¿½ï¿½Ô²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½ï¿½ï¿½
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////??????????????
 
 //if Road == 1 :left circle
   else if (Road == 1){
-    if (Road1_flag == 0) //×¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô²ï¿½ï¿½
+    if (Road1_flag == 0) //??????????
     {
       Road0_flag = 0;
       Road1_flag = 1;
       /*
-      if(EM_Value_2+EM_Value_3>3.8)//ï¿½ï¿½ï¿½ï¿½Ê¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß½ï¿½ï¿½ï¿½Ò»ï¿½ß·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+      if(EM_Value_2+EM_Value_3>3.8)//??????????????????????????????
       {
         Road12_count++;
         if(Road12_count==2)
         {
           Road12_count=0;
-          Road1_flag=1;//ï¿½ï¿½Ê¾ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô²ï¿½ï¿½
+          Road1_flag=1;//???????????????
         }
         return;
       }
       */
       return;
     }
-    else if (Road1_flag == 1) //ï¿½ï¿½ï¿½ï¿½Ô²ï¿½ï¿½1/4
+    else if (Road1_flag == 1) //???????1/4
     {
       Road0_flag = 0;
       if (Lef_circle == 0 || (Lef_circle == 1 && Lef_break_point > 45)) //if(((Lef_circle==0||( Lef_circle ==1 && Lef_break_point>30)))&& Road1_turnin(EM_Value_2,EM_Value_3,3.8))//if(((Lef_circle==0||( Lef_circle ==1 && Lef_break_point>30))) && Rig_slope>=10)/ && Road1_turnin(EM_Value_2,EM_Value_3,3.8))    //Rig_slope<1 && (Lef_leap[0]==0||Lef_slope==999)&& Rig_leap[0]==0)
       {
         Road13_count++;
-        if (Road13_count == 2) //2Ö¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ô²ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½
+        if (Road13_count == 2) //2??? ??????????????
         {
           Road1_flag = 2;
           //        Road1_flag1 = 1;
@@ -96,11 +96,11 @@ void Road_rec(void)
         return;
       }
     }
-    else if (Road1_flag == 2) //ï¿½ï¿½ï¿½ï¿½Ô²ï¿½ï¿½2/4 ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ß½ï¿½ï¿½ï¿½ï¿½ï¿½
+    else if (Road1_flag == 2) //???????2/4 ????????????
     {
       Road0_flag = 0;
       Road14_count++;
-      if (Road14_count == (int)(DIS_IN_CIRCLE * 10000 / (get_speed() * CAMERA_FPS)) + 1) //ï¿½ê¶¨ï¿½ï¿½ï¿½ï¿½function.h
+      if (Road14_count == (int)(DIS_IN_CIRCLE * 10000 / (get_speed() * CAMERA_FPS)) + 1) //??????function.h
       {
         Road1_flag = 4;
         Road14_count = 0;
@@ -108,7 +108,7 @@ void Road_rec(void)
       }
       return;
     }
-    else if (Road1_flag == 4) //ï¿½ï¿½ï¿½ï¿½Ô²ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    else if (Road1_flag == 4) //????????? ?????????
     {
       Road0_flag = 0;
       if (Rig_circle && whitecnt > 2700) //
@@ -123,7 +123,7 @@ void Road_rec(void)
       }
       return;
     }
-    else if (Road1_flag == 3) //×¼ï¿½ï¿½ï¿½ï¿½Ô²ï¿½ï¿½ï¿½Øµï¿½Ö±Â· ï¿½ï¿½ ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½
+    else if (Road1_flag == 3) //????????????¡¤ ?? ???????
     {
       Road0_flag = 0;
       if ((Rig_slope > -0.02 && Rig_slope < 0) || (Pixle[58][74] == 1 && Pixle[57][74] == 1 && Pixle[56][74] == 1 && Pixle[55][74] == 1 && Pixle[54][74] == 1 && Pixle[53][74] == 1)) //|| Lef_edge < 20))
@@ -141,7 +141,7 @@ void Road_rec(void)
       return;
     }
   }
-  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////ï¿½ï¿½Ô²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¬ï¿½ï¿½ï¿½ï¿½Ô²ï¿½ï¿½ï¿½ï¿½×¢ï¿½Í´Ó¼ï¿½
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////???????????????????????????????
 
 //if Road == 2:right circle
   else if (Road == 2){
@@ -150,13 +150,13 @@ void Road_rec(void)
       Road0_flag = 0;
       Road2_flag = 1;
       /*
-      if( EM_Value_2 +EM_Value_3 >3.8)//ï¿½ï¿½ï¿½ï¿½Ê¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß½ï¿½ï¿½ï¿½Ò»ï¿½ß·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+      if( EM_Value_2 +EM_Value_3 >3.8)//??????????????????????????????
       {
         Road22_count++;
         if(Road22_count==2)
         {
           Road22_count=0;
-          Road2_flag=1;//ï¿½ï¿½Ê¾ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô²ï¿½ï¿½
+          Road2_flag=1;//???????????????
         }
         return;
       }
@@ -240,24 +240,24 @@ void Road_rec(void)
 }
 #endif
 /*************************************************************************
- *  å‡½æ•°åç§°ï¼švoid car_center_pid()
- *  åŠŸèƒ½è¯´æ˜ï¼šè½¦æ­£ ä¸ä¸­å¿ƒçº¿ä½ç½®å·®pid
- *  å‚æ•°è¯´æ˜ï¼šæ—  (pixel)
- *  å‡½æ•°è¿”å›ï¼šæ— 
- *  ä¿®æ”¹æ—¶é—´ï¼š2019.12.28
- *  å¤‡    æ³¨ï¼šä¸è½¦ç›´åˆç”¨
+ *  º¯ÊıÃû³Æ£ºvoid car_center_pid()
+ *  ¹¦ÄÜËµÃ÷£º³µÕı ÓëÖĞĞÄÏßÎ»ÖÃ²îpid
+ *  ²ÎÊıËµÃ÷£ºÎŞ (pixel)
+ *  º¯Êı·µ»Ø£ºÎŞ
+ *  ĞŞ¸ÄÊ±¼ä£º2019.12.28
+ *  ±¸    ×¢£ºÓë³µÖ±ºÏÓÃ
  * **********************************************************************/
 
 struct _pid
 {
-  float err;          //å®šä¹‰åå·®å€¼
-  float err_lastlast; //å®šä¹‰ä¸Šä¸Šä¸ªåå·®å€¼
-  float err_last;     //å®šä¹‰ä¸Šä¸ªåå·®å€¼
-  //float Kp, Ki, Kd;   //å®šä¹‰æ¯”ä¾‹ã€ç§¯åˆ†ã€å¾®åˆ†ç³»æ•°
-  float Kp, Kd;       //å®šä¹‰æ¯”ä¾‹ã€å¾®åˆ†ç³»æ•°
-  float voltage;      //å®šä¹‰ç”µå‹å€¼ï¼ˆæ§åˆ¶æ‰§è¡Œå™¨çš„å˜é‡ï¼‰
-  float integral;     //å®šä¹‰ç§¯åˆ†å€¼
-  float ActualAngle;  //è¾“å‡ºè½¬è§’
+  float err;          //¶¨ÒåÆ«²îÖµ
+  float err_lastlast; //¶¨ÒåÉÏÉÏ¸öÆ«²îÖµ
+  float err_last;     //¶¨ÒåÉÏ¸öÆ«²îÖµ
+  //float Kp, Ki, Kd;   //¶¨Òå±ÈÀı¡¢»ı·Ö¡¢Î¢·ÖÏµÊı
+  float Kp, Kd;      //¶¨Òå±ÈÀı¡¢Î¢·ÖÏµÊı
+  float voltage;     //¶¨ÒåµçÑ¹Öµ£¨¿ØÖÆÖ´ĞĞÆ÷µÄ±äÁ¿£©
+  float integral;    //¶¨Òå»ı·ÖÖµ
+  float ActualAngle; //Êä³ö×ª½Ç
 };
 
 _pid pid_center;
@@ -280,7 +280,7 @@ float PID_realize_center(float err)
 {
   pid_center.err = err;
   float incrementAngle = pid_center.Kp * (pid_center.err - pid_center.err_last) + pid_center.Kd * (pid_center.err - 2 * pid_center.err_last + pid_center.err_lastlast);
-  //+ pid_center.Ki * pid_center.err //ä¸ç”¨iè°ƒèŠ‚
+  //+ pid_center.Ki * pid_center.err //²»ÓÃiµ÷½Ú
   pid_center.ActualAngle += incrementAngle;
   pid_center.err_lastlast = pid_center.err_last;
   pid_center.err_last = pid_center.err;
@@ -307,12 +307,12 @@ float car_center()
 }
 
 /*************************************************************************
- *  å‡½æ•°åç§°ï¼švoid car_straight_pid()
- *  åŠŸèƒ½è¯´æ˜ï¼šè½¦ç›´ ä¸ä¸­çº¿è§’åº¦å·®pid
- *  å‚æ•°è¯´æ˜ï¼šæ—  (theta)
- *  å‡½æ•°è¿”å›ï¼šæ— 
- *  ä¿®æ”¹æ—¶é—´ï¼š2019.12.28
- *  å¤‡    æ³¨ï¼šç»™gmydlçš„è½¦ç›´åŠ (æ‰“)pid(call)
+ *  º¯ÊıÃû³Æ£ºvoid car_straight_pid()
+ *  ¹¦ÄÜËµÃ÷£º³µÖ± ÓëÖĞÏß½Ç¶È²îpid
+ *  ²ÎÊıËµÃ÷£ºÎŞ (theta)
+ *  º¯Êı·µ»Ø£ºÎŞ
+ *  ĞŞ¸ÄÊ±¼ä£º2019.12.28
+ *  ±¸    ×¢£º¸øgmydlµÄ³µÖ±¼Ó(´ò)pid(call)
  * **********************************************************************/
 _pid pid_straight;
 
@@ -334,7 +334,7 @@ int PID_realize_straight(float err)
 {
   pid_straight.err = err;
   float incrementAngle = pid_straight.Kp * (pid_straight.err - pid_straight.err_last) + pid_straight.Kd * (pid_straight.err - 2 * pid_straight.err_last + pid_straight.err_lastlast);
-  //+ pid_straight.Ki * pid_straight.err //ä¸ç”¨iè°ƒèŠ‚
+  //+ pid_straight.Ki * pid_straight.err //²»ÓÃiµ÷½Ú
   pid_straight.ActualAngle += incrementAngle;
   pid_straight.err_lastlast = pid_straight.err_last;
   pid_straight.err_last = pid_straight.err;
@@ -348,3 +348,91 @@ void car_straight_pid()
   centerAngle = PID_realize_straight(atan(new_M_slope()));
 }
 
+/* ²¹control.c 39-45 */
+void chuyuanhuan_bunengbuxian(void)
+{
+  float wall_slope = 0;
+  int wall_dis = 0;
+  int avr_x = 0;
+
+  if (Road1_flag == 5) //³ö×ó»·²»ÄÜ²¹ÏßÊ±
+  {
+    /* ºÚÏßĞ±ÂÊÔ¼¶¸´ò½ÇÔ½Ğ¡ */
+    if (Rig[Allwhiteend] < 78) //Õı³£Çé¿ö
+    {
+      avr_x += Rig[Allwhiteend];
+      for (int i = Allwhiteend - 1; i > Fir_row; --i)
+      {
+        if (Rig[i] >= 78 || Rig[i] - Rig[i + 1] > 0) //Ñ­»·ËÑÖÁÕÒ²»µ½±ßÏß»ò²»µ¥µ÷
+        {
+          avr_x += 2;                                                            //È¡×î×ó
+          avr_x /= Allwhiteend - i + 1;                                          //¾ùÖµ£¬È¡Õû£¬ÖÁÉÙÁ½µã£¬Rig[Allwhiteend] ¡­ ¡­ 2
+          wall_slope = Slope(avr_x, (i + Allwhiteend + 1) / 2, 78, Allwhiteend); //ËãĞ±ÂÊ£¬Ó¦¸Ã²»´óÓÚ1
+          break;
+        }
+        avr_x += Rig[i];
+      }
+    }
+    else if (Lef[Allwhiteend] <= 2) //ºÚ³¤Ö±
+    {
+      wall_slope = 0.01;
+    }
+    else //ÍáµÄÀëÆ×£¬ÌáÇ°½ø5¿ÉÄÜµ¼ÖÂ¸Ã×´Ì¬
+    {
+      wall_slope = 0.01; //-999;//ÔİÊ±ÓëÖ±Ïß²»Çø·Ö
+    }
+
+    /* ºÚÏß¾àÀëÔ½½ü´ò½ÇÔ½´ó£¨ÒÔÖĞ¼äÁĞÎª×¼£© */
+    for (int j = 0; j < 3 && Allwhiteend - j > Fir_row && Rig[Allwhiteend - j] < 78; ++j)
+    {
+      if (j == 2)
+      {
+        wall_dis == Rig[Allwhiteend - 1]; //38ĞĞ´òÂúÍíÁË
+      }
+    }
+
+    /* Õ¦Õûµ½Ò»ÆğÄØ ×ó»·×ó×ªÎª¸º*/
+    Turn_Cam_Out = -120 - (1 - wall_slope) * (wall_dis - 25) * 10;
+  }
+
+  if (Road2_flag == 5) //³öÓÒ»·²»ÄÜ²¹ÏßÊ±
+  {
+    /* ºÚÏßĞ±ÂÊÔ¼¶¸´ò½ÇÔ½Ğ¡ */
+    if (Lef[Allwhiteend] < 78) //Õı³£Çé¿ö
+    {
+      avr_x += Lef[Allwhiteend];
+      for (int i = Allwhiteend - 1; i > Fir_row; --i)
+      {
+        if (Lef[i] >= 78 || Lef[i] - Lef[i + 1] > 0) //Ñ­»·ËÑÖÁÕÒ²»µ½±ßÏß»ò²»µ¥µ÷
+        {
+          avr_x += 2;                                                            //È¡×î×ó
+          avr_x /= Allwhiteend - i + 1;                                          //¾ùÖµ£¬È¡Õû£¬ÖÁÉÙÁ½µã£¬Rig[Allwhiteend] ¡­ ¡­ 2
+          wall_slope = Slope(avr_x, (i + Allwhiteend + 1) / 2, 78, Allwhiteend); //ËãĞ±ÂÊ£¬Ó¦¸Ã²»´óÓÚ1
+          break;
+        }
+        avr_x += Lef[i];
+      }
+    }
+    else if (Rig[Allwhiteend] <= 2) //ºÚ³¤Ö±
+    {
+      wall_slope = 0.01;
+    }
+    else //ÍáµÄÀëÆ×£¬ÌáÇ°½ø5¿ÉÄÜµ¼ÖÂ¸Ã×´Ì¬
+    {
+      wall_slope = 0.01; //-999;//ÔİÊ±ÓëÖ±Ïß²»Çø·Ö
+    }
+
+    /* ºÚÏß¾àÀëÔ½½ü´ò½ÇÔ½´ó£¨ÒÔÖĞ¼äÁĞÎª×¼£© */
+    for (int j = 0; j < 3 && Allwhiteend - j > Fir_row && Lef[Allwhiteend - j] < 78; ++j)
+    {
+      if (j == 2)
+
+      {
+        wall_dis == Lef[Allwhiteend - 1]; //38ĞĞ´òÂúÍíÁË
+      }
+    }
+
+    /* Õ¦Õûµ½Ò»ÆğÄØ ÓÒ»·ÓÒ×ªÎªÕı*/
+    Turn_Cam_Out = 120 + (1 - wall_slope) * (wall_dis - 25) * 10;
+  }
+}
