@@ -125,9 +125,9 @@ void gpio_interrupt_init(PIN_enum pin, TRIGGER_enum trigger, uint32 pinconf)
     GPIO_PinInit(PORTPTR[pin>>5], pin&0x1f, &gpio_config);      //初始化GPIO
     GPIO_PortEnableInterrupts(PORTPTR[pin>>5],1<<(pin&0x1f));   //打开GPIO的中断
 
-    EnableIRQ((IRQn_Type)((IRQn_Type)((pin>>4)-2) + GPIO1_Combined_0_15_IRQn));//使用IRQ
+    EnableIRQ((IRQn_Type)((IRQn_Type)((pin>>4)-2) + GPIO2_Combined_16_31_IRQn));//使用IRQ
     
-    NVIC_SetPriority((IRQn_Type)((IRQn_Type)((pin>>4)-2) + GPIO1_Combined_0_15_IRQn),15);//优先级设置 范围0-15 越小优先级越高
+    //NVIC_SetPriority((IRQn_Type)((IRQn_Type)((pin>>4)-2) + GPIO1_Combined_0_15_IRQn),15);//优先级设置 范围0-15 越小优先级越高
 }
 
 

@@ -96,3 +96,4 @@ extern int Lef_edge, Rig_edge;
 
 extern float Lef_slope, Rig_slope;
 
+extern int Road_Half_Width_change;

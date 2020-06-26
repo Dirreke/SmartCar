@@ -892,7 +892,7 @@ void Pic_particular(void)
     int i;
     Lef_edge = 0;
     Rig_edge = 0;
-    for (i = 59; i > Fir_row; i--)
+    for (i = 54; i > Fir_row; i--)
     {
         if (Lef[i] - Fir_col < 3)
             Lef_edge += 1;
@@ -1539,7 +1539,7 @@ void Pic_Fix_Line(void)
         // {
         //   ;
         // }
-        else if (Road1_flag = 6)
+        else if (Road1_flag == 6)
         {
             for (int i = Fir_row; i < Last_row - 5; ++i)
             {
@@ -2079,25 +2079,14 @@ void Pic_DrawMid(void)
  *  修改时间：2020.5.31
  *  备    注：
  * ************************************************************************/
-
+int Road_Half_Width_change = 0;
 void Pic_DrawMid_und(void)
 {
     int i;
-    int Road_Half_Width_change = 0;
-    if (Road0_flag == 4 || Road == 1) //左
+    // int Road_Half_Width_change = 0;
+    if (Road0_flag == 4 || (Road == 1 && Road1_flag != 0 && Road1_flag != 5)) //左
     {
-        if (Lef_slope == 999 || Lef_slope == 998 || Lef_slope < 0)
-        {
-            Road_Half_Width_change = ROAD_HALF_WIDTH; //异常处理，不改变中线位置
-        }
-        else
-        {
-            Road_Half_Width_change = (int)(150 / sin(atan(Lef_slope * UNDISTORT_PYK * UNDISTORT_XPK))); //计算改变中线位置
-        }
-    }
-    else if (Road0_flag == 5 || Road == 2) //右
-    {
-         if (Rig_slope == 999 ||Rig_slope == 998 || Rig_slope > 0)
+        if (Rig_slope == 999 || Rig_slope == 998 || Rig_slope >= 0)
         {
             Road_Half_Width_change = ROAD_HALF_WIDTH; //异常处理，不改变中线位置
         }
@@ -2106,7 +2095,19 @@ void Pic_DrawMid_und(void)
             Road_Half_Width_change = (int)(150 / sin(atan(-Rig_slope * UNDISTORT_PYK * UNDISTORT_XPK))); //计算改变中线位置
         }
     }
-    else{
+    else if (Road0_flag == 5 || (Road == 2 && Road2_flag != 0 && Road2_flag != 5)) //右
+    {
+        if (Lef_slope == 999 || Lef_slope == 998 || Lef_slope <= 0)
+        {
+            Road_Half_Width_change = ROAD_HALF_WIDTH; //异常处理，不改变中线位置
+        }
+        else
+        {
+            Road_Half_Width_change = (int)(150 / sin(atan(Lef_slope * UNDISTORT_PYK * UNDISTORT_XPK))); //计算改变中线位置
+        }
+    }
+    else
+    {
         Road_Half_Width_change = ROAD_HALF_WIDTH; //不转弯不改
     }
 

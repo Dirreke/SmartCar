@@ -15,9 +15,11 @@ extern int Road1_flag;
 extern int Road2_flag;
 extern int Road0_flag;
 extern int Road7_flag;
+extern int Road3_flag;
+
 extern int EM_Road;
 extern bool ganhuangguan_flag;
-extern int ganhuangguan_flag_cnt1;
+extern bool barn_reset_flag;
 
 extern int turn_stop;//◊™Õ‰÷’÷πœﬂ
 
@@ -36,7 +38,7 @@ void camera_dispose_main(void);
 void Allwhite_find(void);
 void Pic_find_circle(void);
 void start_stop_find(void);
-
+void mag_find(void);
 void Road_rec(void);
 
 void Pic_offset_fig(void);

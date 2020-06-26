@@ -334,5 +334,5 @@ void Speed_Control(void)
   MotorOut1 += SpeedControlOutE1;
   MotorOut2 += SpeedControlOutE2;
 
-  Moto_Out(MotorOut1, MotorOut1); // (uint32)(MotorOut1 / 100) * 100要先分+-
+  Moto_Out(MotorOut1, MotorOut2); // (uint32)(MotorOut1 / 100) * 100要先分+-
 }

@@ -52,15 +52,15 @@ void PIT_IRQHandler(void)
 
 void GPIO2_Combined_16_31_IRQHandler(void)
 {
-    static int ganhuangguan_flag_cnt=0;
-    ganhuangguan_flag_cnt++;
-    CLEAR_GPIO_FLAG(C25);//清除中断标志位
 
-    if(ganhuangguan_flag_cnt>4){
+    CLEAR_GPIO_FLAG(C23);//清除中断标志位
+
+    
         ganhuangguan_flag=1;
-        gpio_interrupt_init(C25,NO_INT,GPIO_INT_CONFIG); 
+        
+        gpio_interrupt_init(C23,NO_INT,GPIO_INT_CONFIG); 
 
-    }
+    
 
     
   

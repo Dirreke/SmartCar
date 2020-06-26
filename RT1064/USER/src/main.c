@@ -65,12 +65,12 @@ int main(void)
     pit_interrupt_ms(PIT_CH0, PIT_TIME);
     qtimer_AB_init(); //解码器初始化
     EM_Init();        //ADC初始化
- //  gpio_init(C25, GPO, 1, GPIO_PIN_CONFIG);
-       state = gpio_get(C25);
-    gpio_interrupt_init(C25,FALLING,GPIO_INT_CONFIG);   //初始化GPIO C23 中断模式 使用默认引脚配置GPIO_INT_CONFIG
-    
-    //NVIC_SetPriority(GPIO2_Combined_16_31_IRQn,0);    //设置中断优先级 范围0-15 越小优先级越高
-    Para_Init(); //各个变量初始化
+    gpio_init(C23, GPI, 1, GPIO_PIN_CONFIG);
+    state = gpio_get(C23);
+    gpio_interrupt_init(C23, FALLING, GPIO_INT_CONFIG); //初始化GPIO C23 中断模式 使用默认引脚配置GPIO_INT_CONFIG
+
+    NVIC_SetPriority(GPIO2_Combined_16_31_IRQn, 0); //设置中断优先级 范围0-15 越小优先级越高
+    Para_Init();                                    //各个变量初始化
 
     EnableGlobalIRQ(0);
 
@@ -81,20 +81,12 @@ int main(void)
         if (mt9v03x_csi_finish_flag) //图像采集完成
         {
             mt9v03x_csi_finish_flag = 0; //清除采集完成标志位
+            mag_find();
             camera_dispose_main();
-state = gpio_get(C25);
-            
+            state = gpio_get(C23);
+
             Send_Data();
             Dubug_key();
-            if(ganhuangguan_flag==1){
-                ganhuangguan_flag_cnt1++;
-            }
-        
-            if(ganhuangguan_flag_cnt1>4){
-                    ganhuangguan_flag=0;
-                    gpio_interrupt_init(C25,LOW,GPIO_INT_CONFIG);
-            }
-
 
 
             //使用缩放显示函数，根据原始图像大小 以及设置需要显示的大小自动进行缩放或者放大显示。

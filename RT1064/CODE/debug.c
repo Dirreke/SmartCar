@@ -14,7 +14,7 @@ void Debug_Init(void)
 void Dubug_key(void)
 {
     static int ips_num = 0;
-    const int page_num = 6;
+    const int page_num = 8;
     if (gpio_get(DEBUG_KEY0))
     {
         return;
@@ -63,24 +63,48 @@ void Dubug_key(void)
         {
             switch (ips_num)
             {
-            case 0:
+            case 2:
                 threshold_offset += 1;
                 break;
-            case 1:
+            case 3:
                 SpeedGoal += 0.1;
                 break;
-            case 2:
+            case 4:
                 PID_TURN_CAM_EXT.P += 0.02;
                 break;
-            case 3:
+            case 5:
                 PID_TURN_CAM_EXT.D += 0.02;
                 break;
-            case 4:
+            case 6:
                 PID_STRAIGHT_EM.P += 0.01;
                 break;
-            case 5:
+            case 7:
                 PID_STRAIGHT_EM.D += 0.01;
                 break;
+            case 0:
+                Road += 1;
+                break;
+            case 1:
+                switch (Road)
+                {
+                case 0:
+                    Road0_flag++;
+                    break;
+                case 1:
+                    Road1_flag++;
+                    break;
+                case 2:
+                    Road2_flag++;
+                    break;
+                case 3:
+                    Road3_flag++;
+                    break;
+                case 7:
+                    Road7_flag++;
+                    break;
+                default:
+                    break;
+                }
 
                 /*
             case 32:
@@ -198,24 +222,48 @@ void Dubug_key(void)
         {
             switch (ips_num)
             {
-            case 0:
+            case 2:
                 threshold_offset -= 1;
                 break;
-            case 1:
+            case 3:
                 SpeedGoal -= 0.1;
                 break;
-            case 2:
+            case 4:
                 PID_TURN_CAM_EXT.P -= 0.02;
                 break;
-            case 3:
+            case 5:
                 PID_TURN_CAM_EXT.D -= 0.02;
                 break;
-            case 4:
+            case 6:
                 PID_STRAIGHT_EM.P -= 0.01;
                 break;
-            case 5:
+            case 7:
                 PID_STRAIGHT_EM.D -= 0.01;
                 break;
+            case 0:
+                Road -= 1;
+                break;
+            case 1:
+                switch (Road)
+                {
+                case 0:
+                    Road0_flag--;
+                    break;
+                case 1:
+                    Road1_flag--;
+                    break;
+                case 2:
+                    Road2_flag--;
+                    break;
+                case 3:
+                    Road3_flag--;
+                    break;
+                case 7:
+                    Road7_flag--;
+                    break;
+                default:
+                    break;
+                }
                 /*
             case 32:
                 Sobel_Threshold_FarFar -= 1;
@@ -342,33 +390,61 @@ void ips_show_debug(int ips_num)
     {
 
     /** pages **/
-    case 0:                                          //阈值
+    case 2:                                          //阈值
         ips200_showstr(0, 12, "threshold_offset: "); //显示字符串
         //ips200_showfloat(0, 13, 66.6667, 2, 4);    //显示一个浮点数并去除整数部分无效0
         //ips200_showuint16(0,1,666);                //显示一个16位无符号整数
         //ips200_showint32(0,3,-666,3);              //显示一个32位有符号数并去除无效0
         ips200_showint32(0, 13, threshold_offset, 3);
         break;
-    case 1:
+    case 3:
         ips200_showstr(0, 12, "speed: "); //显示字符串
         ips200_showfloat(0, 13, SpeedGoal, 2, 2);
         break;
-    case 2:
+    case 4:
         ips200_showstr(0, 12, "P_CAM");
         ips200_showfloat(0, 13, PID_TURN_CAM_EXT.P, 2, 2);
         break;
-    case 3:
+    case 5:
         ips200_showstr(0, 12, "D_CAM");
         ips200_showfloat(0, 13, PID_TURN_CAM_EXT.D, 2, 2);
         break;
-    case 4:
+    case 6:
         ips200_showstr(0, 12, "P_EM");
         ips200_showfloat(0, 13, PID_STRAIGHT_EM.P, 2, 2);
         break;
-    case 5:
+    case 7:
         ips200_showstr(0, 12, "D_EM");
         ips200_showfloat(0, 13, PID_STRAIGHT_EM.D, 2, 2);
         break;
+    case 0:
+        ips200_showstr(0, 12, "Road");
+        ips200_showint32(0, 13, Road, 3);
+        break;
+    case 1:
+        ips200_showstr(0, 12, "Road_flag");
+        ips200_showint32(5, 12, Road, 3);
+        switch (Road)
+        {
+        case 0:
+            
+        ips200_showint32(0, 13, Road0_flag, 3);
+            break;
+        case 1:
+        ips200_showint32(0, 13, Road1_flag, 3);
+            break;
+        case 2:
+        ips200_showint32(0, 13, Road2_flag, 3);
+            break;
+        case 3:
+        ips200_showint32(0, 13, Road3_flag, 3);
+            break;
+        case 7:
+        ips200_showint32(0, 13, Road7_flag, 3);
+            break;
+        default:
+            break;
+        }
         /*
     case 32:
         ips200_showstr(0, 12, "Sobel_Threshold_FarFar: ");

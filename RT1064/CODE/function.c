@@ -20,6 +20,7 @@ void Para_Init()
         PID_CENTER_EM.D = 12;//9
         PID_STRAIGHT_EM.P = 0.3;
         PID_STRAIGHT_EM.D = 0.7;
+        barn_reset_flag = 0;    
         
         MotorOut1=0;
         MotorOut2=0;
