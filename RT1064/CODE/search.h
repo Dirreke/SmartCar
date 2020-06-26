@@ -15,6 +15,7 @@ extern int Road1_flag;
 extern int Road2_flag;
 extern int Road0_flag;
 extern int Road7_flag;
+extern int EM_Road;
 
 extern int turn_stop;//×ªÍäÖÕÖ¹Ïß
 
@@ -26,7 +27,7 @@ extern int Lef_break_point;
 extern int Rig_break_point;
 
 extern int start_stop_line;
-
+extern int barn_line;
 extern float Cam_offset;
 
 void camera_dispose_main(void);

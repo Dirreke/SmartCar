@@ -17,20 +17,15 @@
  * @date       		2019-04-30
  ********************************************************************************************************************/
 
-
 //整套推荐IO查看Projecct文件夹下的TXT文本
-
-
 
 //打开新的工程或者工程移动了位置务必执行以下操作
 //第一步 关闭上面所有打开的文件
 //第二步 project  clean  等待下方进度条走完
 
-
-
-							// ！！！ 必看 ！！！！
-							// ！！！ 必看 ！！！！
-							// ！！！ 必看 ！！！！
+// ！！！ 必看 ！！！！
+// ！！！ 必看 ！！！！
+// ！！！ 必看 ！！！！
 //*********************************************************************************
 //*********************************************************************************
 //*********************************************************************************
@@ -43,58 +38,51 @@
 //*********************************************************************************
 //*********************************************************************************
 
-
-
 #include "headfile.h"
 
-uint8 image_head[4] ={0x00,0xff,0x01,0x01};
-
-
+uint8 image_head[4] = {0x00, 0xff, 0x01, 0x01};
 
 uint32 use_time;
-
 
 int main(void)
 {
 
     DisableGlobalIRQ();
     /** board init **/
-    board_init();   	      	 //务必保留，本函数用于初始化MPU 时钟 调试串口
-    systick_delay_ms(100);	   //延时100ms，等待主板其他外设上电成功
+    board_init();          //务必保留，本函数用于初始化MPU 时钟 调试串口
+    systick_delay_ms(100); //延时100ms，等待主板其他外设上电成功
 
     /** program init **/
     //seekfree_wireless_init();  //初始化无线串口模块
     Debug_Init();
-    uart_init(USART_1,1500000,UART1_TX_B12, UART1_RX_B13);
-    mt9v03x_csi_init();		     //初始化摄像头	使用CSI接口
-    ips200_init();	       		 //初始化2.0寸IPS屏幕
-    Motor_Init(); //电机初始化
-    Servo_Init(); //舵机初始化
-    pit_init();   //中断初始化，每2ms控制电机一次（中断的时间也许可以改到更小一些，因为主频有所提升）
-    pit_interrupt_ms(PIT_CH0,PIT_TIME);
-    qtimer_AB_init();//解码器初始化
-    EM_Init();//ADC初始化
+    uart_init(USART_1, 1500000, UART1_TX_B12, UART1_RX_B13);
+    mt9v03x_csi_init(); //初始化摄像头	使用CSI接口
+    ips200_init();      //初始化2.0寸IPS屏幕
+    Motor_Init();       //电机初始化
+    Servo_Init();       //舵机初始化
+    pit_init();         //中断初始化，每2ms控制电机一次（中断的时间也许可以改到更小一些，因为主频有所提升）
+    pit_interrupt_ms(PIT_CH0, PIT_TIME);
+    qtimer_AB_init(); //解码器初始化
+    EM_Init();        //ADC初始化
     //gpio_interrupt_init(C16,RISING,GPIO_INT_CONFIG);   //初始化GPIO C16 中断模式 使用默认引脚配置GPIO_INT_CONFIG
     //NVIC_SetPriority(GPIO2_Combined_16_31_IRQn,15);    //设置中断优先级 范围0-15 越小优先级越高
-    Para_Init();    //各个变量初始化
-    
+    Para_Init(); //各个变量初始化
+
     EnableGlobalIRQ(0);
-  
+
     /** main loop **/
 
-    while(1)
+    while (1)
     {
         if (mt9v03x_csi_finish_flag) //图像采集完成
         {
             mt9v03x_csi_finish_flag = 0; //清除采集完成标志位
             camera_dispose_main();
-            if (Road7_flag!= 2)
-            {
-                Turn_Cam();
-            }
-
             EM_main();
-            Turn_EM();
+            if (Road7_flag != 2)
+            {
+                Turn_Servo();
+            }
             Send_Data();
             Dubug_key();
 
@@ -107,7 +95,7 @@ int main(void)
         }
 
         //更改占空比为  百分之100*2000/PWM_DUTY_MAX  PWM_DUTY_MAX在fsl_pwm.h文件中 默认为50000
-//      占空比对应关系  0：D0  1：D1  2：D12  3：D13
+        //      占空比对应关系  0：D0  1：D1  2：D12  3：D13
 
         /*
         Motor_Duty(0,12500);
@@ -118,9 +106,7 @@ int main(void)
         */
 
         //舵机
-        
+
         //Servo_Duty(2500);
-
-}
-
+    }
 }

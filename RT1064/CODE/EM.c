@@ -8,6 +8,8 @@ float EM_Value_4 = 0;
 
 float EM_center_offset = 0;
 float EM_straight_offset = 0;
+
+int EM_edge = 0;
 // int Curve_Cnt = 0;
 // int EM_Peak_Time_Cnt = 0;
 // int EM_Ring_State = 0;
@@ -140,7 +142,8 @@ void EM_straight_offset_fig(void)
   float pl = EM_Value_1;
   float pr = EM_Value_4;
   const float temp = 0.35;
-  float EM_straight_offset1,EM_straight_offset2;
+  const float temp2 = 0.6;
+  float EM_straight_offset1, EM_straight_offset2;
 
   //now calculate the actuall distance dA
   float lm, rm;    //l and r 's magnitude  //将全局变量改为局部变量，，部分与EM_angle_get 相同，但EM_angle_get使用值似乎没有用到；——GMY注
@@ -148,26 +151,11 @@ void EM_straight_offset_fig(void)
 
   lm = (float)sqrt(l * l + EM2EM1K2 * pl * pl);
   rm = (float)sqrt(EM2EM1K2 * pr * pr + r * r);
-
-  if (lm >rm + temp)
+  if (pl < temp2 && pr < temp2)
   {
-    if (l > 2.85 && pl <= 2.85)
-    {
-      mix_choice = 2;
-    }
-    else if (pl > 2.85 && l <= 2.85)
-    {
-      mix_choice = 1;
-    }
-    else if (pl > 2.85 && l > 2.85)
-    {
-      mix_choice = 3;
-    }
-    cos_angle = l / lm;
-    EM_straight_offset = -acos(cos_angle) / ANGLE_RANGE * SERVO_RANGE;
-    //    err = (lm-rm);
+    EM_straight_offset = 0;
   }
-  else if(lm<rm - temp)
+  else if (pl < temp2 && pr >= temp2)
   {
     if (r > 2.85 && pr <= 2.85)
     {
@@ -183,15 +171,70 @@ void EM_straight_offset_fig(void)
     }
     cos_angle = r / rm;
     EM_straight_offset = acos(cos_angle) / ANGLE_RANGE * SERVO_RANGE;
-    //    err = (rm-lm);
+  }
+  else if (pl >= temp2 && pr < temp2)
+  {
+    if (l > 2.85 && pl <= 2.85)
+    {
+      mix_choice = 2;
+    }
+    else if (pl > 2.85 && l <= 2.85)
+    {
+      mix_choice = 1;
+    }
+    else if (pl > 2.85 && l > 2.85)
+    {
+      mix_choice = 3;
+    }
+    cos_angle = l / lm;
+    EM_straight_offset = -acos(cos_angle) / ANGLE_RANGE * SERVO_RANGE;
   }
   else
   {
-    EM_straight_offset1 = -acos(cos_angle) / ANGLE_RANGE * SERVO_RANGE;
-    EM_straight_offset2 = acos(cos_angle) / ANGLE_RANGE * SERVO_RANGE;
-    // EM_straight_offset = (EM_straight_offset1 * (lm-rm) + EM_straight_offset2* (rm-lm)) /2/temp;
-    // EM_straight_offset = (EM_straight_offset1-EM_straight_offset2)/2/temp*(lm-rm);
-    EM_straight_offset = (EM_straight_offset1 -EM_straight_offset2)/2/temp*(lm-rm-temp)+EM_straight_offset1;
+    if (lm > rm + temp)
+    {
+      if (l > 2.85 && pl <= 2.85)
+      {
+        mix_choice = 2;
+      }
+      else if (pl > 2.85 && l <= 2.85)
+      {
+        mix_choice = 1;
+      }
+      else if (pl > 2.85 && l > 2.85)
+      {
+        mix_choice = 3;
+      }
+      cos_angle = l / lm;
+      EM_straight_offset = -acos(cos_angle) / ANGLE_RANGE * SERVO_RANGE;
+      //    err = (lm-rm);
+    }
+    else if (lm < rm - temp)
+    {
+      if (r > 2.85 && pr <= 2.85)
+      {
+        mix_choice = 2;
+      }
+      else if (pr > 2.85 && r <= 2.85)
+      {
+        mix_choice = 1;
+      }
+      else if (pr > 2.85 && r > 2.85)
+      {
+        mix_choice = 3;
+      }
+      cos_angle = r / rm;
+      EM_straight_offset = acos(cos_angle) / ANGLE_RANGE * SERVO_RANGE;
+      //    err = (rm-lm);
+    }
+    else
+    {
+      EM_straight_offset1 = -acos(cos_angle) / ANGLE_RANGE * SERVO_RANGE;
+      EM_straight_offset2 = acos(cos_angle) / ANGLE_RANGE * SERVO_RANGE;
+      // EM_straight_offset = (EM_straight_offset1 * (lm-rm) + EM_straight_offset2* (rm-lm)) /2/temp;
+      // EM_straight_offset = (EM_straight_offset1-EM_straight_offset2)/2/temp*(lm-rm);
+      EM_straight_offset = (EM_straight_offset1 - EM_straight_offset2) / 2 / temp * (lm - rm - temp) + EM_straight_offset1;
+    }
   }
 
   // 单条件判定时使用
@@ -199,7 +242,6 @@ void EM_straight_offset_fig(void)
   //     return err;
   //   else //car is near left side
   //     return -err;
-  
 }
 
 void EM_straight_offset_filter(void)
@@ -212,6 +254,26 @@ void EM_straight_offset_filter(void)
   EM_straight_offset = EM_straight_offset_buff[0] * 0.5 + EM_straight_offset_buff[1] * 0.2 + EM_straight_offset_buff[2] * 0.2 + EM_straight_offset_buff[3] * 0.1;
 }
 
+void EM_particular(void)
+{
+  EM_edge = 0;
+  if (EM_Value_1 > 2.85)
+  {
+    EM_edge += 1;
+  }
+  if (EM_Value_2 > 2.85)
+  {
+    EM_edge += 1;
+  }
+  if (EM_Value_3 > 2.85)
+  {
+    EM_edge += 1;
+  }
+  if (EM_Value_4 > 2.85)
+  {
+    EM_edge += 1;
+  }
+}
 #if 0
 void EM_offset_filter(void)
 {
@@ -444,7 +506,7 @@ void EM_main(void)
   EM_center_offset_filter();
   EM_straight_offset_fig();
   EM_straight_offset_filter();
-
+  Turn_EM();
   // EM_Ring_Rec();
   // //EM_Ramp_Rec();
   // EM_Curve_Rec();

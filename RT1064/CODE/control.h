@@ -2,6 +2,7 @@
 
 extern float Turn_Cam_Out;
 extern float Turn_EM_Out;
+extern float Turn_Out;
 extern float MotorOut1,MotorOut2;
 extern float speedTarget1,speedTarget2;
 extern PID PID_SPEED;
@@ -17,6 +18,7 @@ void SpeedTarget_fig(void);
 void Speed_Control(void);
 
 void Turn_EM(void);
+void Turn_Servo(void);
 // float EM_err_cal(float l,float r,float pl, float pr);
 // void TurnFuzzyPD_EM(void);
 // float PD_section(float err);
