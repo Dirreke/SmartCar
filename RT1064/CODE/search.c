@@ -18,6 +18,8 @@ int Road1_flag = 0;
 int Road2_flag = 0;
 int Road7_flag = 0;
 int EM_Road = 0;
+bool ganhuangguan_flag=0;
+int ganhuangguan_flag_cnt1=0;
 
 int turn_stop = 0; //×ªÍäÓÃ
 float Cam_offset = 0;

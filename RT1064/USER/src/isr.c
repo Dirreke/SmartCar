@@ -32,7 +32,11 @@ void PIT_IRQHandler(void)
     if(PIT_FLAG_GET(PIT_CH0))
     {
         PIT_FLAG_CLEAR(PIT_CH0);
-
+    EM_main();
+    if (Road7_flag != 2)
+        {
+            Turn_Servo();
+        }
 
 
        Get_Speed();
@@ -48,8 +52,18 @@ void PIT_IRQHandler(void)
 
 void GPIO2_Combined_16_31_IRQHandler(void)
 {
-
+    static int ganhuangguan_flag_cnt=0;
+    ganhuangguan_flag_cnt++;
     CLEAR_GPIO_FLAG(C16);//清除中断标志位
+
+    if(ganhuangguan_flag_cnt>4){
+        ganhuangguan_flag=1;
+        gpio_interrupt_init(C16,NO_INT,GPIO_INT_CONFIG); 
+
+    }
+
+    
+  
 
 }
 

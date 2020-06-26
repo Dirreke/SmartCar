@@ -64,8 +64,8 @@ int main(void)
     pit_interrupt_ms(PIT_CH0, PIT_TIME);
     qtimer_AB_init(); //解码器初始化
     EM_Init();        //ADC初始化
-    //gpio_interrupt_init(C16,RISING,GPIO_INT_CONFIG);   //初始化GPIO C16 中断模式 使用默认引脚配置GPIO_INT_CONFIG
-    //NVIC_SetPriority(GPIO2_Combined_16_31_IRQn,15);    //设置中断优先级 范围0-15 越小优先级越高
+    gpio_interrupt_init(C16,LOW,GPIO_INT_CONFIG);   //初始化GPIO C16 中断模式 使用默认引脚配置GPIO_INT_CONFIG
+    NVIC_SetPriority(GPIO2_Combined_16_31_IRQn,0);    //设置中断优先级 范围0-15 越小优先级越高
     Para_Init(); //各个变量初始化
 
     EnableGlobalIRQ(0);
@@ -78,13 +78,19 @@ int main(void)
         {
             mt9v03x_csi_finish_flag = 0; //清除采集完成标志位
             camera_dispose_main();
-            EM_main();
-            if (Road7_flag != 2)
-            {
-                Turn_Servo();
-            }
+
             Send_Data();
             Dubug_key();
+            if(ganhuangguan_flag==1){
+                ganhuangguan_flag_cnt1++;
+            }
+        
+            if(ganhuangguan_flag_cnt1>4){
+                    ganhuangguan_flag=0;
+                    gpio_interrupt_init(C16,LOW,GPIO_INT_CONFIG);
+            }
+
+
 
             //使用缩放显示函数，根据原始图像大小 以及设置需要显示的大小自动进行缩放或者放大显示。
             //总钻风采集到的图像分辨率为 188*120 ，2.0寸IPS屏显示分辨率为 320*240 ，图像拉伸全屏显示。
