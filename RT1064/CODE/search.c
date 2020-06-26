@@ -357,15 +357,15 @@ void Road_rec(void)
     // static int oldwhite=5000;
     // static uint8 Road1_cnt1=0;
     // static char Road1_flag1=0;
-    if ((Road == 1 && Road1_flag == 1) || (Road == 2 && Road2_flag == 1))
-    {
-        EM_Road = 1;
-    }
+    // if ((Road == 1 && Road1_flag == 1) || (Road == 2 && Road2_flag == 1))
+    // {
+    //     EM_Road = 1;
+    // }
 
-    if (EM_Road == 1 && Road == 0 && Road0_flag == 0 && EM_Value_1 < 0.6 && EM_Value_4 < 0.6)
-    {
-        EM_Road = 0;
-    }
+    // if (EM_Road == 1 && Road == 0 && Road0_flag == 0 && EM_Value_1 < 0.6 && EM_Value_4 < 0.6)
+    // {
+    //     EM_Road = 0;
+    // }
 
     if (Lef_slope == 998 && Rig_slope == 998 && Road7_flag != 2 && Lef_edge < 12 && Rig_edge < 12)
     {
@@ -419,7 +419,7 @@ void Road_rec(void)
     {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////普通赛道→圆环
-        if ((Lef_break_point < 45 && Road == 0 && Rig_circle == 0 && Lef_circle == 1 && Lef_slope != 998 && Rig_slope == 998 &&
+        if ((Lef_break_point < 45 && Road == 0 && Rig_circle == 0 && Lef_circle == 1 && Lef_slope != 998 && (Rig_slope == 998||Rig_slope ==999) &&
              Rig[39] - Rig[37] < 5 && Rig[37] - Rig[35] < 5 && Rig[35] - Rig[33] < 5 && Rig[33] - Rig[31] < 5 && Rig[31] - Rig[29] < 5 && Rig[29] - Rig[27] < 5 && Rig[27] - Rig[25] < 5 && Rig[25] - Rig[23] < 5 &&
              //  (New_Lef[54] == -MIDMAP || New_Lef[55] == -MIDMAP || New_Lef[56] == -MIDMAP)&&
              Rig_edge < 15)) //左圆环：左边线,右边线：直通到底//&& Rig[11] != 78
@@ -433,7 +433,7 @@ void Road_rec(void)
             }
             return;
         }
-        else if (Rig_break_point < 45 && Road == 0 && Lef_circle == 0 && Rig_circle == 1 && Rig_slope != 998 && Lef_slope == 998 &&
+        else if (Rig_break_point < 45 && Road == 0 && Lef_circle == 0 && Rig_circle == 1 && Rig_slope != 998 && (Lef_slope == 998||Lef_slope == 999) &&
                  Lef[25] - Lef[27] < 5 && Lef[27] - Lef[29] < 5 && Lef[29] - Lef[31] < 5 && Lef[31] - Lef[33] < 5 && Lef[33] - Lef[35] < 5 && Lef[35] - Lef[37] < 5 && Lef[37] - Lef[39] < 5 && Lef[23] - Lef[25] < 5 &&
                  //     (New_Rig[54] == MIDMAP || New_Rig[55] == MIDMAP || New_Rig[56] == MIDMAP) &&
                  Lef_edge < 15) //右圆环：右边线：突变点→拐点→突变点//&& Lef[11] != 2
@@ -708,9 +708,10 @@ void TurnRight_Process(void)
 *  修改时间：2020.06.17
 *  备    注：
 *************************************************************************/
+
 void Road1_zhuangtaiji(void)
 {
-    static int Road11_count = 0, Road12_count = 0, Road13_count = 0, Road14_count = 0, Road15_count = 0, Road16_count = 0;
+    static int Road11_count = 0, Road12_count = 0, Road13_count = 0, Road14_count = 0, Road15_count = 0, Road16_count = 0, Road17_count = 0;
     int dis = 0, dis1 = 0;
     if (Road1_flag == 0) //准备进左圆环
     {
@@ -849,10 +850,23 @@ void Road1_zhuangtaiji(void)
         {
             Road13_count = 0;
         }
+        if (Allwhitestart >= 42)
+        {
+            Road15_count++;
+            if (Road15_count > 1)
+            {
+                Road15_count = 0;
+                Road1_flag = 5;
+            }
+        }
+        else
+        {
+            Road15_count = 0;
+        }
     }
     else if (Road1_flag == 3) //准备出圆环，右边线补线
     {
-        if (Allwhitestart >= 45)
+        if (Allwhitestart >= 42)
         {
             Road15_count++;
             if (Road15_count > 1)
@@ -876,8 +890,8 @@ void Road1_zhuangtaiji(void)
             {
                 Road16_count = 0;
                 // Road = 0;
-                Road0_flag = 0;
-                Road1_flag = 0;
+                // Road0_flag = 0;
+                Road1_flag = 6;
             }
         }
         else
@@ -885,8 +899,21 @@ void Road1_zhuangtaiji(void)
             Road16_count = 0;
         }
     }
+    else if (Road1_flag == 6)
+    {
+        if (EM_Value_1 < 0.6 && EM_Value_4 < 0.6)
+        {
+            Road17_count++;
+            if (Road17_count > 1)
+            {
+                Road = 0;
+                Road0_flag = 0;
+            }
+        }
+    }
     return;
 }
+
 /*************************************************************************
 *  函数名称：void Road1_zhuangtaiji(void)
 *  功能说明：右圆环状态机
@@ -898,7 +925,7 @@ void Road1_zhuangtaiji(void)
 
 void Road2_zhuangtaiji(void)
 {
-    static int Road21_count = 0, Road22_count = 0, Road23_count = 0, Road24_count = 0, Road25_count = 0, Road26_count = 0;
+    static int Road21_count = 0, Road22_count = 0, Road23_count = 0, Road24_count = 0, Road25_count = 0, Road26_count = 0, Road27_count = 0;
     int dis = 0, dis1 = 0;
     if (Road2_flag == 0) //
     {
@@ -1038,10 +1065,23 @@ void Road2_zhuangtaiji(void)
         {
             Road23_count = 0;
         }
+        if (Allwhitestart >= 42)
+        {
+            Road25_count++;
+            if (Road25_count > 1)
+            {
+                Road25_count = 0;
+                Road2_flag = 5;
+            }
+        }
+        else
+        {
+            Road25_count = 0;
+        }
     }
     else if (Road2_flag == 3)
     {
-        if (Allwhitestart >= 45)
+        if (Allwhitestart >= 42)
         {
             Road25_count++;
             if (Road25_count > 1)
@@ -1065,9 +1105,9 @@ void Road2_zhuangtaiji(void)
             if (Road26_count > 3)
             {
                 Road26_count = 0;
-                Road = 0;
+                // Road = 0;
 
-                Road2_flag = 0;
+                Road2_flag = 6;
             }
         }
         else
@@ -1075,6 +1115,19 @@ void Road2_zhuangtaiji(void)
             Road26_count = 0;
         }
     }
+    else if (Road2_flag == 6)
+    {
+        if (EM_Value_1 < 0.6 && EM_Value_4 < 0.6)
+        {
+            Road27_count++;
+            if (Road27_count > 1)
+            {
+                Road = 0;
+                Road0_flag = 0;
+            }
+        }
+    }
+    return;
 }
 
 /*************************************************************************

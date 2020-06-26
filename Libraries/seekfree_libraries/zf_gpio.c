@@ -127,7 +127,7 @@ void gpio_interrupt_init(PIN_enum pin, TRIGGER_enum trigger, uint32 pinconf)
 
     EnableIRQ((IRQn_Type)((IRQn_Type)((pin>>4)-2) + GPIO1_Combined_0_15_IRQn));//使用IRQ
     
-    //NVIC_SetPriority((IRQn_Type)((IRQn_Type)((pin>>4)-2) + GPIO1_Combined_0_15_IRQn),0);//优先级设置 范围0-15 越小优先级越高
+    NVIC_SetPriority((IRQn_Type)((IRQn_Type)((pin>>4)-2) + GPIO1_Combined_0_15_IRQn),15);//优先级设置 范围0-15 越小优先级越高
 }
 
 

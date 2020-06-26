@@ -1087,7 +1087,6 @@ void Threshold_change(void)
         threshold_offset2 = -5;
     }
 }
-#if 1
 /*************************************************************************
 *  函数名称：void Fix_line()
 *  功能说明：岔路补线处理
@@ -1540,6 +1539,51 @@ void Pic_Fix_Line(void)
         // {
         //   ;
         // }
+        else if (Road1_flag = 6)
+        {
+            for (int i = Fir_row; i < Last_row - 5; ++i)
+            {
+                if (Lef[i] <= Fir_col + 5 || Lef[i] > 40)
+                {
+                    continue;
+                }
+                if (Lef[i] - Lef[i + 2] < 5 && Lef[i + 2] - Lef[i + 4] < 5 && Lef[i] - Lef[i + 2] > 0 && Lef[i + 2] - Lef[i + 4] > 0)
+                {
+                    xtemp = Lef[i];
+                    ytemp = i;
+                    get_flag = 1;
+                    break;
+                }
+            }
+            if (get_flag == 1)
+            {
+                for (int i = ytemp; i < Last_row - 5; ++i)
+                {
+                    if (Lef[i] - Fir_col <= 5 || Lef[i] > 40)
+                    {
+                        continue;
+                    }
+                    if (Lef[i - 2] - Lef[i] < 5 && Lef[i - 4] - Lef[i - 2] < 5 && Lef[i - 5] - Lef[i - 3] < 5 &&
+                        Lef[i - 2] - Lef[i] >= 0 && Lef[i - 4] - Lef[i - 2] >= 0 && Lef[i - 5] - Lef[i - 3] >= 0)
+                    {
+                        continue;
+                    }
+                    else if ((i - 1 - ytemp) > 4)
+                    {
+                        slope = Slope(Lef[i - 1], i - 1, xtemp, ytemp); //Slope(int F1x,int F1y,int F2x,int F2y)
+                        if (slope != 999)
+                        {
+                            for (int j = i + 1; j < 55; j++)
+                            {
+                                Lef[j] = (int)(Lef[i] - (i - j) / slope);
+                            }
+                            Pic_undistort(1, 0);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
     }
     else if (Road == 2)
     {
@@ -1668,6 +1712,52 @@ void Pic_Fix_Line(void)
         // {
         //   ;
         // }
+        else if (Road2_flag == 6)
+        {
+            get_flag = 0;
+            for (int i = Fir_row; i < Last_row - 5; ++i)
+            {
+                if (Rig[i] >= Last_col - 5 || Rig[i] < 40)
+                {
+                    continue;
+                }
+                if (Rig[i + 2] - Rig[i] < 5 && Rig[i + 4] - Rig[i + 2] < 5 && Rig[i + 2] - Rig[i] > 0 && Rig[i + 4] - Rig[i + 2] > 0)
+                {
+                    xtemp = Rig[i];
+                    ytemp = i;
+                    get_flag = 1;
+                    break;
+                }
+            }
+            if (get_flag == 1)
+            {
+                for (int i = ytemp; i < Last_row - 5; ++i)
+                {
+                    if (Rig[i] >= Last_col - 5 || Rig[i] < 40)
+                    {
+                        continue;
+                    }
+                    if (Rig[i] - Rig[i - 2] < 5 && Rig[i - 2] - Rig[i - 4] < 5 && Rig[i - 3] - Rig[i - 5] < 5 &&
+                        Rig[i] - Rig[i - 2] >= 0 && Rig[i - 2] - Rig[i - 4] >= 0 && Rig[i - 3] - Rig[i - 5] >= 0)
+                    {
+                        continue;
+                    }
+                    else if ((i - 1 - ytemp) > 4)
+                    {
+                        slope = Slope(Rig[i], i, xtemp, ytemp); //Slope(int F1x,int F1y,int F2x,int F2y)
+                        if (slope != 999)
+                        {
+                            for (int j = i + 1; j < 55; j++)
+                            {
+                                Rig[j] = (int)(Rig[i] - (i - j) / slope);
+                            }
+                            Pic_undistort(0, 1);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
     }
     else if (Road == 7)
     {
@@ -1740,7 +1830,7 @@ void Pic_Fix_Line(void)
         {
             for (int i = Fir_row; i < barn_line; ++i)
             {
-                if (Lef[i] <= Fir_col + 15|| Lef[i]> 40)
+                if (Lef[i] <= Fir_col + 15 || Lef[i] > 40)
                 {
                     continue;
                 }
@@ -1756,7 +1846,7 @@ void Pic_Fix_Line(void)
             {
                 for (int i = barn_line - 1; i > ytemp; --i)
                 {
-                    if (Lef[i] - Fir_col < 5|| Lef[i]> 40)
+                    if (Lef[i] - Fir_col < 5 || Lef[i] > 40)
                     {
                         continue;
                     }
@@ -1776,10 +1866,10 @@ void Pic_Fix_Line(void)
                     }
                 }
             }
-        get_flag = 0;
+            get_flag = 0;
             for (int i = Fir_row; i < barn_line; ++i)
             {
-                if (Rig[i] >= Last_col - 15 || Rig[i]< 40)
+                if (Rig[i] >= Last_col - 15 || Rig[i] < 40)
                 {
                     continue;
                 }
@@ -1795,7 +1885,7 @@ void Pic_Fix_Line(void)
             {
                 for (int i = barn_line - 1; i > ytemp; --i)
                 {
-                    if (Rig[i] >= Last_col - 5 || Rig[i]< 40)
+                    if (Rig[i] >= Last_col - 5 || Rig[i] < 40)
                     {
                         continue;
                     }
@@ -1834,10 +1924,6 @@ void Pic_Fix_Line(void)
             //     }
             //     // get_flag = 1;
             // }
-
-
-
-
 
             // if (get_flag == 1)
             // {
@@ -1891,605 +1977,6 @@ void Pic_Fix_Line(void)
     fangyuejie();
 }
 
-#endif
-#if 0
-/*************************************************************************
-*  函数名称：void Fix_line()
-*  功能说明：岔路补线处理
-*  参数说明：无
-*  函数返回：无
-*  修改时间：2020.06.20
-*  备    注：3.6日：主要补线体现在十字路口偏离中心道路时将左右两边路补线，
-             在普通直道与弯道不进行补线（通过平滑与否与十字区分开）
-
-*************************************************************************/
-
-void Pic_Fix_Line(void)
-{
-    float slope;
-    float slope2;
-    static float slope_static;
-    // int i;
-    // int j;
-    // int k;
-    int xtemp, ytemp, get_flag = 0;
-    //static float stat_slope;
-    //static float stat_slope2;
-    //static char road1_flag1 = 1; //0表示已计算完进圆环斜率，1表示已经出圆环，再次进圆环时计算补线斜率
-    //static char road2_flag1 = 1;
-    //bool road1_flag2 = 0, road2_flag2 = 0;
-    //static bool road1_flag3 = 0, road2_flag3 = 0;
-    static bool road1_flag4, road2_flag4;
-    if (Road == 0)
-    {
-        if (Road0_flag == 1)
-        {
-            for (int i = Fir_row; i < Allwhiteend; ++i)
-            {
-                if (Lef[i] <= Fir_col)
-                {
-                    continue;
-                }
-                if (40 - Lef[i] < 20 && Lef[i] - Lef[i + 2] < 5 && Lef[i + 1] - Lef[i + 3] < 5 && Lef[i] - Lef[i + 2] > 0 && Lef[i + 1] - Lef[i + 3] > 0)
-                {
-                    xtemp = Lef[i];
-                    ytemp = i;
-                    get_flag = 1;
-                    break;
-                }
-            }
-            if (get_flag == 1)
-            {
-                for (int i = 55; i > Allwhitestart; i--)
-                {
-                    if (Lef[i] <= Fir_col)
-                    {
-                        continue;
-                    }
-
-                    if (Lef[i - 2] - Lef[i] < 5 && Lef[i - 3] - Lef[i - 1] < 5 && Lef[i - 2] - Lef[i] > 0 && Lef[i - 3] - Lef[i - 1] > 0)
-                    {
-                        slope = Slope(Lef[i], i, xtemp, ytemp); //Slope(int F1x,int F1y,int F2x,int F2y)
-                        if (slope != 999)
-                        {
-                            for (int j = ytemp; j < 55; j++)
-                            {
-                                Lef[j] = (int)(Lef[i] - (i - j) / slope);
-                            }
-                            Pic_undistort(1, 0);
-                            break;
-                        }
-                    }
-                }
-            }
-            else
-            {
-                for (int i = 55; i > Allwhitestart; i--)
-                {
-                    if (abs(Lef[i] - Fir_col) < 5)
-                    {
-                        continue;
-                    }
-                    if (Lef[i - 3] - Lef[i - 1] < 5 && Lef[i - 5] - Lef[i - 3] < 5 && Lef[i - 3] - Lef[i - 1] > 0 && Lef[i - 5] - Lef[i - 3] > 0)
-                    {
-                        slope = Slope(Lef[i], i, Lef[i - 5], i - 5); //Slope(int F1x,int F1y,int F2x,int F2y)
-                        if (slope != 999)
-                        {
-                            for (int j = i + 1; j > Fir_row + 5; j--)
-                            {
-                                Lef[j] = (int)(Lef[i] - (i - j) / slope);
-                            }
-                            Pic_undistort(1, 0);
-                            break;
-                        }
-                    }
-                }
-            }
-            get_flag = 0;
-            for (int i = Fir_row; i < Allwhiteend; ++i)
-            {
-                if (Rig[i] >= Last_col)
-                {
-                    continue;
-                }
-                if (Rig[i] - 40 < 20 && Rig[i + 2] - Rig[i] < 5 && Rig[i + 3] - Rig[i + 1] < 5 && Rig[i + 2] - Rig[i] > 0 && Rig[i + 3] - Rig[i + 1] > 0)
-                {
-                    xtemp = Rig[i];
-                    ytemp = i;
-                    get_flag = 1;
-                    break;
-                }
-            }
-            if (get_flag == 1)
-            {
-                for (int i = 55; i > Allwhitestart; i--)
-                {
-                    if (Rig[i] >= Last_col)
-                    {
-                        continue;
-                    }
-
-                    if (Rig[i] - Rig[i - 2] < 5 && Rig[i - 1] - Rig[i - 3] < 5 && Rig[i] - Rig[i - 2] > 0 && Rig[i - 1] - Rig[i - 3] > 0)
-                    {
-                        slope = Slope(Rig[i], i, xtemp, ytemp); //Slope(int F1x,int F1y,int F2x,int F2y)
-                        if (slope != 999)
-                        {
-                            for (int j = ytemp; j < 55; j++)
-                            {
-                                Rig[j] = (int)(Rig[i] - (i - j) / slope);
-                            }
-                            Pic_undistort(0, 1);
-                            break;
-                        }
-                    }
-                }
-            }
-            else
-            {
-                for (int i = 55; i > Allwhitestart; i--)
-                {
-                    if (Last_col - Rig[i] < 5)
-                    {
-                        continue;
-                    }
-                    if (Rig[i - 1] - Rig[i - 3] < 5 && Rig[i - 3] - Rig[i - 5] < 5 && Rig[i - 1] - Rig[i - 3] > 0 && Rig[i - 3] - Rig[i - 5] > 0)
-                    {
-                        slope = Slope(Rig[i], i, Rig[i - 5], i - 5); //Slope(int F1x,int F1y,int F2x,int F2y)
-                        if (slope != 999)
-                        {
-                            for (int j = i + 1; j > Fir_row + 5; j--)
-                            {
-                                Rig[j] = (int)(Rig[i] - (i - j) / slope);
-                            }
-                            Pic_undistort(0, 1);
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-        else if (Road0_flag == 2)
-        {
-            for (int i = Fir_row + 5; i < Allwhiteend; i++)
-            {
-                if (abs(Lef[i] - Fir_col) < 15)
-                    continue;
-                slope = Slope(Lef[i], i, 4, 54); //Slope(int F1x,int F1y,int F2x,int F2y)
-                if (slope != 999)
-                {
-                    for (int j = i + 1; j < 55; j++)
-                    {
-                        Lef[j] = (int)(Lef[i] - (i - j) / slope);
-                    }
-                    Pic_undistort(1, 0);
-                    break;
-                }
-            }
-            for (int i = Fir_row + 5; i < Allwhiteend; i++)
-            {
-                if (abs(Rig[i] - Last_col) < 15)
-                    continue;
-                slope = Slope(Rig[i], i, 75, 54); //Slope(int F1x,int F1y,int F2x,int F2y)
-                if (slope != 999)
-                {
-                    for (int j = i + 1; j < 55; j++)
-                    {
-                        Rig[j] = (int)(Rig[i] - (i - j) / slope);
-                    }
-                    Pic_undistort(0, 1);
-                    break;
-                }
-            }
-            return;
-        }
-        else if (Road0_flag == 3)
-        {
-            for (int i = 55; i > Fir_row + 15; i--)
-            {
-                if (abs(Lef[i] - Fir_col) < 5)
-                    continue;
-                slope = Slope(Lef[i], i, Lef[Fir_row + 1], Fir_row + 1); //Slope(int F1x,int F1y,int F2x,int F2y)
-                if (slope != 999 && slope < 0)
-                {
-                    for (int j = i + 1; j > Fir_row + 1; j--)
-                    {
-                        Lef[j] = (int)(Lef[i] - (i - j) / slope);
-                    }
-                    Pic_undistort(1, 0);
-                    break;
-                }
-            }
-            for (int i = 55; i > Fir_row + 15; i--)
-            {
-                if (abs(Rig[i] - Last_col) < 5)
-                    continue;
-                slope = Slope(Rig[i], i, Rig[Fir_row + 1], Fir_row + 1); //Slope(int F1x,int F1y,int F2x,int F2y)
-                if (slope != 999 && slope > 0)
-                {
-                    for (int j = i + 1; j > Fir_row + 5; j--)
-                    {
-                        Rig[j] = (int)(Rig[i] - (i - j) / slope);
-                    }
-                    Pic_undistort(0, 1);
-                    break;
-                }
-            }
-
-            return;
-        }
-        else if (Road0_flag == 4)
-        {
-            for (int i = turn_stop; i >= Fir_row; --i)
-            {
-                Rig[i] = 78;
-            }
-            Pic_undistort(0, 1);
-            return;
-        }
-        else if (Road0_flag == 5)
-        {
-            for (int i = turn_stop; i >= Fir_row; --i)
-            {
-                Lef[i] = 1;
-            }
-            Pic_undistort(1, 0);
-            return;
-        }
-    }
-
-    //左圆环补线处理
-    else if (Road == 1)
-    {
-        if (Road1_flag == 1)
-        {
-            if (road1_flag4 == 0)
-            {
-                slope_static = 999;
-                road1_flag4 = 1;
-            }
-            // road1_flag2 = 0;
-            for (int i = Fir_row; i < Last_row - 20; i++)
-            {
-                if (Lef[i] - Fir_col < 2)
-                {
-                    continue;
-                }
-                if (Lef[i - 4] - Lef[i - 2] < 5 && Lef[i - 2] - Lef[i] < 5 && Lef[i] - Lef[i + 1] > 15 && Pixle[i + 2][Lef[i] - 5] == 1)
-                {
-
-                    slope_static = Slope(Lef[i], i, 75, 54);
-                    // road1_flag2 = 1;
-                    break;
-                }
-            }
-            if (slope_static != 999)
-            {
-                for (int k = Fir_row + 3; k < 55; k++)
-                {
-                    Rig[k] = (int)(75 - (54 - k) / slope_static);
-                }
-                Pic_undistort(0, 1);
-            }
-        }
-
-        else if (Road1_flag == 2)
-        {
-            road1_flag4 = 0;
-            slope = Slope(Rig[Lef_circle_point], Lef_circle_point, 75, 54);
-            if (slope != 999)
-            {
-                for (int k = Lef_circle_point; k < 55; k++)
-                {
-                    Rig[k] = (int)(75 - (54 - k) / slope);
-                }
-                Pic_undistort(0, 1);
-            }
-
-            // for (int i = Last_row - 13; i > Fir_row; i--)
-            // {
-            //     if (road1_flag1)
-            //     {
-            //         if (abs(Lef[i] - Fir_col) < 25)
-            //             continue;
-            //         stat_slope = Slope(Lef[i], i, 75, 54);
-            //         road1_flag1 = 0;
-            //     }
-
-            //     if (stat_slope != 999)
-            //     {
-            //         for (int k = Fir_row + 3; k < 55; k++)
-            //         {
-            //             Rig[k] = (int)(75 - (54 - k) / stat_slope);
-            //         }
-            //         Pic_undistort(0, 1);
-            //         break;
-            //     }
-            // }
-        }
-        else if (Road1_flag == 4)
-        {
-            //road1_flag3 = 0;
-            //road1_flag4 = 0;
-            // road1_flag1 = 1; //表示已经出圆环，再次进圆环时计算补线斜率
-            for (int i = turn_stop; i >= Fir_row; --i)
-            {
-                Rig[i] = 78;
-            }
-            Pic_undistort(0, 1);
-        }
-        else if (Road1_flag == 3)
-        {
-            for (int j = Last_row - 3; j > Fir_row; j--)
-            {
-
-                if (abs(Rig[j] - Last_col) < 2 || Rig[j] - Rig[j - 2] >= 5 || Rig[j - 2] - Rig[j - 4] >= 5 || Rig[j - 4] - Rig[j - 6] >= 5 || Rig[j] - Rig[j - 2] < 0 || Rig[j - 2] - Rig[j - 4] < 0 || Rig[j - 4] - Rig[j - 6] < 0)
-                    continue;
-                slope = Slope(Rig[j - 1], j - 1, Rig[j - 6], j - 6);
-
-                if (slope != 999)
-                {
-                    for (int k = j + 1; k > Fir_row + 5; k--)
-                    {
-                        Rig[k] = (int)(Rig[j] - (j - k) / slope);
-                    }
-                    Pic_undistort(0, 1);
-                    break;
-                }
-            }
-        }
-        // else if (Road1_flag == 5)
-        // {
-        //   ;
-        // }
-    }
-    else if (Road == 2)
-    {
-        if (Road2_flag == 1)
-        {
-            if (road2_flag4 == 0)
-            {
-                slope_static = 999;
-                road2_flag4 = 1;
-            }
-            // road2_flag2 = 0;
-            for (int i = Fir_row; i < Last_row - 20; i++)
-            {
-                if (Last_col - Rig[i] < 2)
-                {
-                    continue;
-                }
-                if (Rig[i] - Rig[i - 2] < 5 && Rig[i - 2] - Rig[i - 4] < 5 && Rig[i + 1] - Rig[i] > 15 && Pixle[i + 2][Rig[i] + 5] == 1)
-                {
-                    slope_static = Slope(Rig[i], i, 4, 54);
-                    // road2_flag2 = 1;
-                    // road2_flag3 = 1;
-                    break;
-                }
-            }
-            // if (Rig_circle_point == 0)
-            // {
-            //     road2_flag2 = 1;
-            // }
-            if (slope_static != 999)
-            {
-                for (int k = Fir_row + 3; k < 55; k++)
-                {
-                    Lef[k] = (int)(4 - (54 - k) / slope_static);
-                }
-                Pic_undistort(1, 0);
-            }
-        }
-        else if (Road2_flag == 2)
-        {
-            road2_flag4 = 0;
-            slope = Slope(Lef[Rig_circle_point], Rig_circle_point, 4, 54);
-            if (slope != 999)
-            {
-                for (int k = Rig_circle_point; k < 55; k++)
-                {
-                    Lef[k] = (int)(4 - (54 - k) / slope);
-                }
-                Pic_undistort(1, 0);
-            }
-
-            // for (int i = Last_row - 13; i > Fir_row; i--)
-            // {
-            //     if (road2_flag1)
-            //     {
-            //         if (abs(Rig[i] - Last_col) < 25)
-            //             continue;
-            //         stat_slope2 = Slope(Rig[i], i, 4, 54);
-            //         road2_flag1 = 0;
-            //     }
-
-            //     if (stat_slope2 != 999)
-            //     {
-            //         for (int k = Fir_row + 3; k < 55; k++)
-            //         {
-            //             Lef[k] = (int)(15 - (57 - k) / stat_slope2);
-            //         }
-            //         Pic_undistort(1, 0);
-            //         break;
-            //     }
-            // }
-        }
-        else if (Road2_flag == 4)
-        {
-            // road2_flag3 = 0;
-            // road2_flag4 = 0;
-            // road2_flag1 = 1;
-            for (int i = turn_stop; i >= Fir_row; --i)
-            {
-                Lef[i] = 1;
-            }
-            Pic_undistort(1, 0);
-        }
-        else if (Road2_flag == 3)
-        {
-            for (int j = Last_row - 3; j > Fir_row; j--)
-            {
-
-                if (abs(Lef[j] - Fir_col) < 2 || Lef[j - 2] - Lef[j] >= 5 || Lef[j - 4] - Lef[j - 2] >= 5 || Lef[j - 6] - Lef[j - 4] >= 5 || Lef[j - 2] - Lef[j] < 0 || Lef[j - 4] - Lef[j - 2] < 0 || Lef[j - 6] - Lef[j - 4] < 0)
-                    continue;
-                slope2 = Slope(Lef[j - 1], j - 1, Lef[j - 6], j - 6);
-
-                if (slope2 != 999)
-                {
-                    for (int k = j + 1; k > Fir_row + 5; k--)
-                    {
-                        Lef[k] = (int)(Lef[j] - (j - k) / slope2);
-                    }
-                    Pic_undistort(1, 0);
-                    break;
-                }
-            }
-        }
-        // else if (Road2_flag == 5)
-        // {
-        //   ;
-        // }
-    }
-    else if (Road == 7)
-    {
-        if (Road7_flag == 0)
-        {
-            get_flag = 0;
-            for (int i = Fir_row + 2; i < start_stop_line; i++)
-            {
-                if (abs(Lef[i] - Fir_col) < 15 || Lef[i] - Lef[i + 2] > 5 || Lef[i] - Lef[i + 2] < 0)
-                    continue;
-                xtemp = Lef[i];
-                ytemp = i;
-                get_flag = 1;
-                break;
-            }
-            if (get_flag == 1)
-            {
-
-                for (int i = start_stop_line + 5; i < Last_row; i++)
-                {
-                    if (abs(Lef[i] - Fir_col) < 4 || Lef[i] - Lef[i + 2] > 5 || Lef[i] - Lef[i + 2] < 0)
-                        continue;
-
-                    slope = Slope(Lef[i], i, xtemp, ytemp); //Slope(int F1x,int F1y,int F2x,int F2y)
-                    if (slope != 999)
-                    {
-                        for (int j = ytemp; j < 55; j++)
-                        {
-                            Lef[j] = (int)(Lef[i] - (i - j) / slope);
-                        }
-                        Pic_undistort(1, 0);
-                        break;
-                    }
-                }
-            }
-
-            get_flag = 0;
-            for (int i = Fir_row + 2; i < start_stop_line; i++)
-            {
-                if (abs(Rig[i] - Last_col) < 15 || Rig[i + 2] - Rig[i] > 5 || Rig[i + 2] - Rig[i] < 0)
-                    continue;
-                if (Rig[i] < 40)
-                    break;
-                xtemp = Rig[i];
-                ytemp = i;
-                get_flag = 1;
-                break;
-            }
-            if (get_flag == 1)
-            {
-                for (int i = start_stop_line + 5; i < Last_row; i++)
-                {
-                    if (abs(Rig[i] - Fir_col) < 4 || Rig[i] < 40 || Rig[i + 2] - Rig[i] > 5 || Rig[i + 2] - Rig[i] < 0)
-                        continue;
-
-                    slope = Slope(Rig[i], i, xtemp, ytemp); //Slope(int F1x,int F1y,int F2x,int F2y)
-                    if (slope != 999)
-                    {
-                        for (int j = ytemp; j < 55; j++)
-                        {
-                            Rig[j] = (int)(Rig[i] - (i - j) / slope);
-                        }
-                        Pic_undistort(0, 1);
-                        break;
-                    }
-                }
-            }
-        }
-        else if (Road7_flag == 1)
-        {
-
-            // get_flag = 0;
-            for (int i = Fir_row + 5; i < start_stop_line; i++)
-            {
-                if (abs(Lef[i] - Fir_col) < 15 || Lef[i] - Lef[i + 2] > 5 || Lef[i] - Lef[i + 2] < 0)
-                    continue;
-                // xtemp = Lef[i];
-                // ytemp = i;
-                slope = Slope(4, 54, Lef[i], i); //Slope(int F1x,int F1y,int F2x,int F2y)
-                if (slope != 999)
-                {
-                    for (int j = ytemp; j < 55; j++)
-                    {
-                        Lef[j] = (int)(Lef[i] - (i - j) / slope);
-                    }
-                    Pic_undistort(1, 0);
-                    break;
-                }
-                // get_flag = 1;
-            }
-            // if (get_flag == 1)
-            // {
-
-            //   for (; i < start_stop_line; i++)
-            //   {
-            //     if (abs(Lef[i] - Fir_col) > 15 && Lef[i] - Lef[i + 2] < 5 && Lef[i] - Lef[i + 2] > 0)
-            //       continue;
-
-            // slope = Slope(Lef[i-1], i-1, xtemp, ytemp); //Slope(int F1x,int F1y,int F2x,int F2y)
-            //     break;
-            //   }
-            // }
-
-            // get_flag = 0;
-            for (int i = Fir_row + 5; i < start_stop_line; i++)
-            {
-                if (abs(Rig[i] - Last_col) < 15 || Rig[i + 2] - Rig[i] > 5 || Rig[i + 2] - Rig[i] < 0)
-                    continue;
-                if (Rig[i] < 40)
-                    break;
-                // xtemp = Rig[i];
-                // ytemp = i;
-                slope = Slope(75, 54, Rig[i], i); //Slope(int F1x,int F1y,int F2x,int F2y)
-                if (slope != 999)
-                {
-                    for (int j = ytemp; j < 55; j++)
-                    {
-                        Rig[j] = (int)(Rig[i] - (i - j) / slope);
-                    }
-                    Pic_undistort(0, 1);
-                    break;
-                }
-                // get_flag = 1;
-            }
-
-            // if (get_flag == 1)
-            // {
-            //   for (; i < start_stop_line; i++)
-            //   {
-            //     if (abs(Rig[i] - Fir_col) > 15 && Rig[i] > 40 && Rig[i+2] - Rig[i] < 5 && Rig[i+2] - Rig[i] > 0)
-            // continue;
-
-            //     slope = Slope(Rig[i-1], i-1, xtemp, ytemp); //Slope(int F1x,int F1y,int F2x,int F2y)
-            //     break;
-            //   }
-            // }
-            //
-        }
-    }
-    fangyuejie();
-}
-#endif
 void fangyuejie(void)
 {
     for (int i = Fir_row; i < Last_row; ++i)
@@ -2596,6 +2083,32 @@ void Pic_DrawMid(void)
 void Pic_DrawMid_und(void)
 {
     int i;
+    int Road_Half_Width_change = 0;
+    if (Road0_flag == 4 || Road == 1) //左
+    {
+        if (Lef_slope == 999 || Lef_slope == 998 || Lef_slope < 0)
+        {
+            Road_Half_Width_change = ROAD_HALF_WIDTH; //异常处理，不改变中线位置
+        }
+        else
+        {
+            Road_Half_Width_change = (int)(150 / sin(atan(Lef_slope * UNDISTORT_PYK * UNDISTORT_XPK))); //计算改变中线位置
+        }
+    }
+    else if (Road0_flag == 5 || Road == 2) //右
+    {
+         if (Rig_slope == 999 ||Rig_slope == 998 || Rig_slope > 0)
+        {
+            Road_Half_Width_change = ROAD_HALF_WIDTH; //异常处理，不改变中线位置
+        }
+        else
+        {
+            Road_Half_Width_change = (int)(150 / sin(atan(-Rig_slope * UNDISTORT_PYK * UNDISTORT_XPK))); //计算改变中线位置
+        }
+    }
+    else{
+        Road_Half_Width_change = ROAD_HALF_WIDTH; //不转弯不改
+    }
 
     if ((Road0_flag == 4 && Road == 0) || Road == 1)
     {
@@ -2604,7 +2117,7 @@ void Pic_DrawMid_und(void)
 
             if (New_Rig[i] != MIDMAP)
             {
-                New_Mid[i] = New_Rig[i] - ROAD_HALF_WIDTH;
+                New_Mid[i] = New_Rig[i] - Road_Half_Width_change;
             }
             else
             {
@@ -2619,7 +2132,7 @@ void Pic_DrawMid_und(void)
 
             if (New_Lef[i] != -MIDMAP)
             {
-                New_Mid[i] = New_Lef[i] + ROAD_HALF_WIDTH;
+                New_Mid[i] = New_Lef[i] + Road_Half_Width_change;
             }
             else
             {
@@ -2638,11 +2151,11 @@ void Pic_DrawMid_und(void)
             }
             else if (New_Lef[i] == -MIDMAP && New_Rig[i] != MIDMAP)
             {
-                New_Mid[i] = New_Rig[i] - ROAD_HALF_WIDTH;
+                New_Mid[i] = New_Rig[i] - Road_Half_Width_change;
             }
             else if (New_Lef[i] != -MIDMAP && New_Rig[i] == MIDMAP)
             {
-                New_Mid[i] = New_Lef[i] + ROAD_HALF_WIDTH;
+                New_Mid[i] = New_Lef[i] + Road_Half_Width_change;
             }
             else
             {
