@@ -1,5 +1,5 @@
 #include "headfile.h"
-#include "math.h"
+
 
 /*************************************************************************
  *  函数名称：void Pic_DrawMid_und(void)
@@ -260,6 +260,80 @@ void Pic_DrawMid_und(void)
     }
     return;
 }
+
+
+
+
+/*************************************************************************
+ *  函数名称：float Circle_angle_val1_calculate(void)
+ *  功能说明：计算中线的曲率半径,并计算理想舵机打角
+ *  参数说明：无
+ *  函数返回：转向打角
+ *  修改时间：2020.1.18
+ *  备    注：其中12位参数等于去畸中压缩比例的数字,y2_origin为参数
+             -angle_val1为正，车偏右，向左拐；
+             -angle_val1为负，车偏左，向右拐；
+            
+ * ************************************************************************/
+#define CAR_LENGTH 148.5149
+float car_straight(float car_dias)
+{
+    int i;
+    float x2_temp;
+    float sum1 = 0;
+    float sum2 = 0;
+    float temp_sin;
+    float angle_val1;
+    // static const float y2_origin[58] = {467856, 451584, 435600, 419904, 404496, 389376, 374544, 360000, 345744, 331776, 318096, 304704, 291600, 278784, 266256, 254016, 242064, 230400, 219024, 207936, 197136, 186624, 176400, 166464, 156816, 147456, 138384, 129600, 121104, 112896, 104976, 97344, 90000, 82944, 76176, 69696, 63504, 57600, 51984, 46656, 41616, 36864, 32400, 28224, 24336, 20736, 17424, 14400, 11664, 9216, 7056, 5184, 3600, 2304, 1296, 576, 144, 0};
+    // //认为控制行高（近）行为第0行，成比例反转，即y2_origin=((control_line_min-y)*12)^2，暂定控制行3-57。
+
+    // static const float y2_origin[60] = {55696, 53824, 51984, 50176, 48400, 46656, 44944, 43264, 41616, 40000, 38416, 36864, 35344, 33856, 32400, 30976, 29584, 28224, 26896, 25600, 24336, 23104, 21904, 20736, 19600, 18496, 17424, 16384, 15376, 14400, 13456, 12544, 11664, 10816, 10000, 9216, 8464, 7744, 7056, 6400, 5776, 5184, 4624, 4096, 3600, 3136, 2704, 2304, 1936, 1600, 1296, 1024, 784, 576, 400, 256, 144, 64, 16, 0}
+    // // //认为控制行高（近）行为第0行，成比例反转，即y2_origin=((control_line_min-y)*4)^2，暂定控制行3-57。
+
+    static const float y2_origin[60] = {8911.36, 8611.84, 8317.44, 8028.16, 7744, 7464.96, 7191.04, 6922.24, 6658.56, 6400, 6146.56, 5898.24, 5655.04, 5416.96, 5184, 4956.16, 4733.44, 4515.84, 4303.36, 4096, 3893.76, 3696.64, 3504.64, 3317.76, 3136, 2959.36, 2787.84, 2621.44, 2460.16, 2304, 2152.96, 2007.04, 1866.24, 1730.56, 1600, 1474.56, 1354.24, 1239.04, 1128.96, 1024, 924.16, 829.44, 739.84, 655.36, 576, 501.76, 432.64, 368.64, 309.76, 256, 207.36, 163.84, 125.44, 92.16, 64, 40.96, 23.04, 10.24, 2.56, 0};
+    // // 即y2_origin=(y*1.6)^2。
+    // static const float y2_origin[60] = {23839.36,23347.84,22861.44,22380.16,21904,21432.96,20967.04,20506.24,20050.56,19600,19154.56,18714.24,18279.04,17848.96,17424,17004.16,16589.44,16179.84,15775.36,15376,14981.76,14592.64,14208.64,13829.76,13456,13087.36,12723.84,12365.44,12012.16,11664,11320.96,10983.04,10650.24,10322.56,10000,9682.56,9370.24,9063.04,8760.96,8464,8172.16,7885.44,7603.84,7327.36,7056,6789.76,6528.64,6272.64,6021.76,5776,5535.36,5299.84,5069.44,4844.16,4624,4408.96,4199.04,3994.24,3794.56,3600}
+    // // // 即y2_origin=(y*1.6+车中心)^2。认为第一行距车中心20cm,,即60像素。
+
+    for (i = 3; i < 58; i++)
+    {
+        if (New_Mid != 999)
+        {
+            x2_temp = ((New_Mid[i] - car_dias) / UNDISTORT_XPK) * ((New_Mid[i] - car_dias) / UNDISTORT_XPK);
+            sum1 += x2_temp;
+            sum2 += (x2_temp + y2_origin[i]) * (New_Mid[i] - car_dias);
+        }
+    }
+    if (sum2 == 0)
+    {
+        angle_val1 = 0;
+    }
+    else
+    {
+        temp_sin = sum1 / sum2 * 2 * CAR_LENGTH * UNDISTORT_PWK;
+        temp_sin = limit_f(temp_sin, -1, 1);
+        angle_val1 = asin(temp_sin);
+    }
+    return -angle_val1;
+}
+
+
+void Turn_Cam_New()
+{
+    float car_center_dias;
+    float car_straight_angle;
+    int car_center_PWM;
+    int car_straight_PWM;
+    car_center_dias = car_center();
+    car_straight_angle = car_straight(car_center_dias);
+    car_center_PWM = PID_realize_center(car_center_dias);
+    car_straight_PWM = PID_realize_straight(car_straight_angle * SERVO_RANGE / ANGLE_RANGE);
+    Turn_Cam_Out = car_center_PWM + car_straight_PWM;
+    Servo_Duty(-Turn_Cam_Out);
+}
+
+
+
 #if 0
 /*************************************************************************
  *  函数名称：void Pic_DrawMid_und(void)
@@ -332,62 +406,11 @@ void Pic_DrawMid_und(void)
     }
     return;
 }
-#endif
 
-/*************************************************************************
- *  函数名称：float Circle_angle_val1_calculate(void)
- *  功能说明：计算中线的曲率半径,并计算理想舵机打角
- *  参数说明：无
- *  函数返回：转向打角
- *  修改时间：2020.1.18
- *  备    注：其中12位参数等于去畸中压缩比例的数字,y2_origin为参数
-             -angle_val1为正，车偏右，向左拐；
-             -angle_val1为负，车偏左，向右拐；
-            
- * ************************************************************************/
-#define CAR_LENGTH 148.5149
-float car_straight(float car_dias)
-{
-    int i;
-    float x2_temp;
-    float sum1 = 0;
-    float sum2 = 0;
-    float temp_sin;
-    float angle_val1;
-    // static const float y2_origin[58] = {467856, 451584, 435600, 419904, 404496, 389376, 374544, 360000, 345744, 331776, 318096, 304704, 291600, 278784, 266256, 254016, 242064, 230400, 219024, 207936, 197136, 186624, 176400, 166464, 156816, 147456, 138384, 129600, 121104, 112896, 104976, 97344, 90000, 82944, 76176, 69696, 63504, 57600, 51984, 46656, 41616, 36864, 32400, 28224, 24336, 20736, 17424, 14400, 11664, 9216, 7056, 5184, 3600, 2304, 1296, 576, 144, 0};
-    // //认为控制行高（近）行为第0行，成比例反转，即y2_origin=((control_line_min-y)*12)^2，暂定控制行3-57。
 
-    // static const float y2_origin[60] = {55696, 53824, 51984, 50176, 48400, 46656, 44944, 43264, 41616, 40000, 38416, 36864, 35344, 33856, 32400, 30976, 29584, 28224, 26896, 25600, 24336, 23104, 21904, 20736, 19600, 18496, 17424, 16384, 15376, 14400, 13456, 12544, 11664, 10816, 10000, 9216, 8464, 7744, 7056, 6400, 5776, 5184, 4624, 4096, 3600, 3136, 2704, 2304, 1936, 1600, 1296, 1024, 784, 576, 400, 256, 144, 64, 16, 0}
-    // // //认为控制行高（近）行为第0行，成比例反转，即y2_origin=((control_line_min-y)*4)^2，暂定控制行3-57。
 
-    static const float y2_origin[60] = {8911.36, 8611.84, 8317.44, 8028.16, 7744, 7464.96, 7191.04, 6922.24, 6658.56, 6400, 6146.56, 5898.24, 5655.04, 5416.96, 5184, 4956.16, 4733.44, 4515.84, 4303.36, 4096, 3893.76, 3696.64, 3504.64, 3317.76, 3136, 2959.36, 2787.84, 2621.44, 2460.16, 2304, 2152.96, 2007.04, 1866.24, 1730.56, 1600, 1474.56, 1354.24, 1239.04, 1128.96, 1024, 924.16, 829.44, 739.84, 655.36, 576, 501.76, 432.64, 368.64, 309.76, 256, 207.36, 163.84, 125.44, 92.16, 64, 40.96, 23.04, 10.24, 2.56, 0};
-    // // 即y2_origin=(y*1.6)^2。
-    // static const float y2_origin[60] = {23839.36,23347.84,22861.44,22380.16,21904,21432.96,20967.04,20506.24,20050.56,19600,19154.56,18714.24,18279.04,17848.96,17424,17004.16,16589.44,16179.84,15775.36,15376,14981.76,14592.64,14208.64,13829.76,13456,13087.36,12723.84,12365.44,12012.16,11664,11320.96,10983.04,10650.24,10322.56,10000,9682.56,9370.24,9063.04,8760.96,8464,8172.16,7885.44,7603.84,7327.36,7056,6789.76,6528.64,6272.64,6021.76,5776,5535.36,5299.84,5069.44,4844.16,4624,4408.96,4199.04,3994.24,3794.56,3600}
-    // // // 即y2_origin=(y*1.6+车中心)^2。认为第一行距车中心20cm,,即60像素。
 
-    for (i = 3; i < 58; i++)
-    {
-        if (New_Mid != 999)
-        {
-            x2_temp = ((New_Mid[i] - car_dias) / UNDISTORT_XPK) * ((New_Mid[i] - car_dias) / UNDISTORT_XPK);
-            sum1 += x2_temp;
-            sum2 += (x2_temp + y2_origin[i]) * (New_Mid[i] - car_dias);
-        }
-    }
-    if (sum2 == 0)
-    {
-        angle_val1 = 0;
-    }
-    else
-    {
-        temp_sin = sum1 / sum2 * 2 * CAR_LENGTH * UNDISTORT_PWK;
-        temp_sin = limit_f(temp_sin, -1, 1);
-        angle_val1 = asin(temp_sin);
-    }
-    return -angle_val1;
-}
-
-#if 0 /************************************************************************ \
+/************************************************************************ \
        * search.c 1459-                                                         \
        * 修改，减少取景行                                               \
        * 增加参数startpoint便于调整                                     \
@@ -579,9 +602,7 @@ void Pic_undistort(int L, int R)
 }
 
 #endif
-#endif
 
-#if 0
 //起跑线
 int start_waited = 0;
 int start_stop_line = 0;
@@ -834,8 +855,9 @@ void start_stop_rec(void)
     }
     return;
 }
-#endif
-#if 0
+
+
+
 /*************************************************************************
 *  函数名称：void Pic_DrawLRside(void)
 *  功能说明：绘制左右边线线
@@ -1101,22 +1123,10 @@ void Pic_DrawLRside(void)
     }
 }
 
-#endif
 
-void Turn_Cam_New()
-{
-    float car_center_dias;
-    float car_straight_angle;
-    int car_center_PWM;
-    int car_straight_PWM;
-    car_center_dias = car_center();
-    car_straight_angle = car_straight(car_center_dias);
-    car_center_PWM = PID_realize_center(car_center_dias);
-    car_straight_PWM = PID_realize_straight(car_straight_angle * SERVO_RANGE / ANGLE_RANGE);
-    Turn_Cam_Out = car_center_PWM + car_straight_PWM;
-    Servo_Duty(-Turn_Cam_Out);
-}
-#if 0
+
+
+
 int turn_stop=0;
 
 void part()
@@ -1224,8 +1234,9 @@ void part()
         }
     }
 }
-#endif
-#if 0
+
+
+
 /*************************************************************************
 *  函数名称：void start_stop_rec(void)
 *  功能说明：起跑线识别与等待
@@ -1595,8 +1606,9 @@ void part(void)
         }
     }
 }
-#endif
-#if 0
+
+
+
 void Road7_zhuangtaiji(void)
 {
     static int Road73_count = 0;
@@ -1687,8 +1699,8 @@ void Road7_zhuangtaiji(void)
     }
     return;
 }
-#endif
-#if 0
+
+
     void Road1_zhuangtaiji(void)
     {
         static int Road11_count = 0, Road12_count = 0, Road13_count = 0, Road14_count = 0, Road15_count = 0, Road16_count = 0;
@@ -1916,9 +1928,7 @@ void Road2_zhuagntaiji(void)
     }
 }
 
-#endif
 
-#if 0 
 /*************************************************************************
 *  函数名称：void start_stop_rec(void)
 *  功能说明：起跑线识别与等待
@@ -2250,8 +2260,7 @@ void TurnRight_process()
     }
     return;
 }
-#endif
-#if 1
+
 
 //弯道状态机阈值用0.5试试
 
@@ -2976,8 +2985,7 @@ void Pic_Fix_Line(void)
     fangyuejie();
 }
 
-#endif
-#if 1
+
 
 void Pic_send_new2(void)
 {
@@ -3181,8 +3189,7 @@ void Send_Img2(void)
     My_Put_Char(0xf2); //代表整个数据都发完了
 }
 
-#endif
-#if 1
+
 
 /*************************************************************************
 *  函数名称：void Turn_Cam(void)
@@ -3264,15 +3271,12 @@ PID TurnFuzzyPD_Cam(void)
     return PID_TURN_CAM;
 }
 
-#endif
-#if 1
+
 slope *PYK *XPK;
 theta - 90 150 / sin(theta);
 Road_Half_Width_change = (int)(150 / sin(atan(slope * PYK * XPK)));
 
-#endif
 
-#if 1
 
 void Road1_zhuangtaiji(void)
 {
@@ -3479,8 +3483,7 @@ void Road1_zhuangtaiji(void)
     return;
 }
 
-#endif
-#if 1
+
 
 void Road2_zhuangtaiji(void)
 {
@@ -3689,8 +3692,7 @@ void Road2_zhuangtaiji(void)
     return;
 }
 
-#endif
-#if 1
+
 else if (Road1_flag = 6)
 {
     for (int i = Fir_row; i < Last_row - 5; ++i)
@@ -3782,3 +3784,9 @@ else if (Road2_flag == 6)
         }
     }
 }
+#endif
+
+
+
+
+

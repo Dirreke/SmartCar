@@ -42,6 +42,8 @@ extern uint8 Sobel_Threshold_FarFar;
 extern uint8 Sobel_Threshold_Far; 
 extern uint8 Sobel_Threshold_Near;   
 
+void camera_dispose_main(void);
+
 __ramfunc void Get_Use_Image(void);
 
 uint8_t GetOSTU(void);
@@ -63,6 +65,9 @@ void fangyuejie(void);
 
 void Pic_DrawMid(void);
 void Pic_DrawMid_und(void);
+
+void Pic_offset_fig(void);
+void Pic_offset_filter(void);
 
 void Get_pic_with_edge(void);
 
@@ -95,5 +100,7 @@ extern int Rig_circle_point;
 extern int Lef_edge, Rig_edge;
 
 extern float Lef_slope, Rig_slope;
+
+extern float Cam_offset;
 
 extern int Road_Half_Width_change;

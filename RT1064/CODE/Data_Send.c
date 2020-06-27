@@ -1,5 +1,4 @@
-#include "Data_Send.h"
-#include "search.h"
+#include"headfile.h"
 
 #define ori_pic
 

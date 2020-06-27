@@ -1,4 +1,4 @@
-#include "Picture.h"
+#include "headfile.h"
 // #include "math.h"
 uint8 Image_Use[CAMERA_H][CAMERA_W];
 uint16 Pixle[CAMERA_H][CAMERA_W]; //二值化后用于OLED显uint16氖???//u16
@@ -23,6 +23,43 @@ int Rig_circle_point = 0;
 int Lef_edge = 0, Rig_edge = 0;
 
 float Lef_slope = 0, Rig_slope = 0;
+
+float Cam_offset = 0;
+
+/*************************************************************************
+*  函数名称：void camera_dispose_main(void)
+*  功能说明：图像处理主函数
+*  参数说明：无
+*  函数返回：无
+*  修改时间：2019.5.31
+*  备    注：
+*************************************************************************/
+
+void camera_dispose_main(void) //摄像头处理主函数
+{
+    Get_Use_Image(); //图像预处理
+    sobel();
+    Pic_noi_elim();      //图像简单去噪点
+    Pic_DrawLRside();    //寻找左右边线
+    Pic_undistort(1, 1); //图像去畸变
+    Pic_particular();
+    LR_Slope_fig();    //左右边线斜率计算
+    Allwhite_find();   //查找全白行//注释Allwhitestart2.Allwhiteend2
+    Pic_find_circle(); //寻找环状黑线及拐点
+    start_stop_find();
+    Road_rec(); //利用左右边线斜率识别赛道
+    // start_stop_rec();    //识别起跑线
+    Threshold_change();
+    Pic_Fix_Line();      //补线处理
+    Pic_DrawMid();       //计算去畸前中心线-仅上位机用
+    Pic_DrawMid_und();   //计算去畸后中线
+    Pic_offset_fig();    //offset计算//注释Cam_offset2
+    Pic_offset_filter(); //offset滤波
+
+    Get_pic_with_edge(); //获得带边线灰度图
+    Turn_Cam();
+}
+
 
 __ramfunc void Get_Use_Image(void)
 {
@@ -2157,6 +2194,70 @@ void Pic_DrawMid_und(void)
     return;
 }
 
+
+/*************************************************************************
+*  函数名称：void Pic_offset_fig(void)
+*  功能说明：计算offset
+*  参数说明：无
+*  函数返回：无
+*  修改时间：2020.5.31_GMY
+*  备    注：Cam_offset为负，车偏右，向左拐；
+             Cam_offset为正，车偏左，向右拐；
+
+*************************************************************************/
+void Pic_offset_fig(void)
+{
+    int i;
+    int count = 0; // count2 = 0;
+
+    for (i = FIG_AREA_FAR; i < FIG_AREA_NEAR; ++i)
+    {
+        if (New_Mid[i] != 999)
+        {
+            Cam_offset = Cam_offset + New_Mid[i];
+            count++;
+        }
+    }
+    if (count != 0)
+    {
+        Cam_offset = Cam_offset / count;
+    }
+
+    if ((Road0_flag == 1 || Road0_flag == 2) && Road == 0)
+    {
+        Cam_offset *= 0.3;
+    }
+
+    else if (Road1_flag == 3 || Road2_flag == 3)
+        Cam_offset *= 0.8;
+
+    // if (Road == 3 || Road1_flag == 2 || Road2_flag == 2)
+    // {
+    //   Cam_offset *= 1;
+    // }
+    return;
+}
+
+/*************************************************************************
+*  函数名称：void Pic_offset_filter(void)
+*  功能说明：分段计算道路偏差值及实现滤波
+*  参数说明：无
+*  函数返回：无
+*  修改时间：2019.3.6
+*  备    注：
+
+*************************************************************************/
+
+void Pic_offset_filter(void)
+{
+    static float Cam_offset_filter[4] = {0, 0, 0, 0}; //offset滤波数组
+    Cam_offset_filter[3] = Cam_offset_filter[2];
+    Cam_offset_filter[2] = Cam_offset_filter[1];
+    Cam_offset_filter[1] = Cam_offset_filter[0];
+    Cam_offset_filter[0] = Cam_offset;
+    Cam_offset = Cam_offset_filter[0] * 0.5 + Cam_offset_filter[1] * 0.2 + Cam_offset_filter[2] * 0.2 + Cam_offset_filter[3] * 0.1;
+}
+
 /*************************************************************************
 *  函数名称：void Get_pic_with_edge()
 *  功能说明：带边线灰度图
@@ -2175,6 +2276,7 @@ void Get_pic_with_edge()
         Image_Use[i][Rig[i]] = 0xFF;
     }
 }
+
 
 #if 0
 /*************************************************************************
