@@ -426,7 +426,6 @@ void chuyuanhuan_bunengbuxian(void)
     for (int j = 0; j < 3 && Allwhiteend - j > Fir_row && Lef[Allwhiteend - j] < 78; ++j)
     {
       if (j == 2)
-
       {
         wall_dis == Lef[Allwhiteend - 1]; //38行打满晚了
       }
@@ -435,4 +434,118 @@ void chuyuanhuan_bunengbuxian(void)
     /* 咋整到一起呢 右环右转为正*/
     Turn_Cam_Out = 120 + (1 - wall_slope) * (wall_dis - 25) * 10;
   }
+}
+
+void Kalman_Filter(void)
+{
+  /* 控制向量uk：舵机打角变化dδ */
+  /* 控制矩阵B：角度速度耦合矩阵 */
+  /* 状态向量xk：当前状态（frenet坐标系，n：车与中心线法向距离，μ：车与中心线切线夹角） */
+  /* 速度方向β：tanδ = 2 * tanβ */
+  /* 状态方程： nk = nk+1 + vxsinμ + vycosμ */
+  /* 状态方程： μk = μk-1 + r - κ(s)ds*/
+  /* 状态转移矩阵Fk：  */
+
+  float accuracy_EM = 0;
+  float accuracy_Cam = 0;
+  float K = 0;
+  accuracy_EM = 1;
+
+  if (Road == 7)
+  {
+    if (Road7_flag == 2)
+    {
+#ifdef TL2barn
+      Turn_Out = -SERVO_RANGE;
+#endif
+#ifdef TR2barn
+      Turn_Out = SERVO_RANGE;
+#endif
+    }
+    else if (Road7_flag == 3)
+    {
+      accuracy_EM = 0;
+      accuracy_Cam = 1;
+    }
+    else if (Road7_flag == 4)
+    {
+      Turn_Out = 0;
+    }
+  }
+
+  else if (Road == 1)
+  {
+    if (Road1_flag == 5)
+    {
+      // if (Turn_Cam_Out > -0.5 * SERVO_RANGE)
+      // {
+      //   Turn_Cam_Out = -0.5 * SERVO_RANGE;
+      // }
+      Turn_Out = -SERVO_RANGE;
+      Servo_Duty(-Turn_Out); //舵机控制
+      return;
+    }
+    else if (Road1_flag == 4)
+    {
+      accuracy_EM = 1;
+      accuracy_Cam = 0;
+    }
+    else
+    {
+      accuracy_EM = 0;
+      accuracy_Cam = 1;
+    }
+  }
+
+  else if (Road == 2)
+  {
+    if (Road2_flag == 5)
+    {
+      // if (Turn_Cam_Out < 0.5 * SERVO_RANGE)
+      // {
+      //   Turn_Cam_Out = 0.5 * SERVO_RANGE;
+      // }
+      Turn_Out = SERVO_RANGE;
+      Servo_Duty(-Turn_Out); //舵机控制
+      return;
+    }
+    else if (Road2_flag == 4)
+    {
+      accuracy_EM = 1;
+      accuracy_Cam = 0;
+    }
+    else
+    {
+      accuracy_EM = 0;
+      accuracy_Cam = 1;
+    }
+  }
+
+  else if (Road == 3)
+  {
+    accuracy_EM = 0;
+    accuracy_Cam = 1;
+  }
+
+  else
+  {
+    if (Road0_flag == 1 || Road0_flag == 2)
+    {
+      accuracy_EM = 0;
+      accuracy_Cam = 1;
+    }
+    else if (EM_edge > 2)
+    {
+      accuracy_EM = 0;
+      accuracy_Cam = 1;
+    }
+    else
+    {
+      accuracy_EM = 1;
+      accuracy_Cam = 0;
+    }
+  }
+  K = accuracy_EM / (accuracy_Cam + accuracy_EM);
+  Turn_Out = (1 - K) * Turn_Cam_Out + K * Turn_EM_Out;
+  Servo_Duty(-Turn_Out); //舵机控制
 }
