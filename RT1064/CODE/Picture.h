@@ -55,7 +55,7 @@ void Pic_DrawLRside(void);
 void Pic_undistort(int L,int R);
 
 void Pic_particular(void);
-
+void jump_point_cnt(void);
 void LR_Slope_fig(void);
 float Slope(int F1x, int F1y, int F2x, int F2y);
 
@@ -104,3 +104,5 @@ extern float Lef_slope, Rig_slope;
 extern float Cam_offset;
 
 extern int Road_Half_Width_change;
+
+extern int jump_p[60];

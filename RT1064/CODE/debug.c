@@ -1,6 +1,8 @@
 #include "headfile.h"
 #include "debug.h"
 
+int DEBUG_CHOICE = 1;
+float speedgoal;
 void Debug_Init(void)
 {
     gpio_init(D4, GPI, 1, PULLUP_22K);
@@ -14,9 +16,10 @@ void Debug_Init(void)
 void Dubug_key(void)
 {
     static int ips_num = 0;
-    const int page_num = 8;
+    const int page_num = 9;
     if (gpio_get(DEBUG_KEY0))
     {
+        SpeedGoal=speedgoal;
         return;
     }
 
@@ -67,19 +70,22 @@ void Dubug_key(void)
                 threshold_offset += 1;
                 break;
             case 3:
-                SpeedGoal += 0.1;
+                speedgoal += 0.1;
                 break;
             case 4:
-                PID_TURN_CAM_EXT.P += 0.02;
+                PID_SPEED.P += 0.01;
                 break;
             case 5:
-                PID_TURN_CAM_EXT.D += 0.02;
+                PID_SPEED.I += 0.01;
                 break;
             case 6:
                 PID_STRAIGHT_EM.P += 0.01;
                 break;
             case 7:
                 PID_STRAIGHT_EM.D += 0.01;
+                break;
+            case 8:
+                DEBUG_CHOICE++;
                 break;
             case 0:
                 Road += 1;
@@ -226,19 +232,22 @@ void Dubug_key(void)
                 threshold_offset -= 1;
                 break;
             case 3:
-                SpeedGoal -= 0.1;
+                speedgoal -= 0.1;
                 break;
             case 4:
-                PID_TURN_CAM_EXT.P -= 0.02;
+                PID_SPEED.P -= 0.01;
                 break;
             case 5:
-                PID_TURN_CAM_EXT.D -= 0.02;
+                PID_SPEED.I -= 0.01;
                 break;
             case 6:
                 PID_STRAIGHT_EM.P -= 0.01;
                 break;
             case 7:
                 PID_STRAIGHT_EM.D -= 0.01;
+                break;
+            case 8:
+                DEBUG_CHOICE--;
                 break;
             case 0:
                 Road -= 1;
@@ -399,15 +408,15 @@ void ips_show_debug(int ips_num)
         break;
     case 3:
         ips200_showstr(0, 12, "speed: "); //显示字符串
-        ips200_showfloat(0, 13, SpeedGoal, 2, 2);
+        ips200_showfloat(0, 13, speedgoal, 2, 2);
         break;
     case 4:
-        ips200_showstr(0, 12, "P_CAM");
-        ips200_showfloat(0, 13, PID_TURN_CAM_EXT.P, 2, 2);
+        ips200_showstr(0, 12, "P_");
+        ips200_showfloat(0, 13, PID_SPEED.P, 2, 2);
         break;
     case 5:
-        ips200_showstr(0, 12, "D_CAM");
-        ips200_showfloat(0, 13, PID_TURN_CAM_EXT.D, 2, 2);
+        ips200_showstr(0, 12, "I");
+        ips200_showfloat(0, 13, PID_SPEED.I, 2, 2);
         break;
     case 6:
         ips200_showstr(0, 12, "P_EM");
@@ -416,6 +425,10 @@ void ips_show_debug(int ips_num)
     case 7:
         ips200_showstr(0, 12, "D_EM");
         ips200_showfloat(0, 13, PID_STRAIGHT_EM.D, 2, 2);
+        break;
+    case 8:
+        ips200_showstr(0, 12, "DEBUG_CHOICE");
+        ips200_showint32(0, 13, DEBUG_CHOICE, 3);
         break;
     case 0:
         ips200_showstr(0, 12, "Road");
@@ -427,20 +440,20 @@ void ips_show_debug(int ips_num)
         switch (Road)
         {
         case 0:
-            
-        ips200_showint32(0, 13, Road0_flag, 3);
+
+            ips200_showint32(0, 13, Road0_flag, 3);
             break;
         case 1:
-        ips200_showint32(0, 13, Road1_flag, 3);
+            ips200_showint32(0, 13, Road1_flag, 3);
             break;
         case 2:
-        ips200_showint32(0, 13, Road2_flag, 3);
+            ips200_showint32(0, 13, Road2_flag, 3);
             break;
         case 3:
-        ips200_showint32(0, 13, Road3_flag, 3);
+            ips200_showint32(0, 13, Road3_flag, 3);
             break;
         case 7:
-        ips200_showint32(0, 13, Road7_flag, 3);
+            ips200_showint32(0, 13, Road7_flag, 3);
             break;
         default:
             break;

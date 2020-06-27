@@ -109,7 +109,7 @@ void Servo_Duty(float duty)
 *  备    注：其中限幅过程会影响PD调节过程
 
 *************************************************************************/
-void Moto_Out(float MotorOut1,float MotorOut2)
+void Moto_Out(void)
 {
   
   //速度控制输出限幅

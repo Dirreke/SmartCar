@@ -32,4 +32,4 @@ void Motor_Duty(uint16 Motno, uint32 duty);
 void Servo_Init(void);
 void Servo_Duty(float duty);
 
-void Moto_Out(float MotorOut1,float MotorOut2);
+void Moto_Out(void);

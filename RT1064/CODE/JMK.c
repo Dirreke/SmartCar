@@ -487,8 +487,9 @@ void Kalman_Filter(void)
     }
     else if (Road1_flag == 4)
     {
-      accuracy_EM = 1;
-      accuracy_Cam = 0;
+      if(EM_edge > 0) {accuracy_EM = 0;}
+      else{accuracy_EM = 0.3;}
+      accuracy_Cam = 1;
     }
     else
     {
@@ -511,8 +512,9 @@ void Kalman_Filter(void)
     }
     else if (Road2_flag == 4)
     {
-      accuracy_EM = 1;
-      accuracy_Cam = 0;
+      if(EM_edge > 0) {accuracy_EM = 0;}
+      else{accuracy_EM = 0.3;}
+      accuracy_Cam = 1;
     }
     else
     {
@@ -541,8 +543,8 @@ void Kalman_Filter(void)
     }
     else
     {
-      accuracy_EM = 1;
-      accuracy_Cam = 0;
+      accuracy_EM = 0.3;
+      accuracy_Cam = 0.7;
     }
   }
   K = accuracy_EM / (accuracy_Cam + accuracy_EM);

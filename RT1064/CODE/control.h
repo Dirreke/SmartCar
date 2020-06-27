@@ -24,6 +24,8 @@ void Turn_Servo(void);
 // float PD_section(float err);
 // float PD_section1(float err);
 
+void Kalman_Filter(void);
+
 //debug
 extern PID PID_SPEED;
 extern PID PID_TURN_CAM_EXT;

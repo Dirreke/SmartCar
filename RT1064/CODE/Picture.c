@@ -17,6 +17,8 @@ int New_Lef[60];
 int New_Rig[60]; //用于存储逆透视变换后的横坐标
 int New_Mid[60];
 
+int jump_p[60];
+
 int Lef_circle_point = 0;
 int Rig_circle_point = 0;
 
@@ -43,6 +45,7 @@ void camera_dispose_main(void) //摄像头处理主函数
     Pic_DrawLRside();    //寻找左右边线
     Pic_undistort(1, 1); //图像去畸变
     Pic_particular();
+    jump_point_cnt();
     LR_Slope_fig();    //左右边线斜率计算
     Allwhite_find();   //查找全白行//注释Allwhitestart2.Allwhiteend2
     Pic_find_circle(); //寻找环状黑线及拐点
@@ -59,7 +62,6 @@ void camera_dispose_main(void) //摄像头处理主函数
     Get_pic_with_edge(); //获得带边线灰度图
     Turn_Cam();
 }
-
 
 __ramfunc void Get_Use_Image(void)
 {
@@ -943,6 +945,32 @@ void Pic_particular(void)
 }
 
 /*************************************************************************
+*  函数名称：void jump_point_cnt(void)
+*  功能说明：每行跳变点
+*  参数说明：无
+*  函数返回：无
+*  修改时间：2020.06.28
+*  备    注：
+*************************************************************************/
+
+void jump_point_cnt(void)
+{
+    int cnt = 0;
+    for (int i = Fir_row; i < Last_row; i++)
+    {
+        cnt = 0;
+        for (int j = Fir_col + 1; j < Last_col; j++)
+        {
+            if (Pixle[i][j] != Pixle[i][j - 1])
+            {
+                cnt++;
+            }
+        }
+        jump_p[i] = cnt;
+    }
+}
+
+/*************************************************************************
 *  函数名称：void Slope_fig()
 *  功能说明：赛道左右斜率计算
 *  参数说明：无
@@ -1594,7 +1622,7 @@ void Pic_Fix_Line(void)
             }
             if (get_flag == 1)
             {
-                for (int i = ytemp+1; i < Last_row - 5; ++i)
+                for (int i = ytemp + 1; i < Last_row - 5; ++i)
                 {
                     if (Lef[i] - Lef[i + 2] < 5 && Lef[i + 2] - Lef[i + 4] < 5 && Lef[i] - Lef[i + 2] >= 0 && Lef[i + 2] - Lef[i + 4] >= 0)
                     {
@@ -1763,15 +1791,15 @@ void Pic_Fix_Line(void)
             }
             if (get_flag == 1)
             {
-                for (int i = ytemp+1; i < Last_row - 5; ++i)
+                for (int i = ytemp + 1; i < Last_row - 5; ++i)
                 {
                     if (Rig[i + 2] - Rig[i] < 5 && Rig[i + 4] - Rig[i + 2] < 5 && Rig[i + 2] - Rig[i] >= 0 && Rig[i + 4] - Rig[i + 2] >= 0)
                     {
                         continue;
                     }
-                    else if ((i +3 - ytemp) > 4)
+                    else if ((i + 3 - ytemp) > 4)
                     {
-                        slope = Slope(Rig[i+3], i+3, xtemp, ytemp); //Slope(int F1x,int F1y,int F2x,int F2y)
+                        slope = Slope(Rig[i + 3], i + 3, xtemp, ytemp); //Slope(int F1x,int F1y,int F2x,int F2y)
                         if (slope != 999)
                         {
                             for (int j = i + 4; j < 55; j++)
@@ -2194,7 +2222,6 @@ void Pic_DrawMid_und(void)
     return;
 }
 
-
 /*************************************************************************
 *  函数名称：void Pic_offset_fig(void)
 *  功能说明：计算offset
@@ -2276,7 +2303,6 @@ void Get_pic_with_edge()
         Image_Use[i][Rig[i]] = 0xFF;
     }
 }
-
 
 #if 0
 /*************************************************************************
@@ -2370,3 +2396,5 @@ void Pic_seedfill_grow(uint8 flag[CAMERA_H][CAMERA_W], int i, int j)
 }
 
 #endif
+
+

@@ -5,6 +5,8 @@
 #define DEBUG_KEY3 C27
 #define DEBUG_KEY4 C26
 
+extern int DEBUG_CHOICE;
+extern float speedgoal;
 
 void Debug_Init(void);
 void Dubug_key(void);

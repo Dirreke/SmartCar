@@ -222,11 +222,11 @@ void Variable_update(void)
   Variable[4] = EM_Value_1; //speedTarget1; //Allwhiteend;
   Variable[5] = EM_Value_2; //
   Variable[6] = EM_Value_3;
-  Variable[7] = EM_Value_4; //EM_Value_4;
+  Variable[7] = CarSpeed1; //EM_Value_4;
 
   Variable[8] = CarSpeed2; //EM_offset;
-  Variable[9] = Lef_slope; //speedTarget2;//Turn_Cam_Out;
-  Variable[10] = Rig_slope;
+  Variable[9] = MotorOut1; //speedTarget2;//Turn_Cam_Out;
+  Variable[10] = MotorOut2;
   Variable[11] = EM_straight_offset; //Turn_EM_Out;  //Lef_break_point*100+Rig_break_point;
   Variable[12] = Turn_EM_Out;
   Variable[13] = Turn_Out; /*Rig_circle;*/ //Road6_flag ;//CarSpeed2;

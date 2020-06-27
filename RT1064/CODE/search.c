@@ -202,6 +202,26 @@ void start_stop_find(void)
     {
         return;
     }
+
+    int jump_p_count = 0;
+    for (int i = Fir_row; i < 45; ++i)
+    {
+        if (jump_p[i] >= 5)
+        {
+            jump_p_count++;
+            if (jump_p_count >= 3)
+            {
+                start_stop_line_flag = 1;
+                start_stop_line = i - 3;
+                return;
+            }
+        }
+        else
+        {
+            jump_p_count = 0;
+        }
+    }
+    
 #ifdef TL2barn
     for (int i = Rig_end; i < Last_row - 7; ++i)
     {
@@ -235,17 +255,13 @@ void start_stop_find(void)
             {
                 start_stop_line_flag = 1;
                 start_stop_line = tiaobian1;
-                break;
+                return;
             }
             else
             {
                 continue;
             }
         }
-    }
-    else
-    {
-        return;
     }
 #endif
 #ifdef TR2barn
@@ -280,7 +296,7 @@ void start_stop_find(void)
             {
                 start_stop_line_flag = 1;
                 start_stop_line = tiaobian1;
-                break;
+                return;
             }
             else
             {
@@ -288,11 +304,8 @@ void start_stop_find(void)
             }
         }
     }
-    else
-    {
-        return;
-    }
 #endif
+
     // }
 }
 
@@ -1217,4 +1230,3 @@ void Road7_zhuangtaiji(void)
     }
     return;
 }
-
