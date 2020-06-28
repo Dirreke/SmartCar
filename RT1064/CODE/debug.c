@@ -17,10 +17,21 @@ void Dubug_key(void)
 {
     static int ips_num = 0;
     const int page_num = 9;
+    static bool qipao_flag;
     if (gpio_get(DEBUG_KEY0))
     {
-        SpeedGoal=speedgoal;
+        if(qipao_flag == 0)
+        {
+            SpeedGoal=speedgoal;
+            qipao_flag = 1;
+            Road= 0;
+        }
         return;
+    }
+    else
+    {
+        qipao_flag = 0;
+        SpeedGoal = 0;
     }
 
     //翻页
@@ -73,16 +84,16 @@ void Dubug_key(void)
                 speedgoal += 0.1;
                 break;
             case 4:
-                PID_SPEED.P += 0.01;
+                PID_SPEED.P += 10;
                 break;
             case 5:
-                PID_SPEED.I += 0.01;
+                PID_SPEED.I += 1;
                 break;
             case 6:
-                PID_STRAIGHT_EM.P += 0.01;
+                PID2_SPEED.P += 10;
                 break;
             case 7:
-                PID_STRAIGHT_EM.D += 0.01;
+                PID2_SPEED.I += 1;
                 break;
             case 8:
                 DEBUG_CHOICE++;
@@ -235,16 +246,16 @@ void Dubug_key(void)
                 speedgoal -= 0.1;
                 break;
             case 4:
-                PID_SPEED.P -= 0.01;
+                PID_SPEED.P -= 10;
                 break;
             case 5:
-                PID_SPEED.I -= 0.01;
+                PID_SPEED.I -= 1;
                 break;
             case 6:
-                PID_STRAIGHT_EM.P -= 0.01;
+                PID2_SPEED.P -= 10;
                 break;
             case 7:
-                PID_STRAIGHT_EM.D -= 0.01;
+                PID2_SPEED.I -= 1;
                 break;
             case 8:
                 DEBUG_CHOICE--;
@@ -412,19 +423,19 @@ void ips_show_debug(int ips_num)
         break;
     case 4:
         ips200_showstr(0, 12, "P_");
-        ips200_showfloat(0, 13, PID_SPEED.P, 2, 2);
+        ips200_showfloat(0, 13, PID_SPEED.P, 4, 2);
         break;
     case 5:
         ips200_showstr(0, 12, "I");
-        ips200_showfloat(0, 13, PID_SPEED.I, 2, 2);
+        ips200_showfloat(0, 13, PID_SPEED.I, 4, 2);
         break;
     case 6:
-        ips200_showstr(0, 12, "P_EM");
-        ips200_showfloat(0, 13, PID_STRAIGHT_EM.P, 2, 2);
+        ips200_showstr(0, 12, "P_2");
+        ips200_showfloat(0, 13, PID2_SPEED.P, 4, 2);
         break;
     case 7:
-        ips200_showstr(0, 12, "D_EM");
-        ips200_showfloat(0, 13, PID_STRAIGHT_EM.D, 2, 2);
+        ips200_showstr(0, 12, "D_2");
+        ips200_showfloat(0, 13, PID2_SPEED.I, 4, 2);
         break;
     case 8:
         ips200_showstr(0, 12, "DEBUG_CHOICE");
@@ -435,8 +446,8 @@ void ips_show_debug(int ips_num)
         ips200_showint32(0, 13, Road, 3);
         break;
     case 1:
-        ips200_showstr(0, 12, "Road_flag");
-        ips200_showint32(5, 12, Road, 3);
+        ips200_showstr(0, 12, "Road       _flag");
+        ips200_showint32(12, 12, Road, 3);
         switch (Road)
         {
         case 0:

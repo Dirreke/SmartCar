@@ -280,45 +280,85 @@ void SpeedTarget_fig(void)
 *  修改时间：2020.6.20
 *  备    注：
 *************************************************************************/
-PID PID_SPEED;
+PID PID_SPEED, PID2_SPEED;
+
+float SpeedE1, SpeedE2;
+float SpeedEE1, SpeedEE2;
 void Speed_Control(void)
 {
-  int SpeedE1, SpeedE2;
-  static int OldE1, OldE2;
-  int SpeedEE1, SpeedEE2;
+
+  static float OldE1, OldE2;
+
   float Speed_kP1, Speed_kP2, Speed_kI1, Speed_kI2;
   float SpeedControlOutE1, SpeedControlOutE2;
-  SpeedE1 = (int)((speedTarget1 - CarSpeed1) * 100.0);
-  SpeedE2 = (int)((speedTarget2 - CarSpeed2) * 100.0);
+  static bool flag1 = 0, flag2 = 0;
+  SpeedE1 = speedTarget1 - CarSpeed1;
+  SpeedE2 = speedTarget2 - CarSpeed2;
 
   //kp
-  Speed_kP1 = PID_SPEED.P;
-  Speed_kP2 = PID_SPEED.P;
+  if (SpeedE1 < 0.5)
+  {
+    Speed_kP1 = PID2_SPEED.P;
+    Speed_kI1 = PID2_SPEED.I;
+  }
+  else
+  {
+    Speed_kP1 = PID_SPEED.P;
+    Speed_kI1 = PID_SPEED.I;
+  }
+  if (SpeedE2 < 0.5)
+  {
+    Speed_kP2 = PID2_SPEED.P;
+    Speed_kI2 = PID2_SPEED.I;
+  }
+  else
+  {
+    Speed_kP2 = PID_SPEED.P;
+    Speed_kI2 = PID_SPEED.I;
+  }
+  if (fabs(SpeedEE1) > 0.1)
+  {
+    Speed_kP1 = 0;
+  }
+  if (fabs(SpeedEE2) > 0.1)
+  {
+    Speed_kP2 = 0;
+  }
+
   //ki
   SpeedEE1 = SpeedE1 - OldE1;
   SpeedEE2 = SpeedE2 - OldE2;
-  ////////////////////////////////////////////////////////////////////////////////
-  // if (abs(SpeedE1) > 15)
-  //   Speed_kI1 = 0;
-  // else
-  Speed_kI1 = PID_SPEED.I;
-  // if (abs(SpeedE2) > 15)
-  //   Speed_kI2 = 0;
-  // else
-  Speed_kI2 = PID_SPEED.I;
-  ///////////////////////////////////////////////////////////////////////////////
+
   SpeedControlOutE1 = (Speed_kP1 * SpeedEE1 + Speed_kI1 * SpeedE1);
   SpeedControlOutE2 = (Speed_kP2 * SpeedEE2 + Speed_kI2 * SpeedE2);
+
   OldE1 = SpeedE1;
   OldE2 = SpeedE2;
 
   MotorOut1 += SpeedControlOutE1;
   MotorOut2 += SpeedControlOutE2;
 
+  if (SpeedE1 < 0.1 && SpeedE1 > -0.1 && flag1 == 0)
+  {
+    flag1 = 1;
+    MotorOut1 = speedTarget1 * 2500;
+  }
+  else if (SpeedE1 > 1 || SpeedE1 < -1)
+  {
+    flag1 = 0;
+  }
+  if (SpeedE2 < 0.1 && SpeedE2 > -0.1 && flag2 == 0)
+  {
+    flag2 = 1;
+    MotorOut2 = speedTarget2 * 2500;
+  }
+  else if (SpeedE2 > 1 || SpeedE2 < -1)
+  {
+    flag2 = 0;
+  }
+
   Moto_Out(); // (uint32)(MotorOut1 / 100) * 100要先分+-
 }
-
-
 
 void Kalman_Filter(void)
 {
@@ -334,7 +374,12 @@ void Kalman_Filter(void)
   float accuracy_Cam = 0;
   float K = 0;
   accuracy_EM = 1;
-
+  if (Road0_flag == 4)
+  {
+    SpeedGoal = 0;
+    Road = 7;
+    Road7_flag = 4;
+  }
   if (Road == 7)
   {
     if (Road7_flag == 2)
@@ -371,8 +416,14 @@ void Kalman_Filter(void)
     }
     else if (Road1_flag == 4)
     {
-      if(EM_edge > 0) {accuracy_EM = 0;}
-      else{accuracy_EM = 0.3;}
+      if (EM_edge > 0)
+      {
+        accuracy_EM = 0;
+      }
+      else
+      {
+        accuracy_EM = 0.3;
+      }
       accuracy_Cam = 1;
     }
     else
@@ -396,8 +447,14 @@ void Kalman_Filter(void)
     }
     else if (Road2_flag == 4)
     {
-      if(EM_edge > 0) {accuracy_EM = 0;}
-      else{accuracy_EM = 0.3;}
+      if (EM_edge > 0)
+      {
+        accuracy_EM = 0;
+      }
+      else
+      {
+        accuracy_EM = 0.3;
+      }
       accuracy_Cam = 1;
     }
     else

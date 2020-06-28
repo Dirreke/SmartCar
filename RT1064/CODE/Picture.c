@@ -956,17 +956,33 @@ void Pic_particular(void)
 void jump_point_cnt(void)
 {
     int cnt = 0;
+    int temp = 0;
     for (int i = Fir_row; i < Last_row; i++)
     {
         cnt = 0;
+        temp = 0;
+        jump_p[i] = 0;
         for (int j = Fir_col + 1; j < Last_col; j++)
         {
             if (Pixle[i][j] != Pixle[i][j - 1])
             {
-                cnt++;
+                if (j - temp <= 5)
+                {
+                    cnt++;
+                }
+                else if (cnt > jump_p[i])
+                {
+                    jump_p[i] = cnt;
+                    cnt = 0;
+                }
+                temp = j;
             }
         }
-        jump_p[i] = cnt;
+        if (cnt > jump_p[i])
+        {
+            jump_p[i] = cnt;
+        }
+        // jump_p[i] = cnt;
     }
 }
 
@@ -2396,5 +2412,3 @@ void Pic_seedfill_grow(uint8 flag[CAMERA_H][CAMERA_W], int i, int j)
 }
 
 #endif
-
-

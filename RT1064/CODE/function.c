@@ -9,9 +9,11 @@ void Para_Init()
 {
         threshold_offset = 0;
         
-  	PID_SPEED.P=0.9;//2.9;//0.50
-	PID_SPEED.I=0.4;//0.25;//0.0014;
+  	PID_SPEED.P=500;//2.9;//0.50
+	PID_SPEED.I=40;//0.25;//0.0014;
 	PID_SPEED.D=0.000;//0.030
+  	PID2_SPEED.P=500;//2.9;//0.50
+	PID2_SPEED.I=40;//0.25;//0.0014;   
   	// PID_TURN.P=0.0102*325;//0.0118;//0.0112;//
 	// PID_TURN.D=-0.0042*325;//-0.0053;//-0.004//3.7йт╦д-0.0035;
         PID_TURN_CAM_EXT.P = 0.85;
