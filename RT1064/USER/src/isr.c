@@ -37,7 +37,8 @@ void PIT_IRQHandler(void)
 Kalman_Filter();
        Get_Speed();
        SpeedTarget_fig();
-       Speed_Control();
+    //    BBC();
+       Speed_Control_New();
 
     }
 

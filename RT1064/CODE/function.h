@@ -6,6 +6,7 @@
 #define PIT_TIME 2
 #define SERVO_MIDDLE 1320  //1.36*20000/20;1140-1500 （1120打死）
 #define SERVO_RANGE 180 //190 limit
+#define MOTOR_RANGE 18000
 #define CAMERA_FPS 100
 #define DIS_IN_CIRCLE 1.1 //0.9
 /**********************search.c去畸变***********************************/
@@ -29,6 +30,8 @@
 #define CAR_LENGTH 20//车长cm
 /********************* EM.c ******************************************/
 #define EM2EM1K2 4 // EM_Value_2/EM_Value_1的平方
+
+#define FILTER_ARRAY_SIZE 20
 
 
 /***************************差速两套**********************************/

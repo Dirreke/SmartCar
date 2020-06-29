@@ -221,7 +221,7 @@ void start_stop_find(void)
             jump_p_count = 0;
         }
     }
-    
+
 #ifdef TL2barn
     for (int i = Rig_end; i < Last_row - 7; ++i)
     {
@@ -350,6 +350,69 @@ void mag_find(void)
 
     return;
 }
+/*************************************************************************
+*  函数名称：void Road3_zhuangtaiji()
+*  功能说明：出库
+*  参数说明：无
+*  函数返回：无
+*  修改时间：2019.3.23
+*  备    注：Road=3表示出库
+            Road3_flag=0准备出库，=1出库中
+
+*************************************************************************/
+void Road3_zhuangtaiji(void)
+{
+int start_line;
+static int start_count = 0;
+#ifdef TL2barn
+#endif
+    for (int i = Last_row - 3; i < Fir_row + 1; --i)
+    {
+        if (abs(Lef[i - 1] - Lef[i]) < 10)
+        {
+            continue;
+        }
+        else
+        {
+            start_line = i;
+            break;
+        }
+    }
+    if (start_line > 35)
+    {
+        start_count++;
+    }
+    if (start_count > 1)
+    {
+        start_count = 0;
+        Road3_flag = 1;
+    }
+
+#ifdef TR2barn
+       for (int i = Last_row - 3; i < Fir_row + 1; --i)
+    {
+        if (abs(Rig[i - 1] - Rig[i]) < 10)
+        {
+            continue;
+        }
+        else
+        {
+            start_line = i;
+            break;
+        }
+    }
+    if (start_line > 35)
+    {
+        start_count++;
+    }
+    if (start_count > 1)
+    {
+        start_count = 0;
+        Road3_flag = 0;
+    }
+#endif
+}
+
 /*************************************************************************
 *  函数名称：void Road_rec()
 *  功能说明：赛道识别
@@ -513,6 +576,10 @@ void Road_rec(void)
         Road2_zhuangtaiji();
     }
     //入库状态机
+    else if (Road == 3){
+        Road3_flag = 0;
+        Road3_zhuangtaiji();
+    }
     else if (Road == 7)
     {
         Road0_flag = 0;
@@ -1215,7 +1282,7 @@ void Road7_zhuangtaiji(void)
                         {
                             Road7_flag = 4; //停车
                             Road74_count = 0;
-                            SpeedGoal = 0;
+                            lib_speed_set( 0 );
                             stop_line = Fir_row;
                         }
                     }

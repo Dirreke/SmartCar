@@ -9,11 +9,11 @@ void Para_Init()
 {
         threshold_offset = 0;
         
-  	PID_SPEED.P=500;//2.9;//0.50
-	PID_SPEED.I=40;//0.25;//0.0014;
+  	PID_SPEED.P=250;//2.9;//0.50
+	PID_SPEED.I=80;//0.25;//0.0014;
 	PID_SPEED.D=0.000;//0.030
-  	PID2_SPEED.P=500;//2.9;//0.50
-	PID2_SPEED.I=40;//0.25;//0.0014;   
+  	//PID2_SPEED.P=100;//2.9;//0.50
+	//PID2_SPEED.I=100;//0.25;//0.0014;   
   	// PID_TURN.P=0.0102*325;//0.0118;//0.0112;//
 	// PID_TURN.D=-0.0042*325;//-0.0053;//-0.004//3.7йт╦д-0.0035;
         PID_TURN_CAM_EXT.P = 0.85;
@@ -30,8 +30,8 @@ void Para_Init()
 //diff.h and speed.h init
 //        lib_speed_init();
 
-        SpeedGoal = 1.5;
-        speedgoal = 1.5;
+        SpeedGoal = 2.0;
+        speedgoal = 2.0;
 #ifdef DIFF0
         lib_active_diff_init();
         lib_active_diff_set_p(0.1);

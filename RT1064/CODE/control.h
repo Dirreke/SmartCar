@@ -10,12 +10,14 @@ extern PID PID_SPEED;
 extern float Turn_EM_Out1 ,Turn_EM_Out2 ,Turn_EM_Out;
 extern PID PID_CENTER_EM ,PID_STRAIGHT_EM;
 
+extern bool speed_change_flag;
 extern int mix_choice;
 
 void Turn_Cam(void);
 PID TurnFuzzyPD_Cam(void);
 void SpeedTarget_fig(void);
-void Speed_Control(void);
+// void Speed_Control(void);
+void Speed_Control_New(void);
 
 void Turn_EM(void);
 void Turn_Servo(void);
@@ -25,6 +27,7 @@ void Turn_Servo(void);
 // float PD_section1(float err);
 
 void Kalman_Filter(void);
+void BBC(void);
 
 //debug
 extern PID PID_SPEED,PID2_SPEED;

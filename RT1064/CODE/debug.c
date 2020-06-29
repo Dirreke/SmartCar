@@ -20,18 +20,18 @@ void Dubug_key(void)
     static bool qipao_flag;
     if (gpio_get(DEBUG_KEY0))
     {
-        if(qipao_flag == 0)
+        Road = 0;
+        if (qipao_flag == 0)
         {
-            SpeedGoal=speedgoal;
+            lib_speed_set(speedgoal);
             qipao_flag = 1;
-            Road= 0;
         }
         return;
     }
     else
     {
         qipao_flag = 0;
-        SpeedGoal = 0;
+        lib_speed_set(0);;
     }
 
     //翻页

@@ -30,3 +30,7 @@ static enum diff_state_def{
 char get_diff_state(void);
 void diff_on(void);
 void diff_off(void);
+float speed_mean_filter1(float D_new);
+float speed_mean_filter2(float D_new);
+void lib_speed_set(float a);
+
