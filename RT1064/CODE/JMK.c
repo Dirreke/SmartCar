@@ -1,5 +1,5 @@
 #include "headfile.h"
-
+#include <queue>
 //params init
 int Road03_count = 0, Road04_count = 0;
 float centerAngle;
@@ -487,8 +487,14 @@ void Kalman_Filter(void)
     }
     else if (Road1_flag == 4)
     {
-      if(EM_edge > 0) {accuracy_EM = 0;}
-      else{accuracy_EM = 0.3;}
+      if (EM_edge > 0)
+      {
+        accuracy_EM = 0;
+      }
+      else
+      {
+        accuracy_EM = 0.3;
+      }
       accuracy_Cam = 1;
     }
     else
@@ -512,8 +518,14 @@ void Kalman_Filter(void)
     }
     else if (Road2_flag == 4)
     {
-      if(EM_edge > 0) {accuracy_EM = 0;}
-      else{accuracy_EM = 0.3;}
+      if (EM_edge > 0)
+      {
+        accuracy_EM = 0;
+      }
+      else
+      {
+        accuracy_EM = 0.3;
+      }
       accuracy_Cam = 1;
     }
     else
@@ -550,4 +562,75 @@ void Kalman_Filter(void)
   K = accuracy_EM / (accuracy_Cam + accuracy_EM);
   Turn_Out = (1 - K) * Turn_Cam_Out + K * Turn_EM_Out;
   Servo_Duty(-Turn_Out); //¶æ»ú¿ØÖÆ
+}
+
+void disturb_filter(void)
+{
+  const int ARRAY_SIZE = 20;
+  static float D[20];
+  static int num = 0;
+  float err_max;
+  float D_new;
+  float D_show;
+  bool Cequ, Cup, Cdown;
+
+  if (num < ARRAY_SIZE)
+  {
+    D[num] = D_new;
+    ++num;
+  }
+  else
+  {
+    num = num % ARRAY_SIZE + ARRAY_SIZE;
+    D[num - ARRAY_SIZE] = D_new;
+    /*  */
+    for (int i = num + 1 - ARRAY_SIZE; i < ARRAY_SIZE - 1; ++i)
+    {
+      if (D[i + 1] - D[i] > err_max)
+      {
+        Cup += 1;
+      }
+      else if (D[i] - D[i + 1] > err_max)
+      {
+        Cdown += 1;
+      }
+      else
+      {
+        Cequ += 1;
+      }
+    }
+    /*  */
+    if (D[ARRAY_SIZE] - D[0] > err_max)
+    {
+      Cup += 1;
+    }
+    else if (D[0] - D[ARRAY_SIZE] > err_max)
+    {
+      Cdown += 1;
+    }
+    else
+    {
+      Cequ += 1;
+    }
+    /*  */)
+    for (int i = 0; i < num - ARRAY_SIZE; ++i)
+    {
+      if (D[i + 1] - D[i] > err_max)
+      {
+        Cup += 1;
+      }
+      else if (D[i] - D[i + 1] > err_max)
+      {
+        Cdown += 1;
+      }
+      else
+      {
+        Cequ += 1;
+      }
+    }
+    /*  */
+    if (Cequ + Cup >= ARRAY_SIZE - 1 || Cequ + Cdown >= ARRAY_SIZE - 1){
+      Dshow = D_new;
+    }
+  }
 }
