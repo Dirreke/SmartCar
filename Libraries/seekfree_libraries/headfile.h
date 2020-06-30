@@ -20,7 +20,6 @@
 #ifndef _headfile_h
 #define _headfile_h
 
-
 #include <stdint.h>
 #include "fsl_common.h"
 
@@ -35,9 +34,7 @@
 #include "common.h"
 #include "zf_vector.h"
 
-
 #include "SEEKFREE_PRINTF.h"
-
 
 //------???????????????????????
 #include "zf_gpio.h"
@@ -84,8 +81,9 @@
 #include "function.h"
 #include "Picture.h"
 #include "control.h"
-#include"speed.h"
+#include "speed.h"
 #include "pwm.h"
+#include "ICM.h"
 // #include "qtimer.h"
 // #include "diff.h"
 //#include "speed_old.h"

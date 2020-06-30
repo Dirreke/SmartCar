@@ -81,7 +81,7 @@ int main(void)
         {
             mt9v03x_csi_finish_flag = 0; //清除采集完成标志位
             mag_find();
-            get_icm20602_accdata_spi();
+            ICM_get();
             camera_dispose_main();
 
             Send_Data();

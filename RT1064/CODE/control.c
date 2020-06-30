@@ -939,8 +939,7 @@ void Speed_Control_New(void)
   static int cnt1, cnt2;
   static int frame1 = 0, frame2 = 0;
   static bool frame_flag1 = 0, frame_flag2 = 0;
-  static bool Lef_pp = 0;
-  Rig_pp = 0;
+  static bool Lef_pp = 0,  Rig_pp = 0;
   static bool Lef_BB = 0, Rig_BB = 0;
 
   SpeedE1 = speedTarget1 - CarSpeed1;
@@ -964,7 +963,7 @@ void Speed_Control_New(void)
     if (Lef_BB)
     {
       a_flag1 = 1;
-      Led_BB = 0;
+      Lef_BB = 0;
     }
     cnt1 = 0;
     frame_flag1 = 0;
@@ -972,7 +971,7 @@ void Speed_Control_New(void)
   }
   if (SpeedE2 > 1)
   {
-    ifi(Rig_BB)
+    if(Rig_BB)
     {
       a_flag2 = 1;
       Rig_BB = 0;
@@ -987,7 +986,7 @@ void Speed_Control_New(void)
     if (Lef_BB)
     {
       d_flag1 = 1;
-      Led_BB = 0;
+      Lef_BB = 0;
     }
     cnt1 = 0;
     frame_flag1 = 0;
@@ -1065,7 +1064,6 @@ void Speed_Control_New(void)
     if (SpeedE1 < 0.15 && SpeedE1 > -0.15 && frame_flag1 == 0)
     {
       /* 首次进入置位，开始数帧 */
-      Speed_kI1 = 0;
       frame_flag1 = 1;
       frame1 = 0;
     }
@@ -1161,7 +1159,6 @@ void Speed_Control_New(void)
     if (SpeedE2 < 0.15 && SpeedE2 > -0.15 && frame_flag2 == 0)
     {
       /* 首次进入置位，开始数帧 */
-      Speed_kI2 = 0;
       frame_flag2 = 1;
       frame2 = 0;
     }
