@@ -30,7 +30,7 @@ void Para_Init()
 //diff.h and speed.h init
 //        lib_speed_init();
 
-        SpeedGoal = 2.0;
+        lib_speed_set(2.0);
         speedgoal = 2.0;
 #ifdef DIFF0
         lib_active_diff_init();
