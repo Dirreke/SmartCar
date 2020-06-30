@@ -1953,6 +1953,9 @@
             <name>$PROJ_DIR$\..\..\CODE\function.c</name>
         </file>
         <file>
+            <name>$PROJ_DIR$\..\..\CODE\ICM.c</name>
+        </file>
+        <file>
             <name>$PROJ_DIR$\..\..\USER\src\isr.c</name>
         </file>
         <file>
@@ -1990,6 +1993,9 @@
         </file>
         <file>
             <name>$PROJ_DIR$\..\..\..\Libraries\seekfree_libraries\headfile.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\CODE\ICM.h</name>
         </file>
         <file>
             <name>$PROJ_DIR$\..\..\USER\inc\isr.h</name>

@@ -51,7 +51,6 @@ void camera_dispose_main(void) //摄像头处理主函数
     Pic_find_circle(); //寻找环状黑线及拐点
     start_stop_find();
     Road_rec(); //利用左右边线斜率识别赛道
-    // start_stop_rec();    //识别起跑线
     Threshold_change();
     Pic_Fix_Line();      //补线处理
     Pic_DrawMid();       //计算去畸前中心线-仅上位机用
@@ -1828,6 +1827,18 @@ void Pic_Fix_Line(void)
                     }
                 }
             }
+        }
+    }
+    else if(Road == 3)
+    {
+        if(Road3_flag == 0)
+        {
+            for(int i=Fir_row; i<start_line;++i)
+            {
+                Lef[i] = 1;
+                Rig[i] = 78;
+            }
+            Pic_undistort(1,1);
         }
     }
     else if (Road == 7)

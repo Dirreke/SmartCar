@@ -20,59 +20,51 @@
 #include "headfile.h"
 #include "isr.h"
 
-
 void CSI_IRQHandler(void)
 {
-    CSI_DriverIRQHandler();     //调用SDK自带的中断函数 这个函数最后会调用我们设置的回调函数
-    __DSB();                    //数据同步隔离
+    CSI_DriverIRQHandler(); //调用SDK自带的中断函数 这个函数最后会调用我们设置的回调函数
+    __DSB();                //数据同步隔离
 }
 
 void PIT_IRQHandler(void)
 {
-    if(PIT_FLAG_GET(PIT_CH0))
+    if (PIT_FLAG_GET(PIT_CH0))
     {
         PIT_FLAG_CLEAR(PIT_CH0);
-      EM_main();
-      //Turn_Servo();
-Kalman_Filter();
-       Get_Speed();
-       SpeedTarget_fig();
-    //    BBC();
-       Speed_Control_New();
+        EM_main();
+        if (DEBUG_CHOICE == 3)
+        {
+            Kalman_Filter();
+        }
+        else if (DEBUG_CHOICE == 1 || DEBUG_CHOICE == 2)
+        {
+            Turn_Servo();
+        }
 
+        Get_Speed();
+        SpeedTarget_fig();
+        //    BBC();
+        Speed_Control_New();
     }
-
 
     __DSB();
 }
 
-
 void GPIO2_Combined_16_31_IRQHandler(void)
 {
 
-    CLEAR_GPIO_FLAG(C23);//清除中断标志位
+    CLEAR_GPIO_FLAG(C23); //清除中断标志位
 
-    
-        ganhuangguan_flag=1;
-        
-        gpio_interrupt_init(C23,NO_INT,GPIO_INT_CONFIG); 
+    ganhuangguan_flag = 1;
 
-    
-
-    
-  
-
+    gpio_interrupt_init(C23, NO_INT, GPIO_INT_CONFIG);
 }
-
-
 
 void GPIO2_Combined_0_15_IRQHandler(void)
 {
     mt9v03x_vsync();
     //scc8660_vsync();
 }
-
-
 
 /*
 中断函数名称，用于设置对应功能的中断函数

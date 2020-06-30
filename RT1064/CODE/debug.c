@@ -16,11 +16,11 @@ void Debug_Init(void)
 void Dubug_key(void)
 {
     static int ips_num = 0;
-    const int page_num = 9;
+    const int page_num = 10;
     static bool qipao_flag;
     if (gpio_get(DEBUG_KEY0))
     {
-        Road = 0;
+        // Road = 0;
         if (qipao_flag == 0)
         {
             lib_speed_set(speedgoal);
@@ -31,7 +31,7 @@ void Dubug_key(void)
     else
     {
         qipao_flag = 0;
-        lib_speed_set(0);;
+        lib_speed_set(0);
     }
 
     //翻页
@@ -97,6 +97,11 @@ void Dubug_key(void)
                 break;
             case 8:
                 DEBUG_CHOICE++;
+                break;
+            case 9:
+                DEBUG_CHOICE = 3;
+                Road = 3;
+                Road3_flag = 0;
                 break;
             case 0:
                 Road += 1;
@@ -259,6 +264,11 @@ void Dubug_key(void)
                 break;
             case 8:
                 DEBUG_CHOICE--;
+                break;
+            case 9:
+                DEBUG_CHOICE = 3;
+                Road = 0;
+                Road0_flag = 0;
                 break;
             case 0:
                 Road -= 1;
@@ -441,6 +451,14 @@ void ips_show_debug(int ips_num)
         ips200_showstr(0, 12, "DEBUG_CHOICE");
         ips200_showint32(0, 13, DEBUG_CHOICE, 3);
         break;
+    case 9:
+        ips200_showstr(0, 12, "JMK_debug_Dian AnNiu ShouTeng");
+        if(Road == 3){
+        ips200_showint32(0, 13, DEBUG_CHOICE*100+Road*10+Road3_flag, 3);
+        }
+        else if(Road == 0){
+          ips200_showint32(0, 13, DEBUG_CHOICE*100+Road*10+Road0_flag, 3);}
+        break;        
     case 0:
         ips200_showstr(0, 12, "Road");
         ips200_showint32(0, 13, Road, 3);

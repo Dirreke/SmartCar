@@ -9,8 +9,8 @@ void Para_Init()
 {
         threshold_offset = 0;
         
-  	PID_SPEED.P=250;//2.9;//0.50
-	PID_SPEED.I=80;//0.25;//0.0014;
+  	PID_SPEED.P=50;//2.9;//0.50
+	PID_SPEED.I=10;//0.25;//0.0014;
 	PID_SPEED.D=0.000;//0.030
   	//PID2_SPEED.P=100;//2.9;//0.50
 	//PID2_SPEED.I=100;//0.25;//0.0014;   

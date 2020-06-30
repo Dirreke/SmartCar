@@ -118,7 +118,7 @@ void lib_speed_set(float a)
 {
   if(a - SpeedGoal >= 0.1 || a-SpeedGoal <= -0.1)
   {
-    //speed_change_flag = 1;
+    speed_change_flag = 1;
   }
   SpeedGoal = a;
   // speed_change_flag = 1;

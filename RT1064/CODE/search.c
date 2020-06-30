@@ -13,7 +13,7 @@ bool barn_reset_flag; //干簧管及起跑线搜索重打开延时
 int start_stop_line_flag = 0;
 int barn_line = Fir_row;
 int start_stop_line = 0;
-
+int start_line = 0;
 int Road = 0; //道路类型标志位
 int Road0_flag = 0;
 int Road1_flag = 0;
@@ -328,7 +328,7 @@ void mag_find(void)
     }
     if (start_waited >= 600)
     {
-        gpio_interrupt_init(C23, FALLING, GPIO_INT_CONFIG);
+        gpio_interrupt_init(C25, FALLING, GPIO_INT_CONFIG);
         start_waited = 0;
         barn_reset_flag = 1;
     }
@@ -360,56 +360,111 @@ void mag_find(void)
             Road3_flag=0准备出库，=1出库中
 
 *************************************************************************/
+
 void Road3_zhuangtaiji(void)
 {
-int start_line;
-static int start_count = 0;
+
+    static int start_count = 0;
+    static int Road31_count = 0;
+    static int Road32_count = 0;
+    
 #ifdef TL2barn
-#endif
-    for (int i = Last_row - 3; i < Fir_row + 1; --i)
+
+    if (Road3_flag == 0)
     {
-        if (abs(Lef[i - 1] - Lef[i]) < 10)
+        for (int i = Last_row - 3; i > Fir_row + 1; --i)
         {
-            continue;
+            if (abs(Lef[i - 1] - Lef[i]) < 10)
+            {
+                continue;
+            }
+            else
+            {
+                start_line = i;
+                break;
+            }
+        }
+        if (start_line > 38)
+        {
+            Road31_count++;
+            if (Road31_count > 1)
+            {
+                Road31_count = 0;
+                Road3_flag = 1;
+            }
         }
         else
         {
-            start_line = i;
-            break;
+            Road31_count = 0;
         }
     }
-    if (start_line > 35)
+    else if (Road3_flag == 1)
     {
-        start_count++;
-    }
-    if (start_count > 1)
-    {
-        start_count = 0;
-        Road3_flag = 1;
+        if (Rig_slope < -0.25)
+        {
+            Road32_count++;
+            if (Road32_count > 2)
+            {
+                Road = 0;
+                Road0_flag = 0;
+                Road32_count = 0;
+            }
+        }
+        else
+        {
+            Road32_count = 0;
+        }
     }
 
+#endif
 #ifdef TR2barn
-       for (int i = Last_row - 3; i < Fir_row + 1; --i)
+    if (Road3_flag == 0)
     {
-        if (abs(Rig[i - 1] - Rig[i]) < 10)
+        for (int i = Last_row - 3; i > Fir_row + 1; --i)
         {
-            continue;
+            if (abs(Rig[i - 1] - Rig[i]) < 10)
+            {
+                continue;
+            }
+            else
+            {
+                start_line = i;
+                break;
+            }
+        }
+        if (start_line > 38)
+        {
+            Road31_count++;
+            if (Road31_count > 1)
+            {
+                Road31_count = 0;
+                Road3_flag = 0;
+            }
         }
         else
         {
-            start_line = i;
-            break;
+            Road31_count = 0;
         }
     }
-    if (start_line > 35)
+    else if (Road3_flag == 1)
     {
-        start_count++;
+        if (Lef_slope > 0.25 && Lef_slope != 999)
+        {
+            Road32_count ++ ;
+            if(Road32_count > 2)
+            {
+                Road32_count = 0;
+
+            }
+            Road = 0;
+            Road0_flag = 0
+        }
+        else
+        {
+            Road32_count = 0;
+        }
     }
-    if (start_count > 1)
-    {
-        start_count = 0;
-        Road3_flag = 0;
-    }
+
 #endif
 }
 
@@ -576,8 +631,9 @@ void Road_rec(void)
         Road2_zhuangtaiji();
     }
     //入库状态机
-    else if (Road == 3){
-        Road3_flag = 0;
+    else if (Road == 3)
+    {
+        Road0_flag = 0;
         Road3_zhuangtaiji();
     }
     else if (Road == 7)
@@ -1282,7 +1338,7 @@ void Road7_zhuangtaiji(void)
                         {
                             Road7_flag = 4; //停车
                             Road74_count = 0;
-                            lib_speed_set( 0 );
+                            lib_speed_set(0);
                             stop_line = Fir_row;
                         }
                     }

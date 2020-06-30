@@ -30,6 +30,7 @@ extern int Rig_break_point;
 
 extern int start_stop_line;
 extern int barn_line;
+extern int start_line;
 
 
 

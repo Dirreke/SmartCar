@@ -72,7 +72,6 @@ int main(void)
     Para_Init();                                    //各个变量初始化
 
     EnableGlobalIRQ(0);
-
     /** main loop **/
 
     while (1)

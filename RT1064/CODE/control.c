@@ -203,11 +203,6 @@ void Turn_Servo()
     }
   }
 
-  else if (Road == 3)
-  {
-    Turn_Out = Turn_Cam_Out;
-  }
-
   else
   {
     if (Road0_flag == 1 || Road0_flag == 2)
@@ -930,6 +925,7 @@ void Speed_Control_New(void)
 
 void Speed_Control_New(void)
 {
+  
   static float OldE1, OldE2;
 
   float Speed_kP1, Speed_kP2, Speed_kI1, Speed_kI2;
@@ -939,22 +935,24 @@ void Speed_Control_New(void)
   static int cnt1, cnt2;
   static int frame1 = 0, frame2 = 0;
   static bool frame_flag1 = 0, frame_flag2 = 0;
-  static bool Lef_pp = 0,  Rig_pp = 0;
+  static bool Lef_pp = 0, Rig_pp = 0;
   static bool Lef_BB = 0, Rig_BB = 0;
 
   SpeedE1 = speedTarget1 - CarSpeed1;
   SpeedE2 = speedTarget2 - CarSpeed2;
-  // set flag
-  if (SpeedGoal == 0)
-  {
-    Lef_pp = 1;
-    Rig_pp = 1;
-    speed_change_flag = 0;
-  }
+  // set flagW
   if (speed_change_flag)
   {
-    Lef_BB = 1;
-    Rig_BB = 1;
+    if (SpeedGoal == 0)
+    {
+      Lef_pp = 1;
+      Rig_pp = 1;
+    }
+    else
+    {
+      Lef_BB = 1;
+      Rig_BB = 1;
+    }
     speed_change_flag = 0;
   }
 
@@ -971,7 +969,7 @@ void Speed_Control_New(void)
   }
   if (SpeedE2 > 1)
   {
-    if(Rig_BB)
+    if (Rig_BB)
     {
       a_flag2 = 1;
       Rig_BB = 0;
@@ -1194,7 +1192,6 @@ void Speed_Control_New(void)
   OldE1 = SpeedE1;
   OldE2 = SpeedE2;
 
-  
   Moto_Out();
 }
 
@@ -1212,124 +1209,131 @@ void Kalman_Filter(void)
   float accuracy_Cam = 0;
   float K = 0;
   accuracy_EM = 1;
-  if (Road0_flag == 4 || Road0_flag == 5)
+
+  if (Road == 7)
   {
-    lib_speed_set(0);
-    ;
-    Road = 7;
-    Road7_flag = 4;
+    if (Road7_flag == 2)
+    {
+#ifdef TL2barn
+      Turn_Out = -SERVO_RANGE;
+#endif
+#ifdef TR2barn
+      Turn_Out = SERVO_RANGE;
+#endif
+    }
+    else if (Road7_flag == 3)
+    {
+      accuracy_EM = 0;
+      accuracy_Cam = 1;
+    }
+    else if (Road7_flag == 4)
+    {
+      Turn_Out = 0;
+    }
   }
-  Servo_Duty(-Turn_Cam_Out);
-  //   if (Road == 7)
-  //   {
-  //     if (Road7_flag == 2)
-  //     {
-  // #ifdef TL2barn
-  //       Turn_Out = -SERVO_RANGE;
-  // #endif
-  // #ifdef TR2barn
-  //       Turn_Out = SERVO_RANGE;
-  // #endif
-  //     }
-  //     else if (Road7_flag == 3)
-  //     {
-  //       accuracy_EM = 0;
-  //       accuracy_Cam = 1;
-  //     }
-  //     else if (Road7_flag == 4)
-  //     {
-  //       Turn_Out = 0;
-  //     }
-  //   }
 
-  //   else if (Road == 1)
-  //   {
-  //     if (Road1_flag == 5)
-  //     {
-  //       // if (Turn_Cam_Out > -0.5 * SERVO_RANGE)
-  //       // {
-  //       //   Turn_Cam_Out = -0.5 * SERVO_RANGE;
-  //       // }
-  //       Turn_Out = -SERVO_RANGE;
-  //       Servo_Duty(-Turn_Out); //舵机控制
-  //       return;
-  //     }
-  //     else if (Road1_flag == 4)
-  //     {
-  //       if (EM_edge > 0)
-  //       {
-  //         accuracy_EM = 0;
-  //       }
-  //       else
-  //       {
-  //         accuracy_EM = 0.3;
-  //       }
-  //       accuracy_Cam = 1;
-  //     }
-  //     else
-  //     {
-  //       accuracy_EM = 0;
-  //       accuracy_Cam = 1;
-  //     }
-  //   }
+  else if (Road == 1)
+  {
+    if (Road1_flag == 5)
+    {
+      // if (Turn_Cam_Out > -0.5 * SERVO_RANGE)
+      // {
+      //   Turn_Cam_Out = -0.5 * SERVO_RANGE;
+      // }
+      Turn_Out = -SERVO_RANGE;
+      Servo_Duty(-Turn_Out); //舵机控制
+      return;
+    }
+    else if (Road1_flag == 4)
+    {
+      if (EM_edge > 0)
+      {
+        accuracy_EM = 0;
+      }
+      else
+      {
+        accuracy_EM = 0.3;
+      }
+      accuracy_Cam = 1;
+    }
+    else
+    {
+      accuracy_EM = 0;
+      accuracy_Cam = 1;
+    }
+  }
 
-  //   else if (Road == 2)
-  //   {
-  //     if (Road2_flag == 5)
-  //     {
-  //       // if (Turn_Cam_Out < 0.5 * SERVO_RANGE)
-  //       // {
-  //       //   Turn_Cam_Out = 0.5 * SERVO_RANGE;
-  //       // }
-  //       Turn_Out = SERVO_RANGE;
-  //       Servo_Duty(-Turn_Out); //舵机控制
-  //       return;
-  //     }
-  //     else if (Road2_flag == 4)
-  //     {
-  //       if (EM_edge > 0)
-  //       {
-  //         accuracy_EM = 0;
-  //       }
-  //       else
-  //       {
-  //         accuracy_EM = 0.3;
-  //       }
-  //       accuracy_Cam = 1;
-  //     }
-  //     else
-  //     {
-  //       accuracy_EM = 0;
-  //       accuracy_Cam = 1;
-  //     }
-  //   }
+  else if (Road == 2)
+  {
+    if (Road2_flag == 5)
+    {
+      // if (Turn_Cam_Out < 0.5 * SERVO_RANGE)
+      // {
+      //   Turn_Cam_Out = 0.5 * SERVO_RANGE;
+      // }
+      Turn_Out = SERVO_RANGE;
+      Servo_Duty(-Turn_Out); //舵机控制
+      return;
+    }
+    else if (Road2_flag == 4)
+    {
+      if (EM_edge > 0)
+      {
+        accuracy_EM = 0;
+      }
+      else
+      {
+        accuracy_EM = 0.3;
+      }
+      accuracy_Cam = 1;
+    }
+    else
+    {
+      accuracy_EM = 0;
+      accuracy_Cam = 1;
+    }
+  }
 
-  //   else if (Road == 3)
-  //   {
-  //     accuracy_EM = 0;
-  //     accuracy_Cam = 1;
-  //   }
+  else if (Road == 3)
+  {
+    if (Road3_flag == 1)
+    {
+#ifdef TL2barn
+      Turn_Out = -SERVO_RANGE;
+#endif
+#ifdef TR2barn
+      Turn_Out = SERVO_RANGE;
+#endif
+      Servo_Duty(-Turn_Out); //舵机控制
+      return;
+    }
+    else
+    {
+      accuracy_EM = 0;
+      accuracy_Cam = 1;
+    }
+  }
 
-  //   else
-  //   {
-  //     if (Road0_flag == 1 || Road0_flag == 2)
-  //     {
-  //       accuracy_EM = 0;
-  //       accuracy_Cam = 1;
-  //     }
-  //     else if (EM_edge > 2)
-  //     {
-  //       accuracy_EM = 0;
-  //       accuracy_Cam = 1;
-  //     }
-  //     else
-  //     {
-  //       accuracy_EM = 0.3;
-  //       accuracy_Cam = 0.7;
-  //     }
-  //   }
+  else
+  {
+    if (Road0_flag == 1 || Road0_flag == 2)
+    {
+      accuracy_EM = 0;
+      accuracy_Cam = 1;
+    }
+    else if (EM_edge > 2)
+    {
+      accuracy_EM = 0;
+      accuracy_Cam = 1;
+    }
+    else
+    {
+      accuracy_EM = 0.3;
+      accuracy_Cam = 0.7;
+    }
+  }
 
-  //   K = accuracy_EM / (accuracy_Cam + accuracy_EM);
-  //   Turn_Out = (1 - K) * Turn_Cam_Out + K * Turn_EM_Out;
-  //   Servo_Duty(-Turn_Out); //舵机控制
+  K = accuracy_EM / (accuracy_Cam + accuracy_EM);
+  Turn_Out = (1 - K) * Turn_Cam_Out + K * Turn_EM_Out;
+  Servo_Duty(-Turn_Out); //舵机控制
 }
