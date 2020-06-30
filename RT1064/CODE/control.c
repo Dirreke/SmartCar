@@ -669,7 +669,7 @@ void BBC(void)
 
   Moto_Out();
 }
-#endif
+
 void Speed_Control_New(void)
 {
   static float OldE1, OldE2;
@@ -924,6 +924,280 @@ void Speed_Control_New(void)
     }
   }
 
+  Moto_Out();
+}
+#endif
+
+void Speed_Control_New(void)
+{
+  static float OldE1, OldE2;
+
+  float Speed_kP1, Speed_kP2, Speed_kI1, Speed_kI2;
+  float SpeedControlOutE1, SpeedControlOutE2;
+
+  static bool a_flag1 = 0, a_flag2 = 0, d_flag1 = 0, d_flag2 = 0;
+  static int cnt1, cnt2;
+  static int frame1 = 0, frame2 = 0;
+  static bool frame_flag1 = 0, frame_flag2 = 0;
+  static bool Lef_pp = 0;
+  Rig_pp = 0;
+  static bool Lef_BB = 0, Rig_BB = 0;
+
+  SpeedE1 = speedTarget1 - CarSpeed1;
+  SpeedE2 = speedTarget2 - CarSpeed2;
+  // set flag
+  if (SpeedGoal == 0)
+  {
+    Lef_pp = 1;
+    Rig_pp = 1;
+    speed_change_flag = 0;
+  }
+  if (speed_change_flag)
+  {
+    Lef_BB = 1;
+    Rig_BB = 1;
+    speed_change_flag = 0;
+  }
+
+  if (SpeedE1 > 1)
+  {
+    if (Lef_BB)
+    {
+      a_flag1 = 1;
+      Led_BB = 0;
+    }
+    cnt1 = 0;
+    frame_flag1 = 0;
+    frame1 = 0;
+  }
+  if (SpeedE2 > 1)
+  {
+    ifi(Rig_BB)
+    {
+      a_flag2 = 1;
+      Rig_BB = 0;
+    }
+    cnt2 = 0;
+    frame_flag2 = 0;
+    frame2 = 0;
+  }
+
+  if (SpeedE1 < -1)
+  {
+    if (Lef_BB)
+    {
+      d_flag1 = 1;
+      Led_BB = 0;
+    }
+    cnt1 = 0;
+    frame_flag1 = 0;
+    frame1 = 0;
+  }
+  if (SpeedE2 < -1)
+  {
+    if (Rig_BB)
+    {
+      d_flag2 = 1;
+      Rig_BB = 0;
+    }
+    cnt2 = 0;
+    frame_flag2 = 0;
+    frame2 = 0;
+  }
+  //BBC
+  if (Lef_pp)
+  {
+    if (CarSpeed1 > SpeedGoal)
+    {
+      MotorOut1 = -MOTOR_RANGE;
+    }
+    else
+    {
+      Lef_pp = 0;
+      MotorOut1 = 0;
+    }
+  }
+  else if (a_flag1)
+  {
+    if (CarSpeed1 < speedTarget1 * 1.0)
+    {
+      MotorOut1 = speedTarget1 * 5000; //speedTarget1
+    }
+    else if (CarSpeed1 < speedTarget1 * 1.1) //0.8
+    {
+      cnt1++;
+      if (cnt1 > 5)
+      {
+        a_flag1 = 0;
+        MotorOut1 = speedTarget1 * 2500;
+      }
+    }
+    else
+    {
+      a_flag1 = 0;
+      MotorOut1 = speedTarget1 * 2500;
+    }
+  }
+  else if (d_flag1)
+  {
+    if (CarSpeed1 > speedTarget1 * 1.0)
+    {
+      MotorOut1 = speedTarget1 * -3000;
+    }
+    else if (CarSpeed1 > speedTarget1 * 0.8)
+    {
+      cnt1++;
+      if (cnt1 > 5)
+      {
+        d_flag1 = 0;
+        MotorOut1 = speedTarget1 * 2500;
+      }
+    }
+    else
+    {
+      d_flag1 = 0;
+      MotorOut1 = speedTarget1 * 2500;
+    }
+  }
+  else
+  {
+    /******* 左轮 *******/
+    if (SpeedE1 < 0.15 && SpeedE1 > -0.15 && frame_flag1 == 0)
+    {
+      /* 首次进入置位，开始数帧 */
+      Speed_kI1 = 0;
+      frame_flag1 = 1;
+      frame1 = 0;
+    }
+    if (frame_flag1)
+    {
+      frame1++;
+    }
+
+    SpeedEE1 = SpeedE1 - OldE1;
+    if (SpeedEE1 > 0.1 || SpeedEE1 < -0.1)
+    {
+      Speed_kP1 = 0;
+    }
+    else
+    {
+      Speed_kP1 = PID_SPEED.P;
+    }
+    if (frame1 <= 10 && frame_flag1 == 1)
+    {
+      /* 小于10帧 且开始数帧*/
+      Speed_kI1 = 0;
+    }
+    else
+    {
+      /* 继续数帧 不重复进入置位 I不为0 */
+      frame1 = 11;
+      Speed_kI1 = PID_SPEED.I;
+    }
+
+    SpeedControlOutE1 = (Speed_kP1 * SpeedEE1 + Speed_kI1 * SpeedE1);
+    MotorOut1 += SpeedControlOutE1;
+  }
+
+  if (Rig_pp)
+  {
+    if (CarSpeed2 > SpeedGoal)
+    {
+      MotorOut2 = -MOTOR_RANGE;
+    }
+    else
+    {
+      Rig_pp = 0;
+      ;
+      MotorOut2 = 0;
+    }
+  }
+  else if (a_flag2)
+  {
+    if (CarSpeed2 < speedTarget2 * 1.0)
+    {
+      MotorOut2 = speedTarget2 * 5000;
+    }
+    else if (CarSpeed2 < speedTarget2 * 1.1)
+    {
+      cnt2++;
+      if (cnt2 > 5)
+      {
+        a_flag2 = 0;
+        MotorOut2 = speedTarget2 * 2500;
+      }
+    }
+    else
+    {
+      a_flag2 = 0;
+      MotorOut2 = speedTarget2 * 2500;
+    }
+  }
+  else if (d_flag2)
+  {
+
+    if (CarSpeed2 > speedTarget2 * 1.0)
+    {
+      MotorOut2 = speedTarget2 * -3000;
+    }
+    else if (CarSpeed2 > speedTarget2 * 0.8)
+    {
+      cnt2++;
+      if (cnt2 > 5)
+      {
+        d_flag2 = 0;
+        MotorOut2 = speedTarget2 * 2500;
+      }
+    }
+    else
+    {
+      d_flag2 = 0;
+      MotorOut2 = speedTarget2 * 2500;
+    }
+  }
+  else
+  {
+    /******* 右轮 *******/
+    if (SpeedE2 < 0.15 && SpeedE2 > -0.15 && frame_flag2 == 0)
+    {
+      /* 首次进入置位，开始数帧 */
+      Speed_kI2 = 0;
+      frame_flag2 = 1;
+      frame2 = 0;
+    }
+
+    if (frame_flag2)
+    {
+      frame2++;
+    }
+    SpeedEE2 = SpeedE2 - OldE2;
+    if (SpeedEE2 > 0.1 || SpeedEE2 < -0.1)
+    {
+      Speed_kP2 = 0;
+    }
+    else
+    {
+      Speed_kP2 = PID_SPEED.P;
+    }
+    if (frame2 <= 10 && frame_flag2 == 1)
+    {
+      /* 小于10帧 且开始数帧*/
+      Speed_kI2 = 0;
+    }
+    else
+    {
+      /* 继续数帧 不重复进入置位 I不为0 */
+      frame2 = 11;
+      Speed_kI2 = PID_SPEED.I;
+    }
+    SpeedControlOutE2 = (Speed_kP2 * SpeedEE2 + Speed_kI2 * SpeedE2);
+    MotorOut2 += SpeedControlOutE2;
+  }
+
+  OldE1 = SpeedE1;
+  OldE2 = SpeedE2;
+
+  
   Moto_Out();
 }
 
