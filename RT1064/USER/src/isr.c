@@ -41,6 +41,7 @@ void PIT_IRQHandler(void)
             Turn_Servo();
         }
 
+        ICM_get();
         Get_Speed();
         SpeedTarget_fig();
         //    BBC();

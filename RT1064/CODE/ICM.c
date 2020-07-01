@@ -3,8 +3,8 @@
 void ICM_get(void)
 {
     get_icm20602_gyro_spi();
-    get_icm20602_accdata_spi();
-    icm_gyro_y = gyro_y_mean_filter(icm_gyro_y);
+    //get_icm20602_accdata_spi();
+    // icm_gyro_y = gyro_y_mean_filter(icm_gyro_y);
     gyro_y_integration();
     //ICMx_filter();
     //ICMy_filter();
@@ -19,22 +19,24 @@ void ICM_get(void)
 *  修改时间：2020.07.01
 *  备    注：循环读20帧，平均值，偏置，然后初始化进while
 *************************************************************************/
-int16 icm_gyro_y_offset = 0;
+float icm_gyro_y_offset = 0.0;
 
 void gyro_y_init(void)
 {
     static int num = 0;
     static int16 sum = 0;
 
-    while (num < 20)
+    while (num < 100)
     {
         get_icm20602_gyro_spi();
+        
+    systick_delay_ms(10);
         ++num;
         sum += icm_gyro_y;
     }
-    icm_gyro_y_offset = -sum / 20;
+    icm_gyro_y_offset = -sum / 100.0;
 }
-
+#if 0
 /*************************************************************************
 *  函数名称：int16 gyro_y_mean_filter(int16 D_new) 
 *  功能说明：陀螺仪均值滤波
@@ -67,7 +69,7 @@ int16 gyro_y_mean_filter(int D_new)
         return (int16) (sum / 16);
     }
 }
-
+# endif
 /*************************************************************************
 *  函数名称：void gyro_y_integration(void) 
 *  功能说明：陀螺仪角度计算
@@ -75,12 +77,20 @@ int16 gyro_y_mean_filter(int D_new)
 *  函数返回：
 *  修改时间：2020.07.01
 *  备    注：y轴角速度积分 一开始写了int16不够，改了int，然后发现哪有算角度
-            只有int的。。所以用float并换算吧（并不会）
+            只有int的。。所以用float并换算吧（2000/2^15 = 0.06103515625）
 *************************************************************************/
 float icm_gyro_y_angle = 0;
+float icm_gyro_y_float = 0;
 void gyro_y_integration(void)
 {
-    icm_gyro_y_angle += icm_gyro_y / 100.0;
+    icm_gyro_y_float = icm_gyro_y + icm_gyro_y_offset;
+   /* 
+    if(fabs(icm_gyro_y_float) < 100)
+    {
+       icm_gyro_y = 0;
+    }
+*/
+    icm_gyro_y_angle += icm_gyro_y_float * 0.0001220703125;
 }
 
 #if 0

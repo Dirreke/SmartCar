@@ -8,5 +8,6 @@ int16 gyro_y_mean_filter(int D_new);
 void gyro_y_init(void);
 void gyro_y_integration(void);
 
-extern int16 icm_gyro_y_offset;
+extern float icm_gyro_y_offset;
 extern float icm_gyro_y_angle;
+extern float icm_gyro_y_float;

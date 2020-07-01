@@ -241,26 +241,24 @@ void Variable_update(void)
   // Variable[13]=EM_Value_2;//speedTarget2;//lib_active_diff_get();//map_line[MIN(50,AllWhileEndLine)];_
   // Variable[14]=EM_Value_3;//Cam_Block_State;//MotorOut1;//CarSpeed1;//(MotorOut1+MotorOut2)/2;
   // Variable[15]=ToF_distance;//EM_Value_4;//ToF_distance;//MotorOut2;//CarSpeed2;
-  Variable[0] = SpeedE1;  //Cam_offset;   //EM_Value_1;// Cam_offset;//cntt;//ToF_distance;
-  Variable[1] = SpeedE2;  //EM_Value_2; //Turn_Cam_Out;//cnt;//Turn_Cam_Out;//;//stat_slope;//gyroy_1;//Turn_Cam_Out;//Car_W;
-  Variable[2] = SpeedEE1; //EM_Value_1;//Cam_offset;
-  Variable[3] = SpeedEE2;
-  Variable[4] = icm_gyro_x; //EM_Value_1; //speedTarget1; //Allwhiteend;
+  Variable[0] = EM_Value_1;  //Cam_offset;   //EM_Value_1;// Cam_offset;//cntt;//ToF_distance;
+  Variable[1] = EM_Value_2;  //EM_Value_2; //Turn_Cam_Out;//cnt;//Turn_Cam_Out;//;//stat_slope;//gyroy_1;//Turn_Cam_Out;//Car_W;
+  Variable[2] = EM_Value_3; //EM_Value_1;//Cam_offset;
+  Variable[3] = EM_Value_4;
+  Variable[4] = icm_gyro_y_angle; //EM_Value_1; //speedTarget1; //Allwhiteend;
   Variable[5] = icm_gyro_y; //EM_Value_2; //
-  Variable[6] = icm_gyro_z; //EM_Value_3;
+  Variable[6] = icm_gyro_y_float; //EM_Value_3;
   Variable[7] = CarSpeed1;  //EM_Value_4;
 
   Variable[8] = CarSpeed2; //EM_offset;
-  Variable[9] = MotorOut1; //speedTarget2;//Turn_Cam_Out;
-  Variable[10] = MotorOut2;
+  Variable[9] = EM_straight_offset; //speedTarget2;//Turn_Cam_Out;
+  Variable[10] = EM_center_offset;
   Variable[11] = speedTarget1; //Turn_EM_Out;  //Lef_break_point*100+Rig_break_point;
   Variable[12] = Turn_EM_Out;
   Variable[13] = Turn_Cam_Out; /*Rig_circle;*/ //Road6_flag ;//CarSpeed2;
   Variable[14] = icm_gyro_y_offset;
   Variable[15] = 100 + Road * 10 + Road0_flag; //whitecnt;//Road1_turnout;//limit_pos(EM_Value_1/1.5-EM_Value_2/3.5);//speedTarget1;//map_line[MIN(50,AllWhileStartLine)];
-  //Variable[13]=icm_acc_x;//speedTarget2;//lib_active_diff_get();//map_line[MIN(50,AllWhileEndLine)];_
-  //Variable[14]=icm_acc_y;//Cam_Block_State;//MotorOut1;//CarSpeed1;//(MotorOut1+MotorOut2)/2;
-  //Variable[15]=icm_acc_z;//EM_Value_4;//ToF_distance;//MotorOut2;//CarSpeed2;
+
 }
 
 void Pic_send_new2(void)

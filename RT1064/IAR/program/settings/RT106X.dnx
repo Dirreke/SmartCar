@@ -16,7 +16,7 @@
         <LeaveTargetRunning>_ 0</LeaveTargetRunning>
     </JLinkDriver>
     <DebugChecksum>
-        <Checksum>1387274424</Checksum>
+        <Checksum>684451761</Checksum>
     </DebugChecksum>
     <Exceptions>
         <StopOnUncaught>_ 0</StopOnUncaught>
@@ -140,8 +140,7 @@
         <Bp0>_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\..\CODE\control.c}.11.20" 0 0 1 "" 0 "" 0</Bp0>
         <Bp1>_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\..\USER\src\isr.c}.74.5" 0 0 1 "" 0 "" 0</Bp1>
         <Bp2>_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\..\CODE\search.c}.1259.11" 0 0 1 "" 0 "" 0</Bp2>
-        <Bp3>_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\..\USER\src\isr.c}.59.5" 0 0 1 "" 0 "" 0</Bp3>
-        <Count>4</Count>
+        <Count>3</Count>
     </Breakpoints2>
     <Aliases>
         <Count>0</Count>
