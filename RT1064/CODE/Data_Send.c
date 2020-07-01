@@ -256,7 +256,7 @@ void Variable_update(void)
   Variable[11] = speedTarget1; //Turn_EM_Out;  //Lef_break_point*100+Rig_break_point;
   Variable[12] = Turn_EM_Out;
   Variable[13] = Turn_Cam_Out; /*Rig_circle;*/ //Road6_flag ;//CarSpeed2;
-  Variable[14] = CCCCCCC;
+  Variable[14] = icm_gyro_y_offset;
   Variable[15] = 100 + Road * 10 + Road0_flag; //whitecnt;//Road1_turnout;//limit_pos(EM_Value_1/1.5-EM_Value_2/3.5);//speedTarget1;//map_line[MIN(50,AllWhileStartLine)];
   //Variable[13]=icm_acc_x;//speedTarget2;//lib_active_diff_get();//map_line[MIN(50,AllWhileEndLine)];_
   //Variable[14]=icm_acc_y;//Cam_Block_State;//MotorOut1;//CarSpeed1;//(MotorOut1+MotorOut2)/2;

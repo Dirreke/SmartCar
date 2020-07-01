@@ -69,6 +69,7 @@ int main(void)
     gpio_interrupt_init(C25, FALLING, GPIO_INT_CONFIG); //初始化GPIO C23 中断模式 使用默认引脚配置GPIO_INT_CONFIG
 
     NVIC_SetPriority(GPIO2_Combined_16_31_IRQn, 0); //设置中断优先级 范围0-15 越小优先级越高
+    gyro_y_init();                                  //陀螺仪校正初始化
     Para_Init();                                    //各个变量初始化
 
     EnableGlobalIRQ(0);
@@ -85,7 +86,6 @@ int main(void)
 
             Send_Data();
             Dubug_key();
-
 
             //使用缩放显示函数，根据原始图像大小 以及设置需要显示的大小自动进行缩放或者放大显示。
             //总钻风采集到的图像分辨率为 188*120 ，2.0寸IPS屏显示分辨率为 320*240 ，图像拉伸全屏显示。

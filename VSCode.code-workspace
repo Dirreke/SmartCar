@@ -9,6 +9,14 @@
 		{
 			"path": "Libraries"
 		}
+		{
+			"path": "Libraries\\seekfree_libraries"
+		}
 	],
-	"settings": {}
+	"settings": {
+		"files.associations": {
+			"vector": "c"
+		}
+	},
+	"C_Cpp.default.includePath": []
 }

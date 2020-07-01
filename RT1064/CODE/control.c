@@ -925,7 +925,7 @@ void Speed_Control_New(void)
 
 void Speed_Control_New(void)
 {
-  
+
   static float OldE1, OldE2;
 
   float Speed_kP1, Speed_kP2, Speed_kI1, Speed_kI2;
@@ -958,7 +958,13 @@ void Speed_Control_New(void)
 
   if (SpeedE1 > 1)
   {
-    if (Lef_BB)
+    //即使速度目标不改变但speede1>1.5也直接进BB
+    if (SpeedE1 > 1.5)
+    {
+      a_flag1 = 1;
+      Lef_BB = 0;
+    }
+    else if (Lef_BB)
     {
       a_flag1 = 1;
       Lef_BB = 0;
@@ -969,7 +975,13 @@ void Speed_Control_New(void)
   }
   if (SpeedE2 > 1)
   {
-    if (Rig_BB)
+    //即使速度目标不改变但speede2>1.5也直接进BB
+    if (SpeedE2 > 1.5)
+    {
+      a_flag2 = 1;
+      Rig_BB = 0;
+    }
+    else if (Rig_BB)
     {
       a_flag2 = 1;
       Rig_BB = 0;
@@ -981,7 +993,13 @@ void Speed_Control_New(void)
 
   if (SpeedE1 < -1)
   {
-    if (Lef_BB)
+    //同上
+    if (SpeedE1 < -1.5)
+    {
+      d_flag1 = 1;
+      Lef_BB = 0;
+    }
+    else if (Lef_BB)
     {
       d_flag1 = 1;
       Lef_BB = 0;
@@ -992,6 +1010,12 @@ void Speed_Control_New(void)
   }
   if (SpeedE2 < -1)
   {
+    //同上
+    if (SpeedE2 < -1.5)
+    {
+      d_flag2 = 1;
+      Rig_BB = 0;
+    }
     if (Rig_BB)
     {
       d_flag2 = 1;
