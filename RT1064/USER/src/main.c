@@ -65,7 +65,6 @@ int main(void)
     qtimer_AB_init(); //解码器初始化
     EM_Init();        //ADC初始化
     gpio_init(C25, GPI, 1, GPIO_PIN_CONFIG);
-    icm20602_init_spi();
     gpio_interrupt_init(C25, FALLING, GPIO_INT_CONFIG); //初始化GPIO C23 中断模式 使用默认引脚配置GPIO_INT_CONFIG
 
     NVIC_SetPriority(GPIO2_Combined_16_31_IRQn, 0); //设置中断优先级 范围0-15 越小优先级越高
@@ -81,6 +80,7 @@ int main(void)
         {
             mt9v03x_csi_finish_flag = 0; //清除采集完成标志位
             mag_find();
+            ICM_main();
             camera_dispose_main();
 
             Send_Data();

@@ -45,6 +45,7 @@ void TurnRight_Process(void);
 void Road1_zhuangtaiji(void);
 void Road2_zhuangtaiji(void);
 void Road3_zhuangtaiji(void);
+void Road4_zhuangtaiji(void);
 void Road7_zhuangtaiji(void);
 
 

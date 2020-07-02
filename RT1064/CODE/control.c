@@ -242,6 +242,8 @@ void SpeedTarget_fig(void)
   float angle_val; // 用来表示实际转向角度
   float diff_K0;   // 差速率=差速比均速，左右轮各一半
 
+
+
   if (get_diff_state() == DIFF_ON_VAL)
   {
     //开关差速在Para中定义
@@ -956,10 +958,10 @@ void Speed_Control_New(void)
     speed_change_flag = 0;
   }
 
-  if (SpeedE1 > 1)
+  if (SpeedE1 > 0.5)
   {
     //即使速度目标不改变但speede1>1.5也直接进BB
-    if (SpeedE1 > 1.5)
+    if (SpeedE1 > 1)
     {
       a_flag1 = 1;
       Lef_BB = 0;
@@ -973,10 +975,10 @@ void Speed_Control_New(void)
     frame_flag1 = 0;
     frame1 = 0;
   }
-  if (SpeedE2 > 1)
+  if (SpeedE2 > 0.5)
   {
     //即使速度目标不改变但speede2>1.5也直接进BB
-    if (SpeedE2 > 1.5)
+    if (SpeedE2 > 1)
     {
       a_flag2 = 1;
       Rig_BB = 0;
@@ -991,10 +993,10 @@ void Speed_Control_New(void)
     frame2 = 0;
   }
 
-  if (SpeedE1 < -1)
+  if (SpeedE1 < -0.5)
   {
     //同上
-    if (SpeedE1 < -1.5)
+    if (SpeedE1 < -1)
     {
       d_flag1 = 1;
       Lef_BB = 0;
@@ -1008,10 +1010,10 @@ void Speed_Control_New(void)
     frame_flag1 = 0;
     frame1 = 0;
   }
-  if (SpeedE2 < -1)
+  if (SpeedE2 < -0.5)
   {
     //同上
-    if (SpeedE2 < -1.5)
+    if (SpeedE2 < -1)
     {
       d_flag2 = 1;
       Rig_BB = 0;

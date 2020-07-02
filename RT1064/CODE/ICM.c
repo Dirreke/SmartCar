@@ -1,15 +1,15 @@
 #include "headfile.h"
 
-void ICM_get(void)
-{
-    get_icm20602_gyro_spi();
-    //get_icm20602_accdata_spi();
-    // icm_gyro_y = gyro_y_mean_filter(icm_gyro_y);
-    gyro_y_integration();
-    //ICMx_filter();
-    //ICMy_filter();
-    //ICMz_filter();
-}
+// void ICM_get(void)
+// {
+//     // get_icm20602_gyro_spi();
+//     //get_icm20602_accdata_spi();
+//     // icm_gyro_y = gyro_y_mean_filter(icm_gyro_y);
+//     gyro_y_integration();
+//     //ICMx_filter();
+//     //ICMy_filter();
+//     //ICMz_filter();
+// }
 
 /*************************************************************************
 *  函数名称：int16 gyro_y_init(int16 D_new) 
@@ -20,21 +20,23 @@ void ICM_get(void)
 *  备    注：循环读20帧，平均值，偏置，然后初始化进while
 *************************************************************************/
 float icm_gyro_y_offset = 0.0;
-
+float icm_gyro_y_w;
+float icm_gyro_y_angle = 0;
 void gyro_y_init(void)
 {
-    static int num = 0;
-    static int16 sum = 0;
+    icm20602_init_spi();
+    int num = 0;
+    int sum = 0;
 
-    while (num < 100)
+    while (num < 500)
     {
         get_icm20602_gyro_spi();
-        
-    systick_delay_ms(10);
+
+        systick_delay_ms(2);
         ++num;
         sum += icm_gyro_y;
     }
-    icm_gyro_y_offset = -sum / 100.0;
+    icm_gyro_y_offset = -sum / 500.0;
 }
 #if 0
 /*************************************************************************
@@ -69,9 +71,10 @@ int16 gyro_y_mean_filter(int D_new)
         return (int16) (sum / 16);
     }
 }
-# endif
+#endif
+#if 0
 /*************************************************************************
-*  函数名称：void gyro_y_integration(void) 
+*  函数名称：void gyro_y_omega(void) 
 *  功能说明：陀螺仪角度计算
 *  参数说明：
 *  函数返回：
@@ -79,18 +82,50 @@ int16 gyro_y_mean_filter(int D_new)
 *  备    注：y轴角速度积分 一开始写了int16不够，改了int，然后发现哪有算角度
             只有int的。。所以用float并换算吧（2000/2^15 = 0.06103515625）
 *************************************************************************/
-float icm_gyro_y_angle = 0;
-float icm_gyro_y_float = 0;
+// float icm_gyro_y_angle = 0;
+// float icm_gyro_y_float = 0;
 void gyro_y_integration(void)
 {
+    int icm_gyro_y_float;
     icm_gyro_y_float = icm_gyro_y + icm_gyro_y_offset;
-   /* 
-    if(fabs(icm_gyro_y_float) < 100)
+    icm_guro_y_w = icm_gyro_y_float * 0.06103515625
+    // if(fabs(icm_gyro_y_float) < 100)
+    // {
+    //    icm_gyro_y = 0;
+    // }
+    // icm_gyro_y_angle += icm_gyro_y_float * 0.0001220703125;
+}
+#endif
+
+/*************************************************************************
+*  函数名称：void gyro_y_omega(void) 
+*  功能说明：陀螺仪角度计算
+*  参数说明：
+*  函数返回：
+*  修改时间：2020.07.01
+*  备    注：y轴角速度积分 一开始写了int16不够，改了int，然后发现哪有算角度
+            只有int的。。所以用float并换算吧（2000/2^15 = 0.06103515625）
+*************************************************************************/
+// float icm_gyro_y_angle = 0;
+// float icm_gyro_y_float = 0;
+void ICM_main(void)
+{
+
+    if (Road != 4)
     {
-       icm_gyro_y = 0;
+        get_icm20602_gyro_spi();
+        icm_gyro_y_w = (icm_gyro_y + icm_gyro_y_offset) * 0.06103515625;
     }
-*/
-    icm_gyro_y_angle += icm_gyro_y_float * 0.0001220703125;
+}
+
+void ICM_main_isr(void)
+{
+    if (Road == 4)
+    {
+        get_icm20602_gyro_spi();
+        icm_gyro_y_w = (icm_gyro_y + icm_gyro_y_offset) * 0.06103515625;
+        icm_gyro_y_angle += icm_gyro_y_w * 0.002;
+    }
 }
 
 #if 0

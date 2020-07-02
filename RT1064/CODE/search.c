@@ -20,6 +20,7 @@ int Road1_flag = 0;
 int Road2_flag = 0;
 int Road7_flag = 0;
 int Road3_flag = 0;
+int Road4_flag = 0;
 bool ganhuangguan_flag = 0;
 
 int turn_stop = 0; //转弯用
@@ -350,141 +351,12 @@ void mag_find(void)
 
     return;
 }
-/*************************************************************************
-*  函数名称：void Road3_zhuangtaiji()
-*  功能说明：出库
-*  参数说明：无
-*  函数返回：无
-*  修改时间：2019.3.23
-*  备    注：Road=3表示出库
-            Road3_flag=0准备出库，=1出库中
-
-*************************************************************************/
-
-void Road3_zhuangtaiji(void)
-{
-
-    static int start_count = 0;
-    static int Road31_count = 0;
-    static int Road32_count = 0;
-    
-#ifdef TL2barn
-
-    if (Road3_flag == 0)
-    {
-        for (int i = Last_row - 3; i > Fir_row + 1; --i)
-        {
-            if (abs(Lef[i - 1] - Lef[i]) < 10)
-            {
-                continue;
-            }
-            else
-            {
-                start_line = i;
-                break;
-            }
-        }
-        if (start_line > 38)
-        {
-            Road31_count++;
-            if (Road31_count > 1)
-            {
-                Road31_count = 0;
-                Road3_flag = 1;
-            }
-        }
-        else
-        {
-            Road31_count = 0;
-        }
-    }
-    else if (Road3_flag == 1)
-    {
-        if (Rig_slope < -0.25)
-        {
-            Road32_count++;
-            if (Road32_count > 2)
-            {
-                Road = 0;
-                Road0_flag = 0;
-                Road32_count = 0;
-            }
-        }
-        else
-        {
-            Road32_count = 0;
-        }
-    }
-
-#endif
-#ifdef TR2barn
-    if (Road3_flag == 0)
-    {
-        for (int i = Last_row - 3; i > Fir_row + 1; --i)
-        {
-            if (abs(Rig[i - 1] - Rig[i]) < 10)
-            {
-                continue;
-            }
-            else
-            {
-                start_line = i;
-                break;
-            }
-        }
-        if (start_line > 38)
-        {
-            Road31_count++;
-            if (Road31_count > 1)
-            {
-                Road31_count = 0;
-                Road3_flag = 0;
-            }
-        }
-        else
-        {
-            Road31_count = 0;
-        }
-    }
-    else if (Road3_flag == 1)
-    {
-        if (Lef_slope > 0.25 && Lef_slope != 999)
-        {
-            Road32_count ++ ;
-            if(Road32_count > 2)
-            {
-                Road32_count = 0;
-
-            }
-            Road = 0;
-            Road0_flag = 0
-        }
-        else
-        {
-            Road32_count = 0;
-        }
-    }
-
-#endif
-}
-
-/*************************************************************************
-*  函数名称：void Road_rec()
-*  功能说明：赛道识别
-*  参数说明：无
-*  函数返回：无
-*  修改时间：2019.3.23
-*  备    注：Road=0表示正常路况（即没有进入圆环及坡）
-             3.23:Road=1表示左圆环，Road=2表示右圆环
-
-*************************************************************************/
-
 // char Road1_turnout = 1;
 void Road_rec(void)
 {
     static int Road0_count = 0;
     static int Road00_count = 0;
-    static int Road10_count = 0, Road20_count = 0, Road70_count = 0;
+    static int Road10_count = 0, Road20_count = 0, Road70_count = 0, Road40_count = 0;
 
     //进直路
     if (Road != 0)
@@ -540,6 +412,20 @@ void Road_rec(void)
 
     if (Road == 0)
     {
+        if (icm_gyro_y_w < -30*(CarSpeed1+CarSpeed2) && icm_gyro_y_w < -30)
+        {
+            Road40_count++;
+            if (Road40_count > 1)
+            {
+                Road = 4;
+                Road4_flag = 0;
+                return;
+            }
+        }
+        else
+        {
+            Road40_count = 0;
+        }
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////普通赛道→圆环
         if (Rig_circle == 0 && Lef_circle == 1 && Lef_slope != 998 &&
             Rig[39] - Rig[37] < 5 && Rig[37] - Rig[35] < 5 && Rig[35] - Rig[33] < 5 && Rig[33] - Rig[31] < 5 && Rig[31] - Rig[29] < 5 && Rig[29] - Rig[27] < 5 && Rig[27] - Rig[25] < 5 && Rig[25] - Rig[23] < 5 && Lef_break_point < 45 && Rig_slope >= 0 && EM_Value_2 + EM_Value_3 > 4.2)
@@ -635,6 +521,11 @@ void Road_rec(void)
     {
         Road0_flag = 0;
         Road3_zhuangtaiji();
+    }
+    else if(Road == 4)
+    {
+        Road0_flag = 0;
+        Road4_zhuangtaiji();
     }
     else if (Road == 7)
     {
@@ -1257,6 +1148,165 @@ void Road2_zhuangtaiji(void)
         }
     }
     return;
+}
+
+/*************************************************************************
+*  函数名称：void Road3_zhuangtaiji()
+*  功能说明：出库
+*  参数说明：无
+*  函数返回：无
+*  修改时间：2019.3.23
+*  备    注：Road=3表示出库
+            Road3_flag=0准备出库，=1出库中
+
+*************************************************************************/
+
+void Road3_zhuangtaiji(void)
+{
+
+    static int start_count = 0;
+    static int Road31_count = 0;
+    static int Road32_count = 0;
+
+#ifdef TL2barn
+
+    if (Road3_flag == 0)
+    {
+        for (int i = Last_row - 3; i > Fir_row + 1; --i)
+        {
+            if (abs(Lef[i - 1] - Lef[i]) < 10)
+            {
+                continue;
+            }
+            else
+            {
+                start_line = i;
+                break;
+            }
+        }
+        if (start_line > 38)
+        {
+            Road31_count++;
+            if (Road31_count > 1)
+            {
+                Road31_count = 0;
+                Road3_flag = 1;
+            }
+        }
+        else
+        {
+            Road31_count = 0;
+        }
+    }
+    else if (Road3_flag == 1)
+    {
+        if (Rig_slope < -0.25)
+        {
+            Road32_count++;
+            if (Road32_count > 2)
+            {
+                Road = 0;
+                Road0_flag = 0;
+                Road32_count = 0;
+            }
+        }
+        else
+        {
+            Road32_count = 0;
+        }
+    }
+
+#endif
+#ifdef TR2barn
+    if (Road3_flag == 0)
+    {
+        for (int i = Last_row - 3; i > Fir_row + 1; --i)
+        {
+            if (abs(Rig[i - 1] - Rig[i]) < 10)
+            {
+                continue;
+            }
+            else
+            {
+                start_line = i;
+                break;
+            }
+        }
+        if (start_line > 38)
+        {
+            Road31_count++;
+            if (Road31_count > 1)
+            {
+                Road31_count = 0;
+                Road3_flag = 0;
+            }
+        }
+        else
+        {
+            Road31_count = 0;
+        }
+    }
+    else if (Road3_flag == 1)
+    {
+        if (Lef_slope > 0.25 && Lef_slope != 999)
+        {
+            Road32_count++;
+            if (Road32_count > 2)
+            {
+                Road32_count = 0;
+            }
+            Road = 0;
+            Road0_flag = 0
+        }
+        else
+        {
+            Road32_count = 0;
+        }
+    }
+
+#endif
+}
+
+/*************************************************************************
+*  函数名称：void Road4_zhuangtaiji(void)
+*  功能说明：坡道状态机
+*  参数说明：无
+*  函数返回：无
+*  修改时间：2020.07.02
+*  备    注：
+*************************************************************************/
+void Road4_zhuangtaiji(void)
+{
+    if (Road4_flag == 0)
+    {
+        if (icm_gyro_y_angle < -8)
+        {
+            Road4_flag = 1;
+        }
+    }
+    else if (Road4_flag == 1)
+    {
+        if (icm_gyro_y_angle > -6)
+        {
+            Road4_flag = 2;
+        }
+    }
+    else if (Road4_flag == 2)
+    {
+        if (icm_gyro_y_angle > 10)
+        {
+            Road4_flag = 3;
+        }
+    }
+    else if (Road4_flag == 3)
+    {
+        if (icm_gyro_y_angle < 2)
+        {
+            Road = 0;
+            Road0_flag = 0;
+            icm_gyro_y_angle = 0;
+        }
+    }
 }
 
 /*************************************************************************
