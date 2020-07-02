@@ -958,10 +958,10 @@ void Speed_Control_New(void)
     speed_change_flag = 0;
   }
 
-  if (SpeedE1 > 0.5)
+  if (SpeedE1 > 1)
   {
     //即使速度目标不改变但speede1>1.5也直接进BB
-    if (SpeedE1 > 1)
+    if (SpeedE1 > 1.5)
     {
       a_flag1 = 1;
       Lef_BB = 0;
@@ -975,10 +975,10 @@ void Speed_Control_New(void)
     frame_flag1 = 0;
     frame1 = 0;
   }
-  if (SpeedE2 > 0.5)
+  if (SpeedE2 > 1)
   {
     //即使速度目标不改变但speede2>1.5也直接进BB
-    if (SpeedE2 > 1)
+    if (SpeedE2 > 1.5)
     {
       a_flag2 = 1;
       Rig_BB = 0;
@@ -993,10 +993,10 @@ void Speed_Control_New(void)
     frame2 = 0;
   }
 
-  if (SpeedE1 < -0.5)
+  if (SpeedE1 < -1)
   {
     //同上
-    if (SpeedE1 < -1)
+    if (SpeedE1 < -1.5)
     {
       d_flag1 = 1;
       Lef_BB = 0;
@@ -1010,10 +1010,10 @@ void Speed_Control_New(void)
     frame_flag1 = 0;
     frame1 = 0;
   }
-  if (SpeedE2 < -0.5)
+  if (SpeedE2 < -1)
   {
     //同上
-    if (SpeedE2 < -1)
+    if (SpeedE2 < -1.5)
     {
       d_flag2 = 1;
       Rig_BB = 0;
