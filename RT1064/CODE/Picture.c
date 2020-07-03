@@ -2281,6 +2281,10 @@ void Pic_offset_fig(void)
     {
         Cam_offset *= 0.3;
     }
+    if (Road == 4)
+    {
+        Cam_offset *= 0.3;
+    }
 
     else if (Road1_flag == 3 || Road2_flag == 3)
         Cam_offset *= 0.8;

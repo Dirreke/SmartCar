@@ -157,7 +157,7 @@ void Turn_Servo()
       // {
       //   Turn_Cam_Out = -0.5 * SERVO_RANGE;
       // }
-      Turn_Out = -SERVO_RANGE;
+      Turn_Out = -SERVO_RANGE + 30;
     }
     else if (Road1_flag == 4)
     {
@@ -202,6 +202,10 @@ void Turn_Servo()
       Turn_Out = Turn_Cam_Out;
     }
   }
+  else if (Road == 4)
+  {
+    Turn_Out = Turn_EM_Out;
+  }
 
   else
   {
@@ -242,15 +246,20 @@ void SpeedTarget_fig(void)
   float angle_val; // 用来表示实际转向角度
   float diff_K0;   // 差速率=差速比均速，左右轮各一半
 
-
-
   if (get_diff_state() == DIFF_ON_VAL)
   {
     //开关差速在Para中定义
 
-    angle_val = Turn_Cam_Out / SERVO_RANGE * ANGLE_RANGE;
+    angle_val = Turn_Cam_Out > 180 ? ((Turn_Cam_Out - 180) * 2 + 180) / SERVO_RANGE * ANGLE_RANGE : Turn_Cam_Out / SERVO_RANGE * ANGLE_RANGE;
+    angle_val = Turn_Cam_Out < -180 ? ((Turn_Cam_Out + 180) * 2 - 180) / SERVO_RANGE * ANGLE_RANGE : Turn_Cam_Out / SERVO_RANGE * ANGLE_RANGE;
+    angle_val = fabs(Turn_Cam_Out) < 46 ? 0 : Turn_Cam_Out / SERVO_RANGE * ANGLE_RANGE;
+
     diff_K0 = CAR_DIFF_K * tan(angle_val);
     //可串PD控制器
+    if (Road == 4 || (Road == 1 && Road1_flag == 5) || (Road == 2 && Road2_flag == 5) || Road == 3) //出库差速？先不开了
+    {
+      diff_K0 = 0;
+    }
   }
   else if (get_diff_state() == DIFF_OFF_VAL)
   {

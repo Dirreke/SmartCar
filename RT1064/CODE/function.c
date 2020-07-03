@@ -38,8 +38,8 @@ void Para_Init()
         lib_active_diff_set_d(0.1);
 #endif
         //¿ª²îËÙ
-        // diff_on();
-       diff_off();
+        diff_on();
+        //diff_off();
   
   
         

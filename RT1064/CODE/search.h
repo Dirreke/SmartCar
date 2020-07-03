@@ -16,6 +16,7 @@ extern int Road2_flag;
 extern int Road0_flag;
 extern int Road7_flag;
 extern int Road3_flag;
+extern int Road4_flag;
 
 extern int EM_Road;
 extern bool ganhuangguan_flag;

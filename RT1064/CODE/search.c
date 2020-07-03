@@ -365,10 +365,13 @@ void Road_rec(void)
             ((Lef_edge < 10 && Rig_edge < 10) || (Lef_edge < 2 && Rig_edge < 15) || (Rig_edge < 2 && Lef_edge < 15)))
         {
             Road0_count++;
+            if (Road == 4 && Road4_flag > 1)
+                Road0_count = 0;
             if (Road0_count >= 5)
             {
                 Road = 0;
                 Road0_flag = 0;
+                lib_speed_set(SpeedGoal);
             }
         }
         else
@@ -412,7 +415,7 @@ void Road_rec(void)
 
     if (Road == 0)
     {
-        if (icm_gyro_y_w < -30*(CarSpeed1+CarSpeed2) && icm_gyro_y_w < -30)
+        if (icm_gyro_y_w < -30 * (CarSpeed1 + CarSpeed2) && icm_gyro_y_w < -60)
         {
             Road40_count++;
             if (Road40_count > 1)
@@ -522,7 +525,7 @@ void Road_rec(void)
         Road0_flag = 0;
         Road3_zhuangtaiji();
     }
-    else if(Road == 4)
+    else if (Road == 4)
     {
         Road0_flag = 0;
         Road4_zhuangtaiji();
@@ -1277,11 +1280,24 @@ void Road3_zhuangtaiji(void)
 *************************************************************************/
 void Road4_zhuangtaiji(void)
 {
+    static uint8 Road4_count0 = 0;
+    static uint8 Road4_count3 = 0;
+
     if (Road4_flag == 0)
     {
         if (icm_gyro_y_angle < -8)
         {
-            Road4_flag = 1;
+            Road4_count0++;
+            if (Road4_count0 > 2)
+            {
+                Road4_flag = 1;
+                Road4_count0 = 0;
+                lib_speed_set(2.0);
+            }
+        }
+        else
+        {
+            Road4_count0 = 0;
         }
     }
     else if (Road4_flag == 1)
@@ -1289,6 +1305,7 @@ void Road4_zhuangtaiji(void)
         if (icm_gyro_y_angle > -6)
         {
             Road4_flag = 2;
+            lib_speed_set(1.0);
         }
     }
     else if (Road4_flag == 2)
@@ -1296,16 +1313,28 @@ void Road4_zhuangtaiji(void)
         if (icm_gyro_y_angle > 10)
         {
             Road4_flag = 3;
+            lib_speed_set(1.0);
         }
     }
     else if (Road4_flag == 3)
     {
-        if (icm_gyro_y_angle < 2)
+
+        if (icm_gyro_y_angle < 4)
         {
-            Road = 0;
-            Road0_flag = 0;
-            icm_gyro_y_angle = 0;
+            Road4_count3++;
+            if (Road4_count3 > 2)
+            {
+                Road4_count3 = 0;
+                Road = 0;
+                Road0_flag = 0;
+                icm_gyro_y_angle = 0;
+                lib_speed_set(speedgoal);
+            }
         }
+    }
+    else
+    {
+        Road4_count3 = 0;
     }
 }
 
