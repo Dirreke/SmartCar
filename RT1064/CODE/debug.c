@@ -90,18 +90,23 @@ void Dubug_key(void)
                 PID_SPEED.I += 1;
                 break;
             case 6:
-                PID2_SPEED.P += 10;
+                PID_TURN_CAM_EXT.P += 0.1;
                 break;
             case 7:
-                PID2_SPEED.I += 1;
+                PID_TURN_CAM_EXT.D += 0.1;
                 break;
             case 8:
                 DEBUG_CHOICE++;
                 break;
             case 9:
-                DEBUG_CHOICE = 3;
-                Road = 3;
-                Road3_flag = 0;
+                if (get_diff_state() == DIFF_ON_VAL)
+                {
+                    set_diff_state(DIFF_OFF_VAL);
+                }
+                if (get_diff_state() == DIFF_OFF_VAL)
+                {
+                    set_diff_state(DIFF_ON_VAL);
+                }
                 break;
             case 0:
                 Road += 1;
@@ -257,18 +262,23 @@ void Dubug_key(void)
                 PID_SPEED.I -= 1;
                 break;
             case 6:
-                PID2_SPEED.P -= 10;
+                PID_TURN_CAM_EXT.P -= 0.1;
                 break;
             case 7:
-                PID2_SPEED.I -= 1;
+                PID_TURN_CAM_EXT.D -= 0.1;
                 break;
             case 8:
                 DEBUG_CHOICE--;
                 break;
             case 9:
-                DEBUG_CHOICE = 3;
-                Road = 0;
-                Road0_flag = 0;
+                if (get_diff_state() == DIFF_ON_VAL)
+                {
+                    set_diff_state(DIFF_OFF_VAL);
+                }
+                if (get_diff_state() == DIFF_OFF_VAL)
+                {
+                    set_diff_state(DIFF_ON_VAL);
+                }
                 break;
             case 0:
                 Road -= 1;
@@ -440,25 +450,28 @@ void ips_show_debug(int ips_num)
         ips200_showfloat(0, 13, PID_SPEED.I, 4, 2);
         break;
     case 6:
-        ips200_showstr(0, 12, "P_2");
-        ips200_showfloat(0, 13, PID2_SPEED.P, 4, 2);
+        ips200_showstr(0, 12, "CamP");
+        ips200_showfloat(0, 13, PID_TURN_CAM_EXT.P, 4, 2);
         break;
     case 7:
-        ips200_showstr(0, 12, "D_2");
-        ips200_showfloat(0, 13, PID2_SPEED.I, 4, 2);
+        ips200_showstr(0, 12, "CamD");
+        ips200_showfloat(0, 13, PID_TURN_CAM_EXT.D, 4, 2);
         break;
     case 8:
         ips200_showstr(0, 12, "DEBUG_CHOICE");
         ips200_showint32(0, 13, DEBUG_CHOICE, 3);
         break;
     case 9:
-        ips200_showstr(0, 12, "JMK_debug_Dian AnNiu ShouTeng");
-        if(Road == 3){
-        ips200_showint32(0, 13, DEBUG_CHOICE*100+Road*10+Road3_flag, 3);
+        ips200_showstr(0, 12, "diff_change");
+        if (get_diff_state() == DIFF_ON_VAL)
+        {
+            ips200_showstr(0, 13, "DIFF_ON_VAL");
         }
-        else if(Road == 0){
-          ips200_showint32(0, 13, DEBUG_CHOICE*100+Road*10+Road0_flag, 3);}
-        break;        
+        else
+        {
+            ips200_showstr(0, 13, "DIFF_OFF_VAL");
+        }
+        break;
     case 0:
         ips200_showstr(0, 12, "Road");
         ips200_showint32(0, 13, Road, 3);

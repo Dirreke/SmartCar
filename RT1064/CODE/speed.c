@@ -146,6 +146,9 @@ void lib_speed_set(float a)
 char get_diff_state(void){
   return diff_state;
 }
+char set_diff_state(char val){
+  diff_state = val;
+}
 //¿ª¹Ø²îËÙ
 void diff_on(void){
   diff_state = DIFF_ON_VAL;
