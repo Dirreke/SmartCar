@@ -43,9 +43,11 @@ void PIT_IRQHandler(void)
         ICM_main_isr();
         // ICM_get();
         Get_Speed();
+        lib_set_fun();
         SpeedTarget_fig();
         //    BBC();
         Speed_Control_New();
+        Mean_Turn_Out();
     }
 
     __DSB();

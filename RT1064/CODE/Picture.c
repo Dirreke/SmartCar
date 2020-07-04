@@ -1829,16 +1829,16 @@ void Pic_Fix_Line(void)
             }
         }
     }
-    else if(Road == 3)
+    else if (Road == 3)
     {
-        if(Road3_flag == 0)
+        if (Road3_flag == 0)
         {
-            for(int i=Fir_row; i<start_line;++i)
+            for (int i = Fir_row; i < start_line; ++i)
             {
                 Lef[i] = 1;
                 Rig[i] = 78;
             }
-            Pic_undistort(1,1);
+            Pic_undistort(1, 1);
         }
     }
     else if (Road == 7)
@@ -2161,36 +2161,56 @@ void Pic_DrawMid(void)
  *  修改时间：2020.5.31
  *  备    注：
  * ************************************************************************/
-int Road_Half_Width_change = 0;
+// int Road_Half_Width_change = 0;
 void Pic_DrawMid_und(void)
 {
     int i;
-    // int Road_Half_Width_change = 0;
-    if (Road0_flag == 4 || (Road == 1 && Road1_flag != 0 && Road1_flag != 5)) //左
+    int Road_Half_Width_change_r = 0;
+    int Road_Half_Width_change_l = 0;
+    // if (Road0_flag == 4 || (Road == 1 && Road1_flag != 0 && Road1_flag != 5)) //左
+    // {
+    //     if (Rig_slope == 999 || Rig_slope == 998 || Rig_slope >= 0)
+    //     {
+    //         Road_Half_Width_change = ROAD_HALF_WIDTH; //异常处理，不改变中线位置
+    //     }
+    //     else
+    //     {
+    //         Road_Half_Width_change = (int)(150 / sin(atan(-Rig_slope * UNDISTORT_PYK * UNDISTORT_XPK))); //计算改变中线位置
+    //     }
+    // }
+    // else if (Road0_flag == 5 || (Road == 2 && Road2_flag != 0 && Road2_flag != 5)) //右
+    // {
+    //     if (Lef_slope == 999 || Lef_slope == 998 || Lef_slope <= 0)
+    //     {
+    //         Road_Half_Width_change = ROAD_HALF_WIDTH; //异常处理，不改变中线位置
+    //     }
+    //     else
+    //     {
+    //         Road_Half_Width_change = (int)(150 / sin(atan(Lef_slope * UNDISTORT_PYK * UNDISTORT_XPK))); //计算改变中线位置
+    //     }
+    // }
+    // else
+    // {
+    //     Road_Half_Width_change = ROAD_HALF_WIDTH; //不转弯不改
+    // }
+
+    if (Rig_slope == 999 || Rig_slope == 998)
     {
-        if (Rig_slope == 999 || Rig_slope == 998 || Rig_slope >= 0)
-        {
-            Road_Half_Width_change = ROAD_HALF_WIDTH; //异常处理，不改变中线位置
-        }
-        else
-        {
-            Road_Half_Width_change = (int)(150 / sin(atan(-Rig_slope * UNDISTORT_PYK * UNDISTORT_XPK))); //计算改变中线位置
-        }
-    }
-    else if (Road0_flag == 5 || (Road == 2 && Road2_flag != 0 && Road2_flag != 5)) //右
-    {
-        if (Lef_slope == 999 || Lef_slope == 998 || Lef_slope <= 0)
-        {
-            Road_Half_Width_change = ROAD_HALF_WIDTH; //异常处理，不改变中线位置
-        }
-        else
-        {
-            Road_Half_Width_change = (int)(150 / sin(atan(Lef_slope * UNDISTORT_PYK * UNDISTORT_XPK))); //计算改变中线位置
-        }
+        Road_Half_Width_change_r = ROAD_HALF_WIDTH; //异常处理，不改变中线位置
     }
     else
     {
-        Road_Half_Width_change = ROAD_HALF_WIDTH; //不转弯不改
+        Road_Half_Width_change_r = (int)(150 / sin(atan(fabs(Rig_slope) * UNDISTORT_PYK * UNDISTORT_XPK))); //计算改变中线位置
+        Road_Half_Width_change_r *= 1.1;
+    }
+    if (Lef_slope == 999 || Lef_slope == 998)
+    {
+        Road_Half_Width_change_l = ROAD_HALF_WIDTH; //异常处理，不改变中线位置
+    }
+    else
+    {
+        Road_Half_Width_change_l = (int)(150 / sin(atan(fabs(Lef_slope) * UNDISTORT_PYK * UNDISTORT_XPK))); //计算改变中线位置
+        Road_Half_Width_change_l *= 1.1;
     }
 
     if ((Road0_flag == 4 && Road == 0) || Road == 1)
@@ -2200,7 +2220,7 @@ void Pic_DrawMid_und(void)
 
             if (New_Rig[i] != MIDMAP)
             {
-                New_Mid[i] = New_Rig[i] - Road_Half_Width_change;
+                New_Mid[i] = New_Rig[i] - Road_Half_Width_change_r;
             }
             else
             {
@@ -2215,7 +2235,7 @@ void Pic_DrawMid_und(void)
 
             if (New_Lef[i] != -MIDMAP)
             {
-                New_Mid[i] = New_Lef[i] + Road_Half_Width_change;
+                New_Mid[i] = New_Lef[i] + Road_Half_Width_change_r;
             }
             else
             {
@@ -2234,11 +2254,11 @@ void Pic_DrawMid_und(void)
             }
             else if (New_Lef[i] == -MIDMAP && New_Rig[i] != MIDMAP)
             {
-                New_Mid[i] = New_Rig[i] - Road_Half_Width_change;
+                New_Mid[i] = New_Rig[i] - Road_Half_Width_change_r;
             }
             else if (New_Lef[i] != -MIDMAP && New_Rig[i] == MIDMAP)
             {
-                New_Mid[i] = New_Lef[i] + Road_Half_Width_change;
+                New_Mid[i] = New_Lef[i] + Road_Half_Width_change_l;
             }
             else
             {

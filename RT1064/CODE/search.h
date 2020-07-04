@@ -29,11 +29,12 @@ extern int Rig_circle;
 extern int Lef_break_point;
 extern int Rig_break_point;
 
+extern int start_stop_line_flag;
 extern int start_stop_line;
 extern int barn_line;
 extern int start_line;
 
-
+extern int stop_line;
 
 void Allwhite_find(void);
 void Pic_find_circle(void);

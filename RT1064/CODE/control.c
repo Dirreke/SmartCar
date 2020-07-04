@@ -133,10 +133,12 @@ void Turn_Servo()
     if (Road7_flag == 2)
     {
 #ifdef TL2barn
-      Turn_Out = -SERVO_RANGE;
+      Turn_Cam_Out = -SERVO_RANGE;
+      Turn_Out = Turn_Cam_Out;
 #endif
 #ifdef TR2barn
-      Turn_Out = SERVO_RANGE;
+      Turn_Cam_Out = SERVO_RANGE;
+      Turn_Out = Turn_Cam_Out;
 #endif
     }
     else if (Road7_flag == 3)
@@ -144,6 +146,10 @@ void Turn_Servo()
       Turn_Out = Turn_Cam_Out;
     }
     else if (Road7_flag == 4)
+    {
+      Turn_Out = Turn_Cam_Out;
+    }
+    else if (Road7_flag == 5)
     {
       Turn_Out = 0;
     }
@@ -157,7 +163,8 @@ void Turn_Servo()
       // {
       //   Turn_Cam_Out = -0.5 * SERVO_RANGE;
       // }
-      Turn_Out = -SERVO_RANGE + 30;
+      Turn_Cam_Out = mean_turn_out;
+      Turn_Out = Turn_Cam_Out;
     }
     else if (Road1_flag == 4)
     {
@@ -184,7 +191,8 @@ void Turn_Servo()
       // {
       //   Turn_Cam_Out = 0.5 * SERVO_RANGE;
       // }
-      Turn_Out = SERVO_RANGE;
+      Turn_Cam_Out = mean_turn_out;
+      Turn_Out = Turn_Cam_Out;
     }
     else if (Road2_flag == 4)
     {
@@ -206,7 +214,24 @@ void Turn_Servo()
   {
     Turn_Out = Turn_EM_Out;
   }
-
+  else if (Road == 3)
+  {
+    if (Road3_flag == 1)
+    {
+#ifdef TL2barn
+      Turn_Cam_Out = -SERVO_RANGE;
+      Turn_Out = Turn_Cam_Out;
+#endif
+#ifdef TR2barn
+      Turn_Cam_Out = SERVO_RANGE;
+      Turn_Out = Turn_Cam_Out;
+#endif
+    }
+    else
+    {
+      Turn_Out = Turn_Cam_Out;
+    }
+  }
   else
   {
     if (Road0_flag == 1 || Road0_flag == 2)
@@ -245,18 +270,19 @@ void SpeedTarget_fig(void)
 {
   float angle_val; // 用来表示实际转向角度
   float diff_K0;   // 差速率=差速比均速，左右轮各一半
-
+  float Turn_Cam_Out_temp;
+  Turn_Cam_Out_temp = (Turn_Cam_Out > 490) ? 490 : ((Turn_Cam_Out < -490) ? -490 : Turn_Cam_Out);
   if (get_diff_state() == DIFF_ON_VAL)
   {
     //开关差速在Para中定义
 
-    angle_val = Turn_Cam_Out > 180 ? ((Turn_Cam_Out - 180) * 2 + 180) / SERVO_RANGE * ANGLE_RANGE : Turn_Cam_Out / SERVO_RANGE * ANGLE_RANGE;
-    angle_val = Turn_Cam_Out < -180 ? ((Turn_Cam_Out + 180) * 2 - 180) / SERVO_RANGE * ANGLE_RANGE : Turn_Cam_Out / SERVO_RANGE * ANGLE_RANGE;
-    angle_val = fabs(Turn_Cam_Out) < 46 ? 0 : Turn_Cam_Out / SERVO_RANGE * ANGLE_RANGE;
+    angle_val = (Turn_Cam_Out_temp > SERVO_RANGE) ? ((Turn_Cam_Out_temp - SERVO_RANGE) * 2 + SERVO_RANGE) / SERVO_RANGE * ANGLE_RANGE : Turn_Cam_Out_temp / SERVO_RANGE * ANGLE_RANGE;
+    angle_val = (Turn_Cam_Out_temp < -SERVO_RANGE) ? ((Turn_Cam_Out_temp + SERVO_RANGE) * 2 - SERVO_RANGE) / SERVO_RANGE * ANGLE_RANGE : Turn_Cam_Out_temp / SERVO_RANGE * ANGLE_RANGE;
+    angle_val = (fabs(Turn_Cam_Out_temp) < 46) ? 0 : Turn_Cam_Out_temp / SERVO_RANGE * ANGLE_RANGE;
 
     diff_K0 = CAR_DIFF_K * tan(angle_val);
     //可串PD控制器
-    if (Road == 4 || (Road == 1 && Road1_flag == 5) || (Road == 2 && Road2_flag == 5) || Road == 3) //出库差速？先不开了
+    if (Road == 4 || Road == 3) //出库差速？先不开了
     {
       diff_K0 = 0;
     }
@@ -265,7 +291,10 @@ void SpeedTarget_fig(void)
   {
     diff_K0 = 0;
   }
-
+  if (Road == 7 && Road7_flag == 2)
+  {
+    diff_K0 *= 2;
+  }
   speedTarget1 = SpeedGoal * (1 + diff_K0 / 2); //左侧车轮
   speedTarget2 = SpeedGoal * (1 - diff_K0 / 2); //右侧车轮
   //后面可加上下坡部分
@@ -278,7 +307,31 @@ void SpeedTarget_fig(void)
     }
   }
 }
-
+void lib_set_fun(void)
+{
+  if(Road == 7)
+  {
+    if(Road7_flag == 1)
+    {
+      lib_speed_set(2.5);
+    }
+    else if(Road7_flag == 4)
+    {
+      lib_speed_set(0);
+    }
+    else if(Road7_flag == 5)
+    {
+      lib_speed_set(1.0);
+    }
+  }
+  else
+  {
+    if(EM_Value_2< 0.3 && EM_Value_3 < 0.3 &&EM_Value_1 < 0.3 && EM_Value_4 <0.3)
+    {
+      lib_speed_set(0);
+    }
+  }
+}
 /*************************************************************************
 *  函数名称：void Speed_Control(void)
 *  功能说明：速度PI
@@ -942,6 +995,7 @@ void Speed_Control_New(void)
   float Speed_kP1, Speed_kP2, Speed_kI1, Speed_kI2;
   float SpeedControlOutE1, SpeedControlOutE2;
 
+  static uint8 Lef_pp_cnt = 0, Rig_pp_cnt = 0;
   static bool a_flag1 = 0, a_flag2 = 0, d_flag1 = 0, d_flag2 = 0;
   static int cnt1, cnt2;
   static int frame1 = 0, frame2 = 0;
@@ -1039,26 +1093,39 @@ void Speed_Control_New(void)
   //BBC
   if (Lef_pp)
   {
-    if (CarSpeed1 > SpeedGoal)
+    if (CarSpeed1 > SpeedGoal || stop_line > 30)
     {
       MotorOut1 = -MOTOR_RANGE;
     }
     else
     {
-      Lef_pp = 0;
+      Lef_pp_cnt++;
+      if (Lef_pp_cnt > 254)
+      {
+        Lef_pp = 0;
+        Lef_pp_cnt = 0;
+      }
       MotorOut1 = 0;
     }
   }
   else if (a_flag1)
   {
-    if (CarSpeed1 < speedTarget1 * 1.0)
+    if (speedTarget1 > 0)
     {
-      MotorOut1 = speedTarget1 * 5000; //speedTarget1
-    }
-    else if (CarSpeed1 < speedTarget1 * 1.1) //0.8
-    {
-      cnt1++;
-      if (cnt1 > 5)
+      if (CarSpeed1 < speedTarget1 * 1.0)
+      {
+        MotorOut1 = speedTarget1 * 5000; //speedTarget1
+      }
+      else if (CarSpeed1 < speedTarget1 * 1.1) //0.8
+      {
+        cnt1++;
+        if (cnt1 > 5)
+        {
+          a_flag1 = 0;
+          MotorOut1 = speedTarget1 * 2500;
+        }
+      }
+      else
       {
         a_flag1 = 0;
         MotorOut1 = speedTarget1 * 2500;
@@ -1066,20 +1133,44 @@ void Speed_Control_New(void)
     }
     else
     {
-      a_flag1 = 0;
-      MotorOut1 = speedTarget1 * 2500;
+      if (CarSpeed1 < speedTarget1 * 1.0)
+      {
+        MotorOut1 = speedTarget1 * -3000; //speedTarget1
+      }
+      else if (CarSpeed1 < speedTarget1 * 1.1) //0.8
+      {
+        cnt1++;
+        if (cnt1 > 5)
+        {
+          a_flag1 = 0;
+          MotorOut1 = speedTarget1 * 2500;
+        }
+      }
+      else
+      {
+        a_flag1 = 0;
+        MotorOut1 = speedTarget1 * 2500;
+      }
     }
   }
   else if (d_flag1)
   {
-    if (CarSpeed1 > speedTarget1 * 1.0)
+    if (speedTarget1 > 0)
     {
-      MotorOut1 = speedTarget1 * -3000;
-    }
-    else if (CarSpeed1 > speedTarget1 * 0.8)
-    {
-      cnt1++;
-      if (cnt1 > 5)
+      if (CarSpeed1 > speedTarget1 * 1.0)
+      {
+        MotorOut1 = speedTarget1 * -3000;
+      }
+      else if (CarSpeed1 > speedTarget1 * 0.8)
+      {
+        cnt1++;
+        if (cnt1 > 5)
+        {
+          d_flag1 = 0;
+          MotorOut1 = speedTarget1 * 2500;
+        }
+      }
+      else //if(speedTarget>0)//////
       {
         d_flag1 = 0;
         MotorOut1 = speedTarget1 * 2500;
@@ -1087,8 +1178,24 @@ void Speed_Control_New(void)
     }
     else
     {
-      d_flag1 = 0;
-      MotorOut1 = speedTarget1 * 2500;
+      if (CarSpeed1 > speedTarget1 * 1.0)
+      {
+        MotorOut1 = speedTarget1 * 5000;
+      }
+      else if (CarSpeed1 > speedTarget1 * 0.8)
+      {
+        cnt1++;
+        if (cnt1 > 5)
+        {
+          d_flag1 = 0;
+          MotorOut1 = speedTarget1 * 2500;
+        }
+      }
+      else //if(speedTarget>0)//////
+      {
+        d_flag1 = 0;
+        MotorOut1 = speedTarget1 * 2500;
+      }
     }
   }
   else
@@ -1132,12 +1239,18 @@ void Speed_Control_New(void)
 
   if (Rig_pp)
   {
-    if (CarSpeed2 > SpeedGoal)
+    if (CarSpeed2 > SpeedGoal || stop_line > 30)
     {
       MotorOut2 = -MOTOR_RANGE;
     }
     else
     {
+      Rig_pp_cnt++;
+      if (Rig_pp_cnt > 254)
+      {
+        Rig_pp = 0;
+        Rig_pp_cnt = 0;
+      }
       Rig_pp = 0;
       ;
       MotorOut2 = 0;
@@ -1145,14 +1258,22 @@ void Speed_Control_New(void)
   }
   else if (a_flag2)
   {
-    if (CarSpeed2 < speedTarget2 * 1.0)
+    if (speedTarget2 > 0)
     {
-      MotorOut2 = speedTarget2 * 5000;
-    }
-    else if (CarSpeed2 < speedTarget2 * 1.1)
-    {
-      cnt2++;
-      if (cnt2 > 5)
+      if (CarSpeed2 < speedTarget2 * 1.0)
+      {
+        MotorOut2 = speedTarget2 * 5000;
+      }
+      else if (CarSpeed2 < speedTarget2 * 1.1)
+      {
+        cnt2++;
+        if (cnt2 > 5)
+        {
+          a_flag2 = 0;
+          MotorOut2 = speedTarget2 * 2500;
+        }
+      }
+      else
       {
         a_flag2 = 0;
         MotorOut2 = speedTarget2 * 2500;
@@ -1160,21 +1281,44 @@ void Speed_Control_New(void)
     }
     else
     {
-      a_flag2 = 0;
-      MotorOut2 = speedTarget2 * 2500;
+      if (CarSpeed2 < speedTarget2 * 1.0)
+      {
+        MotorOut2 = speedTarget2 * -3000;
+      }
+      else if (CarSpeed2 < speedTarget2 * 1.1)
+      {
+        cnt2++;
+        if (cnt2 > 5)
+        {
+          a_flag2 = 0;
+          MotorOut2 = speedTarget2 * 2500;
+        }
+      }
+      else
+      {
+        a_flag2 = 0;
+        MotorOut2 = speedTarget2 * 2500;
+      }
     }
   }
   else if (d_flag2)
   {
-
-    if (CarSpeed2 > speedTarget2 * 1.0)
+    if (speedTarget2 > 0)
     {
-      MotorOut2 = speedTarget2 * -3000;
-    }
-    else if (CarSpeed2 > speedTarget2 * 0.8)
-    {
-      cnt2++;
-      if (cnt2 > 5)
+      if (CarSpeed2 > speedTarget2 * 1.0)
+      {
+        MotorOut2 = speedTarget2 * -3000;
+      }
+      else if (CarSpeed2 > speedTarget2 * 0.8)
+      {
+        cnt2++;
+        if (cnt2 > 5)
+        {
+          d_flag2 = 0;
+          MotorOut2 = speedTarget2 * 2500;
+        }
+      }
+      else
       {
         d_flag2 = 0;
         MotorOut2 = speedTarget2 * 2500;
@@ -1182,8 +1326,24 @@ void Speed_Control_New(void)
     }
     else
     {
-      d_flag2 = 0;
-      MotorOut2 = speedTarget2 * 2500;
+      if (CarSpeed2 > speedTarget2 * 1.0)
+      {
+        MotorOut2 = speedTarget2 * 5000;
+      }
+      else if (CarSpeed2 > speedTarget2 * 0.8)
+      {
+        cnt2++;
+        if (cnt2 > 5)
+        {
+          d_flag2 = 0;
+          MotorOut2 = speedTarget2 * 2500;
+        }
+      }
+      else
+      {
+        d_flag2 = 0;
+        MotorOut2 = speedTarget2 * 2500;
+      }
     }
   }
   else
@@ -1250,10 +1410,13 @@ void Kalman_Filter(void)
     if (Road7_flag == 2)
     {
 #ifdef TL2barn
-      Turn_Out = -SERVO_RANGE;
+      Turn_Cam_Out = -SERVO_RANGE;
+
+      Turn_Out = Turn_Cam_Out;
 #endif
 #ifdef TR2barn
-      Turn_Out = SERVO_RANGE;
+      Turn_Cam_Out = SERVO_RANGE;
+      Turn_Out = Turn_Cam_Out;
 #endif
     }
     else if (Road7_flag == 3)
@@ -1262,6 +1425,11 @@ void Kalman_Filter(void)
       accuracy_Cam = 1;
     }
     else if (Road7_flag == 4)
+    {
+      accuracy_Cam = 1;
+      accuracy_EM = 0;
+    }
+    else if (Road7_flag == 5)
     {
       Turn_Out = 0;
     }
@@ -1371,4 +1539,26 @@ void Kalman_Filter(void)
   K = accuracy_EM / (accuracy_Cam + accuracy_EM);
   Turn_Out = (1 - K) * Turn_Cam_Out + K * Turn_EM_Out;
   Servo_Duty(-Turn_Out); //舵机控制
+}
+
+/*************************************************************************
+*  函数名称：void Mean_Turn_Out(void)
+*  功能说明：转向角度平均值
+*  参数说明：
+*  函数返回：
+*  修改时间：2020.7.3
+*  备    注：用于圆环
+*************************************************************************/
+float mean_turn_out = 0;
+void Mean_Turn_Out(void)
+{
+  static float turn_sum = 0;
+  static int turn_num = 0;
+
+  if ((Road == 1 && Road1_flag == 4) || (Road == 2 && Road2_flag == 4))
+  {
+    turn_sum += Turn_Cam_Out;
+    turn_num++;
+    mean_turn_out = turn_sum / turn_num;
+  }
 }

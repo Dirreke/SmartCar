@@ -23,6 +23,8 @@ int Road3_flag = 0;
 int Road4_flag = 0;
 bool ganhuangguan_flag = 0;
 
+int stop_line = Fir_row;
+
 int turn_stop = 0; //转弯用
 
 /*************************************************************************
@@ -172,7 +174,7 @@ void start_stop_find(void)
     {
         return;
     }
-    for (int i = Fir_row + 3; i < Last_row - 4; ++i)
+    for (int i = Fir_row; i < Last_row - 4; ++i)
     {
         if (Rig[i] >= Last_col)
         {
@@ -185,7 +187,7 @@ void start_stop_find(void)
             break;
         }
     }
-    for (int i = Fir_row + 3; i < Last_row - 4; ++i)
+    for (int i = Fir_row; i < Last_row - 4; ++i)
     {
         if (Lef[i] <= Fir_col)
         {
@@ -198,7 +200,7 @@ void start_stop_find(void)
             break;
         }
     }
-    Road_end = (Lef_end < Rig_end ? Rig_end : Lef_end);
+    Road_end = (Lef_end < Rig_end ? Lef_end : Rig_end);
     if (Road_end > 30)
     {
         return;
@@ -224,6 +226,7 @@ void start_stop_find(void)
     }
 
 #ifdef TL2barn
+    Rig_end = (Rig_end < (Fir_row + 3) ? (Fir_row + 3) : Rig_end);
     for (int i = Rig_end; i < Last_row - 7; ++i)
     {
         if (Rig[i] > 40 && Rig[i + 2] - Rig[i] < 5 && Rig[i + 3] - Rig[i + 1] < 5 &&
@@ -252,7 +255,7 @@ void start_stop_find(void)
             // {
             //     return;
             // }
-            if (Rig[i] > 40 && Rig[i] - Rig[i - 3] > 25 && Rig[i + 2] - Rig[i] < 5 && Rig[i + 3] - Rig[i + 1] < 5 && Rig[i + 4] - Rig[i + 2] < 5)
+            if (Rig[i] > 40 && ((Rig[i] - Rig[i - 4] > 25) || (Rig[i] - Rig[i - 3] > 25)) && Rig[i + 2] - Rig[i] < 5 && Rig[i + 3] - Rig[i + 1] < 5 && Rig[i + 4] - Rig[i + 2] < 5)
             {
                 start_stop_line_flag = 1;
                 start_stop_line = tiaobian1;
@@ -266,6 +269,7 @@ void start_stop_find(void)
     }
 #endif
 #ifdef TR2barn
+    Lef_end = (Lef_end < (Fir_row + 3) ? (Fir_row + 3) : Lef_end);
     for (int i = Lef_end; i < Last_row - 7; ++i)
     {
         if (Lef[i] < 40 && Lef[i] - Lef[i + 2] < 5 && Lef[i + 1] - Lef[i + 3] < 5 &&
@@ -293,7 +297,7 @@ void start_stop_find(void)
             // {
             //     return;
             // }
-            if (Lef[i] < 40 && Lef[i - 3] - Lef[i] > 25 && Lef[i] - Lef[i + 2] < 5 && Lef[i + 1] - Lef[i + 3] < 5 && Lef[i + 2] - Lef[i + 4] < 5)
+            if (Lef[i] < 40 && ((Lef[i - 3] - Lef[i] > 25) || (Lef[i - 4] - Lef[i] > 25)) && Lef[i] - Lef[i + 2] < 5 && Lef[i + 1] - Lef[i + 3] < 5 && Lef[i + 2] - Lef[i + 4] < 5)
             {
                 start_stop_line_flag = 1;
                 start_stop_line = tiaobian1;
@@ -371,7 +375,7 @@ void Road_rec(void)
             {
                 Road = 0;
                 Road0_flag = 0;
-                lib_speed_set(SpeedGoal);
+                lib_speed_set(speedgoal);
             }
         }
         else
@@ -385,7 +389,7 @@ void Road_rec(void)
         if (start_stop_line_flag == 1)
         {
             Road70_count++;
-            if (Road70_count > 2)
+            if (Road70_count > 1)
             {
                 Road70_count = 0;
                 Road = 7;
@@ -469,7 +473,7 @@ void Road_rec(void)
 
         //弯道状态机
         // else if (((Rig_slope > -0.5 && Rig_slope != 998 && Rig_slope != 999) || Road0_flag == 4) && Rig_slope != 998) //左转弯//(Lef_break_point > 35 && Lef_circle == 1 && Rig_circle == 0)
-        if ((Rig_slope > -0.5 && Rig_slope < 0.05) || Road0_flag == 4)
+        if ((Rig_slope > -0.6 && Rig_slope < 0.05) || Road0_flag == 4)
         {
 
             TurnLeft_Process();
@@ -479,7 +483,7 @@ void Road_rec(void)
             }
         }
         // else if ((Lef_slope < 0.5 || Road0_flag == 5) && Lef_slope != 998) //右转弯//(Rig_break_point > 35 && Rig_circle == 1 && Lef_circle == 0)
-        else if ((Lef_slope < 0.5 && Lef_slope > -0.05) || Road0_flag == 5)
+        else if ((Lef_slope < 0.6 && Lef_slope > -0.05) || Road0_flag == 5)
         {
             TurnRight_Process();
             if (Road0_flag == 5)
@@ -550,7 +554,7 @@ void TurnLeft_Process(void)
     static int Road04_count = 0, Road00_count = 0; //turn_stop_flag = 0,
     int temp = 40;
     int dis = 0, dis1 = 0;
-    for (int i = Fir_row; i < 40; ++i)
+    for (int i = Fir_row; i < 48; ++i)
     {
         if (Rig[i] < 40 && Rig[i + 1] <= 40 && Rig[i + 2] >= 40 && Rig[i + 3] > 40 &&
             Rig[i + 5] - Rig[i + 3] < 7 && Rig[i + 7] - Rig[i + 5] < 7 && Rig[i + 9] - Rig[i + 7] < 7 && Rig[i + 11] - Rig[i + 9] < 7 &&
@@ -645,7 +649,7 @@ void TurnRight_Process(void)
     static int Road05_count = 0, Road00_count = 0; //turn_stop_flag = 0,
     int temp = 40;
     int dis = 0, dis1 = 0;
-    for (int i = Fir_row; i < 40; ++i)
+    for (int i = Fir_row; i < 48; ++i)
     {
         if (Lef[i] > 40 && Lef[i + 1] >= 40 && Lef[i + 2] <= 40 && Lef[i + 3] < 40 &&
             Lef[i + 3] - Lef[i + 5] < 7 && Lef[i + 5] - Lef[i + 7] < 7 && Lef[i + 7] - Lef[i + 9] < 7 && Lef[i + 9] - Lef[i + 11] < 7 &&
@@ -677,7 +681,7 @@ void TurnRight_Process(void)
     {
         if (Lef[i - 1] < 40)
         {
-            turn_stop = i + 4;
+            turn_stop = i + 1;
             break;
         }
         dis1 = Lef[i - 1] - Lef[i];
@@ -746,6 +750,7 @@ void Road1_zhuangtaiji(void)
             {
                 Road11_count = 0;
                 Road1_flag = 1; //表示已经进入左圆环
+                mean_turn_out = 0;
             }
         }
         else
@@ -959,6 +964,7 @@ void Road2_zhuangtaiji(void)
             {
                 Road21_count = 0;
                 Road2_flag = 1; //表示已经进入左圆环
+                mean_turn_out = 0;
             }
         }
         else
@@ -1167,7 +1173,7 @@ void Road2_zhuangtaiji(void)
 void Road3_zhuangtaiji(void)
 {
 
-    static int start_count = 0;
+    //static int start_count = 0;
     static int Road31_count = 0;
     static int Road32_count = 0;
 
@@ -1241,7 +1247,7 @@ void Road3_zhuangtaiji(void)
             if (Road31_count > 1)
             {
                 Road31_count = 0;
-                Road3_flag = 0;
+                Road3_flag = 1;
             }
         }
         else
@@ -1257,9 +1263,9 @@ void Road3_zhuangtaiji(void)
             if (Road32_count > 2)
             {
                 Road32_count = 0;
+                Road = 0;
+                Road0_flag = 0;
             }
-            Road = 0;
-            Road0_flag = 0
         }
         else
         {
@@ -1346,11 +1352,12 @@ void Road4_zhuangtaiji(void)
 *  修改时间：2020.06.17
 *  备    注：
 *************************************************************************/
+
 void Road7_zhuangtaiji(void)
 {
     static int Road73_count = 0;
-    static int Road74_count = 0;
-    static int stop_line = Fir_row;
+    static int Road74_count = 0 , Road75_count = 0;;
+
     int Black_line = 0;
     if (Road7_flag == 0 || Road7_flag == 1) //等待转弯
     {
@@ -1375,13 +1382,16 @@ void Road7_zhuangtaiji(void)
         {
             Road7_flag = 1;
         }
+        else if(barn_line < 32)
+        {
+            Road7_flag = 2;
+        }
         else
         {
-            Road = 7;
-            Road7_flag = 2; //开始转弯
+            Road7_flag = 5; //开始转弯
         }
     }
-    else if (Road7_flag == 2) //开始转弯
+    else if (Road7_flag == 2 || Road7_flag == 5) //开始转弯
     {
         //Road73_count++;
         // if (Road73_count >= (int)(10 * 100 / (get_speed() * CAMERA_FPS)) + 1)
@@ -1410,14 +1420,13 @@ void Road7_zhuangtaiji(void)
                 if (Black_line > 2)
                 {
                     stop_line = i - 2;
-                    if (stop_line > 30) // || Road74_count >= (int)(30 * 100 / (get_speed() * CAMERA_FPS)) + 1)
+                    if (stop_line > 27) // || Road74_count >= (int)(30 * 100 / (get_speed() * CAMERA_FPS)) + 1)
                     {
                         Road74_count++;
                         if (Road74_count > 1)
                         {
                             Road7_flag = 4; //停车
                             Road74_count = 0;
-                            lib_speed_set(0);
                             stop_line = Fir_row;
                         }
                     }
@@ -1428,6 +1437,24 @@ void Road7_zhuangtaiji(void)
             {
                 Black_line = 0;
             }
+        }
+    }
+    else if (Road7_flag == 4)
+    {
+        if (fabs(CarSpeed1) < 0.1 && fabs(CarSpeed2) < 0.1)
+        {
+            Road75_count++;
+            if (Road75_count > 9)
+            {
+                Road = 7;
+                Road7_flag = 5;
+                Road75_count = 0;
+                return;
+            }
+        }
+        else
+        {
+            Road75_count = 0;
         }
     }
     return;

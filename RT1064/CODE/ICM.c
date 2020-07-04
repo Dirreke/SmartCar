@@ -22,11 +22,13 @@
 float icm_gyro_y_offset = 0.0;
 float icm_gyro_y_w;
 float icm_gyro_y_angle = 0;
+
 void gyro_y_init(void)
 {
     icm20602_init_spi();
     int num = 0;
     int sum = 0;
+    //int sumz = 0;
 
     while (num < 500)
     {
@@ -128,6 +130,7 @@ void ICM_main_isr(void)
         icm_gyro_y_angle += icm_gyro_y_w * 0.002;
     }
 }
+
 
 #if 0
 /*************************************************************************

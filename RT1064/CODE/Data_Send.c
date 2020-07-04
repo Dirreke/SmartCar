@@ -278,11 +278,11 @@ void Variable_update(void)
 
   Variable[9] = Lef_slope; //EM_offset;
   Variable[10] = Rig_slope; //speedTarget2;//Turn_Cam_Out;
-  Variable[11] = icm_gyro_y_w;
-  Variable[12] = icm_gyro_y_angle; //Turn_EM_Out;  //Lef_break_point*100+Rig_break_point;
+  Variable[11] = MotorOut1;
+  Variable[12] = MotorOut2; //Turn_EM_Out;  //Lef_break_point*100+Rig_break_point;
   Variable[13] = Allwhitestart * 100 + Allwhiteend;
   Variable[14] = 100 + Lef_circle * 10 + Rig_circle; /*Rig_circle;*/ //Road6_flag ;//CarSpeed2;
-  Variable[15] = whitecnt; //whitecnt;//Road1_turnout;//limit_pos(EM_Value_1/1.5-EM_Value_2/3.5);//speedTarget1;//map_line[MIN(50,AllWhileStartLine)];
+  Variable[15] = start_stop_line_flag; //whitecnt;//Road1_turnout;//limit_pos(EM_Value_1/1.5-EM_Value_2/3.5);//speedTarget1;//map_line[MIN(50,AllWhileStartLine)];
 
 }
 
