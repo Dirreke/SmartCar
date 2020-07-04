@@ -2194,7 +2194,7 @@ void Pic_DrawMid_und(void)
     //     Road_Half_Width_change = ROAD_HALF_WIDTH; //不转弯不改
     // }
 
-    if (Rig_slope == 999 || Rig_slope == 998)
+    if ((Rig_slope == 999 || Rig_slope == 998) && (fabs(Rig_slope) > 0.08))
     {
         Road_Half_Width_change_r = ROAD_HALF_WIDTH; //异常处理，不改变中线位置
     }
@@ -2203,7 +2203,7 @@ void Pic_DrawMid_und(void)
         Road_Half_Width_change_r = (int)(150 / sin(atan(fabs(Rig_slope) * UNDISTORT_PYK * UNDISTORT_XPK))); //计算改变中线位置
         Road_Half_Width_change_r *= 1.1;
     }
-    if (Lef_slope == 999 || Lef_slope == 998)
+    if ((Lef_slope == 999 || Lef_slope == 998) && fabs(Lef_slope) > 0.08)
     {
         Road_Half_Width_change_l = ROAD_HALF_WIDTH; //异常处理，不改变中线位置
     }

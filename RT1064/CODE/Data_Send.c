@@ -245,7 +245,7 @@ void Variable_update(void)
 
   Variable[0] = Cam_offset;  //Cam_offset;   //EM_Value_1;// Cam_offset;//cntt;//ToF_distance;
   Variable[1] = Turn_Out;  //EM_Value_2; //Turn_Cam_Out;//cnt;//Turn_Cam_Out;//;//stat_slope;//gyroy_1;//Turn_Cam_Out;//Car_W;
-  Variable[2] = SpeedGoal; //EM_Value_1;//Cam_offset;
+  Variable[2] = 10000+100*Lef_break_point+Rig_break_point; //EM_Value_1;//Cam_offset;
   Variable[3] = CarSpeed1;
   Variable[4] = CarSpeed2; //EM_Value_1; //speedTarget1; //Allwhiteend;
   Variable[5] = speedTarget1; //EM_Value_2; //
@@ -282,7 +282,7 @@ void Variable_update(void)
   Variable[12] = MotorOut2; //Turn_EM_Out;  //Lef_break_point*100+Rig_break_point;
   Variable[13] = Allwhitestart * 100 + Allwhiteend;
   Variable[14] = 100 + Lef_circle * 10 + Rig_circle; /*Rig_circle;*/ //Road6_flag ;//CarSpeed2;
-  Variable[15] = start_stop_line_flag; //whitecnt;//Road1_turnout;//limit_pos(EM_Value_1/1.5-EM_Value_2/3.5);//speedTarget1;//map_line[MIN(50,AllWhileStartLine)];
+  Variable[15] = EM_Value_2+EM_Value_3; //whitecnt;//Road1_turnout;//limit_pos(EM_Value_1/1.5-EM_Value_2/3.5);//speedTarget1;//map_line[MIN(50,AllWhileStartLine)];
 
 }
 

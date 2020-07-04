@@ -101,11 +101,11 @@ void Dubug_key(void)
             case 9:
                 if (get_diff_state() == DIFF_ON_VAL)
                 {
-                    set_diff_state(DIFF_OFF_VAL);
+                    diff_off();
                 }
                 if (get_diff_state() == DIFF_OFF_VAL)
                 {
-                    set_diff_state(DIFF_ON_VAL);
+                    diff_on();
                 }
                 break;
             case 0:
@@ -273,11 +273,11 @@ void Dubug_key(void)
             case 9:
                 if (get_diff_state() == DIFF_ON_VAL)
                 {
-                    set_diff_state(DIFF_OFF_VAL);
+                    diff_off();
                 }
                 if (get_diff_state() == DIFF_OFF_VAL)
                 {
-                    set_diff_state(DIFF_ON_VAL);
+                    diff_on();
                 }
                 break;
             case 0:

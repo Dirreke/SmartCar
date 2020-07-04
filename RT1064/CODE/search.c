@@ -226,14 +226,14 @@ void start_stop_find(void)
     }
 
 #ifdef TL2barn
-    Rig_end = (Rig_end < (Fir_row + 3) ? (Fir_row + 3) : Rig_end);
+    // Rig_end = (Rig_end < (Fir_row + 3) ? (Fir_row + 3) : Rig_end);
     for (int i = Rig_end; i < Last_row - 7; ++i)
     {
         if (Rig[i] > 40 && Rig[i + 2] - Rig[i] < 5 && Rig[i + 3] - Rig[i + 1] < 5 &&
             Rig[i + 2] - Rig[i] > 0 && Rig[i + 3] - Rig[i + 1] > 0 &&
             Rig[i + 3] - Rig[i + 7] > 25)
         {
-            tiaobian1 = i;
+            tiaobian1 = i+4;
             break;
         }
         // if (Rig[i] > 40 && Rig[i + 2] - Rig[i] < 5 && Rig[i + 3] - Rig[i + 1] < 5 && Rig[i + 4] - Rig[i + 2] < 5 &&
@@ -269,14 +269,14 @@ void start_stop_find(void)
     }
 #endif
 #ifdef TR2barn
-    Lef_end = (Lef_end < (Fir_row + 3) ? (Fir_row + 3) : Lef_end);
+    // Lef_end = (Lef_end < (Fir_row + 3) ? (Fir_row + 3) : Lef_end);
     for (int i = Lef_end; i < Last_row - 7; ++i)
     {
         if (Lef[i] < 40 && Lef[i] - Lef[i + 2] < 5 && Lef[i + 1] - Lef[i + 3] < 5 &&
             Lef[i] - Lef[i + 2] > 0 && Lef[i + 1] - Lef[i + 3] > 0 &&
             Lef[i + 7] - Lef[i + 3] > 25)
         {
-            tiaobian1 = i;
+            tiaobian1 = i+4;
             break;
         }
 
@@ -435,7 +435,7 @@ void Road_rec(void)
         }
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////普通赛道→圆环
         if (Rig_circle == 0 && Lef_circle == 1 && Lef_slope != 998 &&
-            Rig[39] - Rig[37] < 5 && Rig[37] - Rig[35] < 5 && Rig[35] - Rig[33] < 5 && Rig[33] - Rig[31] < 5 && Rig[31] - Rig[29] < 5 && Rig[29] - Rig[27] < 5 && Rig[27] - Rig[25] < 5 && Rig[25] - Rig[23] < 5 && Lef_break_point < 45 && Rig_slope >= 0 && EM_Value_2 + EM_Value_3 > 4.2)
+            Rig[39] - Rig[37] < 5 && Rig[37] - Rig[35] < 5 && Rig[35] - Rig[33] < 5 && Rig[33] - Rig[31] < 5 && Rig[31] - Rig[29] < 5 && Rig[29] - Rig[27] < 5 && Rig[27] - Rig[25] < 5 && Rig[25] - Rig[23] < 5 && Lef_break_point < 45 && Rig_slope >= 0 && EM_Value_2 + EM_Value_3 > 4.0)
         //  (New_Lef[54] == -MIDMAP || New_Lef[55] == -MIDMAP || New_Lef[56] == -MIDMAP)&&// && Rig_edge <= 20)
         //左圆环：左边线,右边线：直通到底//&& Rig[11] != 78
         {
@@ -453,7 +453,7 @@ void Road_rec(void)
             Road10_count = 0;
         }
         if (Lef_circle == 0 && Rig_circle == 1 && Rig_slope != 998 &&
-            Lef[25] - Lef[27] < 5 && Lef[27] - Lef[29] < 5 && Lef[29] - Lef[31] < 5 && Lef[31] - Lef[33] < 5 && Lef[33] - Lef[35] < 5 && Lef[35] - Lef[37] < 5 && Lef[37] - Lef[39] < 5 && Lef[23] - Lef[25] < 5 && Rig_break_point < 45 && (Lef_slope <= 0 || Lef_slope == 998) && EM_Value_2 + EM_Value_3 > 4.2)
+            Lef[25] - Lef[27] < 5 && Lef[27] - Lef[29] < 5 && Lef[29] - Lef[31] < 5 && Lef[31] - Lef[33] < 5 && Lef[33] - Lef[35] < 5 && Lef[35] - Lef[37] < 5 && Lef[37] - Lef[39] < 5 && Lef[23] - Lef[25] < 5 && Rig_break_point < 45 && (Lef_slope <= 0 || Lef_slope == 998) && EM_Value_2 + EM_Value_3 > 4.0)
         //     (New_Rig[54] == MIDMAP || New_Rig[55] == MIDMAP || New_Rig[56] == MIDMAP) &&// && Lef_edge <= 20)
         //右圆环：右边线：突变点→拐点→突变点//&& Lef[11] != 2
         {
@@ -1308,6 +1308,11 @@ void Road4_zhuangtaiji(void)
     }
     else if (Road4_flag == 1)
     {
+        if(icm_gyro_y_angle > 9)
+        {
+            Road4_flag = 3;
+            lib_speed_set(1.0);
+        }
         if (icm_gyro_y_angle > -6)
         {
             Road4_flag = 2;
@@ -1388,10 +1393,10 @@ void Road7_zhuangtaiji(void)
         }
         else
         {
-            Road7_flag = 5; //开始转弯
+            Road7_flag = 6; //开始转弯
         }
     }
-    else if (Road7_flag == 2 || Road7_flag == 5) //开始转弯
+    else if (Road7_flag == 2 || Road7_flag == 6) //开始转弯
     {
         //Road73_count++;
         // if (Road73_count >= (int)(10 * 100 / (get_speed() * CAMERA_FPS)) + 1)

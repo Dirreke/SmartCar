@@ -28,7 +28,7 @@ static enum diff_state_def{
 } diff_state;
 
 char get_diff_state(void);
-char set_diff_state(char val);
+// void set_diff_state(char val);
 void diff_on(void);
 void diff_off(void);
 float speed_mean_filter1(float D_new);

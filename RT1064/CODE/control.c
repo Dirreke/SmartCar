@@ -29,15 +29,19 @@ void Turn_Cam(void)
   PID PID_TURN_CAM;
   static float Cam_offset_old = 0;
   PID_TURN_CAM = TurnFuzzyPD_Cam();
+  float Turn_angle_PWM;
+  static float Turn_angle_PWM_old = 0;
 
   //0.768=0.8*1.2*0.8
-  PID_TURN_CAM.P *= PID_TURN_CAM_EXT.P; //0.85;//0.7
-  PID_TURN_CAM.D *= PID_TURN_CAM_EXT.D;
+  // PID_TURN_CAM.P *= PID_TURN_CAM_EXT.P; //0.85;//0.7
+  // PID_TURN_CAM.D *= PID_TURN_CAM_EXT.D;
 
-  Turn_Cam_Out = PID_TURN_CAM.P * Cam_offset + PID_TURN_CAM.D * (Cam_offset - Cam_offset_old); //转向PID控制
+  // Turn_Cam_Out = PID_TURN_CAM.P * Cam_offset + PID_TURN_CAM.D * (Cam_offset - Cam_offset_old); //转向PID控制
+  // Cam_offset_old = Cam_offset;
 
-  Cam_offset_old = Cam_offset;
-
+  Turn_angle_PWM = PID_TURN_CAM.P * Cam_offset;
+  Turn_Cam_Out = PID_TURN_CAM_EXT.P * Turn_angle_PWM + PID_TURN_CAM_EXT.D * PID_TURN_CAM.D * (Turn_angle_PWM - Turn_angle_PWM_old);
+  Turn_angle_PWM_old = Turn_angle_PWM;
   //Servo_Duty(-Turn_Cam_Out);
 }
 /*************************************************************************
@@ -53,8 +57,8 @@ PID TurnFuzzyPD_Cam(void)
   PID PID_TURN_CAM;
   static const float Cam_Offset_Table0[21] = {-140, -130, -110, -100, -80, -60, -50, -40, -30, -20, 0, 20, 30, 40, 50, 60, 80, 100, 110, 130, 140};
   static const float Turn_Cam_P_Table0[21] = {1.29, 1.20, 1.15, 1.20, 1.20, 1.30, 1.35, 1.60, 1.5, 1.45, 0.3, 1.45, 1.5, 1.60, 1.35, 1.30, 1.20, 1.20, 1.15, 1.20, 1.29};
-  static const float Turn_Cam_D_Table0[21] = {1.29, 1.20, 1.15, 1.20, 1.20, 1.30, 1.35, 1.60, 1.5, 1.45, 0.01, 1.45, 1.5, 1.60, 1.35, 1.30, 1.20, 1.20, 1.15, 1.20, 1.29};
-
+  // static const float Turn_Cam_D_Table0[21] = {1.29, 1.20, 1.15, 1.20, 1.20, 1.30, 1.35, 1.60, 1.5, 1.45, 0.01, 1.45, 1.5, 1.60, 1.35, 1.30, 1.20, 1.20, 1.15, 1.20, 1.29};
+  static const float Turn_Cam_D_Table0[21] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 0.5, 0.01, 0.5, 1, 1, 1, 1, 1, 1, 1, 1, 1};
   if (Cam_offset <= Cam_Offset_Table0[0])
   {
     PID_TURN_CAM.P = Turn_Cam_P_Table0[0];
@@ -272,6 +276,7 @@ void SpeedTarget_fig(void)
   float diff_K0;   // 差速率=差速比均速，左右轮各一半
   float Turn_Cam_Out_temp;
   Turn_Cam_Out_temp = (Turn_Cam_Out > 490) ? 490 : ((Turn_Cam_Out < -490) ? -490 : Turn_Cam_Out);
+  
   if (get_diff_state() == DIFF_ON_VAL)
   {
     //开关差速在Para中定义
@@ -309,27 +314,49 @@ void SpeedTarget_fig(void)
 }
 void lib_set_fun(void)
 {
-  if(Road == 7)
+  static bool ss_flag;
+  if (Road == 7)
   {
-    if(Road7_flag == 1)
+    if (Road7_flag == 0 || Road7_flag == 1)
     {
       lib_speed_set(2.5);
     }
-    else if(Road7_flag == 4)
+    else if (Road7_flag == 4)
     {
       lib_speed_set(0);
     }
-    else if(Road7_flag == 5)
+    else if (Road7_flag == 6)
     {
       lib_speed_set(1.0);
     }
   }
-  else
+  else if (Road != 3)
   {
-    if(EM_Value_2< 0.3 && EM_Value_3 < 0.3 &&EM_Value_1 < 0.3 && EM_Value_4 <0.3)
+    if (EM_Value_2 < 0.3 && EM_Value_3 < 0.3 && EM_Value_1 < 0.3 && EM_Value_4 < 0.3)
     {
       lib_speed_set(0);
     }
+  }
+  else if (Road == 0)
+  {
+    if (Road0_flag == 4 && ss_flag)
+    {
+      speed_change_flag = 1;
+      ss_flag = 0;
+    }
+    else if (Road0_flag == 5 && ss_flag)
+    {
+      speed_change_flag = 1;
+      ss_flag = 0;
+    }
+    else if (Road0_flag == 0)
+    {
+      ss_flag = 1;
+    }
+  }
+  else if(Road == 1 || Road == 2)
+  {
+    // speed_
   }
 }
 /*************************************************************************

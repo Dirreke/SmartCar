@@ -143,12 +143,11 @@ void lib_speed_set(float a)
 
 
 //得到差速状态
-char get_diff_state(void){
+char get_diff_state(void)
+{
   return diff_state;
 }
-char set_diff_state(char val){
-  diff_state = val;
-}
+
 //开关差速
 void diff_on(void){
   diff_state = DIFF_ON_VAL;
