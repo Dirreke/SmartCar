@@ -78,13 +78,13 @@ void Dubug_key(void)
             switch (ips_num)
             {
             case 2:
-                threshold_offset += 1;
+                DIFF_KKK += 0.1;
                 break;
             case 3:
                 speedgoal += 0.1;
                 break;
             case 4:
-                PID_SPEED.P += 10;
+                DIFF_KK += 0.1;
                 break;
             case 5:
                 PID_SPEED.I += 1;
@@ -103,7 +103,7 @@ void Dubug_key(void)
                 {
                     diff_off();
                 }
-                if (get_diff_state() == DIFF_OFF_VAL)
+                else 
                 {
                     diff_on();
                 }
@@ -250,13 +250,13 @@ void Dubug_key(void)
             switch (ips_num)
             {
             case 2:
-                threshold_offset -= 1;
+                DIFF_KKK -= 0.1;
                 break;
             case 3:
                 speedgoal -= 0.1;
                 break;
             case 4:
-                PID_SPEED.P -= 10;
+                DIFF_KK -= 0.1;
                 break;
             case 5:
                 PID_SPEED.I -= 1;
@@ -275,7 +275,7 @@ void Dubug_key(void)
                 {
                     diff_off();
                 }
-                if (get_diff_state() == DIFF_OFF_VAL)
+                else
                 {
                     diff_on();
                 }
@@ -431,19 +431,19 @@ void ips_show_debug(int ips_num)
 
     /** pages **/
     case 2:                                          //阈值
-        ips200_showstr(0, 12, "threshold_offset: "); //显示字符串
+        ips200_showstr(0, 12, "DIFF_KKK: "); //显示字符串
         //ips200_showfloat(0, 13, 66.6667, 2, 4);    //显示一个浮点数并去除整数部分无效0
         //ips200_showuint16(0,1,666);                //显示一个16位无符号整数
         //ips200_showint32(0,3,-666,3);              //显示一个32位有符号数并去除无效0
-        ips200_showint32(0, 13, threshold_offset, 3);
+        ips200_showfloat(0, 13, DIFF_KKK, 3,2);
         break;
     case 3:
         ips200_showstr(0, 12, "speed: "); //显示字符串
         ips200_showfloat(0, 13, speedgoal, 2, 2);
         break;
     case 4:
-        ips200_showstr(0, 12, "P_");
-        ips200_showfloat(0, 13, PID_SPEED.P, 4, 2);
+        ips200_showstr(0, 12, "DIFF_KK");
+        ips200_showfloat(0, 13, DIFF_KK, 4, 2);
         break;
     case 5:
         ips200_showstr(0, 12, "I");

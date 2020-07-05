@@ -2201,7 +2201,7 @@ void Pic_DrawMid_und(void)
     else
     {
         Road_Half_Width_change_r = (int)(150 / sin(atan(fabs(Rig_slope) * UNDISTORT_PYK * UNDISTORT_XPK))); //计算改变中线位置
-        Road_Half_Width_change_r *= 1.1;
+        // Road_Half_Width_change_r *= 1.1;
     }
     if ((Lef_slope == 999 || Lef_slope == 998) && fabs(Lef_slope) > 0.08)
     {
@@ -2210,7 +2210,7 @@ void Pic_DrawMid_und(void)
     else
     {
         Road_Half_Width_change_l = (int)(150 / sin(atan(fabs(Lef_slope) * UNDISTORT_PYK * UNDISTORT_XPK))); //计算改变中线位置
-        Road_Half_Width_change_l *= 1.1;
+        // Road_Half_Width_change_l *= 1.1;
     }
 
     if ((Road0_flag == 4 && Road == 0) || Road == 1)
@@ -2235,7 +2235,7 @@ void Pic_DrawMid_und(void)
 
             if (New_Lef[i] != -MIDMAP)
             {
-                New_Mid[i] = New_Lef[i] + Road_Half_Width_change_r;
+                New_Mid[i] = New_Lef[i] + Road_Half_Width_change_l;
             }
             else
             {
@@ -2288,8 +2288,16 @@ void Pic_offset_fig(void)
     {
         if (New_Mid[i] != 999)
         {
-            Cam_offset = Cam_offset + New_Mid[i];
-            count++;
+            if (i < 30)
+            {
+                Cam_offset = Cam_offset + 2 * New_Mid[i];
+                count += 2;
+            }
+            else
+            {
+                Cam_offset = Cam_offset + New_Mid[i];
+                count++;
+            }
         }
     }
     if (count != 0)
@@ -2301,13 +2309,6 @@ void Pic_offset_fig(void)
     {
         Cam_offset *= 0.3;
     }
-    if (Road == 4)
-    {
-        Cam_offset *= 0.3;
-    }
-
-    else if (Road1_flag == 3 || Road2_flag == 3)
-        Cam_offset *= 0.8;
 
     // if (Road == 3 || Road1_flag == 2 || Road2_flag == 2)
     // {

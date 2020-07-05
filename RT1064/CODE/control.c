@@ -270,21 +270,45 @@ void Turn_Servo()
 *  修改时间：2020.6.20
 *  备    注：
 *************************************************************************/
+float DIFF_KKK = 2;
+float DIFF_KK = 1;
 void SpeedTarget_fig(void)
 {
   float angle_val; // 用来表示实际转向角度
   float diff_K0;   // 差速率=差速比均速，左右轮各一半
-  float Turn_Cam_Out_temp;
-  Turn_Cam_Out_temp = (Turn_Cam_Out > 490) ? 490 : ((Turn_Cam_Out < -490) ? -490 : Turn_Cam_Out);
-  
+  float Turn_Cam_Out_temp = Turn_Cam_Out;
+  // Turn_Cam_Out_temp = (Turn_Cam_Out > 490) ? 490 : ((Turn_Cam_Out < -490) ? -490 : Turn_Cam_Out);
+
   if (get_diff_state() == DIFF_ON_VAL)
   {
     //开关差速在Para中定义
-
-    angle_val = (Turn_Cam_Out_temp > SERVO_RANGE) ? ((Turn_Cam_Out_temp - SERVO_RANGE) * 2 + SERVO_RANGE) / SERVO_RANGE * ANGLE_RANGE : Turn_Cam_Out_temp / SERVO_RANGE * ANGLE_RANGE;
-    angle_val = (Turn_Cam_Out_temp < -SERVO_RANGE) ? ((Turn_Cam_Out_temp + SERVO_RANGE) * 2 - SERVO_RANGE) / SERVO_RANGE * ANGLE_RANGE : Turn_Cam_Out_temp / SERVO_RANGE * ANGLE_RANGE;
-    angle_val = (fabs(Turn_Cam_Out_temp) < 46) ? 0 : Turn_Cam_Out_temp / SERVO_RANGE * ANGLE_RANGE;
-
+    if (fabs(Turn_Cam_Out_temp) < 46)
+    {
+      angle_val = 0;
+    }
+    else if (Turn_Cam_Out_temp > SERVO_RANGE)
+    {
+      angle_val = ((Turn_Cam_Out_temp - SERVO_RANGE) * DIFF_KKK + SERVO_RANGE) / SERVO_RANGE * ANGLE_RANGE;
+    }
+    else if (Turn_Cam_Out_temp < -SERVO_RANGE)
+    {
+      angle_val = ((Turn_Cam_Out_temp + SERVO_RANGE) * DIFF_KKK - SERVO_RANGE) / SERVO_RANGE * ANGLE_RANGE;
+    }
+    else
+    {
+      angle_val = Turn_Cam_Out_temp / SERVO_RANGE *ANGLE_RANGE *DIFF_KK;
+    }
+   // angle_val = (fabs(Turn_Cam_Out_temp) < 46) ? 0 : Turn_Cam_Out_temp / SERVO_RANGE * ANGLE_RANGE;
+   // angle_val = (Turn_Cam_Out_temp > SERVO_RANGE) ? ((Turn_Cam_Out_temp - SERVO_RANGE) * DIFF_KKK + SERVO_RANGE) / SERVO_RANGE * ANGLE_RANGE : Turn_Cam_Out_temp / SERVO_RANGE * ANGLE_RANGE;
+   // angle_val = (Turn_Cam_Out_temp < -SERVO_RANGE) ? ((Turn_Cam_Out_temp + SERVO_RANGE) * DIFF_KKK - SERVO_RANGE) / SERVO_RANGE * ANGLE_RANGE : Turn_Cam_Out_temp / SERVO_RANGE * ANGLE_RANGE;
+  if(angle_val > 1.5)
+  {
+    angle_val = 1.5;
+  }
+  else if(angle_val < -1.5)
+  {
+    angle_val = -1.5;
+  }
     diff_K0 = CAR_DIFF_K * tan(angle_val);
     //可串PD控制器
     if (Road == 4 || Road == 3) //出库差速？先不开了
@@ -354,7 +378,7 @@ void lib_set_fun(void)
       ss_flag = 1;
     }
   }
-  else if(Road == 1 || Road == 2)
+  else if (Road == 1 || Road == 2)
   {
     // speed_
   }

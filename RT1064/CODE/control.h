@@ -14,6 +14,8 @@ extern PID PID_CENTER_EM ,PID_STRAIGHT_EM;
 extern bool speed_change_flag;
 extern int mix_choice;
 
+extern float DIFF_KKK;
+extern float DIFF_KK;
 void Turn_Cam(void);
 PID TurnFuzzyPD_Cam(void);
 
