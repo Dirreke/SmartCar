@@ -23,6 +23,7 @@ void lib_set_fun(void);
 void SpeedTarget_fig(void);
 // void Speed_Control(void);
 void Speed_Control_New(void);
+void SpeedTarget_FuzzyPID_Control(void);
 
 void Turn_EM(void);
 void Turn_Servo(void);

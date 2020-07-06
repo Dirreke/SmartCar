@@ -586,3 +586,50 @@ float speed_mean_filter(float D_new)
     return sum * 0.05;
   }
 }
+
+float Wheel_Differ_P = 6; //4;
+float Wheel_Differ_I = 0; //1.5;
+float Wheel_Differ_D = 2; //4;
+
+float Wheel_Differ_Err_Table[9] = {-1.5, -1, -0.3, -0.05, 0, 0.05, 0.3, 1, 1.5};
+float Wheel_Differ_P_Table0[9] = {8, 9, 25, 35, 6, 35, 25, 9, 8};
+float Wheel_Differ_D_Table0[9] = {3, 3, 4, 6, 5, 6, 4, 3, 3};
+
+float Wheel_Differ_P_Table1[9] = {7, 7, 15, 35, 6, 35, 15, 7, 7};
+float Wheel_Differ_D_Table1[9] = {10, 10, 10, 10, 10, 10, 10, 10, 10}; //25 25 25 30 30 30 25 25 25
+
+float Wheel_Differ_P_Table[9] = {7, 7, 15, 35, 6, 35, 15, 7, 7};
+float Wheel_Differ_D_Table[9] = {10, 10, 10, 10, 10, 10, 10, 10, 10}; //25 25 25 30 30 30 25 25 25
+
+Wheel_Differ_Err = SpeedE1 - SpeedE2;
+if (Wheel_Differ_Err <= Wheel_Differ_Err_Table[0])
+{
+  Wheel_Differ_P = Wheel_Differ_P_Table1[0];
+  Wheel_Differ_D = Wheel_Differ_D_Table1[0];
+}
+else if (Wheel_Differ_Err >= Wheel_Differ_Err_Table[8])
+{
+  Wheel_Differ_P = Wheel_Differ_P_Table1[8];
+  Wheel_Differ_D = Wheel_Differ_D_Table1[8];
+}
+else
+{
+  for (int i = 0; i < 8; i++)
+  {
+    if (Wheel_Differ_Err >= Wheel_Differ_Err_Table[i] && Wheel_Differ_Err < Wheel_Differ_Err_Table[i + 1])
+    {
+      if (Wheel_Differ_Err == 0)
+      {
+        Wheel_Differ_Err = 0.01;
+      }
+      //Err = 0;Err = 0.01 ; P = (35*0.05-6*0)*(1-0/0.01)/(0.05-0)+0*6/0.01=35
+      //Err=0.1;P=(15*0.3-35*0.05)*(1-0.05/0.1)/(0.3-0.05)+0.05*35/0.1=30
+      //(P_high * E_high - P_low * E_low) / (E_high - E_low) * (1 - E_low / E_real) + P_low * E_low / E_real
+      Wheel_Differ_P = (Wheel_Differ_P_Table[i + 1] * Wheel_Differ_Err_Table[i + 1] - Wheel_Differ_P_Table[i] * Wheel_Differ_Err_Table[i]) * (1 - Wheel_Differ_Err_Table[i] / Wheel_Differ_Err) / (Wheel_Differ_Err_Table[i + 1] - Wheel_Differ_Err_Table[i]) + Wheel_Differ_Err_Table[i] * Wheel_Differ_P_Table[i] / Wheel_Differ_Err;
+      Wheel_Differ_D = Wheel_Differ_D_Table[i] + (Wheel_Differ_Err - Wheel_Differ_Err_Table[i]) * (Wheel_Differ_D_Table[i + 1] - Wheel_Differ_D_Table[i]) / (Wheel_Differ_Err_Table[i + 1] - Wheel_Differ_Err_Table[i]);
+      break;
+    }
+  }
+}
+
+Wheel_Differ_PID_Out = Wheel_Differ_P * Wheel_Differ_Err + Wheel_Differ_D * (Wheel_Differ_Err - old_Wheel_Differ_Err);

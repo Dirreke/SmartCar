@@ -296,19 +296,19 @@ void SpeedTarget_fig(void)
     }
     else
     {
-      angle_val = Turn_Cam_Out_temp / SERVO_RANGE *ANGLE_RANGE *DIFF_KK;
+      angle_val = Turn_Cam_Out_temp / SERVO_RANGE * ANGLE_RANGE * DIFF_KK;
     }
-   // angle_val = (fabs(Turn_Cam_Out_temp) < 46) ? 0 : Turn_Cam_Out_temp / SERVO_RANGE * ANGLE_RANGE;
-   // angle_val = (Turn_Cam_Out_temp > SERVO_RANGE) ? ((Turn_Cam_Out_temp - SERVO_RANGE) * DIFF_KKK + SERVO_RANGE) / SERVO_RANGE * ANGLE_RANGE : Turn_Cam_Out_temp / SERVO_RANGE * ANGLE_RANGE;
-   // angle_val = (Turn_Cam_Out_temp < -SERVO_RANGE) ? ((Turn_Cam_Out_temp + SERVO_RANGE) * DIFF_KKK - SERVO_RANGE) / SERVO_RANGE * ANGLE_RANGE : Turn_Cam_Out_temp / SERVO_RANGE * ANGLE_RANGE;
-  if(angle_val > 1.5)
-  {
-    angle_val = 1.5;
-  }
-  else if(angle_val < -1.5)
-  {
-    angle_val = -1.5;
-  }
+    // angle_val = (fabs(Turn_Cam_Out_temp) < 46) ? 0 : Turn_Cam_Out_temp / SERVO_RANGE * ANGLE_RANGE;
+    // angle_val = (Turn_Cam_Out_temp > SERVO_RANGE) ? ((Turn_Cam_Out_temp - SERVO_RANGE) * DIFF_KKK + SERVO_RANGE) / SERVO_RANGE * ANGLE_RANGE : Turn_Cam_Out_temp / SERVO_RANGE * ANGLE_RANGE;
+    // angle_val = (Turn_Cam_Out_temp < -SERVO_RANGE) ? ((Turn_Cam_Out_temp + SERVO_RANGE) * DIFF_KKK - SERVO_RANGE) / SERVO_RANGE * ANGLE_RANGE : Turn_Cam_Out_temp / SERVO_RANGE * ANGLE_RANGE;
+    if (angle_val > 1.5)
+    {
+      angle_val = 1.5;
+    }
+    else if (angle_val < -1.5)
+    {
+      angle_val = -1.5;
+    }
     diff_K0 = CAR_DIFF_K * tan(angle_val);
     //可串PD控制器
     if (Road == 4 || Road == 3) //出库差速？先不开了
@@ -1438,6 +1438,9 @@ void Speed_Control_New(void)
   OldE1 = SpeedE1;
   OldE2 = SpeedE2;
 
+  MotorOut1 += Speed_Diff_PID_Out;
+  MotorOut2 -= Speed_Diff_PID_Out;
+
   Moto_Out();
 }
 
@@ -1611,5 +1614,68 @@ void Mean_Turn_Out(void)
     turn_sum += Turn_Cam_Out;
     turn_num++;
     mean_turn_out = turn_sum / turn_num;
+  }
+}
+
+/*************************************************************************
+*  函数名称：void SpeedTarget_FuzzyPID_Control(void)
+*  功能说明：差速模糊PD
+*  参数说明：
+*  函数返回：
+*  修改时间：2020.7.6
+*  备    注：用于差速调节
+*************************************************************************/
+
+float Speed_Diff_Err = SpeedE1 - SpeedE2;
+float Old_Speed_Diff_Err = 0;
+float Speed_Diff_P = 6; //4;
+float Speed_Diff_D = 2; //4;
+
+float Speed_Diff_PID_Out = 0;
+
+
+void SpeedTarget_FuzzyPID_Control(void)
+{
+  static const float Speed_Diff_Err_Table[9] = {-1.5, -1, -0.3, -0.05, 0, 0.05, 0.3, 1, 1.5};
+  static const float Speed_Diff_P_Table[9] = {8, 9, 25, 35, 6, 35, 25, 9, 8};
+  static const float Speed_Diff_D_Table[9] = {3, 3, 4, 6, 5, 6, 4, 3, 3};
+  if (Speed_Diff_Err <= Speed_Diff_Err_Table[0])
+  {
+    Speed_Diff_P = Speed_Diff_P_Table[0];
+    Speed_Diff_D = Speed_Diff_D_Table[0];
+  }
+  else if (Speed_Diff_Err >= Speed_Diff_Err_Table[8])
+  {
+    Speed_Diff_P = Speed_Diff_P_Table[8];
+    Speed_Diff_D = Speed_Diff_D_Table[8];
+  }
+  else
+  {
+    for (int i = 0; i < 8; i++)
+    {
+      if (Speed_Diff_Err >= Speed_Diff_Err_Table[i] && Speed_Diff_Err <= Speed_Diff_Err_Table[i + 1])
+      {
+        if (Speed_Diff_Err == 0)
+        {
+          Speed_Diff_Err == 0.01;
+        }
+        Speed_Diff_P = (Speed_Diff_P_Table[i + 1] * Speed_Diff_Err_Table[i + 1] -
+                        Speed_Diff_P_Table[i] * Speed_Diff_Err_Table[i]) *
+                           (1 - Speed_Diff_Err_Table[i] / Speed_Diff_Err) /
+                           (Speed_Diff_Err_Table[i + 1] - Speed_Diff_Err_Table[i]) +
+                       Speed_Diff_Err_Table[i] * Speed_Diff_P_Table[i] / Speed_Diff_Err;
+        Speed_Diff_D = Speed_Diff_D_Table[i] +
+                       (Speed_Diff_Err - Speed_Diff_Err_Table[i]) *
+                           (Speed_Diff_D_Table[i + 1] - Speed_Diff_D_Table[i]) /
+                           (Speed_Diff_Err_Table[i + 1] - Speed_Diff_Err_Table[i]);
+        break;
+      }
+    }
+  }
+  Speed_Diff_PID_Out = Speed_Diff_P * Speed_Diff_Err + Speed_Diff_D * (Speed_Diff_Err - Old_Speed_Diff_Err);
+  Old_Speed_Diff_Err = Speed_Diff_Err;
+  if (speedTarget1 == 0 && speedTarget2 == 0)
+  {
+    Speed_Diff_PID_Out = 0;
   }
 }

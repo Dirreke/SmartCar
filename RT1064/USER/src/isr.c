@@ -46,6 +46,7 @@ void PIT_IRQHandler(void)
         lib_set_fun();
         SpeedTarget_fig();
         //    BBC();
+        SpeedTarget_FuzzyPID_Control();
         Speed_Control_New();
         Mean_Turn_Out();
     }
