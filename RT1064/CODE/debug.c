@@ -16,7 +16,7 @@ void Debug_Init(void)
 void Dubug_key(void)
 {
     static int ips_num = 0;
-    const int page_num = 10;
+    const int page_num = 33;
     static bool qipao_flag;
     if (gpio_get(DEBUG_KEY0))
     {
@@ -90,10 +90,10 @@ void Dubug_key(void)
                 PID_SPEED.I += 1;
                 break;
             case 6:
-                PID_TURN_CAM_EXT.P += 0.1;
+                // PID_TURN_CAM_EXT.P += 0.1;
                 break;
             case 7:
-                PID_TURN_CAM_EXT.D += 0.1;
+                // PID_TURN_CAM_EXT.D += 0.1;
                 break;
             case 8:
                 DEBUG_CHOICE++;
@@ -103,7 +103,7 @@ void Dubug_key(void)
                 {
                     diff_off();
                 }
-                else 
+                else
                 {
                     diff_on();
                 }
@@ -132,6 +132,7 @@ void Dubug_key(void)
                 default:
                     break;
                 }
+                break;
 
                 /*
             case 32:
@@ -237,6 +238,14 @@ void Dubug_key(void)
                 break;
 */
             default:
+                if (ips_num < 21)
+                {
+                    Turn_Cam_Extern_P_Table[ips_num - 10] += 0.1;
+                }
+                else if (ips_num < 32)
+                {
+                    Turn_Cam_Extern_D_Table[ips_num - 21] += 0.1;
+                }
                 break;
             }
             return;
@@ -262,10 +271,10 @@ void Dubug_key(void)
                 PID_SPEED.I -= 1;
                 break;
             case 6:
-                PID_TURN_CAM_EXT.P -= 0.1;
+                // PID_TURN_CAM_EXT.P -= 0.1;
                 break;
             case 7:
-                PID_TURN_CAM_EXT.D -= 0.1;
+                // PID_TURN_CAM_EXT.D -= 0.1;
                 break;
             case 8:
                 DEBUG_CHOICE--;
@@ -304,6 +313,7 @@ void Dubug_key(void)
                 default:
                     break;
                 }
+                break;
                 /*
             case 32:
                 Sobel_Threshold_FarFar -= 1;
@@ -409,6 +419,15 @@ void Dubug_key(void)
                 break;
                 */
             default:
+                if (ips_num < 21)
+                {
+                    Turn_Cam_Extern_P_Table[ips_num - 10] -= 0.1;
+                }
+                else if (ips_num < 32)
+                {
+                    Turn_Cam_Extern_D_Table[ips_num - 21] -= 0.1;
+                }
+
                 break;
             }
             return;
@@ -430,12 +449,12 @@ void ips_show_debug(int ips_num)
     {
 
     /** pages **/
-    case 2:                                          //阈值
+    case 2:                                  //阈值
         ips200_showstr(0, 12, "DIFF_KKK: "); //显示字符串
         //ips200_showfloat(0, 13, 66.6667, 2, 4);    //显示一个浮点数并去除整数部分无效0
         //ips200_showuint16(0,1,666);                //显示一个16位无符号整数
         //ips200_showint32(0,3,-666,3);              //显示一个32位有符号数并去除无效0
-        ips200_showfloat(0, 13, DIFF_KKK, 3,2);
+        ips200_showfloat(0, 13, DIFF_KKK, 3, 2);
         break;
     case 3:
         ips200_showstr(0, 12, "speed: "); //显示字符串
@@ -450,12 +469,12 @@ void ips_show_debug(int ips_num)
         ips200_showfloat(0, 13, PID_SPEED.I, 4, 2);
         break;
     case 6:
-        ips200_showstr(0, 12, "CamP");
-        ips200_showfloat(0, 13, PID_TURN_CAM_EXT.P, 4, 2);
+        ips200_showstr(0, 12, "CamP now no use");
+        // ips200_showfloat(0, 13, PID_TURN_CAM_EXT.P, 4, 2);
         break;
     case 7:
-        ips200_showstr(0, 12, "CamD");
-        ips200_showfloat(0, 13, PID_TURN_CAM_EXT.D, 4, 2);
+        ips200_showstr(0, 12, "CamD now no use");
+        // ips200_showfloat(0, 13, PID_TURN_CAM_EXT.D, 4, 2);
         break;
     case 8:
         ips200_showstr(0, 12, "DEBUG_CHOICE");
@@ -500,6 +519,7 @@ void ips_show_debug(int ips_num)
         default:
             break;
         }
+        break;
         /*
     case 32:
         ips200_showstr(0, 12, "Sobel_Threshold_FarFar: ");
@@ -516,6 +536,22 @@ void ips_show_debug(int ips_num)
         */
     default:
         // ips_show_debug_pd(ips_num);
+        ips200_showstr(0, 11, "index:");
+        if (ips_num < 21)
+        {
+
+            ips200_showuint16(100, 11, ips_num - 10);
+            ips200_showstr(0, 12, "Turn_Cam_Extern_P_Table: ");
+            ips200_showfloat(0, 13, Turn_Cam_Extern_P_Table[ips_num - 10], 2, 3);
+        }
+        else if (ips_num < 32)
+        {
+
+            ips200_showuint16(100, 11, ips_num - 21);
+            ips200_showstr(0, 12, "Turn_Cam_Extern_D_Table: ");
+            ips200_showfloat(0, 13, Turn_Cam_Extern_D_Table[ips_num - 21], 2, 3);
+        }
+
         break;
     }
 }

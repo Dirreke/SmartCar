@@ -37,8 +37,13 @@ void Mean_Turn_Out(void);
 
 //debug
 extern PID PID_SPEED,PID2_SPEED;
-extern PID PID_TURN_CAM_EXT;
+// extern PID PID_TURN_CAM_EXT;
 // float Turn_P;
 // float Turn_D;
   extern float SpeedE1, SpeedE2;
   extern float SpeedEE1, SpeedEE2;
+
+extern float Turn_Cam_Extern_P_Table[11];
+extern float Turn_Cam_Extern_D_Table[11];
+extern float Turn_angle_pwm_table[11];
+extern float Turn_angle_PWM;

@@ -14,6 +14,47 @@ PID PID_CENTER_EM, PID_STRAIGHT_EM;
 int mix_choice = 0; //1电磁为最小打角，2电磁为最大打角，3电磁不可信，0电磁中心；
 
 /*************************************************************************
+*  函数名称：void TurnFuzzyPD_Cam_EXT(void)
+*  功能说明：转弯PD模糊函数------角度控制
+*  参数说明：PD 表
+*  函数返回：角度控制转弯PD
+*  修改时间：2020.7.7
+*  备    注：
+*************************************************************************/
+float Turn_Cam_Extern_P_Table[11] = {1.5, 1.8, 2.0, 1.0, 0.3, 0.1, 0.3, 1.0, 2.0, 1.8, 1.5}; //5 2.5 1.3 0.8 0.3 0.8 ---
+float Turn_Cam_Extern_D_Table[11] = {4, 5, 6, 10, 4, 1.5, 4, 10, 6, 5, 4};                   //8 5 3 1.5 0.01
+float Turn_angle_pwm_table[11] = {-120, -95, -70, -55, -40, 0, 40, 55, 70, 95, 120};
+
+float Turn_angle_PWM;
+
+PID TurnFuzzyPD_Cam_EXT(void)
+{
+  PID PID_TURN_CAM_EXT;
+  if (Turn_angle_PWM <= Turn_angle_pwm_table[0])
+  {
+    PID_TURN_CAM_EXT.P = Turn_Cam_Extern_P_Table[0];
+    PID_TURN_CAM_EXT.D = Turn_Cam_Extern_D_Table[0];
+  }
+  else if (Turn_angle_PWM >= Turn_angle_pwm_table[8])
+  {
+    PID_TURN_CAM_EXT.P = Turn_Cam_Extern_P_Table[8];
+    PID_TURN_CAM_EXT.D = Turn_Cam_Extern_D_Table[8];
+  }
+  else
+  {
+    for (int i = 0; i < 9; i++)
+    {
+      if (Turn_angle_PWM >= Turn_angle_pwm_table[i] && Turn_angle_PWM < Turn_angle_pwm_table[i + 1])
+      {
+        PID_TURN_CAM_EXT.P = Turn_Cam_Extern_P_Table[i] + (Turn_angle_PWM - Turn_angle_pwm_table[i]) * (Turn_Cam_Extern_P_Table[i + 1] - Turn_Cam_Extern_P_Table[i]) / (Turn_angle_pwm_table[i + 1] - Turn_angle_pwm_table[i]); //线性
+        PID_TURN_CAM_EXT.D = Turn_Cam_Extern_D_Table[i] + (Turn_angle_PWM - Turn_angle_pwm_table[i]) * (Turn_Cam_Extern_D_Table[i + 1] - Turn_Cam_Extern_D_Table[i]) / (Turn_angle_pwm_table[i + 1] - Turn_angle_pwm_table[i]);
+        break;
+      }
+    }
+  }
+  return PID_TURN_CAM_EXT;
+}
+/*************************************************************************
 *  函数名称：void Turn_Cam(void)
 *  功能说明：摄像头转弯控制程序，根据中心偏移量计算舵机输出量
 *  参数说明：中心偏移量,PD 
@@ -23,13 +64,13 @@ int mix_choice = 0; //1电磁为最小打角，2电磁为最大打角，3电磁不可信，0电磁中心；
              偏移量offset为正说明车身相对赛道中心偏右
 *************************************************************************/
 
-PID PID_TURN_CAM_EXT;
 void Turn_Cam(void)
 {
   PID PID_TURN_CAM;
+  PID PID_TURN_CAM_EXT;
   static float Cam_offset_old = 0;
   PID_TURN_CAM = TurnFuzzyPD_Cam();
-  float Turn_angle_PWM;
+  // float Turn_angle_PWM;
   static float Turn_angle_PWM_old = 0;
 
   //0.768=0.8*1.2*0.8
@@ -40,6 +81,8 @@ void Turn_Cam(void)
   // Cam_offset_old = Cam_offset;
 
   Turn_angle_PWM = PID_TURN_CAM.P * Cam_offset;
+
+  PID_TURN_CAM_EXT = TurnFuzzyPD_Cam_EXT();
   Turn_Cam_Out = PID_TURN_CAM_EXT.P * Turn_angle_PWM + PID_TURN_CAM_EXT.D * PID_TURN_CAM.D * (Turn_angle_PWM - Turn_angle_PWM_old);
   Turn_angle_PWM_old = Turn_angle_PWM;
   //Servo_Duty(-Turn_Cam_Out);
@@ -296,19 +339,19 @@ void SpeedTarget_fig(void)
     }
     else
     {
-      angle_val = Turn_Cam_Out_temp / SERVO_RANGE *ANGLE_RANGE *DIFF_KK;
+      angle_val = Turn_Cam_Out_temp / SERVO_RANGE * ANGLE_RANGE * DIFF_KK;
     }
-   // angle_val = (fabs(Turn_Cam_Out_temp) < 46) ? 0 : Turn_Cam_Out_temp / SERVO_RANGE * ANGLE_RANGE;
-   // angle_val = (Turn_Cam_Out_temp > SERVO_RANGE) ? ((Turn_Cam_Out_temp - SERVO_RANGE) * DIFF_KKK + SERVO_RANGE) / SERVO_RANGE * ANGLE_RANGE : Turn_Cam_Out_temp / SERVO_RANGE * ANGLE_RANGE;
-   // angle_val = (Turn_Cam_Out_temp < -SERVO_RANGE) ? ((Turn_Cam_Out_temp + SERVO_RANGE) * DIFF_KKK - SERVO_RANGE) / SERVO_RANGE * ANGLE_RANGE : Turn_Cam_Out_temp / SERVO_RANGE * ANGLE_RANGE;
-  if(angle_val > 1.5)
-  {
-    angle_val = 1.5;
-  }
-  else if(angle_val < -1.5)
-  {
-    angle_val = -1.5;
-  }
+    // angle_val = (fabs(Turn_Cam_Out_temp) < 46) ? 0 : Turn_Cam_Out_temp / SERVO_RANGE * ANGLE_RANGE;
+    // angle_val = (Turn_Cam_Out_temp > SERVO_RANGE) ? ((Turn_Cam_Out_temp - SERVO_RANGE) * DIFF_KKK + SERVO_RANGE) / SERVO_RANGE * ANGLE_RANGE : Turn_Cam_Out_temp / SERVO_RANGE * ANGLE_RANGE;
+    // angle_val = (Turn_Cam_Out_temp < -SERVO_RANGE) ? ((Turn_Cam_Out_temp + SERVO_RANGE) * DIFF_KKK - SERVO_RANGE) / SERVO_RANGE * ANGLE_RANGE : Turn_Cam_Out_temp / SERVO_RANGE * ANGLE_RANGE;
+    if (angle_val > 1.5)
+    {
+      angle_val = 1.5;
+    }
+    else if (angle_val < -1.5)
+    {
+      angle_val = -1.5;
+    }
     diff_K0 = CAR_DIFF_K * tan(angle_val);
     //可串PD控制器
     if (Road == 4 || Road == 3) //出库差速？先不开了
