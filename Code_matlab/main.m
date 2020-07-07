@@ -26,7 +26,7 @@ clear Images Image_L Image_R Image_M No
 % Picedge=edge(Pic);
 
 %% 去畸变2
-Pic_undistort(Pic_L,Pic_R,1,1);
+Pic_undistort(Pic_L,Pic_R,1,1,1);
 
 %% 去畸后求中心线
 Pic_DrawMid_und();

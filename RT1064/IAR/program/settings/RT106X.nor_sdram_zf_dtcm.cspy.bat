@@ -25,7 +25,7 @@ if not "%~1" == "" goto debugFile
 
 @echo on 
 
-"D:\Program Files (x86)\IAR Systems\Embedded Workbench 8.3\common\bin\cspybat" -f "D:\GMY0\A_competition\Smart_Car\Smart_Car\RT1064\IAR\program\settings\RT106X.nor_sdram_zf_dtcm.general.xcl" --backend -f "D:\GMY0\A_competition\Smart_Car\Smart_Car\RT1064\IAR\program\settings\RT106X.nor_sdram_zf_dtcm.driver.xcl" 
+"D:\Program Files (x86)\IAR Systems\Embedded Workbench 8.3\common\bin\cspybat" -f "D:\GMY0\A_competition\Smart_Car\SmartCar\RT1064\IAR\program\settings\RT106X.nor_sdram_zf_dtcm.general.xcl" --backend -f "D:\GMY0\A_competition\Smart_Car\SmartCar\RT1064\IAR\program\settings\RT106X.nor_sdram_zf_dtcm.driver.xcl" 
 
 @echo off 
 goto end 
@@ -34,7 +34,7 @@ goto end
 
 @echo on 
 
-"D:\Program Files (x86)\IAR Systems\Embedded Workbench 8.3\common\bin\cspybat" -f "D:\GMY0\A_competition\Smart_Car\Smart_Car\RT1064\IAR\program\settings\RT106X.nor_sdram_zf_dtcm.general.xcl" "--debug_file=%~1" --backend -f "D:\GMY0\A_competition\Smart_Car\Smart_Car\RT1064\IAR\program\settings\RT106X.nor_sdram_zf_dtcm.driver.xcl" 
+"D:\Program Files (x86)\IAR Systems\Embedded Workbench 8.3\common\bin\cspybat" -f "D:\GMY0\A_competition\Smart_Car\SmartCar\RT1064\IAR\program\settings\RT106X.nor_sdram_zf_dtcm.general.xcl" "--debug_file=%~1" --backend -f "D:\GMY0\A_competition\Smart_Car\SmartCar\RT1064\IAR\program\settings\RT106X.nor_sdram_zf_dtcm.driver.xcl" 
 
 @echo off 
 :end

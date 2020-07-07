@@ -1,8 +1,8 @@
 function []=Pic_undistort(Pic_L,Pic_R,L,R,flag_canshu)
 global ImageH MIDMAP New_Lef New_Rig;
-% if nargin==4
+if nargin==4
     flag_canshu=0;
-% end
+end
 % % % %% 参数
 % % % startpoint=12;%此参数小为远景。，从此开始取
 % % % D0=10cm
@@ -31,7 +31,7 @@ global ImageH MIDMAP New_Lef New_Rig;
 % % % % clear Rig_New Lef_New;
 %%
 
-startpoint=29+1;
+startpoint=27+1;
 % H0=75;
 % D0=50;
 % n0=77*2*K;
@@ -144,8 +144,8 @@ end
 % clear Lef_New
 k=startpoint;%寻找起点
 k2=59;%Bili=5
-% Bili=round(tempNewy(k)/59);
-Bili=1.6;
+Bili=tempNewy(k)/59;
+% Bili=1.6;
 Rig_New=zeros(ImageH,1);
 Lef_New=zeros(ImageH,1);
 tempNewy(k)=k2*Bili;

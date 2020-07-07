@@ -55,11 +55,11 @@ void camera_dispose_main(void) //摄像头处理主函数
     Pic_Fix_Line();      //补线处理
     Pic_DrawMid();       //计算去畸前中心线-仅上位机用
     Pic_DrawMid_und();   //计算去畸后中线
-    Pic_offset_fig();    //offset计算//注释Cam_offset2
-    Pic_offset_filter(); //offset滤波
+    // Pic_offset_fig();    //offset计算//注释Cam_offset2
+    // Pic_offset_filter(); //offset滤波
 
     Get_pic_with_edge(); //获得带边线灰度图
-    Turn_Cam();
+    Turn_Cam_New();
 }
 
 __ramfunc void Get_Use_Image(void)
@@ -747,7 +747,7 @@ void Pic_undistort(int L, int R)
 {
     int i = 0;
     int j = 0;
-    int const startpoint = 29;
+    int const startpoint = 27;
     int tempy;
     int tempx;
     int tempNewxR[60];

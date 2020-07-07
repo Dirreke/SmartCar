@@ -1938,6 +1938,9 @@
     <group>
         <name>user_c</name>
         <file>
+            <name>$PROJ_DIR$\..\..\CODE\Cam.c</name>
+        </file>
+        <file>
             <name>$PROJ_DIR$\..\..\CODE\control.c</name>
         </file>
         <file>
@@ -1976,6 +1979,9 @@
     </group>
     <group>
         <name>user_h</name>
+        <file>
+            <name>$PROJ_DIR$\..\..\CODE\Cam.h</name>
+        </file>
         <file>
             <name>$PROJ_DIR$\..\..\CODE\control.h</name>
         </file>

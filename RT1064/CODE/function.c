@@ -22,6 +22,10 @@ void Para_Init()
         PID_CENTER_EM.D = 12;//9
         PID_STRAIGHT_EM.P = 0.3;
         PID_STRAIGHT_EM.D = 0.7;
+        PID_CAR_CENTER_CAM.P = 1;
+        PID_CAR_CENTER_CAM.D = 0;
+        PID_CAR_STRAIGHT_CAM.P = 1;
+        PID_CAR_STRAIGHT_CAM.D = 0;        
         barn_reset_flag = 0;   
         DEBUG_CHOICE = 2;
         
