@@ -123,8 +123,8 @@ for ki=1:m
             Pi=Pi+1;
             Image(Pi,Pj:ImageW)=P;
         else
-            Image(Pi,Pj:Image_unpcsImage(ki,kj)-1)=P;
-            Pj=Image_unpcsImage(ki,kj);
+            Image(Pi,Pj:Image_unpcsImage(ki,kj)+1)=P;
+            Pj=Image_unpcsImage(ki,kj)+1;
             P=~P;
         end
         
