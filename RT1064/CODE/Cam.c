@@ -3,9 +3,9 @@
 float car_center(void)
 {
   // PID_init_center();
-  volatile float car_center_dias = 0;
-  volatile int car_center_start = 3;
-  volatile int car_center_end = 8;
+  float car_center_dias = 0;
+  int car_center_start = 45;
+  int car_center_end = 55;
   int cnt = 0;
   for (int i = car_center_start; i < car_center_end; ++i)
   {
@@ -15,9 +15,11 @@ float car_center(void)
       cnt++;
     }
   }
-  car_center_dias = car_center_dias / cnt;
-
-  return car_center_dias;
+  if (cnt == 0)
+  {
+    return 0;
+  }
+  return car_center_dias / cnt;
   // centerAngle=PID_realize_center(car_center_dias);
 }
 
@@ -74,10 +76,11 @@ float Turn_Cam_Center_P_Table[11] = {2, 1.5, 1.3, 1, 1, 0.5, 1, 1, 1.3, 1.5, 2};
 float car_center_dias_Table[11] = {-150, -130, -100, -70, -30, 0, 30, 70, 100, 130, 150};
 float Turn_Cam_Center_P = 0;
 
+float car_straight_angle;
+
+float car_center_dias; //diff impose on angle set
 void Turn_Cam_New(void)
 {
-  float car_center_dias; //diff impose on angle set
-  float car_straight_angle;
   static float car_center_dias_old = 0;
   static float car_straight_angle_old = 0;
   float car_center_PWM;
@@ -124,9 +127,9 @@ float M_Slope_fig(void)
   int i;
   float xsum = 0, ysum = 0, xysum = 0, x2sum = 0, count = 0;
   int max = -800, min = 0;
-  for (i = 5; i < 55; i++)
+  for (i = 5; i < 45; i++)
   {
-    if (i <= FIG_AREA_NEAR && i >= FIG_AREA_FAR && New_Mid[i] != -MIDMAP)
+    if (i <= FIG_AREA_NEAR && i >= FIG_AREA_FAR && New_Mid[i] != 999)
     {
       if (New_Mid[i] > max)
       {
@@ -159,12 +162,18 @@ float M_Slope_fig(void)
     Mid_slope = 998;
   }
 
+  if ((Mid_slope >= 1.2 || Mid_slope <= -1.2) && Mid_slope != 999)
+  {
+    Mid_slope = 998;
+  }
+
   if (Mid_slope == 999 || Mid_slope == 998)
   {
     return 0;
   }
+
   else
   {
-    return atan(-Rig_slope * UNDISTORT_PYK * UNDISTORT_XPK) > 0 ? 90 - atan(-Rig_slope * UNDISTORT_PYK * UNDISTORT_XPK) : -90 + atan(-Rig_slope * UNDISTORT_PYK * UNDISTORT_XPK);
+    return atan(Mid_slope * UNDISTORT_PYK * UNDISTORT_XPK) > 0 ? 1.57 - atan(Mid_slope * UNDISTORT_PYK * UNDISTORT_XPK) : -1.57 + atan(-Mid_slope * UNDISTORT_PYK * UNDISTORT_XPK);
   }
 }

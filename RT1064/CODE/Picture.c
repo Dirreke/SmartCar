@@ -1173,7 +1173,7 @@ void Threshold_change(void)
 *  参数说明：无
 *  函数返回：无
 *  修改时间：2020.06.23
-*  备    注：十字：近远景布线，远景补线
+*  备    注：十字：近远景补线，远景补线
             弯道：圆环弯道部分：将无用信息行（弯道以外）置1和78
             入环，分别按1/2和2/3计算斜率补线
             出环，按2计算斜率补线
@@ -1623,7 +1623,7 @@ void Pic_Fix_Line(void)
         {
             for (int i = Fir_row; i < Last_row - 5; ++i)
             {
-                if (Lef[i] <= Fir_col + 5 || Lef[i] > 40)
+                if (Lef[i] <= Fir_col + 5 || Lef[i] > 50)
                 {
                     continue;
                 }
@@ -1792,7 +1792,7 @@ void Pic_Fix_Line(void)
             get_flag = 0;
             for (int i = Fir_row; i < Last_row - 5; ++i)
             {
-                if (Rig[i] >= Last_col - 5 || Rig[i] < 40)
+                if (Rig[i] >= Last_col - 5 || Rig[i] < 30)
                 {
                     continue;
                 }
@@ -2213,7 +2213,7 @@ void Pic_DrawMid_und(void)
         // Road_Half_Width_change_l *= 1.1;
     }
 
-    if ((Road0_flag == 4 && Road == 0) || Road == 1)
+    if ((Road0_flag == 4 && Road == 0) || (Road == 1 && Road1_flag != 6))
     {
         for (i = 0; i < 60; i++)
         {
@@ -2228,7 +2228,7 @@ void Pic_DrawMid_und(void)
             }
         }
     }
-    else if ((Road0_flag == 5 && Road == 0) || Road == 2)
+    else if ((Road0_flag == 5 && Road == 0) || (Road == 2 && Road2_flag != 6))
     {
         for (i = 0; i < 60; i++)
         {
