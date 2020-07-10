@@ -1,6 +1,6 @@
 clear all;clc;close all;
 
-name='0624_chuku_data';
+name='mykc20200710';
 %'0621_15_1';
 % mykc20200513_10cm
 Initial();
@@ -10,7 +10,7 @@ catch
     pre_fun(name);
     load(strcat('./Data/',name,'.mat'))
 end
-No=1;
+No=555;
 %2530;
 
 %% ȡͼ

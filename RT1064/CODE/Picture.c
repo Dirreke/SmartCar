@@ -52,9 +52,9 @@ void camera_dispose_main(void) //摄像头处理主函数
     start_stop_find();
     Road_rec(); //利用左右边线斜率识别赛道
     Threshold_change();
-    Pic_Fix_Line();      //补线处理
-    Pic_DrawMid();       //计算去畸前中心线-仅上位机用
-    Pic_DrawMid_und();   //计算去畸后中线
+    Pic_Fix_Line();    //补线处理
+    Pic_DrawMid();     //计算去畸前中心线-仅上位机用
+    Pic_DrawMid_und(); //计算去畸后中线
     // Pic_offset_fig();    //offset计算//注释Cam_offset2
     // Pic_offset_filter(); //offset滤波
 
@@ -956,22 +956,30 @@ void jump_point_cnt(void)
 {
     int cnt = 0;
     int temp = 0;
+    int mid_p_cnt = 0; //中间跳变点数
     for (int i = Fir_row; i < Last_row; i++)
     {
         cnt = 0;
         temp = 0;
         jump_p[i] = 0;
-        for (int j = Fir_col + 1; j < Last_col; j++)
+        for (int j = Fir_col + 10; j < Last_col - 10; j++)
         {
             if (Pixle[i][j] != Pixle[i][j - 1])
             {
                 if (j - temp <= 5)
                 {
                     cnt++;
+                    if (j >= 30 && j <= 50)
+                    {
+                        mid_p_cnt++;
+                    }
                 }
                 else if (cnt > jump_p[i])
                 {
-                    jump_p[i] = cnt;
+                    if (mid_p_cnt > 1)
+                    {
+                        jump_p[i] = cnt;
+                    }
                     cnt = 0;
                 }
                 temp = j;
@@ -979,7 +987,10 @@ void jump_point_cnt(void)
         }
         if (cnt > jump_p[i])
         {
-            jump_p[i] = cnt;
+            if (mid_p_cnt > 1)
+            {
+                jump_p[i] = cnt;
+            }
         }
         // jump_p[i] = cnt;
     }

@@ -12,6 +12,7 @@ extern float Turn_EM_Out1 ,Turn_EM_Out2 ,Turn_EM_Out;
 extern PID PID_CENTER_EM ,PID_STRAIGHT_EM;
 
 extern bool speed_change_flag;
+extern bool road_change_flag;
 extern int mix_choice;
 
 extern float DIFF_KKK;
@@ -22,7 +23,9 @@ PID TurnFuzzyPD_Cam(void);
 void lib_set_fun(void);
 void SpeedTarget_fig(void);
 // void Speed_Control(void);
-void Speed_Control_New(void);
+void Speed_Control_New(bool L_flag);
+float Speed_Control_PI(bool L_flag);
+void Road_Speed_Change(void);
 
 void Turn_EM(void);
 void Turn_Servo(void);
