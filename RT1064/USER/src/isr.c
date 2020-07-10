@@ -46,9 +46,7 @@ void PIT_IRQHandler(void)
         lib_set_fun();
         SpeedTarget_fig();
         //    BBC();
-        Speed_Control_New(1);
-        Speed_Control_New(0);
-        Road_Speed_Change();
+        Speed_Control_New();
         Moto_Out();
         Mean_Turn_Out();
     }

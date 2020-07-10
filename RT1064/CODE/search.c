@@ -369,9 +369,10 @@ void Road_rec(void)
     if (Road != 0)
     {
         if (Lef_slope == 998 && Rig_slope == 998 && Road7_flag != 2 &&
-            ((Lef_edge < 10 && Rig_edge < 10) || (Lef_edge < 2 && Rig_edge < 15) || (Rig_edge < 2 && Lef_edge < 15)))
+            ((Lef_edge < 10 && Rig_edge < 10) || (Lef_edge < 2 && Rig_edge < 12) || (Rig_edge < 2 && Lef_edge < 12)))
         {
-            Road0_count++;
+            if (Lef[21] - Lef[23] < 5 && Lef[23] - Lef[25] < 5 && Rig[23] - Lef[21] < 5 && Rig[25] - Rig[23] < 5 && Lef[21] - Lef[23] >= 0 && Lef[23] - Lef[25] >= 0 && Rig[23] - Lef[21] >= 0 && Rig[25] - Rig[23] >= 0)
+                Road0_count++;
             if (Road == 4 && Road4_flag > 1)
                 Road0_count = 0;
             if (Road0_count >= 5)
@@ -439,8 +440,10 @@ void Road_rec(void)
         }
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////普通赛道→圆环
         //先判断是否有左上连续右连续，作为Road1_flag0的置位条件，如果不满足就else if判断直接进Road1_flag=1的条件
-        if (Lef[21] - Lef[23] < 5 && Lef[23] - Lef[25] < 10 && Lef[25] - Lef[27] < 15 && Rig[45] - Rig[43] < 5 && Rig[43] - Rig[41] < 5 && Rig[41] - Rig[39] < 5 && Rig[39] - Rig[37] < 5 && Rig[37] - Rig[35] < 5 && Rig[35] - Rig[33] < 5 && Rig[33] - Rig[31] < 5 && Rig[31] - Rig[29] < 5 && Rig[29] - Rig[27] < 5 && Rig[27] - Rig[25] < 5 &&
-            Lef[21] - Lef[23] >= 0 && Lef[23] - Lef[25] >= 0 && Lef[25] - Lef[27] >= 0 && Rig[45] - Rig[43] >= 0 && Rig[43] - Rig[41] >= 0 && Rig[41] - Rig[39] >= 0 && Rig[39] - Rig[37] >= 0 && Rig[37] - Rig[35] >= 0 && Rig[35] - Rig[33] >= 0 && Rig[33] - Rig[31] >= 0 && Rig[31] - Rig[29] >= 0 && Rig[29] - Rig[27] >= 0 && Rig[27] - Rig[25] >= 0)
+        if (Lef[21] > 5 && Lef[23] > 5 && Lef[25] > 5 && Lef[27] < 30 &&
+            Lef[21] - Lef[23] < 5 && Lef[23] - Lef[25] < 10 && Lef[25] - Lef[27] < 15 && Lef[25] - Lef[27] > 5 &&
+            Rig[45] - Rig[43] < 5 && Rig[43] - Rig[41] < 5 && Rig[41] - Rig[39] < 5 && Rig[39] - Rig[37] < 5 && Rig[37] - Rig[35] < 5 && Rig[35] - Rig[33] < 5 && Rig[33] - Rig[31] < 5 && Rig[31] - Rig[29] < 5 && Rig[29] - Rig[27] < 5 && Rig[27] - Rig[25] < 5 &&
+            Lef[21] - Lef[23] >= 0 && Lef[23] - Lef[25] > 0 && Lef[25] - Lef[27] > 0 && Rig[45] - Rig[43] >= 0 && Rig[43] - Rig[41] >= 0 && Rig[41] - Rig[39] >= 0 && Rig[39] - Rig[37] >= 0 && Rig[37] - Rig[35] >= 0 && Rig[35] - Rig[33] >= 0 && Rig[33] - Rig[31] >= 0 && Rig[31] - Rig[29] >= 0 && Rig[29] - Rig[27] >= 0 && Rig[27] - Rig[25] >= 0)
         {
             //31-39>=6行搜不到左边线
             for (int i = 27; i <= 36; i++)
@@ -489,8 +492,10 @@ void Road_rec(void)
         }
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////普通赛道→圆环
         //先判断是否有右上连续左连续，作为Road2_flag0的置位条件，如果不满足就else if判断直接进Road2_flag=1的条件
-        if (Rig[23] - Rig[21] < 5 && Rig[25] - Rig[23] < 10 && Rig[27] - Rig[25] < 15 && Lef[43] - Lef[45] < 5 && Lef[41] - Lef[43] < 5 && Lef[39] - Lef[41] < 5 && Lef[37] - Lef[39] < 5 && Lef[35] - Lef[37] < 5 && Lef[33] - Lef[35] < 5 && Lef[31] - Lef[33] < 5 && Lef[29] - Lef[31] < 5 && Lef[27] - Lef[29] < 5 && Lef[25] - Lef[27] < 5 &&
-            Rig[23] - Rig[21] >= 0 && Rig[25] - Rig[23] >= 0 && Rig[27] - Rig[25] >= 0 && Lef[43] - Lef[45] >= 0 && Lef[41] - Lef[43] >= 0 && Lef[39] - Lef[41] >= 0 && Lef[37] - Lef[39] >= 0 && Lef[35] - Lef[37] >= 0 && Lef[33] - Lef[35] >= 0 && Lef[31] - Lef[33] >= 0 && Lef[29] - Lef[31] >= 0 && Lef[27] - Lef[29] >= 0 && Lef[25] - Lef[27] >= 0)
+        if (Rig[23] < 75 && Rig[21] < 75 && Rig[25] < 75 && Rig[27] > 50 &&
+            Rig[23] - Rig[21] < 5 && Rig[25] - Rig[23] < 10 && Rig[27] - Rig[25] < 15 && Rig[27] - Rig[25] > 5 &&
+            Lef[43] - Lef[45] < 5 && Lef[41] - Lef[43] < 5 && Lef[39] - Lef[41] < 5 && Lef[37] - Lef[39] < 5 && Lef[35] - Lef[37] < 5 && Lef[33] - Lef[35] < 5 && Lef[31] - Lef[33] < 5 && Lef[29] - Lef[31] < 5 && Lef[27] - Lef[29] < 5 && Lef[25] - Lef[27] < 5 &&
+            Rig[23] - Rig[21] >= 0 && Rig[25] - Rig[23] > 0 && Rig[27] - Rig[25] > 0 && Lef[43] - Lef[45] >= 0 && Lef[41] - Lef[43] >= 0 && Lef[39] - Lef[41] >= 0 && Lef[37] - Lef[39] >= 0 && Lef[35] - Lef[37] >= 0 && Lef[33] - Lef[35] >= 0 && Lef[31] - Lef[33] >= 0 && Lef[29] - Lef[31] >= 0 && Lef[27] - Lef[29] >= 0 && Lef[25] - Lef[27] >= 0)
         {
             //31-39>=6行搜不到左边线
             for (int i = 27; i <= 36; i++)
@@ -645,8 +650,8 @@ void TurnLeft_Process(void)
             road_change_flag = 1;
             // turn_stop_flag = 0;
         }
-        
-            return;
+
+        return;
     }
     else
     {
@@ -689,10 +694,6 @@ void TurnLeft_Process(void)
         {
             turn_stop = i;
             break;
-        }
-        if (i == Fir_row + 1)
-        {
-            turn_stop = i;
         }
     }
 
@@ -755,8 +756,8 @@ void TurnRight_Process(void)
             road_change_flag = 1;
             // turn_stop_flag = 0;
         }
-        
-            return;
+
+        return;
     }
     else
     {
@@ -834,13 +835,15 @@ void TurnRight_Process(void)
 
 void Road1_zhuangtaiji(void)
 {
-    static int Road11_count = 0, Road12_count = 0, Road13_count = 0, Road14_count = 0, Road15_count = 0, Road16_count = 0, Road17_count = 0;
+    static int Road0_count = 0, Road11_count = 0, Road12_count = 0, Road13_count = 0, Road14_count = 0, Road15_count = 0, Road16_count = 0, Road17_count = 0;
     int dis = 0, dis1 = 0;
     if (Road1_flag == 0) //准备进左圆环
     {
         Road0_flag = 0;
-        if (Rig_circle == 0 && Lef_circle == 1 && Lef_slope != 998 &&
-            Rig[39] - Rig[37] < 9 && Rig[37] - Rig[35] < 9 && Rig[35] - Rig[33] < 9 && Rig[33] - Rig[31] < 9 && Rig[31] - Rig[29] < 9 && Rig[29] - Rig[27] < 9 && Rig[27] - Rig[25] < 9 && Rig[25] - Rig[23] < 9 && Lef_break_point < 45 && Rig_slope >= 0 && EM_Value_2 + EM_Value_3 > 4.2)
+        if (Rig_circle == 0 &&
+            // Lef_circle == 1 &&
+            Lef_slope != 998 &&
+            Rig[39] - Rig[37] < 5 && Rig[37] - Rig[35] < 5 && Rig[35] - Rig[33] < 5 && Rig[33] - Rig[31] < 5 && Rig[31] - Rig[29] < 5 && Rig[29] - Rig[27] < 5 && Rig[27] - Rig[25] < 5 && Rig[25] - Rig[23] < 5 && Rig_slope >= 0 && EM_Value_2 + EM_Value_3 > 4.0)
         //if (EM_Value_2 + EM_Value_3 > 4.3) //弯内识别：左右两边仅有一边发生丢线
         {
             Road11_count++;
@@ -854,6 +857,20 @@ void Road1_zhuangtaiji(void)
         else
         {
             Road11_count = 0;
+        }
+        if (Allwhitestart < 35 && Allwhitestart != 20)
+        {
+            Road0_count++;
+            if (Road0_count > 1)
+            {
+                Road = 0;
+                Road0_flag = 0;
+                Road0_count = 0;
+            }
+        }
+        else
+        {
+            Road0_count = 0;
         }
     }
     else if (Road1_flag == 1) //进左圆环1/4
@@ -1010,7 +1027,7 @@ void Road1_zhuangtaiji(void)
     else if (Road1_flag == 5) //右边线已经不能补线，电磁等方法跑
     {
         // if ((Rig_slope > -0.02 && Rig_slope < 0) || (Pixle[58][74] == 1 && Pixle[57][74] == 1 && Pixle[56][74] == 1 && Pixle[55][74] == 1 && Pixle[54][74] == 1 && Pixle[53][74] == 1)) //|| Lef_edge < 20))
-        if ((Rig_slope < -0.1 || Rig_slope == 998) && (Allwhiteend > 45 || Allwhiteend == Fir_row))
+        if ((Rig_slope < -0.15 || Rig_slope == 998) || (Rig_slope < -0.1 && (Allwhiteend > 43 || Allwhiteend == Fir_row)))
         {
             Road16_count++;
             if (Road16_count > 3)
@@ -1053,12 +1070,14 @@ void Road1_zhuangtaiji(void)
 
 void Road2_zhuangtaiji(void)
 {
-    static int Road21_count = 0, Road22_count = 0, Road23_count = 0, Road24_count = 0, Road25_count = 0, Road26_count = 0, Road27_count = 0;
+    static int Road0_count = 0,Road21_count = 0, Road22_count = 0, Road23_count = 0, Road24_count = 0, Road25_count = 0, Road26_count = 0, Road27_count = 0;
     int dis = 0, dis1 = 0;
     if (Road2_flag == 0) //
     {
-        if (Lef_circle == 0 && Rig_circle == 1 && Rig_slope != 998 &&
-            Lef[25] - Lef[27] < 9 && Lef[27] - Lef[29] < 9 && Lef[29] - Lef[31] < 9 && Lef[31] - Lef[33] < 9 && Lef[33] - Lef[35] < 9 && Lef[35] - Lef[37] < 9 && Lef[37] - Lef[39] < 9 && Lef[23] - Lef[25] < 9 && Rig_break_point < 45 && (Lef_slope <= 0 || Lef_slope == 998) && EM_Value_2 + EM_Value_3 > 4.2)
+        if (Lef_circle == 0 &&
+            // Rig_circle == 1 &&
+            Rig_slope != 998 &&
+            Lef[25] - Lef[27] < 5 && Lef[27] - Lef[29] < 5 && Lef[29] - Lef[31] < 5 && Lef[31] - Lef[33] < 5 && Lef[33] - Lef[35] < 5 && Lef[35] - Lef[37] < 5 && Lef[37] - Lef[39] < 5 && Lef[23] - Lef[25] < 5 && (Lef_slope <= 0 || Lef_slope == 998) && EM_Value_2 + EM_Value_3 > 4.0)
         //if (EM_Value_2 + EM_Value_3 > 4.3) //弯内识别：左右两边仅有一边发生丢线
         {
             Road21_count++;
@@ -1073,6 +1092,21 @@ void Road2_zhuangtaiji(void)
         {
             Road21_count = 0;
         }
+        if(Allwhitestart < 35 && Allwhitestart != 20)
+        {
+            Road0_count ++;
+            if(Road0_flag > 1)
+            {
+                Road0_count = 0;
+                Road = 0;
+                Road0_flag = 0;
+            }
+        }
+        else
+        {
+            Road0_count = 0;
+        }
+        
     }
     else if (Road2_flag == 1) //
     {
@@ -1231,7 +1265,7 @@ void Road2_zhuangtaiji(void)
     {
         // Road0_flag = 0;
         // if ((Lef_slope > 0 && Lef_slope < 0.02) || (Pixle[58][5] == 1 && Pixle[57][5] == 1 && Pixle[56][5] == 1 && Pixle[55][5] == 1 && Pixle[54][5] == 1 && Pixle[53][5] == 1)) //|| Lef_edge < 20))
-        if (Lef_slope > 0.1 && (Allwhiteend > 45 || Allwhiteend == Fir_row))
+        if (Lef_slope > 0.15 || (Lef_slope > 0.1 && (Allwhiteend > 43 || Allwhiteend == Fir_row)))
         {
             Road26_count++;
             if (Road26_count > 3)
@@ -1467,7 +1501,6 @@ void Road7_zhuangtaiji(void)
 {
     static int Road73_count = 0;
     static int Road74_count = 0, Road75_count = 0;
-    ;
 
     int Black_line = 0;
     if (Road7_flag == 0 || Road7_flag == 1) //等待转弯

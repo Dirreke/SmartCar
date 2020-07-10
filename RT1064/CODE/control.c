@@ -28,7 +28,7 @@ PID PID_TURN_CAM_EXT;
 void Turn_Cam(void)
 {
   PID PID_TURN_CAM;
-  static float Cam_offset_old = 0;
+  //static float Cam_offset_old = 0;
   PID_TURN_CAM = TurnFuzzyPD_Cam();
   float Turn_angle_PWM;
   static float Turn_angle_PWM_old = 0;
@@ -340,11 +340,18 @@ void SpeedTarget_fig(void)
 void lib_set_fun(void)
 {
   static bool ss_flag;
+  static bool tt_flag = 1;
   if (Road == 7)
   {
-    if (Road7_flag == 0 || Road7_flag == 1)
+    if ((Road7_flag == 0 || Road7_flag == 1 || Road7_flag == 2 || Road7_flag == 6) && tt_flag)
     {
       lib_speed_set(2.5);
+      if( Road7_flag == 2)
+      {
+        lib_speed_set(1.5);
+      }
+      diff_on();
+      tt_flag = 0;
     }
     else if (Road7_flag == 4)
     {
@@ -377,6 +384,7 @@ void lib_set_fun(void)
     else if (Road0_flag == 0)
     {
       ss_flag = 1;
+      tt_flag = 1;
     }
   }
   else if (Road == 1 || Road == 2)
@@ -397,311 +405,408 @@ PID PID_SPEED, PID2_SPEED;
 float SpeedE1, SpeedE2;
 float SpeedEE1, SpeedEE2;
 
-void Speed_Control_New(bool L_flag)
+
+void Speed_Control_New(void)
 {
-  uint8 pp_cnt = 0;
+
+  static float OldE1, OldE2;
+
+  float Speed_kP1, Speed_kP2, Speed_kI1, Speed_kI2;
+  float SpeedControlOutE1, SpeedControlOutE2;
+
   static uint8 Lef_pp_cnt = 0, Rig_pp_cnt = 0;
-  bool a_flag = 0, d_flag = 0;
   static bool a_flag1 = 0, a_flag2 = 0, d_flag1 = 0, d_flag2 = 0;
-  int cnt;
   static int cnt1, cnt2;
-  bool pp = 0, BB = 0;
-  static bool Lef_pp = 0, Rig_pp = 0, Lef_BB = 0, Rig_BB = 0;
+  static int frame1 = 0, frame2 = 0;
+  static bool frame_flag1 = 0, frame_flag2 = 0;
+  static bool Lef_pp = 0, Rig_pp = 0;
+  static bool Lef_BB = 0, Rig_BB = 0;
 
   SpeedE1 = speedTarget1 - CarSpeed1;
   SpeedE2 = speedTarget2 - CarSpeed2;
-
-  float SpeedE = 0, CarSpeed = 0, MotorOut = 0, speedTarget = 0;
-
   // set flagW
-  if (L_flag)
-  {
-    pp_cnt = Lef_pp_cnt;
-    pp = Lef_pp;
-    BB = Lef_BB;
-    a_flag = a_flag1;
-    d_flag = d_flag1;
-    cnt = cnt1;
-    SpeedE = SpeedE1;
-    CarSpeed = CarSpeed1;
-    MotorOut = MotorOut1;
-    speedTarget = speedTarget1;
-  }
-  else if (!L_flag)
-  {
-    pp_cnt = Rig_pp_cnt;
-    pp = Rig_pp;
-    BB = Rig_BB;
-    a_flag = a_flag2;
-    d_flag = d_flag2;
-    cnt = cnt2;
-    SpeedE = SpeedE2;
-    CarSpeed = CarSpeed2;
-    MotorOut = MotorOut2;
-    speedTarget = speedTarget2;
-  }
-
   if (speed_change_flag)
   {
     if (SpeedGoal == 0)
     {
-      pp=1;
+      Lef_pp = 1;
+      Rig_pp = 1;
     }
     else
     {
-      BB=1;
+      Lef_BB = 1;
+      Rig_BB = 1;
     }
     speed_change_flag = 0;
   }
-  if (SpeedE > 1)
+
+  if (SpeedE1 > 1)
   {
-    //即使速度目标不改变但speede>1.5也直接进BB
-    if (SpeedE > 1.5)
+    //即使速度目标不改变但speede1>1.5也直接进BB
+    if (SpeedE1 > 1.5)
     {
-      a_flag = 1;
-      BB = 0;
+      a_flag1 = 1;
+      Lef_BB = 0;
     }
-    else if (BB)
+    else if (Lef_BB)
     {
-      a_flag = 1;
-      BB = 0;
+      a_flag1 = 1;
+      Lef_BB = 0;
     }
-    cnt = 0;
+    cnt1 = 0;
+    frame_flag1 = 0;
+    frame1 = 0;
   }
-  if (SpeedE < -1)
+  if (SpeedE2 > 1)
   {
-    //同上
-    if (SpeedE < -1.5)
+    //即使速度目标不改变但speede2>1.5也直接进BB
+    if (SpeedE2 > 1.5)
     {
-      d_flag = 1;
-      BB = 0;
+      a_flag2 = 1;
+      Rig_BB = 0;
     }
-    else if (BB)
+    else if (Rig_BB)
     {
-      d_flag = 1;
-      BB = 0;
+      a_flag2 = 1;
+      Rig_BB = 0;
     }
-    cnt = 0;
+    cnt2 = 0;
+    frame_flag2 = 0;
+    frame2 = 0;
   }
 
+  if (SpeedE1 < -1)
+  {
+    //同上
+    if (SpeedE1 < -1.5)
+    {
+      d_flag1 = 1;
+      Lef_BB = 0;
+    }
+    else if (Lef_BB)
+    {
+      d_flag1 = 1;
+      Lef_BB = 0;
+    }
+    cnt1 = 0;
+    frame_flag1 = 0;
+    frame1 = 0;
+  }
+  if (SpeedE2 < -1)
+  {
+    //同上
+    if (SpeedE2 < -1.5)
+    {
+      d_flag2 = 1;
+      Rig_BB = 0;
+    }
+    if (Rig_BB)
+    {
+      d_flag2 = 1;
+      Rig_BB = 0;
+    }
+    cnt2 = 0;
+    frame_flag2 = 0;
+    frame2 = 0;
+  }
   //BBC
-  if (pp)
+  if (Lef_pp)
   {
-    if (CarSpeed > SpeedGoal || stop_line > 30)
+    if (CarSpeed1 > SpeedGoal || stop_line > 30)
     {
-      MotorOut = -MOTOR_RANGE;
+      MotorOut1 = -MOTOR_RANGE;
     }
     else
     {
-      pp_cnt++;
-      if (pp_cnt > 254)
+      Lef_pp_cnt++;
+      if (Lef_pp_cnt > 254)
       {
-        pp = 0;
-        pp_cnt = 0;
+        Lef_pp = 0;
+        Lef_pp_cnt = 0;
       }
-      MotorOut = 0;
+      MotorOut1 = 0;
     }
   }
-  else if (a_flag)
+  else if (a_flag1)
   {
-    if (speedTarget > 0)
+    if (speedTarget1 > 0)
     {
-      if (CarSpeed < speedTarget * 1.0)
+      if (CarSpeed1 < speedTarget1 * 1.0)
       {
-        MotorOut = speedTarget * 5000; //speedTarget1
+        MotorOut1 = speedTarget1 * 5000; //speedTarget1
       }
-      else if (CarSpeed < speedTarget * 1.1) //0.8
+      else if (CarSpeed1 < speedTarget1 * 1.1) //0.8
       {
-        cnt++;
-        if (cnt > 5)
+        cnt1++;
+        if (cnt1 > 5)
         {
-          a_flag = 0;
-          MotorOut = speedTarget * 2500;
+          a_flag1 = 0;
+          MotorOut1 = speedTarget1 * 2500;
         }
       }
       else
       {
-        a_flag = 0;
-        MotorOut = speedTarget * 2500;
+        a_flag1 = 0;
+        MotorOut1 = speedTarget1 * 2500;
       }
     }
     else
     {
-      if (CarSpeed < speedTarget * 1.0)
+      if (CarSpeed1 < speedTarget1 * 1.0)
       {
-        MotorOut = speedTarget * -3000; //speedTarget1
+        MotorOut1 = speedTarget1 * -3000; //speedTarget1
       }
-      else if (CarSpeed < speedTarget * 1.1) //0.8
+      else if (CarSpeed1 < speedTarget1 * 1.1) //0.8
       {
-        cnt++;
-        if (cnt > 5)
+        cnt1++;
+        if (cnt1 > 5)
         {
-          a_flag = 0;
-          MotorOut = speedTarget * 2500;
+          a_flag1 = 0;
+          MotorOut1 = speedTarget1 * 2500;
         }
       }
       else
       {
-        a_flag = 0;
-        MotorOut = speedTarget * 2500;
+        a_flag1 = 0;
+        MotorOut1 = speedTarget1 * 2500;
       }
     }
   }
-  else if (d_flag)
+  else if (d_flag1)
   {
-    if (speedTarget > 0)
+    if (speedTarget1 > 0)
     {
-      if (CarSpeed > speedTarget * 1.0)
+      if (CarSpeed1 > speedTarget1 * 1.0)
       {
-        MotorOut = speedTarget * -3000;
+        MotorOut1 = speedTarget1 * -3000;
       }
-      else if (CarSpeed > speedTarget * 0.8)
+      else if (CarSpeed1 > speedTarget1 * 0.8)
       {
-        cnt++;
-        if (cnt > 5)
+        cnt1++;
+        if (cnt1 > 5)
         {
-          d_flag = 0;
-          MotorOut = speedTarget * 2500;
+          d_flag1 = 0;
+          MotorOut1 = speedTarget1 * 2500;
         }
       }
       else //if(speedTarget>0)//////
       {
-        d_flag = 0;
-        MotorOut = speedTarget * 2500;
+        d_flag1 = 0;
+        MotorOut1 = speedTarget1 * 2500;
       }
     }
     else
     {
-      if (CarSpeed > speedTarget * 1.0)
+      if (CarSpeed1 > speedTarget1 * 1.0)
       {
-        MotorOut = speedTarget * 5000;
+        MotorOut1 = speedTarget1 * 5000;
       }
-      else if (CarSpeed > speedTarget * 0.8)
+      else if (CarSpeed1 > speedTarget1 * 0.8)
       {
-        cnt++;
-        if (cnt > 5)
+        cnt1++;
+        if (cnt1 > 5)
         {
-          d_flag = 0;
-          MotorOut = speedTarget * 2500;
+          d_flag1 = 0;
+          MotorOut1 = speedTarget1 * 2500;
         }
       }
       else //if(speedTarget>0)//////
       {
-        d_flag = 0;
-        MotorOut = speedTarget * 2500;
+        d_flag1 = 0;
+        MotorOut1 = speedTarget1 * 2500;
       }
     }
   }
   else
   {
-    MotorOut += Speed_Control_PI(L_flag);
-  }
-  //static set
-  if (L_flag)
-  {
-    Lef_pp_cnt = pp_cnt;
-    Lef_pp = pp;
-    Lef_BB = BB;
-    a_flag1 = a_flag;
-    d_flag1 = d_flag;
-    cnt1 = cnt;
-    MotorOut1 = MotorOut;
-  }
-  else if (!L_flag)
-  {
-    Rig_pp_cnt = pp_cnt;
-    Rig_pp = pp;
-    Rig_BB = BB;
-    a_flag2 = a_flag;
-    d_flag2 = d_flag;
-    cnt2 = cnt;
-    MotorOut2 = MotorOut;
-  }
-  // Moto_Out();
-}
-
-float Speed_Control_PI(bool L_flag)
-{
-  /* extern2local */
-  float SpeedE = 0, SpeedEE = 0;
-  /* static2local */
-  int frame = 0;
-  static int frame1 = 0, frame2 = 0;
-  bool frame_flag = 0;
-  static bool frame_flag1 = 0, frame_flag2 = 0;
-  float OldE;
-  static float OldE1 = 0, OldE2 = 0;
-  /* local */
-  float Speed_kP, Speed_kI;
-  if (L_flag)
-  {
-    SpeedE = SpeedE1;
-    SpeedEE = SpeedEE1;
-    frame_flag = frame_flag1;
-    frame = frame1;
-    OldE = OldE1;
-  }
-  else if (!L_flag)
-  {
-    SpeedE = SpeedE2;
-    SpeedEE = SpeedEE2;
-    frame_flag = frame_flag2;
-    frame = frame2;
-    OldE = OldE2;
-  }
-  { /* 左右轮PI 空中括号便于折叠*/
-    if (SpeedE > 1 || SpeedE < -1)
-    {
-      frame_flag = 0;
-      frame = 0;
-    }
-    if (SpeedE < 0.15 && SpeedE > -0.15 && frame_flag == 0)
+    /******* 左轮 *******/
+    if (SpeedE1 < 0.15 && SpeedE1 > -0.15 && frame_flag1 == 0)
     {
       /* 首次进入置位，开始数帧 */
-      frame_flag = 1;
-      frame = 0;
+      frame_flag1 = 1;
+      frame1 = 0;
     }
-    if (frame_flag)
+    if (frame_flag1)
     {
-      frame++;
+      frame1++;
     }
-    SpeedEE = SpeedE - OldE;
-    if (SpeedEE > 0.1 || SpeedEE < -0.1)
+
+    SpeedEE1 = SpeedE1 - OldE1;
+    if (SpeedEE1 > 0.1 || SpeedEE1 < -0.1)
     {
-      Speed_kP = 0;
+      Speed_kP1 = 0;
     }
     else
     {
-      Speed_kP = PID_SPEED.P;
+      Speed_kP1 = PID_SPEED.P;
     }
-    if (frame <= 10 && frame_flag == 1)
+    if (frame1 <= 10 && frame_flag1 == 1)
     {
       /* 小于10帧 且开始数帧*/
-      Speed_kI = 0;
+      Speed_kI1 = 0;
     }
     else
     {
       /* 继续数帧 不重复进入置位 I不为0 */
-      frame = 11;
-      Speed_kI = PID_SPEED.I;
+      frame1 = 11;
+      Speed_kI1 = PID_SPEED.I;
     }
-  }
-  /* set statics & out*/
-  if (L_flag)
-  {
-    frame_flag1 = frame_flag;
-    frame1 = frame;
-    OldE1 = SpeedE1;
-  }
-  else if (!L_flag)
-  {
-    frame_flag2 = frame_flag;
-    frame2 = frame;
-    OldE2 = SpeedE2;
+
+    SpeedControlOutE1 = (Speed_kP1 * SpeedEE1 + Speed_kI1 * SpeedE1);
+    MotorOut1 += SpeedControlOutE1;
   }
 
-  return (Speed_kP * SpeedEE + Speed_kI * SpeedE);
+  if (Rig_pp)
+  {
+    if (CarSpeed2 > SpeedGoal || stop_line > 30)
+    {
+      MotorOut2 = -MOTOR_RANGE;
+    }
+    else
+    {
+      Rig_pp_cnt++;
+      if (Rig_pp_cnt > 254)
+      {
+        Rig_pp = 0;
+        Rig_pp_cnt = 0;
+      }
+      MotorOut2 = 0;
+    }
+  }
+  else if (a_flag2)
+  {
+    if (speedTarget2 > 0)
+    {
+      if (CarSpeed2 < speedTarget2 * 1.0)
+      {
+        MotorOut2 = speedTarget2 * 5000;
+      }
+      else if (CarSpeed2 < speedTarget2 * 1.1)
+      {
+        cnt2++;
+        if (cnt2 > 5)
+        {
+          a_flag2 = 0;
+          MotorOut2 = speedTarget2 * 2500;
+        }
+      }
+      else
+      {
+        a_flag2 = 0;
+        MotorOut2 = speedTarget2 * 2500;
+      }
+    }
+    else
+    {
+      if (CarSpeed2 < speedTarget2 * 1.0)
+      {
+        MotorOut2 = speedTarget2 * -3000;
+      }
+      else if (CarSpeed2 < speedTarget2 * 1.1)
+      {
+        cnt2++;
+        if (cnt2 > 5)
+        {
+          a_flag2 = 0;
+          MotorOut2 = speedTarget2 * 2500;
+        }
+      }
+      else
+      {
+        a_flag2 = 0;
+        MotorOut2 = speedTarget2 * 2500;
+      }
+    }
+  }
+  else if (d_flag2)
+  {
+    if (speedTarget2 > 0)
+    {
+      if (CarSpeed2 > speedTarget2 * 1.0)
+      {
+        MotorOut2 = speedTarget2 * -3000;
+      }
+      else if (CarSpeed2 > speedTarget2 * 0.8)
+      {
+        cnt2++;
+        if (cnt2 > 5)
+        {
+          d_flag2 = 0;
+          MotorOut2 = speedTarget2 * 2500;
+        }
+      }
+      else
+      {
+        d_flag2 = 0;
+        MotorOut2 = speedTarget2 * 2500;
+      }
+    }
+    else
+    {
+      if (CarSpeed2 > speedTarget2 * 1.0)
+      {
+        MotorOut2 = speedTarget2 * 5000;
+      }
+      else if (CarSpeed2 > speedTarget2 * 0.8)
+      {
+        cnt2++;
+        if (cnt2 > 5)
+        {
+          d_flag2 = 0;
+          MotorOut2 = speedTarget2 * 2500;
+        }
+      }
+      else
+      {
+        d_flag2 = 0;
+        MotorOut2 = speedTarget2 * 2500;
+      }
+    }
+  }
+  else
+  {
+    /******* 右轮 *******/
+    if (SpeedE2 < 0.15 && SpeedE2 > -0.15 && frame_flag2 == 0)
+    {
+      /* 首次进入置位，开始数帧 */
+      frame_flag2 = 1;
+      frame2 = 0;
+    }
+
+    if (frame_flag2)
+    {
+      frame2++;
+    }
+    SpeedEE2 = SpeedE2 - OldE2;
+    if (SpeedEE2 > 0.1 || SpeedEE2 < -0.1)
+    {
+      Speed_kP2 = 0;
+    }
+    else
+    {
+      Speed_kP2 = PID_SPEED.P;
+    }
+    if (frame2 <= 10 && frame_flag2 == 1)
+    {
+      /* 小于10帧 且开始数帧*/
+      Speed_kI2 = 0;
+    }
+    else
+    {
+      /* 继续数帧 不重复进入置位 I不为0 */
+      frame2 = 11;
+      Speed_kI2 = PID_SPEED.I;
+    }
+    SpeedControlOutE2 = (Speed_kP2 * SpeedEE2 + Speed_kI2 * SpeedE2);
+    MotorOut2 += SpeedControlOutE2;
+  }
+
+  OldE1 = SpeedE1;
+  OldE2 = SpeedE2;
+
+  Moto_Out();
 }
+
 
 void Kalman_Filter(void)
 {
@@ -876,57 +981,3 @@ void Mean_Turn_Out(void)
   }
 }
 
-/*************************************************************************
-*  函数名称：void Road_Speed_Change(void)
-*  功能说明：道路状态机切换速度变化
-*  参数说明：
-*  函数返回：
-*  修改时间：2020.7.9
-*  备    注：用于直路->弯 弯->直路
-*************************************************************************/
-void Road_Speed_Change(void)
-{
-  static int straight_line_cnt = 0;
-  static int count = 0;
-  if (road_change_flag)
-  {
-    straight_line_cnt = 0;
-    if (Road == 0 && Road0_flag == 4 || (Road == 1 && Road1_flag == 1))
-    {
-      if (CarSpeed1 > 2.5 && CarSpeed1 - speedTarget1 > 0.5 || (CarSpeed2 < 2.5 && speedTarget2 - CarSpeed2 > 0.5))
-      {
-        MotorOut1 = speedTarget1 * -3000; //MotorOut1 = speedTarget1 * 2500;
-        MotorOut2 = speedTarget2 * 5000;
-        count++;
-        if (count > 2)
-        {
-          MotorOut1 = speedTarget1 * 2500;
-          MotorOut2 = speedTarget2 * 2500;
-          road_change_flag = 0;
-          count = 0;
-        }
-      }
-    }
-    else if (Road == 0 && Road0_flag == 5 || (Road == 2 && Road2_flag == 1))
-    {
-      straight_line_cnt = 0;
-      if (CarSpeed1 - CarSpeed2 <  0.5))
-      {
-        MotorOut2 = speedTarget2 *-3000; //MotorOut2 = speedTarget2 * 2500;
-        MotorOut1 = speedTarget1 * 5000;
-        count++;
-        if (count > 2)
-        {
-          MotorOut2 = speedTarget2 * 2500;
-          MotorOut1 = speedTarget1 * 2500;
-          road_change_flag = 0;
-          count = 0;
-        }
-      }
-    }
-    else if (Road == 0 && Road0_flag == 0)
-    {
-      lib_speed_set(3.5);
-      road_change_flag = 0;
-    }
-  }

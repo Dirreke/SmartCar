@@ -91,7 +91,7 @@ void Dubug_key(void)
                 break;
             case 6:
                 //PID_TURN_CAM_EXT.P += 0.1;
-              PID_CAR_CENTER_CAM.D += 0.1;
+              PID_CAR_STRAIGHT_CAM.P += 0.1;
                 break;
             case 7:
                 //PID_TURN_CAM_EXT.D += 0.1;
@@ -265,7 +265,7 @@ void Dubug_key(void)
                 break;
             case 6:
                 //PID_TURN_CAM_EXT.P -= 0.1;
-              PID_CAR_CENTER_CAM.D -= 0.1;
+              PID_CAR_STRAIGHT_CAM.P -= 0.1;
                 break;
             case 7:
                 //PID_TURN_CAM_EXT.D -= 0.1;
@@ -454,8 +454,8 @@ void ips_show_debug(int ips_num)
         ips200_showfloat(0, 13, PID_SPEED.I, 4, 2);
         break;
     case 6:
-        ips200_showstr(0, 12, "CamCenterD");
-        ips200_showfloat(0, 13, PID_CAR_CENTER_CAM.D,4,2);//PID_TURN_CAM_EXT.P, 4, 2);
+        ips200_showstr(0, 12, "PID_CAR_STRAIGHT_CAM.P");
+        ips200_showfloat(0, 13, PID_CAR_STRAIGHT_CAM.P,4,2);//PID_TURN_CAM_EXT.P, 4, 2);
         break;
     case 7:
         ips200_showstr(0, 12, "CamStraightD");
