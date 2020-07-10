@@ -161,12 +161,17 @@ float M_Slope_fig(void)
   {
     Mid_slope = 998;
   }
-
-  if ((Mid_slope >= 1.2 || Mid_slope <= -1.2) && Mid_slope != 999)
+  if (Mid_slope != 999)
   {
-    Mid_slope = 998;
+    if (Mid_slope >= 1.4 || Mid_slope <= -1.4)
+    {
+      Mid_slope = 998;
+    }
+    else if (Mid_slope >= 1.2 || Mid_slope <= -1.2)
+    {
+      Mid_slope = pow(Mid_slope, 3);
+    }
   }
-
   if (Mid_slope == 999 || Mid_slope == 998)
   {
     return 0;

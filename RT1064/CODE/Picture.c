@@ -52,9 +52,10 @@ void camera_dispose_main(void) //摄像头处理主函数
     start_stop_find();
     Road_rec(); //利用左右边线斜率识别赛道
     Threshold_change();
-    Pic_Fix_Line();      //补线处理
-    Pic_DrawMid();       //计算去畸前中心线-仅上位机用
-    Pic_DrawMid_und();   //计算去畸后中线
+    Pic_Fix_Line();    //补线处理
+    LR_Slope_fig();
+    Pic_DrawMid();     //计算去畸前中心线-仅上位机用
+    Pic_DrawMid_und(); //计算去畸后中线
     // Pic_offset_fig();    //offset计算//注释Cam_offset2
     // Pic_offset_filter(); //offset滤波
 
@@ -956,22 +957,30 @@ void jump_point_cnt(void)
 {
     int cnt = 0;
     int temp = 0;
+    int mid_p_cnt = 0; //中间跳变点数
     for (int i = Fir_row; i < Last_row; i++)
     {
         cnt = 0;
         temp = 0;
         jump_p[i] = 0;
-        for (int j = Fir_col + 1; j < Last_col; j++)
+        for (int j = Fir_col + 10; j < Last_col - 10; j++)
         {
             if (Pixle[i][j] != Pixle[i][j - 1])
             {
                 if (j - temp <= 5)
                 {
                     cnt++;
+                    if (j >= 30 && j <= 50)
+                    {
+                        mid_p_cnt++;
+                    }
                 }
                 else if (cnt > jump_p[i])
                 {
-                    jump_p[i] = cnt;
+                    if (mid_p_cnt > 1)
+                    {
+                        jump_p[i] = cnt;
+                    }
                     cnt = 0;
                 }
                 temp = j;
@@ -979,7 +988,10 @@ void jump_point_cnt(void)
         }
         if (cnt > jump_p[i])
         {
-            jump_p[i] = cnt;
+            if (mid_p_cnt > 1)
+            {
+                jump_p[i] = cnt;
+            }
         }
         // jump_p[i] = cnt;
     }
@@ -1621,7 +1633,7 @@ void Pic_Fix_Line(void)
         // }
         else if (Road1_flag == 6)
         {
-            for (int i = Fir_row; i < Last_row - 5; ++i)
+            for (int i = Fir_row + 2; i < Last_row - 5; ++i)
             {
                 if (Lef[i] <= Fir_col + 5 || Lef[i] > 50)
                 {
@@ -1637,12 +1649,13 @@ void Pic_Fix_Line(void)
             }
             if (get_flag == 1)
             {
-                for (int i = ytemp + 1; i < Last_row - 5; ++i)
+                for (int i = ytemp - 2; i < Last_row - 5; ++i)
                 {
                     if (Lef[i] - Lef[i + 2] < 5 && Lef[i + 2] - Lef[i + 4] < 5 && Lef[i] - Lef[i + 2] >= 0 && Lef[i + 2] - Lef[i + 4] >= 0)
                     {
                         continue;
                     }
+
                     else if ((i + 3 - ytemp) > 4)
                     {
                         slope = Slope(Lef[i + 3], i + 3, xtemp, ytemp); //Slope(int F1x,int F1y,int F2x,int F2y)
@@ -1650,7 +1663,7 @@ void Pic_Fix_Line(void)
                         {
                             for (int j = i + 4; j < 55; j++)
                             {
-                                Lef[j] = (int)(Lef[i] - (i - j) / slope);
+                                Lef[j] = (int)(Lef[i + 3] - (i + 3 - j) / slope);
                             }
                             Pic_undistort(1, 0);
                             break;
@@ -1790,7 +1803,7 @@ void Pic_Fix_Line(void)
         else if (Road2_flag == 6)
         {
             get_flag = 0;
-            for (int i = Fir_row; i < Last_row - 5; ++i)
+            for (int i = Fir_row + 2; i < Last_row - 5; ++i)
             {
                 if (Rig[i] >= Last_col - 5 || Rig[i] < 30)
                 {
@@ -1806,7 +1819,7 @@ void Pic_Fix_Line(void)
             }
             if (get_flag == 1)
             {
-                for (int i = ytemp + 1; i < Last_row - 5; ++i)
+                for (int i = ytemp - 2; i < Last_row - 5; ++i)
                 {
                     if (Rig[i + 2] - Rig[i] < 5 && Rig[i + 4] - Rig[i + 2] < 5 && Rig[i + 2] - Rig[i] >= 0 && Rig[i + 4] - Rig[i + 2] >= 0)
                     {
@@ -1819,7 +1832,7 @@ void Pic_Fix_Line(void)
                         {
                             for (int j = i + 4; j < 55; j++)
                             {
-                                Rig[j] = (int)(Rig[i] - (i - j) / slope);
+                                Rig[j] = (int)(Rig[i + 3] - (i + 3 - j) / slope);
                             }
                             Pic_undistort(0, 1);
                             break;

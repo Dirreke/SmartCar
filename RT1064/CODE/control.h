@@ -12,6 +12,7 @@ extern float Turn_EM_Out1 ,Turn_EM_Out2 ,Turn_EM_Out;
 extern PID PID_CENTER_EM ,PID_STRAIGHT_EM;
 
 extern bool speed_change_flag;
+extern bool road_change_flag;
 extern int mix_choice;
 
 extern float DIFF_KKK;

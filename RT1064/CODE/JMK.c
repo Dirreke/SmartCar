@@ -580,9 +580,11 @@ float speed_mean_filter(float D_new)
   else
   {
     sum += D_new;
-    num = num % FILTER_ARRAY_SIZE + FILTER_ARRAY_SIZE;
+    num = num % FILTER_A
+                    num = num % FILTER_ARRAY_SIZE + FILTER_ARRAY_SIZE;
     sum -= D[num - FILTER_ARRAY_SIZE];
     D[num - FILTER_ARRAY_SIZE] = D_new;
     return sum * 0.05;
   }
 }
+
