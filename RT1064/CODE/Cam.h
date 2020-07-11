@@ -12,3 +12,6 @@ float car_center(void);
 float car_straight(float car_dias);
 void Turn_Cam_New(void);
 float M_Slope_fig(void);
+
+extern float DEBUG_SLOPE;
+extern int DEBUG_MIDMAXMIN;

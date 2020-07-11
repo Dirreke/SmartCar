@@ -7,6 +7,8 @@ int Lef_circle;
 int Rig_circle; //左右边线寻找环状黑线标志位
 int Lef_break_point;
 int Rig_break_point; //左右环状黑线拐弯点
+// int Lef_break_point_und = 0;
+// int Rig_break_point_und = 0;
 
 bool barn_reset_flag; //干簧管及起跑线搜索重打开延时
 
@@ -151,7 +153,44 @@ void Pic_find_circle(void)
         }
     }
 }
+# if 0
+//已放入补线中
+/*************************************************************************
+*  函数名称：void break_point_find_und(void)
+*  功能说明：圆环内环去畸后的点
+*  参数说明：无
+*  函数返回：无
+*  修改时间：2020.07.11
+*  备    注：
 
+*************************************************************************/
+
+void break_point_find_und(bool L, bool R)
+{
+    if (Lef_circle == 1 && L)
+    {
+        Lef_break_point_und = 0;
+        for (int i = FIG_AREA_NEAR; i < FIG_AREA_FAR; --i)
+        {
+            if (New_Lef[i] != -MIDMAP && New_Lef[i] < -50 && New_Lef[i] > Lef_break_point_und)
+            {
+                Lef_break_point_und = New_Lef[i];
+            }
+        }
+    }
+    if (Rig_circle == 1 && R)
+    {
+        Rig_break_point_und = 0;
+        for (int i = FIG_AREA_NEAR; i < FIG_AREA_FAR; --i)
+        {
+            if (New_Rig[i] != MIDMAP && New_Rig[i] > 50 && New_Rig[i] < Rig_break_point_und)
+            {
+                Rig_break_point_und = New_Rig[i];
+            }
+        }
+    }
+}
+#endif
 /*************************************************************************
 *  函数名称：void start_stop_find(void)
 *  功能说明：起跑线识别
@@ -568,7 +607,7 @@ void Road_rec(void)
         {
             Road0_flag = 1;
         }
-        else if ((Allwhitestart > 45 && Allwhiteend < 52) && Allwhitestart - Allwhiteend > 3 && whitecnt > 2000)
+        else if (Allwhitestart > 45 && Allwhiteend != 20 && (Allwhiteend < 40 || (Allwhiteend < 52 && Road0_flag == 2)) && Allwhitestart - Allwhiteend > 3 && whitecnt > 2000)
         {
             Road0_flag = 2;
         }
@@ -635,7 +674,7 @@ void TurnLeft_Process(void)
             Rig[i + 2] - Rig[i] > 0)
         //可能较严，（出现连续边线为40）
         {
-            temp = i;
+            temp = i + 2;
             break;
         }
     }
@@ -662,7 +701,7 @@ void TurnLeft_Process(void)
     {
         if (Rig[i - 1] > 40)
         {
-            turn_stop = i + 1;
+            turn_stop = i;
             break;
         }
         dis1 = Rig[i] - Rig[i - 1];
@@ -676,7 +715,7 @@ void TurnLeft_Process(void)
 
             if (i == Fir_row + 1)
             {
-                turn_stop = i;
+                turn_stop = i - 1;
             }
             continue;
         }
@@ -686,7 +725,7 @@ void TurnLeft_Process(void)
 
             if (i == Fir_row + 1)
             {
-                turn_stop = i;
+                turn_stop = i - 1;
             }
             continue;
         }
@@ -701,7 +740,7 @@ void TurnLeft_Process(void)
     // {
     //     turn_stop_flag = 1;
     // }
-    if (Road0_flag != 4 && Rig[turn_stop] < 34 && dis > 4)
+    if (Road0_flag != 4 && Rig[turn_stop] < 36 && dis > 4)
     {
         Road04_count++;
         if (Road04_count == 2)
@@ -742,7 +781,7 @@ void TurnRight_Process(void)
             Lef[i + 3] - Lef[i + 5] > 0 && Lef[i + 5] - Lef[i + 7] > 0 && Lef[i + 7] - Lef[i + 9] > 0 && Lef[i + 9] - Lef[i + 11] > 0 &&
             Lef[i] - Lef[i + 2] > 0)
         {
-            temp = i;
+            temp = i + 2;
             break;
         }
     }
@@ -768,7 +807,7 @@ void TurnRight_Process(void)
     {
         if (Lef[i - 1] < 40)
         {
-            turn_stop = i + 1;
+            turn_stop = i;
             break;
         }
         dis1 = Lef[i - 1] - Lef[i];
@@ -805,7 +844,7 @@ void TurnRight_Process(void)
     // {
     //     turn_stop_flag = 1;
     // }
-    if (Road0_flag != 5 && Lef[turn_stop] > 45 && dis > 4)
+    if (Road0_flag != 5 && Lef[turn_stop] > 43 && dis > 4)
     {
         Road05_count++;
         if (Road05_count == 2)
@@ -1070,7 +1109,7 @@ void Road1_zhuangtaiji(void)
 
 void Road2_zhuangtaiji(void)
 {
-    static int Road0_count = 0,Road21_count = 0, Road22_count = 0, Road23_count = 0, Road24_count = 0, Road25_count = 0, Road26_count = 0, Road27_count = 0;
+    static int Road0_count = 0, Road21_count = 0, Road22_count = 0, Road23_count = 0, Road24_count = 0, Road25_count = 0, Road26_count = 0, Road27_count = 0;
     int dis = 0, dis1 = 0;
     if (Road2_flag == 0) //
     {
@@ -1092,10 +1131,10 @@ void Road2_zhuangtaiji(void)
         {
             Road21_count = 0;
         }
-        if(Allwhitestart < 35 && Allwhitestart != 20)
+        if (Allwhitestart < 35 && Allwhitestart != 20)
         {
-            Road0_count ++;
-            if(Road0_flag > 1)
+            Road0_count++;
+            if (Road0_flag > 1)
             {
                 Road0_count = 0;
                 Road = 0;
@@ -1106,7 +1145,6 @@ void Road2_zhuangtaiji(void)
         {
             Road0_count = 0;
         }
-        
     }
     else if (Road2_flag == 1) //
     {

@@ -122,63 +122,134 @@ void Turn_Cam_New(void)
   //Servo_Duty(-Turn_Cam_Out);
 }
 float Mid_slope = 0;
+float DEBUG_SLOPE = 0;
+int DEBUG_MIDMAXMIN = 0;
 float M_Slope_fig(void)
 {
   int i;
-  float xsum = 0, ysum = 0, xysum = 0, x2sum = 0, count = 0;
+  float xsum = 0, ysum = 0, xysum = 0, x2sum = 0;
   int max = -800, min = 0;
-  for (i = 5; i < 45; i++)
+  int jump_change_point = 0;
+  int jcp_old = FIG_AREA_NEAR;
+  int count = 0, cnt_max = 0;
+  int long_start = FIG_AREA_NEAR, long_end = 0;
+  do //这个do后面是算跳变点的，要是不连续算个p斜率，取最长连续段算个斜率p
   {
-    if (i <= FIG_AREA_NEAR && i >= FIG_AREA_FAR && New_Mid[i] != 999)
+    gmyshuoqianbuchulai(jcp_old, jump_change_point);
+
+    for (i = jump_change_point; i < jcp_old; i++)
     {
-      if (New_Mid[i] > max)
+      if (i <= FIG_AREA_NEAR && i >= FIG_AREA_FAR && New_Mid[i] != 999)
       {
-        max = New_Mid[i];
+        count++;
       }
-      if (New_Mid[i] < min)
-      {
-        min = New_Mid[i];
-      }
-      xsum += New_Mid[i];
-      ysum += i;
-      xysum += New_Mid[i] * i;
-      x2sum += New_Mid[i] * New_Mid[i];
-      count++;
     }
-  }
-  if (abs(max - min) > 25)
-  {
-    if (count * x2sum - xsum * xsum)
+    if (count > cnt_max)
     {
-      Mid_slope = -(count * xysum - xsum * ysum) / (count * x2sum - xsum * xsum);
+      cnt_max = count;
+      long_start = jcp_old;
+      long_end = jump_change_point;
+    }
+
+    jcp_old = jump_change_point;
+  } while (jump_change_point != FIG_AREA_FAR);
+  { //如果看到这段注释 下面是算斜率 可以折起来了
+    for (i = jump_change_point; i < jcp_old; i++)
+    {
+      if (i <= FIG_AREA_NEAR && i >= FIG_AREA_FAR && New_Mid[i] != 999)
+      {
+        if (New_Mid[i] > max)
+        {
+          max = New_Mid[i];
+        }
+        if (New_Mid[i] < min)
+        {
+          min = New_Mid[i];
+        }
+        xsum += New_Mid[i];
+        ysum += i;
+        xysum += New_Mid[i] * i;
+        x2sum += New_Mid[i] * New_Mid[i];
+        count++;
+      }
+    }
+    cnt_max = count;
+    DEBUG_MIDMAXMIN = abs(max - min);
+    if (abs(max - min) > 25)
+    {
+      if (count * x2sum - xsum * xsum)
+      {
+        Mid_slope = -(count * xysum - xsum * ysum) / (count * x2sum - xsum * xsum);
+      }
+      else
+      {
+        Mid_slope = 999;
+      }
     }
     else
     {
-      Mid_slope = 999;
-    }
-  }
-  else
-  {
-    Mid_slope = 998;
-  }
-  if (Mid_slope != 999)
-  {
-    if (Mid_slope >= 1.4 || Mid_slope <= -1.4)
-    {
       Mid_slope = 998;
     }
-    else if (Mid_slope >= 1.2 || Mid_slope <= -1.2)
+    DEBUG_SLOPE = Mid_slope;
+  }
+  { //如果看到这段注释 下面是对斜率进行了一些神奇操作 然后return角度 记得是弧度！！好了折起来吧
+    if (Mid_slope != 999)
     {
-      Mid_slope = pow(Mid_slope, 3);
+      if (Mid_slope >= 1.4 || Mid_slope <= -1.4)
+      {
+        Mid_slope = 998;
+      }
+      else if (Mid_slope >= 1.2 || Mid_slope <= -1.2)
+      {
+        Mid_slope = pow(Mid_slope, 3);
+      }
+    }
+    if (Mid_slope == 999 || Mid_slope == 998)
+    {
+      return 0;
+    }
+    else
+    {
+      return atan(Mid_slope * UNDISTORT_PYK * UNDISTORT_XPK) > 0 ? 1.57 - atan(Mid_slope * UNDISTORT_PYK * UNDISTORT_XPK) : -1.57 + atan(-Mid_slope * UNDISTORT_PYK * UNDISTORT_XPK);
     }
   }
-  if (Mid_slope == 999 || Mid_slope == 998)
-  {
-    return 0;
-  }
+}
 
-  else
+void gmyshuoqianbuchulai(int temp, int &turn)
+{
+  int dis = 0, dis1 = 0;
+  dis = New_Mid[temp + 1] - New_Mid[temp];
+  for (int i = temp; i > FIG_AREA_FAR; --i)//从别的地方拿过来的 去search.c的TurnLeft_Process()看正版 折起来吧
   {
-    return atan(Mid_slope * UNDISTORT_PYK * UNDISTORT_XPK) > 0 ? 1.57 - atan(Mid_slope * UNDISTORT_PYK * UNDISTORT_XPK) : -1.57 + atan(-Mid_slope * UNDISTORT_PYK * UNDISTORT_XPK);
+    dis1 = New_Mid[i] - New_Mid[i - 1];
+    if (dis1 < 0)
+    {
+      turn = i;
+      break;
+    }
+    else if (dis1 < dis)
+    {
+
+      if (i == FIG_AREA_FAR + 1)
+      {
+        turn = i - 1;
+      }
+      continue;
+    }
+    else if (dis1 <= 2 * dis + 1)
+    {
+      dis = dis1;
+
+      if (i == FIG_AREA_FAR + 1)
+      {
+        turn = i - 1;
+      }
+      continue;
+    }
+    else
+    {
+      turn = i;
+      break;
+    }
   }
 }

@@ -52,7 +52,7 @@ void camera_dispose_main(void) //摄像头处理主函数
     start_stop_find();
     Road_rec(); //利用左右边线斜率识别赛道
     Threshold_change();
-    Pic_Fix_Line();    //补线处理
+    Pic_Fix_Line(); //补线处理
     LR_Slope_fig();
     Pic_DrawMid();     //计算去畸前中心线-仅上位机用
     Pic_DrawMid_und(); //计算去畸后中线
@@ -313,6 +313,7 @@ void Pic_DrawLRside(void)
     bool search_flag1 = 0, search_flag2 = 0;
     bool Side_flag;
     bool Side_true = 0;
+    // int Circle_+Road_End = 0;
     Lef_circle_point = 0;
     Rig_circle_point = 0;
     for (i = Fir_row; i < LCDH; i++)
@@ -653,6 +654,11 @@ void Pic_DrawLRside(void)
         }
         if (Side_true == 1)
         {
+            for (int k = Fir_row; k < i - 1; ++k)
+            {
+                Rig[k] = 78;
+                Lef[k] = 1;
+            }
             i += 2;
             for (; i < Last_row; ++i)
             {
@@ -716,6 +722,11 @@ void Pic_DrawLRside(void)
         }
         if (Side_true == 1)
         {
+            for (int k = Fir_row; k < i - 1; ++k)
+            {
+                Rig[k] = 78;
+                Lef[k] = 1;
+            }
             i += 2;
             for (; i < Last_row; ++i)
             {
@@ -1179,6 +1190,7 @@ void Threshold_change(void)
         threshold_offset2 = -5;
     }
 }
+
 /*************************************************************************
 *  函数名称：void Fix_line()
 *  功能说明：岔路补线处理
@@ -1202,6 +1214,8 @@ void Pic_Fix_Line(void)
     // int k;
     int xtemp, ytemp, get_flag = 0;
     static int xtemp_static, ytemp_static;
+    int Circle_inner_end_cnt = 0;
+    bool Circle_inner_end_flag = 0;
     //static float stat_slope;
     //static float stat_slope2;
     //static char road1_flag1 = 1; //0表示已计算完进圆环斜率，1表示已经出圆环，再次进圆环时计算补线斜率
@@ -1210,6 +1224,10 @@ void Pic_Fix_Line(void)
     //static bool road1_flag3 = 0, road2_flag3 = 0;
     // static bool road1_flag4, road2_flag4;
     static bool Road_flag1 = 0, Road_flag2 = 0;
+    int Lef_break_point_und = 0;
+    int Rig_break_point_und = 0;
+    int Rig_break_point_max = MIDMAP;
+    int Lef_break_point_max = -MIDMAP;
     if (Road == 0)
     {
         if (Road0_flag == 1)
@@ -1522,7 +1540,7 @@ void Pic_Fix_Line(void)
                 {
                     continue;
                 }
-                if (Lef[i - 4] - Lef[i - 2] < 5 && Lef[i - 2] - Lef[i] < 5 && Lef[i] - Lef[i + 1] > 15 && Pixle[i + 2][Lef[i] - 5] == 1)
+                if (Lef[i - 4] - Lef[i - 2] < 5 && Lef[i - 2] - Lef[i] < 5 && Lef[i] - Lef[i + 1] > 15 && Pixle[i + 2][Lef[i] - 5] == 1) // 开始的时候前面18-20行是0
                 {
 
                     slope_static = Slope(Lef[i], i, 79, 54);
@@ -1537,14 +1555,58 @@ void Pic_Fix_Line(void)
                 for (int k = Fir_row + 3; k < ytemp_static; k++)
                 {
                     Rig[k] = (int)(xtemp_static - (ytemp_static - k) / slope_static);
+                    Lef[k] = 1;
                 }
                 for (int k = ytemp_static; k < 55; k++)
                 {
                     // Rig[k] = (int)((xtemp_static - (ytemp_static - k) / slope_static) / 2) + xtemp_static / 2;
                     Rig[k] = (int)((k - ytemp_static) * 2 / slope_static / 3) + xtemp_static;
+                    Lef[k] = 1;
                 }
+                
 
-                Pic_undistort(0, 1);
+                Pic_undistort(1, 1);
+            }
+            else //按内环边线走
+            {
+                // Lef_break_point_und = 0;
+                for (int i = FIG_AREA_NEAR; i > FIG_AREA_FAR; --i)
+                {
+                    if (New_Lef[i] != -MIDMAP && New_Lef[i] < -50 && New_Lef[i] > Lef_break_point_max)
+                    {
+                        Lef_break_point_und = i;
+                        Lef_break_point_max=New_Lef[i];
+                    }
+                } // 去畸后内环中点
+                // break_point_find_und(1, 0);
+                if (Lef_break_point_und != 0)
+                {
+                    for (int j = Lef_break_point_und; j >= FIG_AREA_FAR; --j)
+                    {
+                        New_Rig[j] = MIDMAP;       //右边线置空；
+                        if (New_Lef[j] == -MIDMAP) //左边线空后停止使用左边线；
+                        {
+                            Circle_inner_end_cnt++;
+                            if (Circle_inner_end_cnt > 8)
+                            {
+                                Circle_inner_end_flag = 1;
+                            }
+                        }
+                        else
+                        {
+                            Circle_inner_end_cnt = 0;
+                        }
+                        if (Circle_inner_end_flag)
+                        {
+                            New_Lef[j] = -MIDMAP;
+                        }
+                        //可以继续写变小后不变大
+                    }
+                    for (int j = Lef_break_point_und; j < 59; ++j)
+                    {
+                        New_Lef[j] = -MIDMAP;
+                    }
+                }
             }
         }
 
@@ -1683,6 +1745,11 @@ void Pic_Fix_Line(void)
                 Road_flag1 = 1;
             }
             // road2_flag2 = 0;
+            Rig[16] = 79;
+            Rig[17] = 79;
+            Rig[18] = 79;
+            Rig[19] = 79;
+
             for (int i = Fir_row; i < Last_row - 20; i++)
             {
                 if (Last_col - Rig[i] < 2)
@@ -1708,13 +1775,56 @@ void Pic_Fix_Line(void)
                 for (int k = Fir_row + 3; k < ytemp_static; k++)
                 {
                     Lef[k] = (int)(xtemp_static - (ytemp_static - k) / slope_static);
+                    Rig[k] = 78;
                 }
                 for (int k = ytemp_static; k < 55; k++)
                 {
 
                     Lef[k] = (int)((k - ytemp_static) * 2 / slope_static / 3) + xtemp_static;
+                    Rig[k] = 78;
                 }
-                Pic_undistort(1, 0);
+                Pic_undistort(1, 1);
+            }
+            else
+            {
+                // Rig_break_point_und = 0;
+                for (int i = FIG_AREA_NEAR; i > FIG_AREA_FAR; --i)
+                {
+                    if (New_Rig[i] != MIDMAP && New_Rig[i] > 50 && New_Rig[i] < Rig_break_point_max)
+                    {
+                        Rig_break_point_max = New_Rig[i];
+                        Rig_break_point_und = i;
+                    }
+                } // 去畸后内环中点
+                // break_point_find_und(1, 0);
+                if (Rig_break_point_und != 0)
+                {
+                    for (int j = Rig_break_point_und; j >= FIG_AREA_FAR; --j)
+                    {
+                        New_Lef[j] = -MIDMAP;     //右边线置空；
+                        if (New_Rig[j] == MIDMAP) //左边线空后停止使用左边线；
+                        {
+                            Circle_inner_end_cnt++;
+                            if (Circle_inner_end_cnt > 8)
+                            {
+                                Circle_inner_end_flag = 1;
+                            }
+                        }
+                        else
+                        {
+                            Circle_inner_end_cnt = 0;
+                        }
+                        if (Circle_inner_end_flag)
+                        {
+                            New_Rig[j] = MIDMAP;
+                        }
+                        //可以继续写变小后不变大
+                    }
+                    for (int j = Rig_break_point_und; j < 59; ++j)
+                    {
+                        New_Rig[j] = MIDMAP;
+                    }
+                }
             }
         }
         else if (Road2_flag == 2)
@@ -2111,7 +2221,7 @@ void Pic_DrawMid(void)
 {
     int i = 0;
     int road_half_width_original[40] = {40, 40, 40, 39, 38, 37, 36, 35, 34, 33, 32, 31, 30, 29, 28, 27, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4};
-    if ((Road0_flag == 4 && Road == 0) || Road == 1)
+    if ((Road0_flag == 4 && Road == 0) || (Road == 1 && Road1_flag != 1))
     {
         for (i = Fir_row; i < Last_row + 1; i++)
         {
@@ -2126,7 +2236,7 @@ void Pic_DrawMid(void)
             }
         }
     }
-    else if ((Road0_flag == 5 && Road == 0) || Road == 2)
+    else if ((Road0_flag == 5 && Road == 0) || (Road == 2 && Road2_flag != 1))
     {
         for (i = Fir_row; i < Last_row + 1; i++)
         {
