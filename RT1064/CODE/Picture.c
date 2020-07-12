@@ -1021,7 +1021,7 @@ void jump_point_cnt(void)
 void LR_Slope_fig()
 {
     int i;
-    float xsum = 0, ysum = 0, xysum = 0, x2sum = 0, count = 0;
+    float xsum = 0, ysum = 0, xysum = 0, y2sum = 0, count = 0;
     Lef_slope = 0;
     Rig_slope = 0;
     int max = -800, min = 0;
@@ -1040,15 +1040,15 @@ void LR_Slope_fig()
             xsum += New_Lef[i];
             ysum += i;
             xysum += New_Lef[i] * i;
-            x2sum += New_Lef[i] * New_Lef[i];
+            y2sum += i*i;
             count++;
         }
     }
     if (abs(max - min) > 25)
     {
-        if (count * x2sum - xsum * xsum)
+        if (count * xysum - xsum * ysum)
         {
-            Lef_slope = -(count * xysum - xsum * ysum) / (count * x2sum - xsum * xsum);
+            Lef_slope = - (count * y2sum - ysum * ysum) / (count * xysum - xsum * ysum);//-(count * xysum - xsum * ysum) / (count * x2sum - xsum * xsum);
         }
         else
         {
@@ -1064,7 +1064,7 @@ void LR_Slope_fig()
     xsum = 0;
     ysum = 0;
     xysum = 0;
-    x2sum = 0;
+    y2sum = 0;
     count = 0;
     for (i = 0; i < 60; i++)
     {
@@ -1081,15 +1081,15 @@ void LR_Slope_fig()
             xsum += New_Rig[i];
             ysum += i;
             xysum += New_Rig[i] * i;
-            x2sum += New_Rig[i] * New_Rig[i];
+            y2sum += i * i;
             count++;
         }
     }
-    if (abs(max - min) > 30)
+    if (abs(max - min) > 25)
     {
-        if (count * x2sum - xsum * xsum)
+        if (count * xysum - xsum * ysum)
         {
-            Rig_slope = -(count * xysum - xsum * ysum) / (count * x2sum - xsum * xsum);
+            Rig_slope = - (count * y2sum - ysum * ysum) / (count * xysum - xsum * ysum);//-(count * xysum - xsum * ysum) / (count * x2sum - xsum * xsum);
         }
         else
         {
@@ -2317,7 +2317,7 @@ void Pic_DrawMid_und(void)
     //     Road_Half_Width_change = ROAD_HALF_WIDTH; //不转弯不改
     // }
 
-    if ((Rig_slope == 999 || Rig_slope == 998) && (fabs(Rig_slope) > 0.08))
+    if (Rig_slope == 999 || Rig_slope == 998)
     {
         Road_Half_Width_change_r = ROAD_HALF_WIDTH; //异常处理，不改变中线位置
     }
@@ -2326,7 +2326,7 @@ void Pic_DrawMid_und(void)
         Road_Half_Width_change_r = (int)(150 / sin(atan(fabs(Rig_slope) * UNDISTORT_PYK * UNDISTORT_XPK))); //计算改变中线位置
         // Road_Half_Width_change_r *= 1.1;
     }
-    if ((Lef_slope == 999 || Lef_slope == 998) && fabs(Lef_slope) > 0.08)
+    if (Lef_slope == 999 || Lef_slope == 998)// && fabs(Lef_slope) > 0.08)
     {
         Road_Half_Width_change_l = ROAD_HALF_WIDTH; //异常处理，不改变中线位置
     }

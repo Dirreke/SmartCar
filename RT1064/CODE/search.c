@@ -153,7 +153,7 @@ void Pic_find_circle(void)
         }
     }
 }
-# if 0
+#if 0
 //已放入补线中
 /*************************************************************************
 *  函数名称：void break_point_find_und(void)
@@ -584,9 +584,8 @@ void Road_rec(void)
 
         //弯道状态机
         // else if (((Rig_slope > -0.5 && Rig_slope != 998 && Rig_slope != 999) || Road0_flag == 4) && Rig_slope != 998) //左转弯//(Lef_break_point > 35 && Lef_circle == 1 && Rig_circle == 0)
-        if ((Rig_slope > -0.6 && Rig_slope < 0.05) || Road0_flag == 4)
+        if ((Rig_slope != 998 && Rig_slope != 999) || Road0_flag == 4) //DEBUG chongxintiao
         {
-
             TurnLeft_Process();
             if (Road0_flag == 4)
             {
@@ -594,7 +593,7 @@ void Road_rec(void)
             }
         }
         // else if ((Lef_slope < 0.5 || Road0_flag == 5) && Lef_slope != 998) //右转弯//(Rig_break_point > 35 && Rig_circle == 1 && Lef_circle == 0)
-        else if ((Lef_slope < 0.6 && Lef_slope > -0.05) || Road0_flag == 5)
+        else if ((Lef_slope != 998 && Lef_slope != 999) || Road0_flag == 5)
         {
             TurnRight_Process();
             if (Road0_flag == 5)
@@ -1066,7 +1065,7 @@ void Road1_zhuangtaiji(void)
     else if (Road1_flag == 5) //右边线已经不能补线，电磁等方法跑
     {
         // if ((Rig_slope > -0.02 && Rig_slope < 0) || (Pixle[58][74] == 1 && Pixle[57][74] == 1 && Pixle[56][74] == 1 && Pixle[55][74] == 1 && Pixle[54][74] == 1 && Pixle[53][74] == 1)) //|| Lef_edge < 20))
-        if ((Rig_slope < -0.15 || Rig_slope == 998) || (Rig_slope < -0.1 && (Allwhiteend > 43 || Allwhiteend == Fir_row)))
+        if (Rig_slope < -0.2)// -0.15 || Rig_slope == 998) || (Rig_slope < -0.1 && (Allwhiteend > 43 || Allwhiteend == Fir_row)))
         {
             Road16_count++;
             if (Road16_count > 3)
@@ -1303,7 +1302,7 @@ void Road2_zhuangtaiji(void)
     {
         // Road0_flag = 0;
         // if ((Lef_slope > 0 && Lef_slope < 0.02) || (Pixle[58][5] == 1 && Pixle[57][5] == 1 && Pixle[56][5] == 1 && Pixle[55][5] == 1 && Pixle[54][5] == 1 && Pixle[53][5] == 1)) //|| Lef_edge < 20))
-        if (Lef_slope > 0.15 || (Lef_slope > 0.1 && (Allwhiteend > 43 || Allwhiteend == Fir_row)))
+        if (Lef_slope > 0.2)//0.15 || (Lef_slope > 0.1 && (Allwhiteend > 43 || Allwhiteend == Fir_row))) //DEBUG chongxintiao
         {
             Road26_count++;
             if (Road26_count > 3)

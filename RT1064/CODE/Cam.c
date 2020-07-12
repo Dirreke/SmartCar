@@ -127,7 +127,7 @@ int DEBUG_MIDMAXMIN = 0;
 float M_Slope_fig(void)
 {
   int i;
-  float xsum = 0, ysum = 0, xysum = 0, x2sum = 0;
+  float xsum = 0, ysum = 0, xysum = 0, y2sum = 0;
   int max = -800, min = 0;
   int jump_change_point = 0;
   int jcp_old = FIG_AREA_NEAR;
@@ -135,7 +135,7 @@ float M_Slope_fig(void)
   int long_start = FIG_AREA_NEAR, long_end = 0;
   do //这个do后面是算跳变点的，要是不连续算个p斜率，取最长连续段算个斜率p
   {
-    gmyshuoqianbuchulai(jcp_old, jump_change_point);
+    jump_change_point = gmyshuoqianbuchulai(jcp_old - 2);
 
     for (i = jump_change_point; i < jcp_old; i++)
     {
@@ -150,11 +150,11 @@ float M_Slope_fig(void)
       long_start = jcp_old;
       long_end = jump_change_point;
     }
-
+count = 0;
     jcp_old = jump_change_point;
   } while (jump_change_point != FIG_AREA_FAR);
-  { //如果看到这段注释 下面是算斜率 可以折起来了
-    for (i = jump_change_point; i < jcp_old; i++)
+  {                                         //如果看到这段注释 下面是算斜率 可以折起来了
+    for (i = long_end; i < long_start; i++) //从下往上搜的 start大，end小
     {
       if (i <= FIG_AREA_NEAR && i >= FIG_AREA_FAR && New_Mid[i] != 999)
       {
@@ -169,17 +169,17 @@ float M_Slope_fig(void)
         xsum += New_Mid[i];
         ysum += i;
         xysum += New_Mid[i] * i;
-        x2sum += New_Mid[i] * New_Mid[i];
+        y2sum += i * i;
         count++;
       }
     }
-    cnt_max = count;
+    //cnt_max = count;
     DEBUG_MIDMAXMIN = abs(max - min);
-    if (abs(max - min) > 25)
+    if (abs(max - min) > 20)
     {
-      if (count * x2sum - xsum * xsum)
+      if (count * xysum - xsum * ysum )
       {
-        Mid_slope = -(count * xysum - xsum * ysum) / (count * x2sum - xsum * xsum);
+        Mid_slope = - (count * y2sum - ysum * ysum) / (count * xysum - xsum * ysum);// -(count * xysum - xsum * ysum) / (count * x2sum - xsum * xsum);
       }
       else
       {
@@ -192,18 +192,18 @@ float M_Slope_fig(void)
     }
     DEBUG_SLOPE = Mid_slope;
   }
-  { //如果看到这段注释 下面是对斜率进行了一些神奇操作 然后return角度 记得是弧度！！好了折起来吧
-    if (Mid_slope != 999)
-    {
-      if (Mid_slope >= 1.4 || Mid_slope <= -1.4)
-      {
-        Mid_slope = 998;
-      }
-      else if (Mid_slope >= 1.2 || Mid_slope <= -1.2)
-      {
-        Mid_slope = pow(Mid_slope, 3);
-      }
-    }
+  { //如果看到这段注释 下面没有神奇操作了 斜率算的不对 return弧度！！好了折起来吧/* 是对斜率进行了一些神奇操作 */ 
+    // if (Mid_slope != 999)
+    // {
+    //   if (Mid_slope >= 1.4 || Mid_slope <= -1.4)
+    //   {
+    //     Mid_slope = 998;
+    //   }
+    //   else if (Mid_slope >= 1.2 || Mid_slope <= -1.2)
+    //   {
+    //     Mid_slope = pow(Mid_slope, 3);
+    //   }
+    // }
     if (Mid_slope == 999 || Mid_slope == 998)
     {
       return 0;
@@ -215,41 +215,25 @@ float M_Slope_fig(void)
   }
 }
 
-void gmyshuoqianbuchulai(int temp, int &turn)
+int gmyshuoqianbuchulai(int temp)
 {
-  int dis = 0, dis1 = 0;
-  dis = New_Mid[temp + 1] - New_Mid[temp];
-  for (int i = temp; i > FIG_AREA_FAR; --i)//从别的地方拿过来的 去search.c的TurnLeft_Process()看正版 折起来吧
+  int dis = 0,turn = 0;
+  if (temp <= FIG_AREA_FAR)
   {
-    dis1 = New_Mid[i] - New_Mid[i - 1];
-    if (dis1 < 0)
+    return FIG_AREA_FAR;
+  }
+  turn = temp;
+  for (int i = turn; i > FIG_AREA_FAR; --i) //从仿制版改成了山寨版 折起来吧
+  {
+    dis = abs(New_Mid[i + 1] - New_Mid[i]);
+    if (dis <= 15)
     {
       turn = i;
-      break;
-    }
-    else if (dis1 < dis)
-    {
-
-      if (i == FIG_AREA_FAR + 1)
-      {
-        turn = i - 1;
-      }
-      continue;
-    }
-    else if (dis1 <= 2 * dis + 1)
-    {
-      dis = dis1;
-
-      if (i == FIG_AREA_FAR + 1)
-      {
-        turn = i - 1;
-      }
-      continue;
     }
     else
     {
-      turn = i;
       break;
     }
   }
+  return turn;
 }
