@@ -122,63 +122,118 @@ void Turn_Cam_New(void)
   //Servo_Duty(-Turn_Cam_Out);
 }
 float Mid_slope = 0;
+float DEBUG_SLOPE = 0;
+int DEBUG_MIDMAXMIN = 0;
 float M_Slope_fig(void)
 {
   int i;
-  float xsum = 0, ysum = 0, xysum = 0, x2sum = 0, count = 0;
+  float xsum = 0, ysum = 0, xysum = 0, y2sum = 0;
   int max = -800, min = 0;
-  for (i = 5; i < 45; i++)
+  int jump_change_point = 0;
+  int jcp_old = FIG_AREA_NEAR;
+  int count = 0, cnt_max = 0;
+  int long_start = FIG_AREA_NEAR, long_end = 0;
+  do //这个do后面是算跳变点的，要是不连续算个p斜率，取最长连续段算个斜率p
   {
-    if (i <= FIG_AREA_NEAR && i >= FIG_AREA_FAR && New_Mid[i] != 999)
+    jump_change_point = gmyshuoqianbuchulai(jcp_old - 2);
+
+    for (i = jump_change_point; i < jcp_old; i++)
     {
-      if (New_Mid[i] > max)
+      if (i <= FIG_AREA_NEAR && i >= FIG_AREA_FAR && New_Mid[i] != 999)
       {
-        max = New_Mid[i];
+        count++;
       }
-      if (New_Mid[i] < min)
-      {
-        min = New_Mid[i];
-      }
-      xsum += New_Mid[i];
-      ysum += i;
-      xysum += New_Mid[i] * i;
-      x2sum += New_Mid[i] * New_Mid[i];
-      count++;
     }
-  }
-  if (abs(max - min) > 25)
-  {
-    if (count * x2sum - xsum * xsum)
+    if (count > cnt_max)
     {
-      Mid_slope = -(count * xysum - xsum * ysum) / (count * x2sum - xsum * xsum);
+      cnt_max = count;
+      long_start = jcp_old;
+      long_end = jump_change_point;
+    }
+count = 0;
+    jcp_old = jump_change_point;
+  } while (jump_change_point != FIG_AREA_FAR);
+  {                                         //如果看到这段注释 下面是算斜率 可以折起来了
+    for (i = long_end; i < long_start; i++) //从下往上搜的 start大，end小
+    {
+      if (i <= FIG_AREA_NEAR && i >= FIG_AREA_FAR && New_Mid[i] != 999)
+      {
+        if (New_Mid[i] > max)
+        {
+          max = New_Mid[i];
+        }
+        if (New_Mid[i] < min)
+        {
+          min = New_Mid[i];
+        }
+        xsum += New_Mid[i];
+        ysum += i;
+        xysum += New_Mid[i] * i;
+        y2sum += i * i;
+        count++;
+      }
+    }
+    //cnt_max = count;
+    DEBUG_MIDMAXMIN = abs(max - min);
+    if (abs(max - min) > 20)
+    {
+      if (count * xysum - xsum * ysum )
+      {
+        Mid_slope = - (count * y2sum - ysum * ysum) / (count * xysum - xsum * ysum);// -(count * xysum - xsum * ysum) / (count * x2sum - xsum * xsum);
+      }
+      else
+      {
+        Mid_slope = 999;
+      }
     }
     else
     {
-      Mid_slope = 999;
-    }
-  }
-  else
-  {
-    Mid_slope = 998;
-  }
-  if (Mid_slope != 999)
-  {
-    if (Mid_slope >= 1.4 || Mid_slope <= -1.4)
-    {
       Mid_slope = 998;
     }
-    else if (Mid_slope >= 1.2 || Mid_slope <= -1.2)
+    DEBUG_SLOPE = Mid_slope;
+  }
+  { //如果看到这段注释 下面没有神奇操作了 斜率算的不对 return弧度！！好了折起来吧/* 是对斜率进行了一些神奇操作 */ 
+    // if (Mid_slope != 999)
+    // {
+    //   if (Mid_slope >= 1.4 || Mid_slope <= -1.4)
+    //   {
+    //     Mid_slope = 998;
+    //   }
+    //   else if (Mid_slope >= 1.2 || Mid_slope <= -1.2)
+    //   {
+    //     Mid_slope = pow(Mid_slope, 3);
+    //   }
+    // }
+    if (Mid_slope == 999 || Mid_slope == 998)
     {
-      Mid_slope = pow(Mid_slope, 3);
+      return 0;
+    }
+    else
+    {
+      return atan(Mid_slope * UNDISTORT_PYK * UNDISTORT_XPK) > 0 ? 1.57 - atan(Mid_slope * UNDISTORT_PYK * UNDISTORT_XPK) : -1.57 + atan(-Mid_slope * UNDISTORT_PYK * UNDISTORT_XPK);
     }
   }
-  if (Mid_slope == 999 || Mid_slope == 998)
-  {
-    return 0;
-  }
+}
 
-  else
+int gmyshuoqianbuchulai(int temp)
+{
+  int dis = 0,turn = 0;
+  if (temp <= FIG_AREA_FAR)
   {
-    return atan(Mid_slope * UNDISTORT_PYK * UNDISTORT_XPK) > 0 ? 1.57 - atan(Mid_slope * UNDISTORT_PYK * UNDISTORT_XPK) : -1.57 + atan(-Mid_slope * UNDISTORT_PYK * UNDISTORT_XPK);
+    return FIG_AREA_FAR;
   }
+  turn = temp;
+  for (int i = turn; i > FIG_AREA_FAR; --i) //从仿制版改成了山寨版 折起来吧
+  {
+    dis = abs(New_Mid[i + 1] - New_Mid[i]);
+    if (dis <= 15)
+    {
+      turn = i;
+    }
+    else
+    {
+      break;
+    }
+  }
+  return turn;
 }
