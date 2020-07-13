@@ -47,6 +47,7 @@ void PIT_IRQHandler(void)
         SpeedTarget_fig();
         //    BBC();
         Speed_Control_New();
+        BB_add();
         Moto_Out();
         Mean_Turn_Out();
     }
