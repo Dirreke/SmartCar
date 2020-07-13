@@ -68,7 +68,7 @@ int main(void)
     gpio_interrupt_init(C25, FALLING, GPIO_INT_CONFIG); //初始化GPIO C23 中断模式 使用默认引脚配置GPIO_INT_CONFIG
 
     NVIC_SetPriority(GPIO2_Combined_16_31_IRQn, 0); //设置中断优先级 范围0-15 越小优先级越高
-    gyro_y_init();                                  //陀螺仪校正初始化
+    // gyro_y_init();                                  //陀螺仪校正初始化
     Para_Init();                                    //各个变量初始化
 
     EnableGlobalIRQ(0);

@@ -245,12 +245,12 @@ void Variable_update(void)
 
   Variable[0] = Cam_offset;      //Cam_offset;   //EM_Value_1;// Cam_offset;//cntt;//ToF_distance;
   Variable[1] = Turn_Out;        //EM_Value_2; //Turn_Cam_Out;//cnt;//Turn_Cam_Out;//;//stat_slope;//gyroy_1;//Turn_Cam_Out;//Car_W;
-  Variable[2] = DEBUG_MIDMAXMIN; //EM_Value_1;//Cam_offset;
+  Variable[2] = Allwhitestart*100+Allwhiteend; //EM_Value_1;//Cam_offset;
   Variable[3] = CarSpeed1;
   Variable[4] = CarSpeed2;    //EM_Value_1; //speedTarget1; //Allwhiteend;
   Variable[5] = speedTarget1; //EM_Value_2; //
   Variable[6] = speedTarget2; //EM_Value_3;
-  Variable[7] = DEBUG_SLOPE;  //EM_Value_1;//Cam_offset;
+  Variable[7] = crossing_flag;  //EM_Value_1;//Cam_offset;
   if (Road == 0)
   {
     Variable[8] = Road0_flag;

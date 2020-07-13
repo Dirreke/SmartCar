@@ -12,6 +12,8 @@ int Rig_break_point; //左右环状黑线拐弯点
 
 bool barn_reset_flag; //干簧管及起跑线搜索重打开延时
 
+bool crossing_flag;
+
 int start_stop_line_flag = 0;
 int barn_line = Fir_row;
 int start_stop_line = 0;
@@ -191,6 +193,164 @@ void break_point_find_und(bool L, bool R)
     }
 }
 #endif
+/*************************************************************************
+*  函数名称：void crossing_find(void)
+*  功能说明：十字识别
+*  参数说明：无
+*  函数返回：无
+*  修改时间：2020.07.13
+*  备    注：
+*************************************************************************/
+void crossing_find(void)
+{
+    //crossing_flag = 0;
+    int Lef_none_edge[LCDH], Rig_none_edge[LCDH];
+    int jl = 0, jr = 0;
+    int Lmin = 0, Lmax = 0, Rmin = 0, Rmax = 0;
+    int temp1 = 0, temp2 = 0;
+    bool set_flag1 = 1, set_flag2 = 1, find_flag1 = 0, find_flag2 = 0;
+    float slopetemp;
+    int y,sum = 0;
+    for (int i = 0; i < LCDH; ++i)
+    {
+        Lef_none_edge[i] = -1;
+        Rig_none_edge[i] = -1;
+    }
+    for (int i = 45; i > Fir_row + 5; --i)
+    {
+        if (Lef[i] < Fir_col + 5)
+        {
+            Lef_none_edge[jl] = i;
+            ++jl;
+        }
+        if (Rig[i] > Last_col - 5)
+        {
+            Rig_none_edge[jr] = i;
+            ++jr;
+        }
+    }
+    for (int i = 0; Lef_none_edge[i] != -1; ++i)
+    {
+        if (set_flag1)
+        {
+            Lmin = Lef_none_edge[i];
+            set_flag1 = !set_flag1;
+        }
+        if (Lef_none_edge[i + 1] - Lef_none_edge[i] > 1 || Lef_none_edge[i + 1] == -1)
+        {
+            Lmax = Lef_none_edge[i];
+            if (Lmax - Lmin < 5)
+            {
+                set_flag1 = 1;
+            }
+            else
+            {
+                find_flag1 = !find_flag1;
+                break;
+            }
+        }
+    }
+    for (int i = 0; Rig_none_edge[i] != -1; ++i)
+    {
+        if (set_flag2)
+        {
+            Rmin = Rig_none_edge[i];
+            set_flag2 = !set_flag2;
+        }
+
+        if (Rig_none_edge[i + 1] - Rig_none_edge[i] > 1 || Rig_none_edge[i + 1] == -1)
+        {
+            Rmax = Rig_none_edge[i];
+            if (Rmax - Rmin < 5)
+            {
+                set_flag2 = 1;
+            }
+            else
+            {
+                find_flag2 = !find_flag2;
+                break;
+            }
+        }
+    }
+    if (!find_flag1 && !find_flag2)
+    {
+        return;
+    }
+
+    if (Lmax > Rmax && Lmin > Rmin)
+    {
+        if (Lmin - Rmax < 3)
+        {
+            temp1 = (Lmin + Lmax) / 2;
+            temp2 = (Rmin + Rmax) / 2;
+        }
+        else
+        {
+            return;
+        }
+    }
+    else if (Rmax > Lmax && Rmin > Lmin)
+    {
+        if (Rmin - Lmax < 3)
+        {
+            temp1 = (Lmin + Lmax) / 2;
+            temp2 = (Rmin + Rmax) / 2;
+        }
+        else
+        {
+            return;
+        }
+    }
+    else
+    {
+        return;
+    }
+
+    slopetemp = Slope(1, temp1, 78, temp2);
+    crossing_flag = 0;
+    sum = 0;
+    for (int x = 10; x < 23; x += 4)
+    {
+        y = (int)(slopetemp*(x - 1) + temp1);
+        sum += Pixle[y][x];
+        if (sum < 2)
+        {
+            crossing_flag = !crossing_flag;
+        }
+    }
+    if (!crossing_flag)
+    {
+        return;
+    }
+    crossing_flag = !crossing_flag;
+    sum = 0;
+    for (int x = 58; x < 71; x += 4)
+    {
+        y = (int)(slopetemp*(x - 1) + temp1);
+        sum += Pixle[y][x];
+        if (sum < 2)
+        {
+            crossing_flag = !crossing_flag;
+        }
+    }
+
+    if (!crossing_flag)
+    {
+        return;
+    }
+    crossing_flag = !crossing_flag;
+    sum = 0;
+    for (int x = 34; x < 47; x += 4)
+    {
+        y = (int)(slopetemp*(x - 1) + temp1);
+        sum += Pixle[y][x];
+        if (sum < 2)
+        {
+            crossing_flag = !crossing_flag;
+        }
+    }
+
+}
 /*************************************************************************
 *  函数名称：void start_stop_find(void)
 *  功能说明：起跑线识别
@@ -1065,7 +1225,7 @@ void Road1_zhuangtaiji(void)
     else if (Road1_flag == 5) //右边线已经不能补线，电磁等方法跑
     {
         // if ((Rig_slope > -0.02 && Rig_slope < 0) || (Pixle[58][74] == 1 && Pixle[57][74] == 1 && Pixle[56][74] == 1 && Pixle[55][74] == 1 && Pixle[54][74] == 1 && Pixle[53][74] == 1)) //|| Lef_edge < 20))
-        if (Rig_slope < -0.2)// -0.15 || Rig_slope == 998) || (Rig_slope < -0.1 && (Allwhiteend > 43 || Allwhiteend == Fir_row)))
+        if (Rig_slope < -0.2) // -0.15 || Rig_slope == 998) || (Rig_slope < -0.1 && (Allwhiteend > 43 || Allwhiteend == Fir_row)))
         {
             Road16_count++;
             if (Road16_count > 3)
@@ -1302,7 +1462,7 @@ void Road2_zhuangtaiji(void)
     {
         // Road0_flag = 0;
         // if ((Lef_slope > 0 && Lef_slope < 0.02) || (Pixle[58][5] == 1 && Pixle[57][5] == 1 && Pixle[56][5] == 1 && Pixle[55][5] == 1 && Pixle[54][5] == 1 && Pixle[53][5] == 1)) //|| Lef_edge < 20))
-        if (Lef_slope > 0.2)//0.15 || (Lef_slope > 0.1 && (Allwhiteend > 43 || Allwhiteend == Fir_row))) //DEBUG chongxintiao
+        if (Lef_slope > 0.2) //0.15 || (Lef_slope > 0.1 && (Allwhiteend > 43 || Allwhiteend == Fir_row))) //DEBUG chongxintiao
         {
             Road26_count++;
             if (Road26_count > 3)

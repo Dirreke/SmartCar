@@ -3,6 +3,8 @@ float Turn_Cam_Out;
 float Turn_EM_Out;
 float Turn_Out;
 float MotorOut1, MotorOut2;
+float MotorOut1_add = 0;
+float MotorOut2_add = 0;
 float speedTarget1, speedTarget2;
 float Turn_P_EM;
 float Turn_D_EM;
@@ -346,7 +348,7 @@ void lib_set_fun(void)
     if ((Road7_flag == 0 || Road7_flag == 1 || Road7_flag == 2 || Road7_flag == 6) && tt_flag)
     {
       lib_speed_set(2.5);
-      if( Road7_flag == 2)
+      if (Road7_flag == 2)
       {
         lib_speed_set(1.5);
       }
@@ -404,7 +406,6 @@ PID PID_SPEED, PID2_SPEED;
 
 float SpeedE1, SpeedE2;
 float SpeedEE1, SpeedEE2;
-
 
 void Speed_Control_New(void)
 {
@@ -803,10 +804,7 @@ void Speed_Control_New(void)
 
   OldE1 = SpeedE1;
   OldE2 = SpeedE2;
-
-  Moto_Out();
 }
-
 
 void Kalman_Filter(void)
 {
@@ -981,3 +979,105 @@ void Mean_Turn_Out(void)
   }
 }
 
+/*************************************************************************
+*  函数名称：int8 BB_add_flag_set(void)
+*  功能说明：转向BB置位
+*  参数说明：
+*  函数返回：
+*  修改时间：2020.7.13
+*  备    注：用于
+*************************************************************************/
+int8 BB_add_flag_set(void)
+{
+
+  static int8 BB_add_flag = -1;
+  if (BB_add_flag == -1) //标志位置位
+  {
+    if (Road0_flag == 4)
+    {
+      if (CarSpeed1 - CarSpeed2 > 0.15)
+      {
+        BB_add_flag = 4;
+      }
+    }
+    else if (Road0_flag == 5)
+    {
+      if (CarSpeed2 - CarSpeed1 > 0.15)
+      {
+        BB_add_flag = 5;
+      }
+    }
+    else if (Road == 0 && Road0_flag < 3)
+    {
+      if (CarSpeed1 - CarSpeed2 > 0.5 && Turn_Out > -50)
+      {
+        BB_add_flag = 0;
+      }
+      else if (CarSpeed2 - CarSpeed1 > 0.5 && Turn_Out < 50)
+      {
+        BB_add_flag = 1;
+      }
+    }
+  }
+  else if (BB_add_flag == 0)
+  {
+    if (CarSpeed1 - CarSpeed2 < 0.2 || Turn_Out < -70) //70budui DEBUG
+      BB_add_flag = -1;
+  }
+  else if (BB_add_flag == 1)
+  {
+    if (CarSpeed2 - CarSpeed1 < 0.2 || Turn_Out > 70)
+      BB_add_flag = -1;
+  }
+  else if (BB_add_flag == 4)
+  {
+    if (CarSpeed2 - CarSpeed1 > 0.1)
+      BB_add_flag = -1;
+  }
+  else if (BB_add_flag == 5)
+  {
+    if (CarSpeed1 - CarSpeed2 > 0.1)
+    {
+      BB_add_flag = -1;
+    }
+  }
+  return BB_add_flag;
+}
+/*************************************************************************
+*  函数名称：  void BB_add(void)
+*  功能说明：转向BB
+*  参数说明：
+*  函数返回：
+*  修改时间：2020.7.13
+*  备    注：用于
+*************************************************************************/
+void BB_add(void)
+{
+  int BB_add_flag = 0;
+  BB_add_flag = BB_add_flag_set();
+  if (BB_add_flag == 0)
+  {
+    MotorOut1_add -= 1500;
+    MotorOut2_add += 1500;
+  }
+  else if (BB_add_flag == 1)
+  {
+    MotorOut1_add += 1500;
+    MotorOut2_add -= 1500;
+  }
+  else if (BB_add_flag == 4)
+  {
+    MotorOut1_add -= 1500;
+    MotorOut2_add += 1500;
+  }
+  else if (BB_add_flag == 5)
+  {
+    MotorOut1_add += 1500;
+    MotorOut2_add -= 1500;
+  }
+  else
+  {
+    MotorOut1_add = 0;
+    MotorOut2_add = 0;
+  }
+}

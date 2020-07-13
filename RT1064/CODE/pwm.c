@@ -24,8 +24,8 @@ void Motor_Duty(uint16 Motno, uint32 duty)
   //归一化为0--500--1000
   //if(duty<1001)
   // {
-    /** if new main_board **/
-    /*
+  /** if new main_board **/
+  /*
     switch (Motno)
     {
     case Mot0:
@@ -44,23 +44,23 @@ void Motor_Duty(uint16 Motno, uint32 duty)
       break;
     }
     */
-    /** if old main_board **/
-    switch (Motno)
-    {
-    case Mot0:
-      pwm_duty(PWM1_MODULE3_CHA_D0, duty); //R电机，
-      break;
-    case Mot1:
-      pwm_duty(PWM2_MODULE3_CHA_D2, duty); //R电机，
-      break;
-    case Mot2:
-      pwm_duty(PWM2_MODULE3_CHB_D3, duty); //L电机，
-      break;
-    case Mot3:
-      pwm_duty(PWM1_MODULE3_CHB_D1, duty); //L电机，
-      break;    
-    default:
-      break;
+  /** if old main_board **/
+  switch (Motno)
+  {
+  case Mot0:
+    pwm_duty(PWM1_MODULE3_CHA_D0, duty); //R电机，
+    break;
+  case Mot1:
+    pwm_duty(PWM2_MODULE3_CHA_D2, duty); //R电机，
+    break;
+  case Mot2:
+    pwm_duty(PWM2_MODULE3_CHB_D3, duty); //L电机，
+    break;
+  case Mot3:
+    pwm_duty(PWM1_MODULE3_CHB_D1, duty); //L电机，
+    break;
+  default:
+    break;
     // }
   }
 }
@@ -70,15 +70,15 @@ void Servo_Duty(float duty)
 {
   if (duty > SERVO_RANGE)
   {
-    duty =  SERVO_MIDDLE + SERVO_RANGE;
+    duty = SERVO_MIDDLE + SERVO_RANGE;
   }
-  else if (duty < 0- SERVO_RANGE)
+  else if (duty < 0 - SERVO_RANGE)
   {
-    duty = SERVO_MIDDLE  - SERVO_RANGE;
+    duty = SERVO_MIDDLE - SERVO_RANGE;
   }
   else
   {
-    duty+=SERVO_MIDDLE ;
+    duty += SERVO_MIDDLE;
   }
   //归一化为2500--12500
   //if((duty>2500)&&(duty<12500))
@@ -111,9 +111,10 @@ void Servo_Duty(float duty)
 *************************************************************************/
 void Moto_Out(void)
 {
-  
+  float Motor1_temp;
+  float Motor2_temp;
   //速度控制输出限幅
-  if (MotorOut1> 18000) //如果车子前倾，则车模的速度控制输出为正，反之为负
+  if (MotorOut1 > 18000) //如果车子前倾，则车模的速度控制输出为正，反之为负
     MotorOut1 = 18000;
   if (MotorOut1 < -18000)
     MotorOut1 = -18000;
@@ -122,25 +123,37 @@ void Moto_Out(void)
   if (MotorOut2 < -18000)
     MotorOut2 = -18000;
 
+  Motor1_temp = MotorOut1_add + MotorOut1;
+  Motor2_temp = MotorOut2_add + MotorOut2;
+
+  if (Motor1_temp > 18000) //如果车子前倾，则车模的速度控制输出为正，反之为负
+    Motor1_temp = 18000;
+  if (Motor1_temp < -18000)
+    Motor1_temp = -18000;
+  if (Motor2_temp > 18000) //如果车子前倾，则车模的速度控制输出为正，反之为负
+    Motor2_temp = 18000;
+  if (Motor2_temp < -18000)
+    Motor2_temp = -18000;
+
   if (MotorOut1 >= 0) //正转
   {
     Motor_Duty(3, 0);
-    Motor_Duty(2, (uint32)MotorOut1);
+    Motor_Duty(2, (uint32)Motor1_temp);
   }
   else //反转
   {
-    Motor_Duty(3, (uint32)-MotorOut1);
-    Motor_Duty(2, 0); 
+    Motor_Duty(3, (uint32)-Motor1_temp);
+    Motor_Duty(2, 0);
   }
 
   if (MotorOut2 >= 0)
   {
     Motor_Duty(1, 0);
-    Motor_Duty(0, (uint32)MotorOut2);
+    Motor_Duty(0, (uint32)Motor2_temp);
   }
   else
   {
-    Motor_Duty(1, (uint32)-MotorOut2 );
+    Motor_Duty(1, (uint32)-Motor2_temp);
     Motor_Duty(0, 0);
   }
 }

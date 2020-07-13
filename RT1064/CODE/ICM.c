@@ -114,23 +114,22 @@ void gyro_y_integration(void)
 void ICM_main(void)
 {
 
-    if (Road != 4)
-    {
-        get_icm20602_gyro_spi();
-        icm_gyro_y_w = (icm_gyro_y + icm_gyro_y_offset) * 0.06103515625;
-    }
+    // if (Road != 4)
+    // {
+    //     get_icm20602_gyro_spi();
+    //     icm_gyro_y_w = (icm_gyro_y + icm_gyro_y_offset) * 0.06103515625;
+    // }
 }
 
 void ICM_main_isr(void)
 {
-    if (Road == 4)
-    {
-        get_icm20602_gyro_spi();
-        icm_gyro_y_w = (icm_gyro_y + icm_gyro_y_offset) * 0.06103515625;
-        icm_gyro_y_angle += icm_gyro_y_w * 0.002;
-    }
+    // if (Road == 4)
+    // {
+    //     get_icm20602_gyro_spi();
+    //     icm_gyro_y_w = (icm_gyro_y + icm_gyro_y_offset) * 0.06103515625;
+    //     icm_gyro_y_angle += icm_gyro_y_w * 0.002;
+    // }
 }
-
 
 #if 0
 /*************************************************************************
