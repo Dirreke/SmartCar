@@ -4,6 +4,9 @@ extern float Turn_Cam_Out;
 extern float Turn_EM_Out;
 extern float Turn_Out;
 extern float MotorOut1,MotorOut2;
+extern float MotorOut1_add;
+extern float MotorOut2_add;
+
 extern float speedTarget1,speedTarget2;
 extern float mean_turn_out;
 extern PID PID_SPEED;
@@ -35,6 +38,9 @@ void Turn_Servo(void);
 void Kalman_Filter(void);
 void BBC(void);
 void Mean_Turn_Out(void);
+
+int8 BB_add_flag_set(void);
+void BB_add(void);
 
 //debug
 extern PID PID_SPEED,PID2_SPEED;

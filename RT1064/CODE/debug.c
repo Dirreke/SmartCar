@@ -5,7 +5,8 @@ int DEBUG_CHOICE = 1;
 float speedgoal;
 void Debug_Init(void)
 {
-    gpio_init(D4, GPI, 1, PULLUP_22K);
+    gpio_init(B10, GPI, 1, GPIO_PIN_CONFIG);
+    gpio_init(D4, GPI, 1, GPIO_PIN_CONFIG);
     gpio_init(D27, GPI, 1, GPIO_PIN_CONFIG);
     gpio_init(C31, GPI, 1, GPIO_PIN_CONFIG);
     gpio_init(C27, GPI, 1, GPIO_PIN_CONFIG);
@@ -50,7 +51,7 @@ void Dubug_key(void)
         }
     }
 
-    /*    if (!gpio_get(DEBUG_KEY1))
+    if (!gpio_get(DEBUG_KEY1))
     {
         systick_delay_ms(50);
         if (!gpio_get(DEBUG_KEY1))
@@ -65,7 +66,7 @@ void Dubug_key(void)
             return;
         }
     }
-*/
+
     //显示
     ips_show_debug(ips_num);
 
@@ -91,11 +92,11 @@ void Dubug_key(void)
                 break;
             case 6:
                 //PID_TURN_CAM_EXT.P += 0.1;
-              PID_CAR_STRAIGHT_CAM.P += 0.1;
+                PID_CAR_STRAIGHT_CAM.P += 0.1;
                 break;
             case 7:
                 //PID_TURN_CAM_EXT.D += 0.1;
-              PID_CAR_STRAIGHT_CAM.D += 0.1;
+                PID_CAR_STRAIGHT_CAM.D += 0.1;
                 break;
             case 8:
                 DEBUG_CHOICE++;
@@ -105,7 +106,7 @@ void Dubug_key(void)
                 {
                     diff_off();
                 }
-                else 
+                else
                 {
                     diff_on();
                 }
@@ -265,11 +266,11 @@ void Dubug_key(void)
                 break;
             case 6:
                 //PID_TURN_CAM_EXT.P -= 0.1;
-              PID_CAR_STRAIGHT_CAM.P -= 0.1;
+                PID_CAR_STRAIGHT_CAM.P -= 0.1;
                 break;
             case 7:
                 //PID_TURN_CAM_EXT.D -= 0.1;
-              PID_CAR_STRAIGHT_CAM.D -= 0.1;
+                PID_CAR_STRAIGHT_CAM.D -= 0.1;
                 break;
             case 8:
                 DEBUG_CHOICE--;
@@ -434,12 +435,12 @@ void ips_show_debug(int ips_num)
     {
 
     /** pages **/
-    case 2:                                          //阈值
+    case 2:                                  //阈值
         ips200_showstr(0, 12, "DIFF_KKK: "); //显示字符串
         //ips200_showfloat(0, 13, 66.6667, 2, 4);    //显示一个浮点数并去除整数部分无效0
         //ips200_showuint16(0,1,666);                //显示一个16位无符号整数
         //ips200_showint32(0,3,-666,3);              //显示一个32位有符号数并去除无效0
-        ips200_showfloat(0, 13, DIFF_KKK, 3,2);
+        ips200_showfloat(0, 13, DIFF_KKK, 3, 2);
         break;
     case 3:
         ips200_showstr(0, 12, "speed: "); //显示字符串
@@ -455,11 +456,11 @@ void ips_show_debug(int ips_num)
         break;
     case 6:
         ips200_showstr(0, 12, "PID_CAR_STRAIGHT_CAM.P");
-        ips200_showfloat(0, 13, PID_CAR_STRAIGHT_CAM.P,4,2);//PID_TURN_CAM_EXT.P, 4, 2);
+        ips200_showfloat(0, 13, PID_CAR_STRAIGHT_CAM.P, 4, 2); //PID_TURN_CAM_EXT.P, 4, 2);
         break;
     case 7:
         ips200_showstr(0, 12, "CamStraightD");
-        ips200_showfloat(0, 13, PID_CAR_STRAIGHT_CAM.D,4,2);//PID_TURN_CAM_EXT.D, 4, 2);
+        ips200_showfloat(0, 13, PID_CAR_STRAIGHT_CAM.D, 4, 2); //PID_TURN_CAM_EXT.D, 4, 2);
         break;
     case 8:
         ips200_showstr(0, 12, "DEBUG_CHOICE");

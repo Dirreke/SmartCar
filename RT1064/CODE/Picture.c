@@ -1040,7 +1040,7 @@ void LR_Slope_fig()
             xsum += New_Lef[i];
             ysum += i;
             xysum += New_Lef[i] * i;
-            y2sum += i*i;
+            y2sum += i * i;
             count++;
         }
     }
@@ -1048,7 +1048,7 @@ void LR_Slope_fig()
     {
         if (count * xysum - xsum * ysum)
         {
-            Lef_slope = - (count * y2sum - ysum * ysum) / (count * xysum - xsum * ysum);//-(count * xysum - xsum * ysum) / (count * x2sum - xsum * xsum);
+            Lef_slope = -(count * y2sum - ysum * ysum) / (count * xysum - xsum * ysum); //-(count * xysum - xsum * ysum) / (count * x2sum - xsum * xsum);
         }
         else
         {
@@ -1089,7 +1089,7 @@ void LR_Slope_fig()
     {
         if (count * xysum - xsum * ysum)
         {
-            Rig_slope = - (count * y2sum - ysum * ysum) / (count * xysum - xsum * ysum);//-(count * xysum - xsum * ysum) / (count * x2sum - xsum * xsum);
+            Rig_slope = -(count * y2sum - ysum * ysum) / (count * xysum - xsum * ysum); //-(count * xysum - xsum * ysum) / (count * x2sum - xsum * xsum);
         }
         else
         {
@@ -1563,7 +1563,6 @@ void Pic_Fix_Line(void)
                     Rig[k] = (int)((k - ytemp_static) * 2 / slope_static / 3) + xtemp_static;
                     Lef[k] = 1;
                 }
-                
 
                 Pic_undistort(1, 1);
             }
@@ -1575,7 +1574,7 @@ void Pic_Fix_Line(void)
                     if (New_Lef[i] != -MIDMAP && New_Lef[i] < -50 && New_Lef[i] > Lef_break_point_max)
                     {
                         Lef_break_point_und = i;
-                        Lef_break_point_max=New_Lef[i];
+                        Lef_break_point_max = New_Lef[i];
                     }
                 } // 去畸后内环中点
                 // break_point_find_und(1, 0);
@@ -2323,16 +2322,16 @@ void Pic_DrawMid_und(void)
     }
     else
     {
-        Road_Half_Width_change_r = (int)(150 / sin(atan(fabs(Rig_slope) * UNDISTORT_PYK * UNDISTORT_XPK))); //计算改变中线位置
+        Road_Half_Width_change_r = (int)(ROAD_HALF_WIDTH / sin(atan(fabs(Rig_slope) * UNDISTORT_PYK * UNDISTORT_XPK))); //计算改变中线位置
         // Road_Half_Width_change_r *= 1.1;
     }
-    if (Lef_slope == 999 || Lef_slope == 998)// && fabs(Lef_slope) > 0.08)
+    if (Lef_slope == 999 || Lef_slope == 998) // && fabs(Lef_slope) > 0.08)
     {
         Road_Half_Width_change_l = ROAD_HALF_WIDTH; //异常处理，不改变中线位置
     }
     else
     {
-        Road_Half_Width_change_l = (int)(150 / sin(atan(fabs(Lef_slope) * UNDISTORT_PYK * UNDISTORT_XPK))); //计算改变中线位置
+        Road_Half_Width_change_l = (int)(ROAD_HALF_WIDTH / sin(atan(fabs(Lef_slope) * UNDISTORT_PYK * UNDISTORT_XPK))); //计算改变中线位置
         // Road_Half_Width_change_l *= 1.1;
     }
 
@@ -2340,7 +2339,10 @@ void Pic_DrawMid_und(void)
     {
         for (i = 0; i < 60; i++)
         {
-
+            // if (i > 45)
+            // {
+            //     Road_Half_Width_change_r = (int )(ROAD_HALF_WIDTH + (Road_Half_Width_change_r - ROAD_HALF_WIDTH) * 0.5);
+            // }
             if (New_Rig[i] != MIDMAP)
             {
                 New_Mid[i] = New_Rig[i] - Road_Half_Width_change_r;
@@ -2355,6 +2357,10 @@ void Pic_DrawMid_und(void)
     {
         for (i = 0; i < 60; i++)
         {
+            // if (i > 45)
+            // {
+            //     Road_Half_Width_change_l = (int )(ROAD_HALF_WIDTH + (Road_Half_Width_change_l - ROAD_HALF_WIDTH) * 0.5);
+            // }
 
             if (New_Lef[i] != -MIDMAP)
             {
@@ -2370,6 +2376,11 @@ void Pic_DrawMid_und(void)
     {
         for (i = 0; i < 60; i++)
         {
+            if (i > 45)
+            {
+                Road_Half_Width_change_r =(int )( ROAD_HALF_WIDTH + (Road_Half_Width_change_r - ROAD_HALF_WIDTH) * 0.7);
+                Road_Half_Width_change_l = (int )(ROAD_HALF_WIDTH + (Road_Half_Width_change_l - ROAD_HALF_WIDTH) * 0.7);
+            }
 
             if (New_Lef[i] != -MIDMAP && New_Rig[i] != MIDMAP) //Mid Calculaing
             {

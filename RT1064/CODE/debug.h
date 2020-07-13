@@ -1,9 +1,10 @@
 #include"headfile.h"
 #define DEBUG_KEY0 D4
-#define DEBUG_KEY1 D27
+#define DEBUG_KEY1 C27
 #define DEBUG_KEY2 C31
-#define DEBUG_KEY3 C27
-#define DEBUG_KEY4 C26
+#define DEBUG_KEY3 C26
+#define DEBUG_KEY4 D27
+#define DEBUG_KEY5 B10
 
 extern int DEBUG_CHOICE;
 extern float speedgoal;

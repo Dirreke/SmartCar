@@ -31,10 +31,14 @@ extern int Rig_break_point;
 // extern int Lef_break_point_und = 0;
 // extern int Rig_break_point_und = 0;
 
+extern bool crossing_flag;
+
 extern int start_stop_line_flag;
 extern int start_stop_line;
 extern int barn_line;
 extern int start_line;
+
+
 
 extern int stop_line;
 
@@ -43,6 +47,7 @@ void Pic_find_circle(void);
 void break_point_find_und(bool L,bool R);
 void start_stop_find(void);
 void mag_find(void);
+void crossing_find(void);
 void Road_rec(void);
 
 void TurnLeft_Process(void);
