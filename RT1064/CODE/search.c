@@ -210,7 +210,7 @@ void crossing_find(void)
     int temp1 = 0, temp2 = 0;
     bool set_flag1 = 1, set_flag2 = 1, find_flag1 = 0, find_flag2 = 0;
     float slopetemp;
-    int y,sum = 0;
+    int y, sum = 0;
     for (int i = 0; i < LCDH; ++i)
     {
         Lef_none_edge[i] = -1;
@@ -311,7 +311,7 @@ void crossing_find(void)
     sum = 0;
     for (int x = 10; x < 23; x += 4)
     {
-        y = (int)(slopetemp*(x - 1) + temp1);
+        y = (int)(slopetemp * (x - 1) + temp1);
         sum += Pixle[y][x];
         if (sum < 2)
         {
@@ -326,7 +326,7 @@ void crossing_find(void)
     sum = 0;
     for (int x = 58; x < 71; x += 4)
     {
-        y = (int)(slopetemp*(x - 1) + temp1);
+        y = (int)(slopetemp * (x - 1) + temp1);
         sum += Pixle[y][x];
         if (sum < 2)
         {
@@ -342,14 +342,13 @@ void crossing_find(void)
     sum = 0;
     for (int x = 34; x < 47; x += 4)
     {
-        y = (int)(slopetemp*(x - 1) + temp1);
+        y = (int)(slopetemp * (x - 1) + temp1);
         sum += Pixle[y][x];
         if (sum < 2)
         {
             crossing_flag = !crossing_flag;
         }
     }
-
 }
 /*************************************************************************
 *  º¯ÊýÃû³Æ£ºvoid start_stop_find(void)
@@ -979,7 +978,7 @@ void TurnRight_Process(void)
         {
             if (i == Fir_row + 1)
             {
-                turn_stop = i;
+                turn_stop = i - 1;
             }
             continue;
         }
@@ -988,7 +987,7 @@ void TurnRight_Process(void)
             dis = dis1;
             if (i == Fir_row + 1)
             {
-                turn_stop = i;
+                turn_stop = i - 1;
             }
             continue;
         }
@@ -1056,7 +1055,7 @@ void Road1_zhuangtaiji(void)
         {
             Road11_count = 0;
         }
-        if (Allwhitestart < 35 && Allwhitestart != 20)
+        if (Allwhiteend < 35 && Allwhiteend != 20)
         {
             Road0_count++;
             if (Road0_count > 1)
@@ -1166,11 +1165,19 @@ void Road1_zhuangtaiji(void)
             }
             else if (dis1 < dis)
             {
+                if (i == Fir_row + 1)
+                {
+                    turn_stop = i - 1;
+                }
                 continue;
             }
             else if (dis1 <= 2 * dis + 1)
             {
                 dis = dis1;
+                if (i == Fir_row + 1)
+                {
+                    turn_stop = i - 1;
+                }
                 continue;
             }
             else
@@ -1243,7 +1250,7 @@ void Road1_zhuangtaiji(void)
     }
     else if (Road1_flag == 6)
     {
-        if (EM_Value_1 < 0.6 && EM_Value_4 < 0.6)
+        if (EM_Value_1 < 0.6 && EM_Value_4 < 0.6 && Lef_edge < 10)
         {
             Road17_count++;
             if (Road17_count > 1)
@@ -1401,11 +1408,19 @@ void Road2_zhuangtaiji(void)
             }
             else if (dis1 < dis)
             {
+                if (i == Fir_row + 1)
+                {
+                    turn_stop = i - 1;
+                }
                 continue;
             }
             else if (dis1 <= 2 * dis + 1)
             {
                 dis = dis1;
+                if (i == Fir_row + 1)
+                {
+                    turn_stop = i - 1;
+                }
                 continue;
             }
             else
@@ -1480,7 +1495,7 @@ void Road2_zhuangtaiji(void)
     }
     else if (Road2_flag == 6)
     {
-        if (EM_Value_1 < 0.6 && EM_Value_4 < 0.6)
+        if (EM_Value_1 < 0.6 && EM_Value_4 < 0.6 && Rig_edge < 10)
         {
             Road27_count++;
             if (Road27_count > 1)
@@ -1753,14 +1768,14 @@ void Road7_zhuangtaiji(void)
     {
         Road73_count = 0;
         // Road74_count++;
-        for (int i = Last_row; i > stop_line - 5; i--)
+        for (int i = Last_row - 2; i > Fir_row; i--)
         {
             if (Pixle[i][8] + Pixle[i][72] + Pixle[i][30] + Pixle[i][35] + Pixle[i][40] + Pixle[i][45] + Pixle[i][50] < 3)
             {
                 Black_line++;
                 if (Black_line > 2)
                 {
-                    stop_line = i - 2;
+                    stop_line = i + 2;
                     if (stop_line > 27) // || Road74_count >= (int)(30 * 100 / (get_speed() * CAMERA_FPS)) + 1)
                     {
                         Road74_count++;
