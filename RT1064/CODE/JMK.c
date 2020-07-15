@@ -4,7 +4,7 @@
 int Road03_count = 0, Road04_count = 0;
 float centerAngle;
 
-// ÈüµÀÊ¶±ð
+// ï¿½ï¿½ï¿½ï¿½Ê¶ï¿½ï¿½
 #if 0
 char Road1_turnout = 1;
 void Road_rec(void)
@@ -17,7 +17,7 @@ void Road_rec(void)
 
   //if road=0 : straight line/turn left/turn right
   if(Road == 0){
-    if((Rig_break_point > 30 && Lef_circle == 0 && Rig_circle == 1 && Rig_slope != 998 )) //×ó×ªÍä
+    if((Rig_break_point > 30 && Lef_circle == 0 && Rig_circle == 1 && Rig_slope != 998 )) //ï¿½ï¿½×ªï¿½ï¿½
     {
       Road03_count++;
       if (Road03_count == 2){
@@ -25,7 +25,7 @@ void Road_rec(void)
         Road03_count = 0;//reset
       }
     }
-    else if ((Lef_break_point > 30 && Rig_circle == 0 && Lef_circle == 1 && Lef_slope != 998 )) //ÓÒ×ªÍä
+    else if ((Lef_break_point > 30 && Rig_circle == 0 && Lef_circle == 1 && Lef_slope != 998 )) //ï¿½ï¿½×ªï¿½ï¿½
     {
       Road04_count++;
       if (Road04_count == 2){
@@ -123,7 +123,7 @@ void Road_rec(void)
       }
       return;
     }
-    else if (Road1_flag == 3) //????????????¡¤ ?? ???????
+    else if (Road1_flag == 3) //????????????ï¿½ï¿½ ?? ???????
     {
       Road0_flag = 0;
       if ((Rig_slope > -0.02 && Rig_slope < 0) || (Pixle[58][74] == 1 && Pixle[57][74] == 1 && Pixle[56][74] == 1 && Pixle[55][74] == 1 && Pixle[54][74] == 1 && Pixle[53][74] == 1)) //|| Lef_edge < 20))
@@ -240,24 +240,24 @@ void Road_rec(void)
 }
 #endif
 /*************************************************************************
- *  º¯ÊýÃû³Æ£ºvoid car_center_pid()
- *  ¹¦ÄÜËµÃ÷£º³µÕý ÓëÖÐÐÄÏßÎ»ÖÃ²îpid
- *  ²ÎÊýËµÃ÷£ºÎÞ (pixel)
- *  º¯Êý·µ»Ø£ºÎÞ
- *  ÐÞ¸ÄÊ±¼ä£º2019.12.28
- *  ±¸    ×¢£ºÓë³µÖ±ºÏÓÃ
+ *  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ£ï¿½void car_center_pid()
+ *  ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½Ã²ï¿½pid
+ *  ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ (pixel)
+ *  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ø£ï¿½ï¿½ï¿½
+ *  ï¿½Þ¸ï¿½Ê±ï¿½ä£º2019.12.28
+ *  ï¿½ï¿½    ×¢ï¿½ï¿½ï¿½ë³µÖ±ï¿½ï¿½ï¿½ï¿½
  * **********************************************************************/
 
 struct _pid
 {
-  float err;          //¶¨ÒåÆ«²îÖµ
-  float err_lastlast; //¶¨ÒåÉÏÉÏ¸öÆ«²îÖµ
-  float err_last;     //¶¨ÒåÉÏ¸öÆ«²îÖµ
-  //float Kp, Ki, Kd;   //¶¨Òå±ÈÀý¡¢»ý·Ö¡¢Î¢·ÖÏµÊý
-  float Kp, Kd;      //¶¨Òå±ÈÀý¡¢Î¢·ÖÏµÊý
-  float voltage;     //¶¨ÒåµçÑ¹Öµ£¨¿ØÖÆÖ´ÐÐÆ÷µÄ±äÁ¿£©
-  float integral;    //¶¨Òå»ý·ÖÖµ
-  float ActualAngle; //Êä³ö×ª½Ç
+  float err;          //ï¿½ï¿½ï¿½ï¿½Æ«ï¿½ï¿½Öµ
+  float err_lastlast; //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¸ï¿½Æ«ï¿½ï¿½Öµ
+  float err_last;     //ï¿½ï¿½ï¿½ï¿½ï¿½Ï¸ï¿½Æ«ï¿½ï¿½Öµ
+  //float Kp, Ki, Kd;   //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¡ï¿½Î¢ï¿½ï¿½Ïµï¿½ï¿½
+  float Kp, Kd;      //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î¢ï¿½ï¿½Ïµï¿½ï¿½
+  float voltage;     //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¹Öµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½ï¿½ï¿½ï¿½Ä±ï¿½ï¿½ï¿½ï¿½ï¿½
+  float integral;    //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµ
+  float ActualAngle; //ï¿½ï¿½ï¿½ï¿½×ªï¿½ï¿½
 };
 
 _pid pid_center;
@@ -280,7 +280,7 @@ float PID_realize_center(float err)
 {
   pid_center.err = err;
   float incrementAngle = pid_center.Kp * (pid_center.err - pid_center.err_last) + pid_center.Kd * (pid_center.err - 2 * pid_center.err_last + pid_center.err_lastlast);
-  //+ pid_center.Ki * pid_center.err //²»ÓÃiµ÷½Ú
+  //+ pid_center.Ki * pid_center.err //ï¿½ï¿½ï¿½ï¿½iï¿½ï¿½ï¿½ï¿½
   pid_center.ActualAngle += incrementAngle;
   pid_center.err_lastlast = pid_center.err_last;
   pid_center.err_last = pid_center.err;
@@ -307,12 +307,12 @@ float car_center()
 }
 
 /*************************************************************************
- *  º¯ÊýÃû³Æ£ºvoid car_straight_pid()
- *  ¹¦ÄÜËµÃ÷£º³µÖ± ÓëÖÐÏß½Ç¶È²îpid
- *  ²ÎÊýËµÃ÷£ºÎÞ (theta)
- *  º¯Êý·µ»Ø£ºÎÞ
- *  ÐÞ¸ÄÊ±¼ä£º2019.12.28
- *  ±¸    ×¢£º¸øgmydlµÄ³µÖ±¼Ó(´ò)pid(call)
+ *  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ£ï¿½void car_straight_pid()
+ *  ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö± ï¿½ï¿½ï¿½ï¿½ï¿½ß½Ç¶È²ï¿½pid
+ *  ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ (theta)
+ *  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ø£ï¿½ï¿½ï¿½
+ *  ï¿½Þ¸ï¿½Ê±ï¿½ä£º2019.12.28
+ *  ï¿½ï¿½    ×¢ï¿½ï¿½ï¿½ï¿½gmydlï¿½Ä³ï¿½Ö±ï¿½ï¿½(ï¿½ï¿½)pid(call)
  * **********************************************************************/
 _pid pid_straight;
 
@@ -334,7 +334,7 @@ int PID_realize_straight(float err)
 {
   pid_straight.err = err;
   float incrementAngle = pid_straight.Kp * (pid_straight.err - pid_straight.err_last) + pid_straight.Kd * (pid_straight.err - 2 * pid_straight.err_last + pid_straight.err_lastlast);
-  //+ pid_straight.Ki * pid_straight.err //²»ÓÃiµ÷½Ú
+  //+ pid_straight.Ki * pid_straight.err //ï¿½ï¿½ï¿½ï¿½iï¿½ï¿½ï¿½ï¿½
   pid_straight.ActualAngle += incrementAngle;
   pid_straight.err_lastlast = pid_straight.err_last;
   pid_straight.err_last = pid_straight.err;
@@ -348,103 +348,103 @@ void car_straight_pid()
   centerAngle = PID_realize_straight(atan(new_M_slope()));
 }
 
-/* ²¹control.c 39-45 */
+/* ï¿½ï¿½control.c 39-45 */
 void chuyuanhuan_bunengbuxian(void)
 {
   float wall_slope = 0;
   int wall_dis = 0;
   int avr_x = 0;
 
-  if (Road1_flag == 5) //³ö×ó»·²»ÄÜ²¹ÏßÊ±
+  if (Road1_flag == 5) //ï¿½ï¿½ï¿½ó»·²ï¿½ï¿½Ü²ï¿½ï¿½ï¿½Ê±
   {
-    /* ºÚÏßÐ±ÂÊÔ¼¶¸´ò½ÇÔ½Ð¡ */
-    if (Rig[Allwhiteend] < 78) //Õý³£Çé¿ö
+    /* ï¿½ï¿½ï¿½ï¿½Ð±ï¿½ï¿½Ô¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô½Ð¡ */
+    if (Rig[Allwhiteend] < 78) //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     {
       avr_x += Rig[Allwhiteend];
       for (int i = Allwhiteend - 1; i > Fir_row; --i)
       {
-        if (Rig[i] >= 78 || Rig[i] - Rig[i + 1] > 0) //Ñ­»·ËÑÖÁÕÒ²»µ½±ßÏß»ò²»µ¥µ÷
+        if (Rig[i] >= 78 || Rig[i] - Rig[i + 1] > 0) //Ñ­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß»ò²»µï¿½ï¿½ï¿½
         {
-          avr_x += 2;                                                            //È¡×î×ó
-          avr_x /= Allwhiteend - i + 1;                                          //¾ùÖµ£¬È¡Õû£¬ÖÁÉÙÁ½µã£¬Rig[Allwhiteend] ¡­ ¡­ 2
-          wall_slope = Slope(avr_x, (i + Allwhiteend + 1) / 2, 78, Allwhiteend); //ËãÐ±ÂÊ£¬Ó¦¸Ã²»´óÓÚ1
+          avr_x += 2;                                                            //È¡ï¿½ï¿½ï¿½ï¿½
+          avr_x /= Allwhiteend - i + 1;                                          //ï¿½ï¿½Öµï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ã£¬Rig[Allwhiteend] ï¿½ï¿½ ï¿½ï¿½ 2
+          wall_slope = Slope(avr_x, (i + Allwhiteend + 1) / 2, 78, Allwhiteend); //ï¿½ï¿½Ð±ï¿½Ê£ï¿½Ó¦ï¿½Ã²ï¿½ï¿½ï¿½ï¿½ï¿½1
           break;
         }
         avr_x += Rig[i];
       }
     }
-    else if (Lef[Allwhiteend] <= 2) //ºÚ³¤Ö±
+    else if (Lef[Allwhiteend] <= 2) //ï¿½Ú³ï¿½Ö±
     {
       wall_slope = 0.01;
     }
-    else //ÍáµÄÀëÆ×£¬ÌáÇ°½ø5¿ÉÄÜµ¼ÖÂ¸Ã×´Ì¬
+    else //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×£ï¿½ï¿½ï¿½Ç°ï¿½ï¿½5ï¿½ï¿½ï¿½Üµï¿½ï¿½Â¸ï¿½×´Ì¬
     {
-      wall_slope = 0.01; //-999;//ÔÝÊ±ÓëÖ±Ïß²»Çø·Ö
+      wall_slope = 0.01; //-999;//ï¿½ï¿½Ê±ï¿½ï¿½Ö±ï¿½ß²ï¿½ï¿½ï¿½ï¿½ï¿½
     }
 
-    /* ºÚÏß¾àÀëÔ½½ü´ò½ÇÔ½´ó£¨ÒÔÖÐ¼äÁÐÎª×¼£© */
+    /* ï¿½ï¿½ï¿½ß¾ï¿½ï¿½ï¿½Ô½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¼ï¿½ï¿½ï¿½Îª×¼ï¿½ï¿½ */
     for (int j = 0; j < 3 && Allwhiteend - j > Fir_row && Rig[Allwhiteend - j] < 78; ++j)
     {
       if (j == 2)
       {
-        wall_dis == Rig[Allwhiteend - 1]; //38ÐÐ´òÂúÍíÁË
+        wall_dis == Rig[Allwhiteend - 1]; //38ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
       }
     }
 
-    /* Õ¦Õûµ½Ò»ÆðÄØ ×ó»·×ó×ªÎª¸º*/
+    /* Õ¦ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×ªÎªï¿½ï¿½*/
     Turn_Cam_Out = -120 - (1 - wall_slope) * (wall_dis - 25) * 10;
   }
 
-  if (Road2_flag == 5) //³öÓÒ»·²»ÄÜ²¹ÏßÊ±
+  if (Road2_flag == 5) //ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Ü²ï¿½ï¿½ï¿½Ê±
   {
-    /* ºÚÏßÐ±ÂÊÔ¼¶¸´ò½ÇÔ½Ð¡ */
-    if (Lef[Allwhiteend] < 78) //Õý³£Çé¿ö
+    /* ï¿½ï¿½ï¿½ï¿½Ð±ï¿½ï¿½Ô¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô½Ð¡ */
+    if (Lef[Allwhiteend] < 78) //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     {
       avr_x += Lef[Allwhiteend];
       for (int i = Allwhiteend - 1; i > Fir_row; --i)
       {
-        if (Lef[i] >= 78 || Lef[i] - Lef[i + 1] > 0) //Ñ­»·ËÑÖÁÕÒ²»µ½±ßÏß»ò²»µ¥µ÷
+        if (Lef[i] >= 78 || Lef[i] - Lef[i + 1] > 0) //Ñ­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß»ò²»µï¿½ï¿½ï¿½
         {
-          avr_x += 2;                                                            //È¡×î×ó
-          avr_x /= Allwhiteend - i + 1;                                          //¾ùÖµ£¬È¡Õû£¬ÖÁÉÙÁ½µã£¬Rig[Allwhiteend] ¡­ ¡­ 2
-          wall_slope = Slope(avr_x, (i + Allwhiteend + 1) / 2, 78, Allwhiteend); //ËãÐ±ÂÊ£¬Ó¦¸Ã²»´óÓÚ1
+          avr_x += 2;                                                            //È¡ï¿½ï¿½ï¿½ï¿½
+          avr_x /= Allwhiteend - i + 1;                                          //ï¿½ï¿½Öµï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ã£¬Rig[Allwhiteend] ï¿½ï¿½ ï¿½ï¿½ 2
+          wall_slope = Slope(avr_x, (i + Allwhiteend + 1) / 2, 78, Allwhiteend); //ï¿½ï¿½Ð±ï¿½Ê£ï¿½Ó¦ï¿½Ã²ï¿½ï¿½ï¿½ï¿½ï¿½1
           break;
         }
         avr_x += Lef[i];
       }
     }
-    else if (Rig[Allwhiteend] <= 2) //ºÚ³¤Ö±
+    else if (Rig[Allwhiteend] <= 2) //ï¿½Ú³ï¿½Ö±
     {
       wall_slope = 0.01;
     }
-    else //ÍáµÄÀëÆ×£¬ÌáÇ°½ø5¿ÉÄÜµ¼ÖÂ¸Ã×´Ì¬
+    else //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×£ï¿½ï¿½ï¿½Ç°ï¿½ï¿½5ï¿½ï¿½ï¿½Üµï¿½ï¿½Â¸ï¿½×´Ì¬
     {
-      wall_slope = 0.01; //-999;//ÔÝÊ±ÓëÖ±Ïß²»Çø·Ö
+      wall_slope = 0.01; //-999;//ï¿½ï¿½Ê±ï¿½ï¿½Ö±ï¿½ß²ï¿½ï¿½ï¿½ï¿½ï¿½
     }
 
-    /* ºÚÏß¾àÀëÔ½½ü´ò½ÇÔ½´ó£¨ÒÔÖÐ¼äÁÐÎª×¼£© */
+    /* ï¿½ï¿½ï¿½ß¾ï¿½ï¿½ï¿½Ô½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¼ï¿½ï¿½ï¿½Îª×¼ï¿½ï¿½ */
     for (int j = 0; j < 3 && Allwhiteend - j > Fir_row && Lef[Allwhiteend - j] < 78; ++j)
     {
       if (j == 2)
       {
-        wall_dis == Lef[Allwhiteend - 1]; //38ÐÐ´òÂúÍíÁË
+        wall_dis == Lef[Allwhiteend - 1]; //38ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
       }
     }
 
-    /* Õ¦Õûµ½Ò»ÆðÄØ ÓÒ»·ÓÒ×ªÎªÕý*/
+    /* Õ¦ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ ï¿½Ò»ï¿½ï¿½ï¿½×ªÎªï¿½ï¿½*/
     Turn_Cam_Out = 120 + (1 - wall_slope) * (wall_dis - 25) * 10;
   }
 }
 
 void Kalman_Filter(void)
 {
-  /* ¿ØÖÆÏòÁ¿uk£º¶æ»ú´ò½Ç±ä»¯d¦Ä */
-  /* ¿ØÖÆ¾ØÕóB£º½Ç¶ÈËÙ¶ÈñîºÏ¾ØÕó */
-  /* ×´Ì¬ÏòÁ¿xk£ºµ±Ç°×´Ì¬£¨frenet×ø±êÏµ£¬n£º³µÓëÖÐÐÄÏß·¨Ïò¾àÀë£¬¦Ì£º³µÓëÖÐÐÄÏßÇÐÏß¼Ð½Ç£© */
-  /* ËÙ¶È·½Ïò¦Â£ºtan¦Ä = 2 * tan¦Â */
-  /* ×´Ì¬·½³Ì£º nk = nk+1 + vxsin¦Ì + vycos¦Ì */
-  /* ×´Ì¬·½³Ì£º ¦Ìk = ¦Ìk-1 + r - ¦Ê(s)ds*/
-  /* ×´Ì¬×ªÒÆ¾ØÕóFk£º  */
+  /* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ukï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç±ä»¯dï¿½ï¿½ */
+  /* ï¿½ï¿½ï¿½Æ¾ï¿½ï¿½ï¿½Bï¿½ï¿½ï¿½Ç¶ï¿½ï¿½Ù¶ï¿½ï¿½ï¿½ï¿½Ï¾ï¿½ï¿½ï¿½ */
+  /* ×´Ì¬ï¿½ï¿½ï¿½ï¿½xkï¿½ï¿½ï¿½ï¿½Ç°×´Ì¬ï¿½ï¿½frenetï¿½ï¿½ï¿½ï¿½Ïµï¿½ï¿½nï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ë£¬ï¿½Ì£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß¼Ð½Ç£ï¿½ */
+  /* ï¿½Ù¶È·ï¿½ï¿½ï¿½ï¿½Â£ï¿½tanï¿½ï¿½ = 2 * tanï¿½ï¿½ */
+  /* ×´Ì¬ï¿½ï¿½ï¿½Ì£ï¿½ nk = nk+1 + vxsinï¿½ï¿½ + vycosï¿½ï¿½ */
+  /* ×´Ì¬ï¿½ï¿½ï¿½Ì£ï¿½ ï¿½ï¿½k = ï¿½ï¿½k-1 + r - ï¿½ï¿½(s)ds*/
+  /* ×´Ì¬×ªï¿½Æ¾ï¿½ï¿½ï¿½Fkï¿½ï¿½  */
 
   float accuracy_EM = 0;
   float accuracy_Cam = 0;
@@ -482,7 +482,7 @@ void Kalman_Filter(void)
       //   Turn_Cam_Out = -0.5 * SERVO_RANGE;
       // }
       Turn_Out = -SERVO_RANGE;
-      Servo_Duty(-Turn_Out); //¶æ»ú¿ØÖÆ
+      Servo_Duty(-Turn_Out); //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
       return;
     }
     else if (Road1_flag == 4)
@@ -513,7 +513,7 @@ void Kalman_Filter(void)
       //   Turn_Cam_Out = 0.5 * SERVO_RANGE;
       // }
       Turn_Out = SERVO_RANGE;
-      Servo_Duty(-Turn_Out); //¶æ»ú¿ØÖÆ
+      Servo_Duty(-Turn_Out); //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
       return;
     }
     else if (Road2_flag == 4)
@@ -561,7 +561,7 @@ void Kalman_Filter(void)
   }
   K = accuracy_EM / (accuracy_Cam + accuracy_EM);
   Turn_Out = (1 - K) * Turn_Cam_Out + K * Turn_EM_Out;
-  Servo_Duty(-Turn_Out); //¶æ»ú¿ØÖÆ
+  Servo_Duty(-Turn_Out); //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 }
 
 float speed_mean_filter(float D_new)
@@ -588,3 +588,88 @@ float speed_mean_filter(float D_new)
   }
 }
 
+float Mid_slope = 0;
+float M_Slope_fig(void)
+{
+
+  float xsum = 0, ysum = 0, xysum = 0, x2sum = 0, count = 0;
+  int max = -800, min = 0;
+  const int M_slope_start = 5, M_slope_end = 45;
+  for (int i = M_slope_start; i < M_slope_end; i++)
+  {
+    if (i <= FIG_AREA_NEAR && i >= FIG_AREA_FAR && New_Mid[i] != 999)
+    {
+      if (New_Mid[i] > max)
+      {
+        max = New_Mid[i];
+      }
+      if (New_Mid[i] < min)
+      {
+        min = New_Mid[i];
+      }
+      xsum += New_Mid[i];
+      ysum += i;
+      xysum += New_Mid[i] * i;
+      x2sum += New_Mid[i] * New_Mid[i];
+      count++;
+    }
+  }
+
+  if (abs(max - min) > 25)
+  {
+    if (count * x2sum - xsum * xsum)
+    {
+      Mid_slope = -(count * xysum - xsum * ysum) / (count * x2sum - xsum * xsum);
+    }
+    else
+    {
+      Mid_slope = 999;
+    }
+  }
+  else
+  {
+    Mid_slope = 998;
+  }
+  if (Mid_slope != 999)
+  {
+    if (Mid_slope >= 1.4 || Mid_slope <= -1.4)
+    {
+      Mid_slope = 998;
+    }
+    else if (Mid_slope >= 1.2 || Mid_slope <= -1.2)
+    {
+      Mid_slope = pow(Mid_slope, 3);
+    }
+  }
+  if (Mid_slope == 999 || Mid_slope == 998)
+  {
+    return 0;
+  }
+
+  else
+  {
+    return atan(Mid_slope * UNDISTORT_PYK * UNDISTORT_XPK) > 0 ? 1.57 - atan(Mid_slope * UNDISTORT_PYK * UNDISTORT_XPK) : -1.57 + atan(-Mid_slope * UNDISTORT_PYK * UNDISTORT_XPK);
+  }
+}
+
+float Related_calculate(float xsum, float ysum, const int M_slope_start, const int M_slope_end)
+{
+  float xmean = 0, ymean = 0, xmean2sum = 0, ymean2sum = 0;
+  float xysigma = 0, rsum = 0;
+  int count = M_slope_end - M_slope_start;
+  xmean = xsum / count;
+  ymean = ysum / count;
+  for (int i = M_slope_start; i < M_slope_end; i++)
+  {
+    xmean2sum += (New_Mid[i] - xmean) * (New_Mid[i] - xmean);
+    ymean2sum += (i - ymean) * (i - ymean);
+  }
+  xmean2sum /= count;
+  ymean2sum /= count;
+  xysigma = 1 / sqrt(xmean2sum * ymean2sum);
+  for (int i = M_slope_start; i < M_slope_end; i++)
+  {
+    rsum += (New_Mid[i] - xmean) * (i - ymean) * xysigma;
+  }
+  return rsum / count;
+}
