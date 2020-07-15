@@ -203,7 +203,7 @@ void break_point_find_und(bool L, bool R)
 *************************************************************************/
 void crossing_find(void)
 {
-    //crossing_flag = 0;
+    crossing_flag = 0;
     int Lef_none_edge[LCDH], Rig_none_edge[LCDH];
     int jl = 0, jr = 0;
     int Lmin = 0, Lmax = 0, Rmin = 0, Rmax = 0;
@@ -233,13 +233,13 @@ void crossing_find(void)
     {
         if (set_flag1)
         {
-            Lmin = Lef_none_edge[i];
+            Lmax = Lef_none_edge[i];
             set_flag1 = !set_flag1;
         }
         if (Lef_none_edge[i + 1] - Lef_none_edge[i] > 1 || Lef_none_edge[i + 1] == -1)
         {
-            Lmax = Lef_none_edge[i];
-            if (Lmax - Lmin < 5)
+            Lmin = Lef_none_edge[i];
+            if (Lmax - Lmin < 3)
             {
                 set_flag1 = 1;
             }
@@ -254,14 +254,14 @@ void crossing_find(void)
     {
         if (set_flag2)
         {
-            Rmin = Rig_none_edge[i];
+            Rmax = Rig_none_edge[i];
             set_flag2 = !set_flag2;
         }
 
         if (Rig_none_edge[i + 1] - Rig_none_edge[i] > 1 || Rig_none_edge[i + 1] == -1)
         {
-            Rmax = Rig_none_edge[i];
-            if (Rmax - Rmin < 5)
+            Rmin = Rig_none_edge[i];
+            if (Rmax - Rmin < 3)
             {
                 set_flag2 = 1;
             }
@@ -272,7 +272,7 @@ void crossing_find(void)
             }
         }
     }
-    if (!find_flag1 && !find_flag2)
+    if (!find_flag1 || !find_flag2)
     {
         return;
     }
@@ -313,9 +313,10 @@ void crossing_find(void)
     {
         y = (int)(slopetemp * (x - 1) + temp1);
         sum += Pixle[y][x];
-        if (sum < 2)
+        if (sum > 2)
         {
             crossing_flag = !crossing_flag;
+            break;
         }
     }
     if (!crossing_flag)
@@ -328,9 +329,10 @@ void crossing_find(void)
     {
         y = (int)(slopetemp * (x - 1) + temp1);
         sum += Pixle[y][x];
-        if (sum < 2)
+        if (sum > 2)
         {
             crossing_flag = !crossing_flag;
+            break;
         }
     }
 
@@ -344,9 +346,10 @@ void crossing_find(void)
     {
         y = (int)(slopetemp * (x - 1) + temp1);
         sum += Pixle[y][x];
-        if (sum < 2)
+        if (sum > 2)
         {
             crossing_flag = !crossing_flag;
+            break;
         }
     }
 }

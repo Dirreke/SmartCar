@@ -72,7 +72,9 @@ float car_straight(float car_dias)
 PID PID_CAR_STRAIGHT_CAM;
 PID PID_CAR_CENTER_CAM;
 
-float Turn_Cam_Center_P_Table[11] = {0.2, 0.4, 0.45, 0.3, 0.2, 0.1, 0.2, 0.3, 0.45, 0.4, 0.2};
+float Turn_Cam_Center_P_Table[11] = {0.2, 0.4, 0.45, 0.3, 0.2, 0.1, 0.2, 0.3, 0.45, 0.4, 0.2};//*0.5;
+float Turn_Cam_Center_D_Table[11] = {0.2, 0.35, 0.5, 0.3, 0.2, 0.1, 0.2, 0.3, 0.5, 0.35, 0.2};//{0.2, 0.4, 0.45, 0.3, 0.2, 0.1, 0.2, 0.3, 0.45, 0.4, 0.2}*0.5;
+
 float car_center_dias_Table[11] = {-180, -120, -75, -50, -30, 0, 30, 50, 75, 120, 180};
 
 // float Turn_Cam_Straight_P_Table[11] = {0.5, 0.8, 0.7, 0.55, 0.4, 0.1, 0.4, 0.55, 0.7, 0.8, 0.5};
@@ -99,11 +101,13 @@ void Turn_Cam_New(void)
   /* 车正角度转换p表 */
   if (car_center_dias <= car_center_dias_Table[0])
   {
-    Turn_Cam_Center_P = Turn_Cam_Center_P_Table[0];
+    PID_CAR_CENTER_CAM.P = Turn_Cam_Center_P_Table[0];
+    PID_CAR_CENTER_CAM.D = Turn_Cam_Center_D_Table[0];
   }
   else if (car_center_dias >= car_center_dias_Table[10])
   {
-    Turn_Cam_Center_P = Turn_Cam_Center_P_Table[10];
+    PID_CAR_CENTER_CAM.P = Turn_Cam_Center_P_Table[10];
+    PID_CAR_CENTER_CAM.D = Turn_Cam_Center_D_Table[10];
   }
   else
   {
@@ -111,12 +115,13 @@ void Turn_Cam_New(void)
     {
       if (car_center_dias >= car_center_dias_Table[i] && car_center_dias < car_center_dias_Table[i + 1])
       {
-        Turn_Cam_Center_P = Turn_Cam_Center_P_Table[i] + (car_center_dias - car_center_dias_Table[i]) * (Turn_Cam_Center_P_Table[i + 1] - Turn_Cam_Center_P_Table[i]) / (car_center_dias_Table[i + 1] - car_center_dias_Table[i]); //线性
-        break;
+        PID_CAR_CENTER_CAM.P = Turn_Cam_Center_P_Table[i] + (car_center_dias - car_center_dias_Table[i]) * (Turn_Cam_Center_P_Table[i + 1] - Turn_Cam_Center_P_Table[i]) / (car_center_dias_Table[i + 1] - car_center_dias_Table[i]); //线性
+        PID_CAR_CENTER_CAM.D = Turn_Cam_Center_D_Table[i] + (car_center_dias - car_center_dias_Table[i]) * (Turn_Cam_Center_D_Table[i + 1] - Turn_Cam_Center_D_Table[i]) / (car_center_dias_Table[i + 1] - car_center_dias_Table[i]); //线性
       }
     }
   }
-  car_center_dias *= Turn_Cam_Center_P;
+
+  car_center_PWM = PID_CAR_CENTER_CAM.P * car_center_dias+ PID_CAR_CENTER_CAM.D * (car_center_dias - car_center_dias_old);
 
   /* 车直模糊PD表 */
 
@@ -143,7 +148,7 @@ void Turn_Cam_New(void)
     }
   }
 
-  car_center_PWM = PID_CAR_CENTER_CAM.P * car_center_dias + PID_CAR_CENTER_CAM.D * (car_center_dias - car_center_dias_old);
+
   car_straight_PWM = PID_CAR_STRAIGHT_CAM.P * car_straight_dias + PID_CAR_STRAIGHT_CAM.D * (car_straight_dias - car_straight_dias_old);
 
   car_straight_dias_old = car_straight_dias;
