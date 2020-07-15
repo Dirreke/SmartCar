@@ -4,15 +4,15 @@ float car_center(void)
 {
   // PID_init_center();
   float car_center_dias = 0;
-  int car_center_start = 45;
-  int car_center_end = 55;
+  int car_center_start = 5;
+  int car_center_end = 15;
   int cnt = 0;
   for (int i = car_center_start; i < car_center_end; ++i)
   {
     if (New_Mid[i] != 999)
     {
       car_center_dias += New_Mid[i];
-      cnt++;
+      cnt += 1;
     }
   }
   if (cnt == 0)
@@ -72,22 +72,30 @@ float car_straight(float car_dias)
 PID PID_CAR_STRAIGHT_CAM;
 PID PID_CAR_CENTER_CAM;
 
-float Turn_Cam_Center_P_Table[11] = {2, 1.5, 1.3, 1, 1, 0.5, 1, 1, 1.3, 1.5, 2};
-float car_center_dias_Table[11] = {-150, -130, -100, -70, -30, 0, 30, 70, 100, 130, 150};
+float Turn_Cam_Center_P_Table[11] = {0.3, 0.25, 0.4, 0.25, 0.2, 0.1, 0.2, 0.25, 0.4, 0.25, 0.3};
+float car_center_dias_Table[11] = {-100, -75, -50, -30, -15, 0, 15, 30, 50, 75, 100};
+
+// float Turn_Cam_Straight_P_Table[11] = {0.5, 0.8, 0.7, 0.55, 0.4, 0.1, 0.4, 0.55, 0.7, 0.8, 0.5};
+// float Turn_Cam_Straight_D_Table[11] = {0.15, 0.3, 0.6, 0.6, 0.4, 0.01, 0.4, 0.6, 0.6, 0.3, 0.15};
+// float car_straight_dias_Table[11] = {-250, -180, -140, -100, -70, 0, 70, 100, 140, 180, 250};
+float Turn_Cam_Straight_P_Table[11] = {0.5, 0.75, 0.75, 0.55, 0.4, 0.1, 0.4, 0.55, 0.75, 0.75, 0.5};
+float Turn_Cam_Straight_D_Table[11] = {0.15, 0.25, 0.7, 0.6, 0.5, 0.01, 0.5, 0.6, 0.7, 0.25, 0.15};
+float car_straight_dias_Table[11] = {-250, -180, -140, -100, -70, 0, 70, 100, 140, 180, 250};
+
 float Turn_Cam_Center_P = 0;
 
-float car_straight_angle;
+float car_straight_dias;
 
 float car_center_dias; //diff impose on angle set
 void Turn_Cam_New(void)
 {
   static float car_center_dias_old = 0;
-  static float car_straight_angle_old = 0;
+  static float car_straight_dias_old = 0;
   float car_center_PWM;
   float car_straight_PWM;
   car_center_dias = car_center();
   //car_straight_angle = car_straight(car_center_dias);
-  car_straight_angle = M_Slope_fig();
+  car_straight_dias = M_Slope_fig() * SERVO_RANGE / ANGLE_RANGE;
   /* 车正角度转换p表 */
   if (car_center_dias <= car_center_dias_Table[0])
   {
@@ -99,7 +107,7 @@ void Turn_Cam_New(void)
   }
   else
   {
-    for (int i = 0; i < 11; i++)
+    for (int i = 0; i < 10; i++)
     {
       if (car_center_dias >= car_center_dias_Table[i] && car_center_dias < car_center_dias_Table[i + 1])
       {
@@ -110,10 +118,35 @@ void Turn_Cam_New(void)
   }
   car_center_dias *= Turn_Cam_Center_P;
 
-  car_center_PWM = PID_CAR_CENTER_CAM.P * car_center_dias + PID_CAR_CENTER_CAM.D * (car_center_dias - car_center_dias_old);
-  car_straight_PWM = (PID_CAR_STRAIGHT_CAM.P * car_straight_angle + PID_CAR_STRAIGHT_CAM.D * (car_straight_angle - car_straight_angle_old)) * SERVO_RANGE / ANGLE_RANGE;
+  /* 车直模糊PD表 */
 
-  car_straight_angle_old = car_straight_angle;
+  if (car_straight_dias <= car_straight_dias_Table[0])
+  {
+    PID_CAR_STRAIGHT_CAM.P = Turn_Cam_Straight_P_Table[0];
+    PID_CAR_STRAIGHT_CAM.D = Turn_Cam_Straight_D_Table[0];
+  }
+  else if (car_straight_dias >= car_straight_dias_Table[10])
+  {
+    PID_CAR_STRAIGHT_CAM.P = Turn_Cam_Straight_P_Table[10];
+    PID_CAR_STRAIGHT_CAM.D = Turn_Cam_Straight_D_Table[10];
+  }
+  else
+  {
+    for (int i = 0; i < 10; i++)
+    {
+      if (car_straight_dias >= car_straight_dias_Table[i] && car_straight_dias < car_straight_dias_Table[i + 1])
+      {
+        PID_CAR_STRAIGHT_CAM.P = Turn_Cam_Straight_P_Table[i] + (car_straight_dias - car_straight_dias_Table[i]) * (Turn_Cam_Straight_P_Table[i + 1] - Turn_Cam_Straight_P_Table[i]) / (car_straight_dias_Table[i + 1] - car_straight_dias_Table[i]); //线性
+        PID_CAR_STRAIGHT_CAM.D = Turn_Cam_Straight_D_Table[i] + (car_straight_dias - car_straight_dias_Table[i]) * (Turn_Cam_Straight_D_Table[i + 1] - Turn_Cam_Straight_D_Table[i]) / (car_straight_dias_Table[i + 1] - car_straight_dias_Table[i]);
+        break;
+      }
+    }
+  }
+
+  car_center_PWM = PID_CAR_CENTER_CAM.P * car_center_dias + PID_CAR_CENTER_CAM.D * (car_center_dias - car_center_dias_old);
+  car_straight_PWM = PID_CAR_STRAIGHT_CAM.P * car_straight_dias + PID_CAR_STRAIGHT_CAM.D * (car_straight_dias - car_straight_dias_old);
+
+  car_straight_dias_old = car_straight_dias;
   car_center_dias_old = car_center_dias;
   //PID_realize_center(car_center_dias);
   //car_straight_PWM = PID_realize_straight(car_straight_angle * SERVO_RANGE / ANGLE_RANGE);
@@ -150,7 +183,7 @@ float M_Slope_fig(void)
       long_start = jcp_old;
       long_end = jump_change_point;
     }
-count = 0;
+    count = 0;
     jcp_old = jump_change_point;
   } while (jump_change_point != FIG_AREA_FAR);
   {                                         //如果看到这段注释 下面是算斜率 可以折起来了
@@ -177,9 +210,9 @@ count = 0;
     DEBUG_MIDMAXMIN = abs(max - min);
     if (abs(max - min) > 20)
     {
-      if (count * xysum - xsum * ysum )
+      if (count * xysum - xsum * ysum)
       {
-        Mid_slope = - (count * y2sum - ysum * ysum) / (count * xysum - xsum * ysum);// -(count * xysum - xsum * ysum) / (count * x2sum - xsum * xsum);
+        Mid_slope = -(count * y2sum - ysum * ysum) / (count * xysum - xsum * ysum); // -(count * xysum - xsum * ysum) / (count * x2sum - xsum * xsum);
       }
       else
       {
@@ -192,7 +225,7 @@ count = 0;
     }
     DEBUG_SLOPE = Mid_slope;
   }
-  { //如果看到这段注释 下面没有神奇操作了 斜率算的不对 return弧度！！好了折起来吧/* 是对斜率进行了一些神奇操作 */ 
+  { //如果看到这段注释 下面没有神奇操作了 斜率算的不对 return弧度！！好了折起来吧/* 是对斜率进行了一些神奇操作 */
     // if (Mid_slope != 999)
     // {
     //   if (Mid_slope >= 1.4 || Mid_slope <= -1.4)
@@ -217,7 +250,7 @@ count = 0;
 
 int gmyshuoqianbuchulai(int temp)
 {
-  int dis = 0,turn = 0;
+  int dis = 0, turn = 0;
   if (temp <= FIG_AREA_FAR)
   {
     return FIG_AREA_FAR;
