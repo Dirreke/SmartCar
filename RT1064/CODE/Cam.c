@@ -1,5 +1,8 @@
 #include "headfile.h"
 
+float car_center_new(void)
+{
+}
 float car_center(void)
 {
   // PID_init_center();
@@ -71,9 +74,10 @@ float car_straight(float car_dias)
 
 PID PID_CAR_STRAIGHT_CAM;
 PID PID_CAR_CENTER_CAM;
+PID PID_CAR_Diffcomp_CAM;
 
-float Turn_Cam_Center_P_Table[11] ={0.2, 0.3, 0.4, 0.3, 0.15, 0.05, 0.15, 0.3, 0.4, 0.3, 0.2}; // {0.15, 0.2, 0.3, 0.2, 0.15, 0.05, 0.15, 0.2, 0.3, 0.2, 0.15}; //*0.5;
-float Turn_Cam_Center_D_Table[11] = {0.4, 0.8, 1, 1.2, 0.6, 0, 0.6, 1.2, 1, 0.8, 0.4};        //{0.2, 0.4, 0.45, 0.3, 0.2, 0.1, 0.2, 0.3, 0.45, 0.4, 0.2}*0.5;
+float Turn_Cam_Center_P_Table[11] = {0.2, 0.3, 0.4, 0.3, 0.15, 0.05, 0.15, 0.3, 0.4, 0.3, 0.2}; // {0.15, 0.2, 0.3, 0.2, 0.15, 0.05, 0.15, 0.2, 0.3, 0.2, 0.15}; //*0.5;
+float Turn_Cam_Center_D_Table[11] = {0.4, 0.8, 1, 1.2, 0.6, 0, 0.6, 1.2, 1, 0.8, 0.4};          //{0.2, 0.4, 0.45, 0.3, 0.2, 0.1, 0.2, 0.3, 0.45, 0.4, 0.2}*0.5;
 
 float car_center_dias_Table[11] = {-180, -120, -75, -50, -15, 0, 15, 50, 75, 120, 180};
 
@@ -83,6 +87,10 @@ float car_center_dias_Table[11] = {-180, -120, -75, -50, -15, 0, 15, 50, 75, 120
 float Turn_Cam_Straight_P_Table[11] = {0.58, 0.82, 0.84, 0.57, 0.4, 0.1, 0.4, 0.57, 0.84, 0.82, 0.58};
 float Turn_Cam_Straight_D_Table[11] = {0.4, 0.6, 0.7, 0.5, 0.4, 0.01, 0.4, 0.5, 0.7, 0.6, 0.4};
 float car_straight_dias_Table[11] = {-250, -180, -140, -100, -70, 0, 70, 100, 140, 180, 250};
+
+float Turn_Cam_Diffcomp_P_Table[11] = {0.58, 0.82, 0.84, 0.57, 0.4, 0.1, 0.4, 0.57, 0.84, 0.82, 0.58};
+float Turn_Cam_Diffcomp_D_Table[11] = {0.4, 0.6, 0.7, 0.5, 0.4, 0.01, 0.4, 0.5, 0.7, 0.6, 0.4};
+float car_Diffcomp_Table[11] = {-250, -180, -140, -100, -70, 0, 70, 100, 140, 180, 250};
 
 float Turn_Cam_Center_P = 0;
 
@@ -97,9 +105,11 @@ void Turn_Cam_New(void)
   static float car_center_dias_old = 0;
   static float car_straight_dias_old = 0;
   float car_straight_PWM;
+  float car_diffcomp_PWM;
   car_center_dias = car_center();
   //car_straight_angle = car_straight(car_center_dias);
   car_straight_dias = M_Slope_fig() * SERVO_RANGE / ANGLE_RANGE;
+  car_diffcomp_dias = Car_diff_comp();
   Center_offset_filter();
   Straight_offset_filter();
   /* 车正角度转换p表 */
@@ -153,17 +163,46 @@ void Turn_Cam_New(void)
   }
 
   car_straight_PWM = PID_CAR_STRAIGHT_CAM.P * car_straight_dias + PID_CAR_STRAIGHT_CAM.D * (car_straight_dias - car_straight_dias_old);
+  /* 差速补偿PD表 */
+
+  if (car_diffcomp_dias <= car_Diffcomp_Table[0])
+  {
+    PID_CAR_Diffcomp_CAM.P = Turn_Cam_Diffcomp_P_Table[0];
+    PID_CAR_Diffcomp_CAM.D = Turn_Cam_Diffcomp_D_Table[0];
+  }
+  else if (car_diffcomp_dias >= car_Diffcomp_Table[10])
+  {
+    PID_CAR_Diffcomp_CAM.P = Turn_Cam_Diffcomp_P_Table[10];
+    PID_CAR_Diffcomp_CAM.D = Turn_Cam_Diffcomp_D_Table[10];
+  }
+  else
+  {
+    for (int i = 0; i < 10; i++)
+    {
+      if (car_diffcomp_dias >= car_Diffcomp_Table[i] && car_diffcomp_dias < car_Diffcomp_Table[i + 1])
+      {
+        PID_CAR_Diffcomp_CAM.P = Turn_Cam_Diffcomp_P_Table[i] + (car_diffcomp_dias - car_Diffcomp_Table[i]) * (Turn_Cam_Diffcomp_P_Table[i + 1] - Turn_Cam_Diffcomp_P_Table[i]) / (car_Diffcomp_Table[i + 1] - car_Diffcomp_Table[i]); //线性
+        PID_CAR_STRAIGHT_CAM.D = Turn_Cam_Diffcomp_D_Table[i] + (car_diffcomp_dias - car_Diffcomp_Table[i]) * (Turn_Cam_Diffcomp_D_Table[i + 1] - Turn_Cam_Diffcomp_D_Table[i]) / (car_Diffcomp_Table[i + 1] - car_Diffcomp_Table[i]);
+        break;
+      }
+    }
+  }
+
+  car_diffcomp_PWM = PID_CAR_Diffcomp_CAM.P * car_diffcomp_dias + PID_CAR_Diffcomp_CAM.D * (car_diffcomp_dias - car_diffcomp_dias_old);
 
   car_straight_dias_old = car_straight_dias;
   car_center_dias_old = car_center_dias;
+  car_diffcomp_dias_old = car_diffcomp_dias;
   //PID_realize_center(car_center_dias);
   //car_straight_PWM = PID_realize_straight(car_straight_angle * SERVO_RANGE / ANGLE_RANGE);
 
-  Turn_Cam_Out = car_center_PWM + car_straight_PWM;
+  Turn_Cam_Out = car_center_PWM + car_straight_PWM + car_diffcomp_PWM;
   //Servo_Duty(-Turn_Cam_Out);
 }
 float Mid_slope = 0;
-float DEBUG_SLOPE = 0;
+float Mid_intercept = 0;
+float Mid_status = 0;
+// float DEBUG_SLOPE = 0;
 int DEBUG_MIDMAXMIN = 0;
 float M_Slope_fig(void)
 {
@@ -231,7 +270,9 @@ float M_Slope_fig(void)
     {
       Mid_slope = 998;
     }
-    DEBUG_SLOPE = Mid_slope;
+    // DEBUG_SLOPE = Mid_slope;
+    Mid_intercept = (xsum + ysum / Mid_slope) / count; // x shi y;y shi x;-MId_slope^-1 shi k;Mid_intercept shi jieju;
+    Mid_status = -30 / Mid_slope + Mid_intercept
   }
   { //如果看到这段注释 下面没有神奇操作了 斜率算的不对 return弧度！！好了折起来吧/* 是对斜率进行了一些神奇操作 */
     // if (Mid_slope != 999)
@@ -280,6 +321,21 @@ int gmyshuoqianbuchulai(int temp)
 }
 
 /*************************************************************************
+*  函数名称：void Car_diff_comp(void)
+*  功能说明：chasu buchang
+*  参数说明：无
+*  函数返回：无
+*  修改时间：2020.7.16
+*  备    注：
+
+*************************************************************************/
+float car_diffcomp_dias;
+float Car_diff_comp(void)
+{
+  return Turn_Out - atan(2 * (Carspeed1 - Carspeed2) / ((Carspeed1 + Carspeed2) * CAR_DIFF_K)) / ANGLE_RANGE * SERVO_RANGE;
+}
+
+/*************************************************************************
 *  函数名称：void Center_offset_filter(void)
 *  功能说明：chezheng滤波
 *  参数说明：无
@@ -291,14 +347,13 @@ int gmyshuoqianbuchulai(int temp)
 
 void Center_offset_filter(void)
 {
-    static float Center_offset_filter[4] = {0, 0, 0, 0}; //offset滤波数组
-    Center_offset_filter[3] = Center_offset_filter[2];
-    Center_offset_filter[2] = Center_offset_filter[1];
-    Center_offset_filter[1] = Center_offset_filter[0];
-    Center_offset_filter[0] = car_center_dias;
-    car_center_dias = Center_offset_filter[0] * 0.5 + Center_offset_filter[1] * 0.2 + Center_offset_filter[2] * 0.2 + Center_offset_filter[3] * 0.1;
+  static float Center_offset_filter[4] = {0, 0, 0, 0}; //offset滤波数组
+  Center_offset_filter[3] = Center_offset_filter[2];
+  Center_offset_filter[2] = Center_offset_filter[1];
+  Center_offset_filter[1] = Center_offset_filter[0];
+  Center_offset_filter[0] = car_center_dias;
+  car_center_dias = Center_offset_filter[0] * 0.5 + Center_offset_filter[1] * 0.2 + Center_offset_filter[2] * 0.2 + Center_offset_filter[3] * 0.1;
 }
-
 
 /*************************************************************************
 *  函数名称：void Straight_offset_filter(void)
@@ -312,10 +367,10 @@ void Center_offset_filter(void)
 
 void Straight_offset_filter(void)
 {
-    static float Straight_offset_filter[4] = {0, 0, 0, 0}; //offset滤波数组
-    Straight_offset_filter[3] = Straight_offset_filter[2];
-    Straight_offset_filter[2] = Straight_offset_filter[1];
-    Straight_offset_filter[1] = Straight_offset_filter[0];
-    Straight_offset_filter[0] = car_straight_dias;
-    car_straight_dias = Straight_offset_filter[0] * 0.4 + Straight_offset_filter[1] * 0.3 + Straight_offset_filter[2] * 0.2 + Straight_offset_filter[3] * 0.1;
+  static float Straight_offset_filter[4] = {0, 0, 0, 0}; //offset滤波数组
+  Straight_offset_filter[3] = Straight_offset_filter[2];
+  Straight_offset_filter[2] = Straight_offset_filter[1];
+  Straight_offset_filter[1] = Straight_offset_filter[0];
+  Straight_offset_filter[0] = car_straight_dias;
+  car_straight_dias = Straight_offset_filter[0] * 0.4 + Straight_offset_filter[1] * 0.3 + Straight_offset_filter[2] * 0.2 + Straight_offset_filter[3] * 0.1;
 }
