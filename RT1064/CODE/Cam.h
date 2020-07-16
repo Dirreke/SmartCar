@@ -9,11 +9,14 @@ extern PID PID_CAR_CENTER_CAM;
 extern float Mid_slope;
 extern float car_straight_dias;
 extern float car_center_dias;
+extern float car_center_PWM;
 float car_center(void);
 float car_straight(float car_dias);
 void Turn_Cam_New(void);
 float M_Slope_fig(void);
 int gmyshuoqianbuchulai(int temp);
+void Center_offset_filter(void);
+void Straight_offset_filter(void);
 
 extern float DEBUG_SLOPE;
 extern int DEBUG_MIDMAXMIN;

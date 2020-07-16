@@ -72,16 +72,16 @@ float car_straight(float car_dias)
 PID PID_CAR_STRAIGHT_CAM;
 PID PID_CAR_CENTER_CAM;
 
-float Turn_Cam_Center_P_Table[11] = {0.2, 0.4, 0.45, 0.3, 0.2, 0.1, 0.2, 0.3, 0.45, 0.4, 0.2};//*0.5;
-float Turn_Cam_Center_D_Table[11] = {0.2, 0.35, 0.5, 0.3, 0.2, 0.1, 0.2, 0.3, 0.5, 0.35, 0.2};//{0.2, 0.4, 0.45, 0.3, 0.2, 0.1, 0.2, 0.3, 0.45, 0.4, 0.2}*0.5;
+float Turn_Cam_Center_P_Table[11] ={0.2, 0.3, 0.4, 0.3, 0.15, 0.05, 0.15, 0.3, 0.4, 0.3, 0.2}; // {0.15, 0.2, 0.3, 0.2, 0.15, 0.05, 0.15, 0.2, 0.3, 0.2, 0.15}; //*0.5;
+float Turn_Cam_Center_D_Table[11] = {0.4, 0.8, 1, 1.2, 0.6, 0, 0.6, 1.2, 1, 0.8, 0.4};        //{0.2, 0.4, 0.45, 0.3, 0.2, 0.1, 0.2, 0.3, 0.45, 0.4, 0.2}*0.5;
 
-float car_center_dias_Table[11] = {-180, -120, -75, -50, -30, 0, 30, 50, 75, 120, 180};
+float car_center_dias_Table[11] = {-180, -120, -75, -50, -15, 0, 15, 50, 75, 120, 180};
 
 // float Turn_Cam_Straight_P_Table[11] = {0.5, 0.8, 0.7, 0.55, 0.4, 0.1, 0.4, 0.55, 0.7, 0.8, 0.5};
 // float Turn_Cam_Straight_D_Table[11] = {0.15, 0.3, 0.6, 0.6, 0.4, 0.01, 0.4, 0.6, 0.6, 0.3, 0.15};
 // float car_straight_dias_Table[11] = {-250, -180, -140, -100, -70, 0, 70, 100, 140, 180, 250};
-float Turn_Cam_Straight_P_Table[11] = {0.58, 0.82, 0.84, 0.62, 0.45, 0.1, 0.45, 0.62, 0.84, 0.82, 0.58};
-float Turn_Cam_Straight_D_Table[11] = {0.15, 0.25, 0.7, 0.6, 0.5, 0.01, 0.5, 0.6, 0.7, 0.25, 0.15};
+float Turn_Cam_Straight_P_Table[11] = {0.58, 0.82, 0.84, 0.57, 0.4, 0.1, 0.4, 0.57, 0.84, 0.82, 0.58};
+float Turn_Cam_Straight_D_Table[11] = {0.4, 0.6, 0.7, 0.5, 0.4, 0.01, 0.4, 0.5, 0.7, 0.6, 0.4};
 float car_straight_dias_Table[11] = {-250, -180, -140, -100, -70, 0, 70, 100, 140, 180, 250};
 
 float Turn_Cam_Center_P = 0;
@@ -89,15 +89,19 @@ float Turn_Cam_Center_P = 0;
 float car_straight_dias;
 
 float car_center_dias; //diff impose on angle set
+
+float car_center_PWM;
+
 void Turn_Cam_New(void)
 {
   static float car_center_dias_old = 0;
   static float car_straight_dias_old = 0;
-  float car_center_PWM;
   float car_straight_PWM;
   car_center_dias = car_center();
   //car_straight_angle = car_straight(car_center_dias);
   car_straight_dias = M_Slope_fig() * SERVO_RANGE / ANGLE_RANGE;
+  Center_offset_filter();
+  Straight_offset_filter();
   /* 车正角度转换p表 */
   if (car_center_dias <= car_center_dias_Table[0])
   {
@@ -121,7 +125,7 @@ void Turn_Cam_New(void)
     }
   }
 
-  car_center_PWM = PID_CAR_CENTER_CAM.P * car_center_dias+ PID_CAR_CENTER_CAM.D * (car_center_dias - car_center_dias_old);
+  car_center_PWM = PID_CAR_CENTER_CAM.P * car_center_dias + PID_CAR_CENTER_CAM.D * (car_center_dias - car_center_dias_old);
 
   /* 车直模糊PD表 */
 
@@ -147,7 +151,6 @@ void Turn_Cam_New(void)
       }
     }
   }
-
 
   car_straight_PWM = PID_CAR_STRAIGHT_CAM.P * car_straight_dias + PID_CAR_STRAIGHT_CAM.D * (car_straight_dias - car_straight_dias_old);
 
@@ -274,4 +277,45 @@ int gmyshuoqianbuchulai(int temp)
     }
   }
   return turn;
+}
+
+/*************************************************************************
+*  函数名称：void Center_offset_filter(void)
+*  功能说明：chezheng滤波
+*  参数说明：无
+*  函数返回：无
+*  修改时间：2020.7.16
+*  备    注：
+
+*************************************************************************/
+
+void Center_offset_filter(void)
+{
+    static float Center_offset_filter[4] = {0, 0, 0, 0}; //offset滤波数组
+    Center_offset_filter[3] = Center_offset_filter[2];
+    Center_offset_filter[2] = Center_offset_filter[1];
+    Center_offset_filter[1] = Center_offset_filter[0];
+    Center_offset_filter[0] = car_center_dias;
+    car_center_dias = Center_offset_filter[0] * 0.5 + Center_offset_filter[1] * 0.2 + Center_offset_filter[2] * 0.2 + Center_offset_filter[3] * 0.1;
+}
+
+
+/*************************************************************************
+*  函数名称：void Straight_offset_filter(void)
+*  功能说明：chezhi滤波
+*  参数说明：无
+*  函数返回：无
+*  修改时间：2020.7.16
+*  备    注：
+
+*************************************************************************/
+
+void Straight_offset_filter(void)
+{
+    static float Straight_offset_filter[4] = {0, 0, 0, 0}; //offset滤波数组
+    Straight_offset_filter[3] = Straight_offset_filter[2];
+    Straight_offset_filter[2] = Straight_offset_filter[1];
+    Straight_offset_filter[1] = Straight_offset_filter[0];
+    Straight_offset_filter[0] = car_straight_dias;
+    car_straight_dias = Straight_offset_filter[0] * 0.4 + Straight_offset_filter[1] * 0.3 + Straight_offset_filter[2] * 0.2 + Straight_offset_filter[3] * 0.1;
 }
