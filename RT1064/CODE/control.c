@@ -991,42 +991,56 @@ int8 BB_add_flag_set(void)
 {
 
   static int8 BB_add_flag = -1;
-  if (BB_add_flag == -1) //标志位置位
+  // if (BB_add_flag == -1) //标志位置位
+  // {
+  if (Turn_Out < -100 || Road0_flag == 4 || (Road1_flag > 1 && Road1_flag < 6) || ((Road1_flag == 1 || Road1_flag == 6) && Turn_Out < -50))
   {
-    if (Road0_flag == 4)
+    if (CarSpeed1 - CarSpeed2 > 0.15)
     {
-      if (CarSpeed1 - CarSpeed2 > 0.15)
-      {
-        BB_add_flag = 4;
-      }
-    }
-    else if (Road0_flag == 5)
-    {
-      if (CarSpeed2 - CarSpeed1 > 0.15)
-      {
-        BB_add_flag = 5;
-      }
-    }
-    else if (Road == 0 && Road0_flag < 3)
-    {
-      if (CarSpeed1 - CarSpeed2 > 0.5 && Turn_Out > -50)
-      {
-        BB_add_flag = 0;
-      }
-      else if (CarSpeed2 - CarSpeed1 > 0.5 && Turn_Out < 50)
-      {
-        BB_add_flag = 1;
-      }
+      BB_add_flag = 4;
     }
   }
-  else if (BB_add_flag == 0)
+  else if (Turn_Out > 100 || Road0_flag == 5 || (Road2_flag > 1 && Road2_flag < 6) || ((Road2_flag == 1 || Road2_flag == 6) && Turn_Out > 50))
   {
-    if (CarSpeed1 - CarSpeed2 < 0.2 || Turn_Out < -70) //70budui DEBUG
+    if (CarSpeed2 - CarSpeed1 > 0.15)
+    {
+      BB_add_flag = 5;
+    }
+  }
+  else if (Turn_Out < 50 && Road == 0)
+  {
+    if (CarSpeed1 - CarSpeed2 > 0.5)
+    {
+      BB_add_flag = 0;
+    }
+  }
+  else if (Turn_Out > -50 && Road == 0)
+  {
+    if (CarSpeed2 - CarSpeed1 > 0.5 && Turn_Out > -50)
+    {
+      BB_add_flag = 1;
+    }
+  }
+  // else if (Road == 0 && Road0_flag < 3)
+  // {
+  //   if (CarSpeed1 - CarSpeed2 > 0.5 && Turn_Out < 50)
+  //   {
+  //     BB_add_flag = 0;
+  //   }
+  //   else if (CarSpeed2 - CarSpeed1 > 0.5 && Turn_Out > -50)
+  //   {
+  //     BB_add_flag = 1;
+  //   }
+  // }
+  // }
+  if (BB_add_flag == 0)
+  {
+    if (CarSpeed1 - CarSpeed2 < 0.2 || Turn_Out > 70) //70budui DEBUG
       BB_add_flag = -1;
   }
   else if (BB_add_flag == 1)
   {
-    if (CarSpeed2 - CarSpeed1 < 0.2 || Turn_Out > 70)
+    if (CarSpeed2 - CarSpeed1 < 0.2 || Turn_Out < -70)
       BB_add_flag = -1;
   }
   else if (BB_add_flag == 4)
@@ -1054,26 +1068,28 @@ int8 BB_add_flag_set(void)
 void BB_add(void)
 {
   int BB_add_flag = 0;
+  int temp = 2000;
+  int temp2 = 500;
   BB_add_flag = BB_add_flag_set();
   if (BB_add_flag == 0)
   {
-    MotorOut1_add -= 1500;
-    MotorOut2_add += 1500;
+    MotorOut1_add = -temp2;
+    MotorOut2_add = temp;
   }
   else if (BB_add_flag == 1)
   {
-    MotorOut1_add += 1500;
-    MotorOut2_add -= 1500;
+    MotorOut1_add = temp;
+    MotorOut2_add = -temp2;
   }
   else if (BB_add_flag == 4)
   {
-    MotorOut1_add -= 1500;
-    MotorOut2_add += 1500;
+    MotorOut1_add = -temp2;
+    MotorOut2_add = temp;
   }
   else if (BB_add_flag == 5)
   {
-    MotorOut1_add += 1500;
-    MotorOut2_add -= 1500;
+    MotorOut1_add = temp;
+    MotorOut2_add = -temp2;
   }
   else
   {

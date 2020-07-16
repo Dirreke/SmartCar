@@ -135,6 +135,7 @@ void Dubug_key(void)
                 default:
                     break;
                 }
+                break;
 
                 /*
             case 32:
@@ -240,6 +241,14 @@ void Dubug_key(void)
                 break;
 */
             default:
+                if (ips_num < 21)
+                {
+                    Turn_Cam_Straight_P_Table[ips_num - 10] += 0.05;
+                }
+                else if (ips_num < 32)
+                {
+                    Turn_Cam_Straight_D_Table[ips_num - 21] += 0.05;
+                }
                 break;
             }
             return;
@@ -309,6 +318,7 @@ void Dubug_key(void)
                 default:
                     break;
                 }
+                break;
                 /*
             case 32:
                 Sobel_Threshold_FarFar -= 1;
@@ -414,6 +424,14 @@ void Dubug_key(void)
                 break;
                 */
             default:
+                if (ips_num < 21)
+                {
+                    Turn_Cam_Straight_P_Table[ips_num - 10] -= 0.05;
+                }
+                else if (ips_num < 32)
+                {
+                    Turn_Cam_Straight_D_Table[ips_num - 21] -= 0.05;
+                }
                 break;
             }
             return;
@@ -505,6 +523,7 @@ void ips_show_debug(int ips_num)
         default:
             break;
         }
+        break;
         /*
     case 32:
         ips200_showstr(0, 12, "Sobel_Threshold_FarFar: ");
@@ -521,6 +540,17 @@ void ips_show_debug(int ips_num)
         */
     default:
         // ips_show_debug_pd(ips_num);
+        ips200_showint32(0, 11, ips_num, 2);
+        if (ips_num < 21)
+        {
+            ips200_showstr(0, 12, "P");
+            ips200_showfloat(0, 13, Turn_Cam_Straight_P_Table[ips_num - 10], 4, 2);
+        }
+        else if (ips_num < 32)
+        {
+            ips200_showstr(0, 12, "D");
+            ips200_showfloat(0, 13, Turn_Cam_Straight_D_Table[ips_num - 21], 4, 2);
+        }
         break;
     }
 }

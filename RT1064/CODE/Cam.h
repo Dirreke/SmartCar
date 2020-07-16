@@ -1,12 +1,13 @@
 #include "headfile.h"
 extern float Turn_Cam_Center_P_Table[11];
-extern float car_center_dias_Table[11];
-
+extern float Turn_Cam_Center_D_Table[11];
+extern float Turn_Cam_Straight_P_Table[11];
+extern float Turn_Cam_Straight_D_Table[11];
 extern float Turn_Cam_Center_P;
 extern PID PID_CAR_STRAIGHT_CAM;
 extern PID PID_CAR_CENTER_CAM;
 extern float Mid_slope;
-extern float car_straight_angle;
+extern float car_straight_dias;
 extern float car_center_dias;
 float car_center(void);
 float car_straight(float car_dias);

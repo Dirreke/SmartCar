@@ -50,6 +50,7 @@ void camera_dispose_main(void) //摄像头处理主函数
     Allwhite_find();   //查找全白行//注释Allwhitestart2.Allwhiteend2
     Pic_find_circle(); //寻找环状黑线及拐点
     start_stop_find();
+    crossing_find();
     Road_rec(); //利用左右边线斜率识别赛道
     Threshold_change();
     Pic_Fix_Line(); //补线处理
@@ -642,7 +643,7 @@ void Pic_DrawLRside(void)
                 }
             }
 
-            if (Side_true && Rig[i + 1] - Rig[i] < 10)
+            if (Side_true && Rig[i + 1] - Rig[i] < 10 && Rig[i+1]-Rig[i] > 0)
             {
                 Side_true = 1;
                 break;
@@ -710,7 +711,7 @@ void Pic_DrawLRside(void)
                 }
             }
 
-            if (Side_true && Lef[i] - Lef[i + 1] < 10)
+            if (Side_true && Lef[i] - Lef[i + 1] < 10 && Lef[i] - Lef[i+1] > 0)
             {
                 Side_true = 1;
                 break;
@@ -1543,7 +1544,7 @@ void Pic_Fix_Line(void)
                 if (Lef[i - 4] - Lef[i - 2] < 5 && Lef[i - 2] - Lef[i] < 5 && Lef[i] - Lef[i + 1] > 15 && Pixle[i + 2][Lef[i] - 5] == 1) // 开始的时候前面18-20行是0
                 {
 
-                    slope_static = Slope(Lef[i], i, 79, 54);
+                    slope_static = Slope(Lef[i], i, 79, 45);
                     xtemp_static = Lef[i];
                     ytemp_static = i;
                     // road1_flag2 = 1;
@@ -1560,7 +1561,8 @@ void Pic_Fix_Line(void)
                 for (int k = ytemp_static; k < 55; k++)
                 {
                     // Rig[k] = (int)((xtemp_static - (ytemp_static - k) / slope_static) / 2) + xtemp_static / 2;
-                    Rig[k] = (int)((k - ytemp_static) * 2 / slope_static / 3) + xtemp_static;
+                    //Rig[k] = (int)((k - ytemp_static) * 2 / slope_static / 3) + xtemp_static;
+                    Rig[k] = (int)(xtemp_static - (ytemp_static - k) / slope_static);
                     Lef[k] = 1;
                 }
 
@@ -1628,7 +1630,8 @@ void Pic_Fix_Line(void)
                 for (int k = ytemp_static; k < 55; k++)
                 {
                     // Rig[k] = (int)((xtemp_static - (ytemp_static - k) / slope_static )* 2 / 3) + xtemp_static / 3;
-                    Rig[k] = (int)((k - ytemp_static) / slope_static / 3) + xtemp_static;
+                    //Rig[k] = (int)((k - ytemp_static) / slope_static / 3) + xtemp_static;
+                    Rig[k] = (int)(xtemp_static - (ytemp_static - k) / slope_static);
                 }
                 Pic_undistort(0, 1);
             }
@@ -1679,9 +1682,10 @@ void Pic_Fix_Line(void)
                 {
                     for (int k = j - 7; k > Fir_row + 5; k--)
                     {
-                        // Rig[k] = (int)(Rig[j] - (j - k) / slope);
+                         Rig[k] = (int)(Rig[j] - (j - k) / slope);
                         // Rig[k] = (int)((Rig[j - 6] - (j - 6 - k) / slope) * 2) - Rig[j - 6];
-                        Rig[k] = (int)((k + 6 - j) * 2 / slope) + Rig[j - 6];
+                        // Rig[k] = (int)((k + 6 - j) * 2 / slope) + Rig[j - 6];
+                        
                     }
                     Pic_undistort(0, 1);
                     break;
@@ -1757,7 +1761,8 @@ void Pic_Fix_Line(void)
                 }
                 if (Rig[i] - Rig[i - 2] < 5 && Rig[i - 2] - Rig[i - 4] < 5 && Rig[i + 1] - Rig[i] > 15 && Pixle[i + 2][Rig[i] + 5] == 1)
                 {
-                    slope_static = Slope(Rig[i], i, 0, 54);
+                    //slope_static = Slope(Rig[i], i, 0, 54);
+                    slope_static = Slope(Rig[i], i, 0, 45);
                     xtemp_static = Rig[i];
                     ytemp_static = i;
                     // road2_flag2 = 1;
@@ -1779,7 +1784,8 @@ void Pic_Fix_Line(void)
                 for (int k = ytemp_static; k < 55; k++)
                 {
 
-                    Lef[k] = (int)((k - ytemp_static) * 2 / slope_static / 3) + xtemp_static;
+                    Lef[k] = (int)(xtemp_static - (ytemp_static - k) / slope_static);
+                    //Lef[k] = (int)((k - ytemp_static) * 2 / slope_static / 3) + xtemp_static;
                     Rig[k] = 78;
                 }
                 Pic_undistort(1, 1);
@@ -1845,8 +1851,9 @@ void Pic_Fix_Line(void)
             {
                 for (int k = ytemp_static; k < 55; k++)
                 {
+                    Lef[k] = (int)(xtemp_static - (ytemp_static - k) / slope_static);
                     // Lef[k] = (int)(4 - (54 - k) / slope_static);
-                    Lef[k] = (int)((k - ytemp_static) / slope_static / 3) + xtemp_static;
+                    //Lef[k] = (int)((k - ytemp_static) / slope_static / 3) + xtemp_static;
                 }
                 Pic_undistort(1, 0);
             }
@@ -1897,8 +1904,9 @@ void Pic_Fix_Line(void)
                 {
                     for (int k = j - 6; k > Fir_row + 5; k--)
                     {
-                        // Lef[k] = (int)(Lef[j] - (j - k) / slope2);
-                        Lef[k] = (int)((k + 6 - j) * 2 / slope) - Lef[j - 6];
+                        Lef[k] = (int)(Lef[j] - (j - k) / slope);
+                        
+                        //Lef[k] = (int)((k + 6 - j) * 2 / slope) - Lef[j - 6];
                     }
                     Pic_undistort(1, 0);
                     break;
@@ -2335,7 +2343,7 @@ void Pic_DrawMid_und(void)
         // Road_Half_Width_change_l *= 1.1;
     }
 
-    if ((Road0_flag == 4 && Road == 0) || (Road == 1 && Road1_flag != 6))
+    if ((Road0_flag == 4 && Road == 0) || (Road == 1 && Road1_flag != 6 && Road1_flag != 1))
     {
         for (i = 0; i < 60; i++)
         {
@@ -2353,7 +2361,7 @@ void Pic_DrawMid_und(void)
             }
         }
     }
-    else if ((Road0_flag == 5 && Road == 0) || (Road == 2 && Road2_flag != 6))
+    else if ((Road0_flag == 5 && Road == 0) || (Road == 2 && Road2_flag != 6 && Road2_flag != 1))
     {
         for (i = 0; i < 60; i++)
         {
