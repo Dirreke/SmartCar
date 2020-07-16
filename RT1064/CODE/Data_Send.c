@@ -243,7 +243,7 @@ void Variable_update(void)
   // Variable[14] = Allwhitestart * 100 + Allwhiteend;
   // Variable[15] = 100 + Lef_circle * 10 + Rig_circle; //whitecnt;//Road1_turnout;//limit_pos(EM_Value_1/1.5-EM_Value_2/3.5);//speedTarget1;//map_line[MIN(50,AllWhileStartLine)];
 
-  Variable[0] = MotorOut1_add;      //Cam_offset;   //EM_Value_1;// Cam_offset;//cntt;//ToF_distance;
+  Variable[0] = car_center_PWM;//MotorOut1_add;      //Cam_offset;   //EM_Value_1;// Cam_offset;//cntt;//ToF_distance;
   Variable[1] = Turn_Out;        //EM_Value_2; //Turn_Cam_Out;//cnt;//Turn_Cam_Out;//;//stat_slope;//gyroy_1;//Turn_Cam_Out;//Car_W;
   Variable[2] = Allwhitestart*100+Allwhiteend; //EM_Value_1;//Cam_offset;
   Variable[3] = CarSpeed1;

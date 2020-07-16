@@ -1068,8 +1068,8 @@ int8 BB_add_flag_set(void)
 void BB_add(void)
 {
   int BB_add_flag = 0;
-  int temp = 2000;
-  int temp2 = 500;
+  int temp = 2000;//2000;
+  int temp2 = 500;//500;
   BB_add_flag = BB_add_flag_set();
   if (BB_add_flag == 0)
   {
