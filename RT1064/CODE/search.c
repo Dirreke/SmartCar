@@ -29,7 +29,7 @@ bool ganhuangguan_flag = 0;
 
 int stop_line = Fir_row;
 
-int turn_stop = 0; //转弯用
+volatile int turn_stop = 0; //转弯用
 
 /*************************************************************************
 *  函数名称：void Allwhite_find()
@@ -755,7 +755,7 @@ void Road_rec(void)
             }
         }
         // else if ((Lef_slope < 0.5 || Road0_flag == 5) && Lef_slope != 998) //右转弯//(Rig_break_point > 35 && Rig_circle == 1 && Lef_circle == 0)
-        else if ((Lef_slope != 998 && Lef_slope != 999) || Road0_flag == 5)
+        if ((Lef_slope != 998 && Lef_slope != 999) || Road0_flag == 5)
         {
             TurnRight_Process();
             if (Road0_flag == 5)
@@ -830,9 +830,8 @@ void TurnLeft_Process(void)
     {
         if (Rig[i] < 40 && Rig[i + 1] <= 40 && Rig[i + 2] >= 40 && Rig[i + 3] > 40 &&
             Rig[i + 5] - Rig[i + 3] < 7 && Rig[i + 7] - Rig[i + 5] < 7 && Rig[i + 9] - Rig[i + 7] < 7 && Rig[i + 11] - Rig[i + 9] < 7 &&
-            Rig[i + 2] - Rig[i] < 10 &&
             Rig[i + 5] - Rig[i + 3] > 0 && Rig[i + 7] - Rig[i + 5] > 0 && Rig[i + 9] - Rig[i + 7] > 0 && Rig[i + 11] - Rig[i + 9] > 0 &&
-            Rig[i + 2] - Rig[i] > 0)
+            Rig[i + 1] - Rig[i] > 0 && Rig[i + 2] - Rig[i+1] > 0)
         //可能较严，（出现连续边线为40）
         {
             temp = i + 2;
@@ -840,14 +839,13 @@ void TurnLeft_Process(void)
         }
     }
 
-    if (temp == 40) //&& turn_stop_flag == 1)
+    if (temp == 40  && Road0_flag != 5) //&& turn_stop_flag == 1)
     {
         Road00_count++;
         if (Road00_count == 2)
         {
             Road00_count = 0;
             Road0_flag = 0;
-            road_change_flag = 1;
             // turn_stop_flag = 0;
         }
 
@@ -923,7 +921,7 @@ void TurnLeft_Process(void)
 
 /*************************************************************************
 *  函数名称：void TurnRight_Process(void)
-*  功能说明：左转进程
+*  功能说明：右转进程
 *  参数说明：无
 *  函数返回：无
 *  修改时间：2020.06.17
@@ -938,18 +936,18 @@ void TurnRight_Process(void)
     {
         if (Lef[i] > 40 && Lef[i + 1] >= 40 && Lef[i + 2] <= 40 && Lef[i + 3] < 40 &&
             Lef[i + 3] - Lef[i + 5] < 7 && Lef[i + 5] - Lef[i + 7] < 7 && Lef[i + 7] - Lef[i + 9] < 7 && Lef[i + 9] - Lef[i + 11] < 7 &&
-            Lef[i] - Lef[i + 2] < 10 &&
             Lef[i + 3] - Lef[i + 5] > 0 && Lef[i + 5] - Lef[i + 7] > 0 && Lef[i + 7] - Lef[i + 9] > 0 && Lef[i + 9] - Lef[i + 11] > 0 &&
-            Lef[i] - Lef[i + 2] > 0)
+            Lef[i] - Lef[i + 1] > 0 && Lef[i+1] - Lef[i + 2] > 0)
         {
             temp = i + 2;
             break;
         }
     }
-    if (temp == 40) // && turn_stop_flag == 1)
+    
+    if (temp == 40 && Road0_flag != 4) // && turn_stop_flag == 1)
     {
         Road00_count++;
-        if (Road00_count >= 3)
+        if (Road00_count >= 3 )
         {
             Road00_count = 0;
             Road0_flag = 0;

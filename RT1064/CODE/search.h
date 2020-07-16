@@ -22,7 +22,7 @@ extern int EM_Road;
 extern bool ganhuangguan_flag;
 extern bool barn_reset_flag;
 
-extern int turn_stop;//转弯终止线
+extern volatile int turn_stop;//转弯终止线
 
 extern int Lef_circle;
 extern int Rig_circle;
