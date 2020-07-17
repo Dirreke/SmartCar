@@ -1839,7 +1839,7 @@
     <group>
         <name>user_c</name>
         <file>
-            <name>$PROJ_DIR$\..\..\CODE\Cam.c</name>
+            <name>$PROJ_DIR$\..\..\CODE\Cam_New.c</name>
         </file>
         <file>
             <name>$PROJ_DIR$\..\..\CODE\control.c</name>
@@ -1881,7 +1881,7 @@
     <group>
         <name>user_h</name>
         <file>
-            <name>$PROJ_DIR$\..\..\CODE\Cam.h</name>
+            <name>$PROJ_DIR$\..\..\CODE\Cam_New.h</name>
         </file>
         <file>
             <name>$PROJ_DIR$\..\..\CODE\control.h</name>
