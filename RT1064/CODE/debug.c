@@ -92,11 +92,11 @@ void Dubug_key(void)
                 break;
             case 6:
                 //PID_TURN_CAM_EXT.P += 0.1;
-                PID_CAR_STRAIGHT_CAM.P += 0.1;
+                PID_CAR_STRAIGHT_CAM.P += 0.01;
                 break;
             case 7:
                 //PID_TURN_CAM_EXT.D += 0.1;
-                PID_CAR_STRAIGHT_CAM.D += 0.1;
+                PID_CAR_STRAIGHT_CAM.D += 0.01;
                 break;
             case 8:
                 DEBUG_CHOICE++;
@@ -129,6 +129,8 @@ void Dubug_key(void)
                 case 3:
                     Road3_flag++;
                     break;
+                case 4:
+                    Road4_flag++;
                 case 7:
                     Road7_flag++;
                     break;
@@ -275,11 +277,11 @@ void Dubug_key(void)
                 break;
             case 6:
                 //PID_TURN_CAM_EXT.P -= 0.1;
-                PID_CAR_STRAIGHT_CAM.P -= 0.1;
+                PID_CAR_STRAIGHT_CAM.P -= 0.01;
                 break;
             case 7:
                 //PID_TURN_CAM_EXT.D -= 0.1;
-                PID_CAR_STRAIGHT_CAM.D -= 0.1;
+                PID_CAR_STRAIGHT_CAM.D -= 0.01;
                 break;
             case 8:
                 DEBUG_CHOICE--;
@@ -311,6 +313,9 @@ void Dubug_key(void)
                     break;
                 case 3:
                     Road3_flag--;
+                    break;
+                case 4:
+                    Road4_flag--;
                     break;
                 case 7:
                     Road7_flag--;
@@ -516,6 +521,9 @@ void ips_show_debug(int ips_num)
             break;
         case 3:
             ips200_showint32(0, 13, Road3_flag, 3);
+            break;
+        case 4:
+            ips200_showint32(0, 13, Road4_flag, 3);
             break;
         case 7:
             ips200_showint32(0, 13, Road7_flag, 3);

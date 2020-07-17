@@ -24,8 +24,8 @@ void Para_Init()
         PID_STRAIGHT_EM.D = 0;//0.6;//0.4;
         //PID_CAR_CENTER_CAM.P = 0.5;
         //PID_CAR_CENTER_CAM.D = 0;
-        //PID_CAR_STRAIGHT_CAM.P = 0.7;//0.5;0.6;
-        //PID_CAR_STRAIGHT_CAM.D = 0.6;//0.4;        
+        PID_CAR_STRAIGHT_CAM.P = 1;//0.5;0.6;
+        PID_CAR_STRAIGHT_CAM.D = 0;//0.4;        
         barn_reset_flag = 0;   
         DEBUG_CHOICE = 2;
         

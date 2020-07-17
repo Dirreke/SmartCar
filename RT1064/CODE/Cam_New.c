@@ -4,12 +4,13 @@ float car_straight_dias;
 PID PID_CAR_STRAIGHT_CAM;
 void Turn_Cam_New(void)
 {
-  PID_CAR_STRAIGHT_CAM.P = 1;
-  PID_CAR_STRAIGHT_CAM.D = 0;
+  //PID_CAR_STRAIGHT_CAM.P = 1;
+  //PID_CAR_STRAIGHT_CAM.D = 0;
   static float car_straight_dias_old = 0;
   car_straight_dias = M_Slope_fig() * SERVO_RANGE / ANGLE_RANGE;
   Straight_offset_filter();
-  Turn_Cam_Out = car_straight_dias;
+  Turn_Cam_Out = car_straight_dias * PID_CAR_STRAIGHT_CAM.P + (car_straight_dias - car_straight_dias_old) * PID_CAR_STRAIGHT_CAM.D;
+  car_straight_dias_old = car_straight_dias;
 }
 float Mid_slope = 0;
 

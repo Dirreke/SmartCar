@@ -569,6 +569,16 @@ void Road_rec(void)
     //进直路
     if (Road != 0)
     {
+        if (Road == 4 && Lef_slope == 998 && Rig_slope == 998)
+        {
+            Road0_count++;
+            if (Road0_count >= 3)
+            {
+                Road = 0;
+                Road0_flag = 0;
+                lib_speed_set(speedgoal);
+            }
+        }
         if (Lef_slope == 998 && Rig_slope == 998 && Road7_flag != 2 &&
             ((Lef_edge < 10 && Rig_edge < 10) || (Lef_edge < 2 && Rig_edge < 12) || (Rig_edge < 2 && Lef_edge < 12)))
         {
@@ -625,10 +635,13 @@ void Road_rec(void)
 
     if (Road == 0)
     {
-        if (icm_gyro_y_w < -30 * (CarSpeed1 + CarSpeed2) && icm_gyro_y_w < -60)
+        /* 摄像头判坡 */
+        if (New_Lef[22] > New_Lef[20] && New_Lef[20] > New_Lef[18] && New_Lef[18] > New_Lef[16] && New_Lef[16] > New_Lef[14] && New_Lef[15] > New_Lef[13] && New_Lef[14] > New_Lef[12] && New_Lef[13] > New_Lef[11] && New_Lef[12] > New_Lef[10] &&
+            New_Rig[22] < New_Rig[20] && New_Rig[20] < New_Rig[18] && New_Rig[18] < New_Rig[16] && New_Rig[16] < New_Rig[14] && New_Rig[15] < New_Rig[13] && New_Rig[14] < New_Rig[12] && New_Rig[13] < New_Rig[11] && New_Rig[12] < New_Rig[10] &&
+            New_Lef[6] > -300 && New_Rig[6] < 300 && New_Lef[8] > -300 && New_Rig[8] < 300)
         {
             Road40_count++;
-            if (Road40_count > 1)
+            if (Road40_count > 2)
             {
                 Road = 4;
                 Road4_flag = 0;
@@ -639,6 +652,22 @@ void Road_rec(void)
         {
             Road40_count = 0;
         }
+
+        // /* ICM判坡 */
+        // if (icm_gyro_y_w < -30 * (CarSpeed1 + CarSpeed2) && icm_gyro_y_w < -60)
+        // {
+        //     Road40_count++;
+        //     if (Road40_count > 1)
+        //     {
+        //         Road = 4;
+        //         Road4_flag = 0;
+        //         return;
+        //     }
+        // }
+        // else
+        // {
+        //     //Road40_count = 0;//！！！用icm判的时候记得取消注释
+        // }
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////普通赛道→圆环
         //先判断是否有左上连续右连续，作为Road1_flag0的置位条件，如果不满足就else if判断直接进Road1_flag=1的条件
         if (Lef[21] > 5 && Lef[23] > 5 && Lef[25] > 5 && Lef[27] < 30 &&
@@ -831,7 +860,7 @@ void TurnLeft_Process(void)
         if (Rig[i] < 40 && Rig[i + 1] <= 40 && Rig[i + 2] >= 40 && Rig[i + 3] > 40 &&
             Rig[i + 5] - Rig[i + 3] < 7 && Rig[i + 7] - Rig[i + 5] < 7 && Rig[i + 9] - Rig[i + 7] < 7 && Rig[i + 11] - Rig[i + 9] < 7 &&
             Rig[i + 5] - Rig[i + 3] > 0 && Rig[i + 7] - Rig[i + 5] > 0 && Rig[i + 9] - Rig[i + 7] > 0 && Rig[i + 11] - Rig[i + 9] > 0 &&
-            Rig[i + 1] - Rig[i] > 0 && Rig[i + 2] - Rig[i+1] > 0)
+            Rig[i + 1] - Rig[i] > 0 && Rig[i + 2] - Rig[i + 1] > 0)
         //可能较严，（出现连续边线为40）
         {
             temp = i + 2;
@@ -839,7 +868,7 @@ void TurnLeft_Process(void)
         }
     }
 
-    if (temp == 40  && Road0_flag != 5) //&& turn_stop_flag == 1)
+    if (temp == 40 && Road0_flag != 5) //&& turn_stop_flag == 1)
     {
         Road00_count++;
         if (Road00_count == 2)
@@ -937,17 +966,17 @@ void TurnRight_Process(void)
         if (Lef[i] > 40 && Lef[i + 1] >= 40 && Lef[i + 2] <= 40 && Lef[i + 3] < 40 &&
             Lef[i + 3] - Lef[i + 5] < 7 && Lef[i + 5] - Lef[i + 7] < 7 && Lef[i + 7] - Lef[i + 9] < 7 && Lef[i + 9] - Lef[i + 11] < 7 &&
             Lef[i + 3] - Lef[i + 5] > 0 && Lef[i + 5] - Lef[i + 7] > 0 && Lef[i + 7] - Lef[i + 9] > 0 && Lef[i + 9] - Lef[i + 11] > 0 &&
-            Lef[i] - Lef[i + 1] > 0 && Lef[i+1] - Lef[i + 2] > 0)
+            Lef[i] - Lef[i + 1] > 0 && Lef[i + 1] - Lef[i + 2] > 0)
         {
             temp = i + 2;
             break;
         }
     }
-    
+
     if (temp == 40 && Road0_flag != 4) // && turn_stop_flag == 1)
     {
         Road00_count++;
-        if (Road00_count >= 3 )
+        if (Road00_count >= 3)
         {
             Road00_count = 0;
             Road0_flag = 0;
