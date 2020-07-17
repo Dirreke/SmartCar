@@ -40,6 +40,8 @@ void PIT_IRQHandler(void)
         {
             Turn_Servo();
         }
+        // Turn_diffs_comp();
+
         ICM_main_isr();
         // ICM_get();
         Get_Speed();

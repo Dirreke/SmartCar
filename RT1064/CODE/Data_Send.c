@@ -279,7 +279,7 @@ void Variable_update(void)
   Variable[9] = Lef_slope;  //EM_offset;
   Variable[10] = Rig_slope; //speedTarget2;//Turn_Cam_Out;
   Variable[11] = MotorOut1;
-  Variable[12] = car_diffcomp_PWM;                                      //Turn_EM_Out;  //Lef_break_point*100+Rig_break_point;
+  Variable[12] = car_diffcomp_dias;                                      //Turn_EM_Out;  //Lef_break_point*100+Rig_break_point;
   Variable[13] = car_straight_dias; //Allwhitestart * 100 + Allwhiteend;
   Variable[14] = car_center_dias;                                //100 + Lef_circle * 10 + Rig_circle; /*Rig_circle;*/ //Road6_flag ;//CarSpeed2;
   Variable[15] = Mid_slope; //Allwhitestart * 100 + Allwhiteend;              //EM_Value_2+EM_Value_3; //whitecnt;//Road1_turnout;//limit_pos(EM_Value_1/1.5-EM_Value_2/3.5);//speedTarget1;//map_line[MIN(50,AllWhileStartLine)];
