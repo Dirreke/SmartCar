@@ -44,7 +44,7 @@ volatile int turn_stop = 0; //转弯用
 void Allwhite_find(void)
 {
     int i;
-    int Allwhiterow[LCDH]; //全白行，1表示全白，否则为0
+    bool Allwhiterow[LCDH]; //全白行，1表示全白，否则为0
     Allwhitestart = 0;
     Allwhiteend = 0;
 
@@ -70,19 +70,38 @@ void Allwhite_find(void)
             Allwhiterow[i] = 1;
         }
     }
-    Allwhitestart = Last_row;
-    i = Last_row - 8;
-    while (Allwhiterow[i] != 1 && i > Fir_row)
-    {
-        i = i - 1;
-    }
-    Allwhitestart = i;
+    // Allwhitestart = Last_row;
+    // i = Last_row - 8;
+    // while (Allwhiterow[i] != 1 && i > Fir_row)
+    // {
+    //     i = i - 1;
+    // }
+    // Allwhitestart = i;
+    // Allwhiteend = Fir_row;
+    // while (Allwhiterow[i] == 1 && i > Fir_row)
+    // {
+    //     i = i - 1;
+    // }
+    // Allwhiteend = i;
     Allwhiteend = Fir_row;
-    while (Allwhiterow[i] == 1 && i > Fir_row)
+    for (i = Fir_row; i < Last_row-6; ++i)
     {
-        i = i - 1;
+        if (Allwhiterow[i])
+        {
+            Allwhiteend = i-1;//全白行的远处一行（该行为非全白行）
+            break;
+        }
     }
-    Allwhiteend = i;
+    Allwhitestart = Fir_row;
+    for (i = Allwhiteend+2; i < Last_row-6; ++i)
+    {
+        if (!Allwhiterow[i])
+        {
+            Allwhitestart = i-1;//（该行为全白行）
+            break;
+        }
+    }
+    
 }
 
 /*************************************************************************
@@ -361,13 +380,23 @@ void crossing_find(void)
 *  修改时间：2020.06.17
 *  备    注：
 *************************************************************************/
+// bool DEBUGDEBUG;
+
 void start_stop_find(void)
 {
     start_stop_line_flag = 0;
 
     int tiaobian1 = 0;
+    bool Method3_flag = 0;
+    int Method3_sum2 = 0;
+    int Method3_sum = 0;
+    int Method2_sum = 0;
+    int Method2_sum2 = 0;
+    int Method3_k = 0;
 
-    int Rig_end = 0, Lef_end = 0, Road_end = 0;
+    int R_STOP = 0, L_STOP = 0;
+    float STOP_slope;
+    int Rig_end = 60, Lef_end = 60, Road_end = 60;
 
     // if (Road == 0 && Road0_flag == 0)
     // {
@@ -381,8 +410,8 @@ void start_stop_find(void)
         {
             continue;
         }
-        if (Rig[i] > 40 && Rig[i + 2] - Rig[i] < 5 && Rig[i + 3] - Rig[i + 1] < 5 && Rig[i + 4] - Rig[i + 2] < 5 &&
-            Rig[i + 2] - Rig[i] >= 0 && Rig[i + 3] - Rig[i + 1] >= 0 && Rig[i + 4] - Rig[i + 2] >= 0)
+        if (Rig[i + 2] - Rig[i] < 5 && Rig[i + 3] - Rig[i + 1] < 5 &&
+            Rig[i + 2] - Rig[i] >= 0 && Rig[i + 3] - Rig[i + 1] >= 0 && Rig[i] < 78)
         {
             Rig_end = i;
             break;
@@ -394,8 +423,8 @@ void start_stop_find(void)
         {
             continue;
         }
-        if (Lef[i] < 40 && Lef[i] - Lef[i + 2] < 5 && Lef[i + 1] - Lef[i + 3] < 5 && Lef[i + 2] - Lef[i + 4] < 5 &&
-            Lef[i] - Lef[i + 2] >= 0 && Lef[i + 1] - Lef[i + 3] >= 0 && Lef[i + 2] - Lef[i + 4] >= 0)
+        if (Lef[i] - Lef[i + 2] < 5 && Lef[i + 1] - Lef[i + 3] < 5 &&
+            Lef[i] - Lef[i + 2] >= 0 && Lef[i + 1] - Lef[i + 3] >= 0 && Lef[i] > 2)
         {
             Lef_end = i;
             break;
@@ -406,7 +435,7 @@ void start_stop_find(void)
     {
         return;
     }
-
+    // Method 1
     int jump_p_count = 0;
     for (int i = Fir_row; i < 45; ++i)
     {
@@ -425,7 +454,7 @@ void start_stop_find(void)
             jump_p_count = 0;
         }
     }
-
+//Method 2
 #ifdef TL2barn
     // Rig_end = (Rig_end < (Fir_row + 3) ? (Fir_row + 3) : Rig_end);
     for (int i = Rig_end; i < Last_row - 7; ++i)
@@ -458,13 +487,20 @@ void start_stop_find(void)
             // }
             if (Rig[i] > 40 && ((Rig[i] - Rig[i - 4] > 25) || (Rig[i] - Rig[i - 3] > 25)) && Rig[i + 2] - Rig[i] < 5 && Rig[i + 3] - Rig[i + 1] < 5 && Rig[i + 4] - Rig[i + 2] < 5)
             {
-                start_stop_line_flag = 1;
-                start_stop_line = tiaobian1;
+                for (int j = i - 1; j > i - 4; --j)
+                {
+                    for (int k = Rig[j]; k < Rig[i]; ++k) //稍微給鬆一點
+                    {
+                        Method2_sum += Pixle[j][k];
+                        Method2_sum++;
+                    }
+                }
+                if (Method2_sum * 1.0 / Method2_sum2 < 0.3)
+                {
+                    start_stop_line_flag = 1;
+                    start_stop_line = tiaobian1;
+                }
                 return;
-            }
-            else
-            {
-                continue;
             }
         }
     }
@@ -500,16 +536,124 @@ void start_stop_find(void)
             // }
             if (Lef[i] < 40 && ((Lef[i - 3] - Lef[i] > 25) || (Lef[i - 4] - Lef[i] > 25)) && Lef[i] - Lef[i + 2] < 5 && Lef[i + 1] - Lef[i + 3] < 5 && Lef[i + 2] - Lef[i + 4] < 5)
             {
-                start_stop_line_flag = 1;
-                start_stop_line = tiaobian1;
+                for (int j = i - 1; j > i - 4; --j)
+                {
+                    for (int k = Lef[j]; k > Lef[i]; --k) //稍微給鬆一點
+                    {
+                        Method2_sum += Pixle[j][k];
+                        Method2_sum++;
+                    }
+                }
+                if (Method2_sum * 1.0 / Method2_sum2 < 0.3)
+                {
+                    start_stop_line_flag = 1;
+                    start_stop_line = tiaobian1;
+                }
                 return;
             }
+
             else
             {
                 continue;
             }
         }
     }
+#endif
+    ///Method 3
+#if 1
+    if (Rig_end > 25 && Lef_end > 25)
+        return;
+    for (int i = 50; i > Rig_end; i--)
+    {
+        if (Rig[i + 6] - Rig[i + 4] < 5 && Rig[i + 4] - Rig[i + 2] < 5 && Rig[i + 3] - Rig[i + 1] < 5 &&
+            (Rig[i + 2] - Rig[i] >= 5 || Rig[i + 2] - Rig[i] < 0) &&
+            Rig[i + 6] - Rig[i + 4] >= 0 && Rig[i + 4] - Rig[i + 2] >= 0 && Rig[i + 3] - Rig[i + 1] >= 0 && Rig[i + 1] > 20)
+        {
+
+            // if ((Pixle[i][Rig[i + 1] - 5] == 0 || Pixle[i - 2][Rig[i + 1] - 5] == 0) && Pixle[i - 1][Rig[i + 2] - 5] == 0)
+            if ((Pixle[i][Rig[i + 1] - 5] == 0 && Pixle[i - 1][Rig[i + 1] - 5] == 0) ||
+                (Pixle[i - 1][Rig[i + 1] - 5] == 0 && Pixle[i - 2][Rig[i + 1] - 5] == 0) ||
+                (Pixle[i - 2][Rig[i + 1] - 5] == 0 && Pixle[i - 3][Rig[i + 1] - 5] == 0))
+            {
+                R_STOP = i + 1;
+                break;
+            }
+        }
+    }
+    for (int i = Rig_end; i < R_STOP; ++i)
+    {
+        if (Rig[i + 2] - Rig[i] < 5 && Rig[i + 3] - Rig[i + 1] < 5 &&
+            (Rig[i + 4] - Rig[i + 2] >= 5 || Rig[i + 4] - Rig[i + 2] <= 0) &&
+            Rig[i + 2] - Rig[i] > 0 && Rig[i + 3] - Rig[i + 1] > 0)
+        {
+            if (Rig[R_STOP] - Rig[i + 3] > -5 && Rig[tiaobian1] - Rig[i + 3] < 15)
+            {
+                Method3_flag = 1;
+                break;
+            }
+        }
+    }
+    if (Method3_flag)
+    {
+        Method3_flag = 0;
+        for (int i = 50; i > Lef_end; i--)
+        {
+            if (Lef[i + 4] - Lef[i + 6] < 5 && Lef[i + 2] - Lef[i + 4] < 5 && Lef[i + 1] - Lef[i + 3] < 5 &&
+                (Lef[i] - Lef[i + 2] >= 5 || Lef[i] - Lef[i + 2] < 0) &&
+                Lef[i + 4] - Lef[i + 6] >= 0 && Lef[i + 2] - Lef[i + 4] >= 0 && Lef[i + 1] - Lef[i + 3] >= 0 && Lef[i + 1] < 60)
+            {
+
+                if ((Pixle[i][Lef[i + 1] + 5] == 0 && Pixle[i - 1][Lef[i + 1] + 5] == 0) ||
+                    (Pixle[i - 1][Lef[i + 1] + 5] == 0 && Pixle[i - 2][Lef[i + 1] + 5] == 0) ||
+                    (Pixle[i - 2][Lef[i + 1] + 5] == 0 && Pixle[i - 3][Lef[i + 1] + 5] == 0))
+                {
+                    L_STOP = i + 1;
+                    break;
+                }
+            }
+        }
+        for (int i = Lef_end; i < L_STOP; ++i)
+        {
+            if (Lef[i] - Lef[i + 2] < 5 && Lef[i + 1] - Lef[i + 3] < 5 &&
+                (Lef[i + 2] - Lef[i + 4] >= 5 || Lef[i + 2] - Lef[i + 4] <= 0) &&
+                Lef[i] - Lef[i + 2] > 0 && Lef[i + 1] - Lef[i + 3] > 0)
+            {
+                if (Lef[i + 3] - Lef[L_STOP] > -5 && Lef[i + 3] - Lef[tiaobian1] < 15)
+                {
+                    Method3_flag = 1;
+                    break;
+                }
+            }
+        }
+    }
+    if (Method3_flag)
+    {
+        STOP_slope = Slope(Lef[L_STOP], L_STOP, Rig[R_STOP], R_STOP);
+        for (int j = 1; j < 5; ++j)
+        {
+            for (int i = Lef[L_STOP]; i < Rig[R_STOP]; ++i)
+            {
+                Method3_k = (int)(STOP_slope * (i - Rig[R_STOP]) + R_STOP - j);
+                Method3_k = Method3_k < 1 ? 1 : (Method3_k > 78 ? 78 : Method3_k);
+                Method3_sum += Pixle[Method3_k][i];
+                Method3_sum2 += 1;
+            }
+        }
+        if (Method3_sum2 != 0)
+        {
+            if (Method3_sum * 1.0 / Method3_sum2 < 0.4)
+            {
+                start_stop_line_flag = 1;
+#ifdef TL2barn
+                start_stop_line = R_STOP;
+#endif
+#ifdef TR2barn
+                start_stop_line = L_STOP;
+#endif
+            }
+        }
+    }
+
 #endif
 
     // }
@@ -1216,7 +1360,7 @@ void Road1_zhuangtaiji(void)
                 break;
             }
         }
-        if (Allwhitestart > 29 && Allwhiteend < 30) //Rig_circlr 不好，改!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        if (Allwhitestart > 30 && Allwhitestart < 40 && Allwhitestart - Allwhiteend > 2) //Rig_circlr 不好，改!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         {
             Road13_count++;
             if (Road13_count > 2)
@@ -1229,7 +1373,7 @@ void Road1_zhuangtaiji(void)
         {
             Road13_count = 0;
         }
-        if (Allwhitestart >= 42 && Allwhiteend < 30)
+        if (Allwhitestart >= 40 && Allwhiteend < 32)
         {
             Road15_count++;
             if (Road15_count > 1)
@@ -1245,7 +1389,7 @@ void Road1_zhuangtaiji(void)
     }
     else if (Road1_flag == 3) //准备出圆环，右边线补线
     {
-        if (Allwhitestart >= 42)
+        if (Allwhitestart >= 40)
         {
             Road15_count++;
             if (Road15_count > 1)
@@ -1327,7 +1471,7 @@ void Road2_zhuangtaiji(void)
         {
             Road21_count = 0;
         }
-        if (Allwhitestart < 35 && Allwhitestart != 20)
+        if (Allwhiteend < 35 && Allwhiteend != 20)
         {
             Road0_count++;
             if (Road0_flag > 1)
@@ -1460,7 +1604,7 @@ void Road2_zhuangtaiji(void)
             }
         }
 
-        if (Allwhitestart > 29 && Allwhiteend < 30)
+        if (Allwhitestart > 30 && Allwhitestart < 40 && Allwhitestart - Allwhiteend > 2)
         {
             Road23_count++;
             if (Road23_count > 2)
@@ -1473,7 +1617,7 @@ void Road2_zhuangtaiji(void)
         {
             Road23_count = 0;
         }
-        if (Allwhitestart >= 42 && Allwhiteend < 30)
+        if (Allwhitestart >= 40 && Allwhiteend < 30)
         {
             Road25_count++;
             if (Road25_count > 1)
@@ -1489,7 +1633,7 @@ void Road2_zhuangtaiji(void)
     }
     else if (Road2_flag == 3)
     {
-        if (Allwhitestart >= 42)
+        if (Allwhitestart >= 40)
         {
             Road25_count++;
             if (Road25_count > 1)
@@ -1784,7 +1928,8 @@ void Road7_zhuangtaiji(void)
         // {
         // Road7_flag = 3;
         // }
-        if (Lef_slope == 998 && Rig_slope == 998 && (Lef_edge < 7 && Rig_edge < 7) || (EM_Value_1 < 0.2 && EM_Value_2 < 0.15 && EM_Value_2 < 0.15 && EM_Value_4 < 0.2))
+        // if (Lef_slope == 998 && Rig_slope == 998 && (Lef_edge < 7 && Rig_edge < 7) || (EM_Value_1 < 0.2 && EM_Value_2 < 0.15 && EM_Value_2 < 0.15 && EM_Value_4 < 0.2))
+        if (Rig_slope < -0.2)
         {
             Road73_count++;
             if (Road73_count > 1)
