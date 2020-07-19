@@ -318,3 +318,23 @@ void Straight_offset_filter(void)
   Straight_offset_filter[0] = car_straight_dias;
   car_straight_dias = Straight_offset_filter[0] * 0.4 + Straight_offset_filter[1] * 0.3 + Straight_offset_filter[2] * 0.2 + Straight_offset_filter[3] * 0.1;
 }
+
+/*************************************************************************
+*  函数名称：void Center_offset_filter(void)
+*  功能说明：chezheng滤波
+*  参数说明：无
+*  函数返回：无
+*  修改时间：2020.7.16
+*  备    注：
+
+*************************************************************************/
+
+void Center_offset_filter(void)
+{
+  static float Center_offset_filter[4] = {0, 0, 0, 0}; //offset滤波数组
+  Center_offset_filter[3] = Center_offset_filter[2];
+  Center_offset_filter[2] = Center_offset_filter[1];
+  Center_offset_filter[1] = Center_offset_filter[0];
+  Center_offset_filter[0] = car_center_dias;
+  car_center_dias = Center_offset_filter[0] * 0.5 + Center_offset_filter[1] * 0.2 + Center_offset_filter[2] * 0.2 + Center_offset_filter[3] * 0.1;
+}

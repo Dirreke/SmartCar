@@ -219,7 +219,7 @@ void Turn_Servo()
   }
   else if (Road == 4)
   {
-    Turn_Out = Turn_EM_Out;
+    Turn_Out = Turn_Cam_Out * 0.2;//Turn_EM_Out;
   }
   else if (Road == 3)
   {
@@ -513,7 +513,7 @@ void Speed_Control_New(void)
   //BBC
   if (Lef_pp)
   {
-    if (CarSpeed1 > SpeedGoal || stop_line > 30)
+    if (CarSpeed1 > SpeedGoal)
     {
       MotorOut1 = -MOTOR_RANGE;
     }
@@ -659,7 +659,7 @@ void Speed_Control_New(void)
 
   if (Rig_pp)
   {
-    if (CarSpeed2 > SpeedGoal || stop_line > 30)
+    if (CarSpeed2 > SpeedGoal)
     {
       MotorOut2 = -MOTOR_RANGE;
     }

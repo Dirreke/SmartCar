@@ -46,8 +46,9 @@ void camera_dispose_main(void) //摄像头处理主函数
     Pic_undistort(1, 1); //图像去畸变
     Pic_particular();
     jump_point_cnt();
-    LR_Slope_fig();    //左右边线斜率计算
-    Allwhite_find();   //查找全白行//注释Allwhitestart2.Allwhiteend2
+    LR_Slope_fig();  //左右边线斜率计算
+    Allwhite_find(); //查找全白行//注释Allwhitestart2.Allwhiteend2
+    Pic_find_circle_pre();
     Pic_find_circle(); //寻找环状黑线及拐点
     start_stop_find();
     crossing_find();
@@ -643,7 +644,7 @@ void Pic_DrawLRside(void)
                 }
             }
 
-            if (Side_true && Rig[i + 1] - Rig[i] < 10 && Rig[i+1]-Rig[i] > 0)
+            if (Side_true && Rig[i + 1] - Rig[i] < 10 && Rig[i + 1] - Rig[i] > 0)
             {
                 Side_true = 1;
                 break;
@@ -711,7 +712,7 @@ void Pic_DrawLRside(void)
                 }
             }
 
-            if (Side_true && Lef[i] - Lef[i + 1] < 10 && Lef[i] - Lef[i+1] > 0)
+            if (Side_true && Lef[i] - Lef[i + 1] < 10 && Lef[i] - Lef[i + 1] > 0)
             {
                 Side_true = 1;
                 break;
@@ -1682,10 +1683,9 @@ void Pic_Fix_Line(void)
                 {
                     for (int k = j - 7; k > Fir_row + 5; k--)
                     {
-                         Rig[k] = (int)(Rig[j] - (j - k) / slope);
+                        Rig[k] = (int)(Rig[j] - (j - k) / slope);
                         // Rig[k] = (int)((Rig[j - 6] - (j - 6 - k) / slope) * 2) - Rig[j - 6];
                         // Rig[k] = (int)((k + 6 - j) * 2 / slope) + Rig[j - 6];
-                        
                     }
                     Pic_undistort(0, 1);
                     break;
@@ -1905,7 +1905,7 @@ void Pic_Fix_Line(void)
                     for (int k = j - 6; k > Fir_row + 5; k--)
                     {
                         Lef[k] = (int)(Lef[j] - (j - k) / slope);
-                        
+
                         //Lef[k] = (int)((k + 6 - j) * 2 / slope) - Lef[j - 6];
                     }
                     Pic_undistort(1, 0);
@@ -1976,9 +1976,9 @@ void Pic_Fix_Line(void)
         if (Road7_flag == 0)
         {
             get_flag = 0;
-            for (int i = Fir_row + 2; i < start_stop_line; i++)
+            for (int i = Last_row - 5; i > start_stop_line + 5; i--)
             {
-                if (abs(Lef[i] - Fir_col) < 15 || Lef[i] - Lef[i + 2] > 5 || Lef[i] - Lef[i + 2] < 0)
+                if (abs(Lef[i] - Fir_col) < 4 || Lef[i] - Lef[i + 2] > 5 || Lef[i] - Lef[i + 2] < 0 || Lef[i + 1] - Lef[i + 3] > 5 || Lef[i] - Lef[i + 2] < 0)
                     continue;
                 xtemp = Lef[i];
                 ytemp = i;
@@ -1987,57 +1987,146 @@ void Pic_Fix_Line(void)
             }
             if (get_flag == 1)
             {
-
-                for (int i = start_stop_line + 5; i < Last_row; i++)
-                {
-                    if (abs(Lef[i] - Fir_col) < 4 || Lef[i] - Lef[i + 2] > 5 || Lef[i] - Lef[i + 2] < 0)
-                        continue;
-
-                    slope = Slope(Lef[i], i, xtemp, ytemp); //Slope(int F1x,int F1y,int F2x,int F2y)
-                    if (slope != 999)
+#ifdef TL2barn
+                for (int i = Fir_row + 2; i < barn_line; i++)
+#endif
+#ifdef TR2barn
+                    for (int i = Fir_row + 2; i < start_stop_line; i++)
+#endif
                     {
-                        for (int j = ytemp; j < 55; j++)
+                        if (abs(Lef[i] - Fir_col) < 15 || Lef[i] - Lef[i + 2] > 5 || Lef[i] - Lef[i + 2] < 0)
+                            continue;
+                        slope = Slope(Lef[i], i, xtemp, ytemp); //Slope(int F1x,int F1y,int F2x,int F2y)
+                        if (slope != 999)
                         {
-                            Lef[j] = (int)(Lef[i] - (i - j) / slope);
+                            for (int j = ytemp; j < 55; j++)
+                            {
+                                Lef[j] = (int)(Lef[i] - (i - j) / slope);
+                            }
+                            Pic_undistort(1, 0);
+                            break;
                         }
-                        Pic_undistort(1, 0);
+                    }
+            }
+            else
+            {
+#ifdef TL2barn
+                for (int i = Fir_row + 2; i < barn_line; i++)
+#endif
+#ifdef TR2barn
+                    for (int i = Fir_row + 2; i < start_stop_line; i++)
+#endif
+                    {
+                        if (abs(Lef[i] - Fir_col) < 15 || Lef[i] - Lef[i + 2] > 5 || Lef[i] - Lef[i + 2] < 0)
+                            continue;
+                        xtemp = Lef[i];
+                        ytemp = i;
+                        get_flag = 1;
                         break;
                     }
+                if (get_flag == 1)
+                {
+#ifdef TL2barn
+                    for (int i = ytemp; i < barn_line; i++)
+#endif
+#ifdef TR2barn
+                        for (int i = ytemp; i < start_stop_line; i++)
+#endif
+                        {
+                            if (abs(Lef[i] - Fir_col) < 15 || Lef[i] - Lef[i + 2] > 5 || Lef[i] - Lef[i + 2] < 0 || Lef[i + 1] - Lef[i + 3] > 5 || Lef[i + 1] - Lef[i + 3] < 0)
+                            {
+                                slope = Slope(Lef[i + 2], i + 2, xtemp, ytemp); //Slope(int F1x,int F1y,int F2x,int F2y)
+                                if (slope != 999)
+                                {
+                                    for (int j = i + 2; j < 55; j++)
+                                    {
+                                        Lef[j] = (int)(Lef[i + 2] - (i + 2 - j) / slope);
+                                    }
+                                    Pic_undistort(1, 0);
+                                    break;
+                                }
+                            }
+                        }
                 }
             }
 
             get_flag = 0;
-            for (int i = Fir_row + 2; i < start_stop_line; i++)
+            for (int i = Last_row - 5; i > start_stop_line + 5; i--)
             {
-                if (abs(Rig[i] - Last_col) < 15 || Rig[i + 2] - Rig[i] > 5 || Rig[i + 2] - Rig[i] < 0)
+                if (Last_col - Rig[i] < 15 || Rig[i + 2] - Rig[i] > 5 || Rig[i + 2] - Rig[i] < 0 || Rig[i + 3] - Rig[i] > 5 || Rig[i + 3] - Rig[i] < 0)
                     continue;
-                if (Rig[i] < 40)
-                    break;
                 xtemp = Rig[i];
                 ytemp = i;
                 get_flag = 1;
                 break;
             }
+
             if (get_flag == 1)
             {
-                for (int i = start_stop_line + 5; i < Last_row; i++)
-                {
-                    if (abs(Rig[i] - Fir_col) < 4 || Rig[i] < 40 || Rig[i + 2] - Rig[i] > 5 || Rig[i + 2] - Rig[i] < 0)
-                        continue;
-
-                    slope = Slope(Rig[i], i, xtemp, ytemp); //Slope(int F1x,int F1y,int F2x,int F2y)
-                    if (slope != 999)
+#ifdef TR2barn
+                for (int i = Fir_row + 2; i < barn_line; i++)
+#endif
+#ifdef TL2barn
+                    for (int i = Fir_row + 2; i < start_stop_line; i++)
+#endif
                     {
-                        for (int j = ytemp; j < 55; j++)
+                        if (abs(Rig[i] - Last_col) < 15 || Rig[i + 2] - Rig[i] > 5 || Rig[i + 2] - Rig[i] < 0)
+                            continue;
+                        slope = Slope(Rig[i], i, xtemp, ytemp); //Slope(int F1x,int F1y,int F2x,int F2y)
+                        if (slope != 999)
                         {
-                            Rig[j] = (int)(Rig[i] - (i - j) / slope);
+                            for (int j = ytemp; j < 55; j++)
+                            {
+                                Rig[j] = (int)(Rig[i] - (i - j) / slope);
+                            }
+                            Pic_undistort(0, 1);
+                            break;
                         }
-                        Pic_undistort(0, 1);
+                    }
+            }
+            else
+            {
+#ifdef TR2barn
+                for (int i = Fir_row + 2; i < barn_line; i++)
+#endif
+#ifdef TL2barn
+                    for (int i = Fir_row + 2; i < start_stop_line; i++)
+#endif
+                    {
+                        if (abs(Rig[i] - Last_col) < 15 || Rig[i + 2] - Rig[i] > 5 || Rig[i + 2] - Rig[i] < 0)
+                            continue;
+                        xtemp = Rig[i];
+                        ytemp = i;
+                        get_flag = 1;
                         break;
                     }
+                if (get_flag)
+                {
+#ifdef TR2barn
+                    for (int i = ytemp; i < barn_line; i++)
+#endif
+#ifdef TL2barn
+                        for (int i = ytemp; i < start_stop_line; i++)
+#endif
+                        {
+                            if (abs(Rig[i] - Last_col) < 15 || Rig[i + 2] - Rig[i] > 5 || Rig[i + 2] - Rig[i] < 0 || Rig[i + 3] - Rig[i + 1] > 5 || Rig[i + 3] - Rig[i + 1] < 0)
+                            {
+                                slope = Slope(Rig[i + 2], i + 2, xtemp, ytemp); //Slope(int F1x,int F1y,int F2x,int F2y)
+                                if (slope != 999)
+                                {
+                                    for (int j = i + 2; j < 55; j++)
+                                    {
+                                        Rig[j] = (int)(Rig[i + 2] - (i + 2 - j) / slope);
+                                    }
+                                    Pic_undistort(0, 1);
+                                    break;
+                                }
+                            }
+                        }
                 }
             }
         }
+
         else if (Road7_flag == 1)
         {
             for (int i = Fir_row; i < barn_line; ++i)
@@ -2386,8 +2475,8 @@ void Pic_DrawMid_und(void)
         {
             if (i > 45)
             {
-                Road_Half_Width_change_r =(int )( ROAD_HALF_WIDTH + (Road_Half_Width_change_r - ROAD_HALF_WIDTH) * 0.7);
-                Road_Half_Width_change_l = (int )(ROAD_HALF_WIDTH + (Road_Half_Width_change_l - ROAD_HALF_WIDTH) * 0.7);
+                Road_Half_Width_change_r = (int)(ROAD_HALF_WIDTH + (Road_Half_Width_change_r - ROAD_HALF_WIDTH) * 0.7);
+                Road_Half_Width_change_l = (int)(ROAD_HALF_WIDTH + (Road_Half_Width_change_l - ROAD_HALF_WIDTH) * 0.7);
             }
 
             if (New_Lef[i] != -MIDMAP && New_Rig[i] != MIDMAP) //Mid Calculaing

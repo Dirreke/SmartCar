@@ -1,7 +1,9 @@
 
 #include "headfile.h"
 float car_straight_dias;
+float car_center_dias;
 PID PID_CAR_STRAIGHT_CAM;
+PID PID_CAR_CENTER_CAM;
 void Turn_Cam_New(void)
 {
   //PID_CAR_STRAIGHT_CAM.P = 1;
@@ -9,7 +11,27 @@ void Turn_Cam_New(void)
   static float car_straight_dias_old = 0;
   car_straight_dias = M_Slope_fig() * SERVO_RANGE / ANGLE_RANGE;
   Straight_offset_filter();
-  Turn_Cam_Out = car_straight_dias * PID_CAR_STRAIGHT_CAM.P + (car_straight_dias - car_straight_dias_old) * PID_CAR_STRAIGHT_CAM.D;
+  car_center_dias = car_center();
+  Center_offset_filter();
+
+  if (fabs(car_center_dias) < 10)
+  {
+    car_center_dias= 0;
+  }
+
+  if (fabs(Mid_slope) < 1)
+  {
+    Turn_Cam_Out = car_straight_dias * PID_CAR_STRAIGHT_CAM.P + (car_straight_dias - car_straight_dias_old) * PID_CAR_STRAIGHT_CAM.D;
+  }
+  else if (fabs(Mid_slope) < 3)
+  {
+    Turn_Cam_Out = car_straight_dias * PID_CAR_STRAIGHT_CAM.P + car_center_dias * PID_CAR_CENTER_CAM.P;
+  }
+  else
+  {
+    Turn_Cam_Out = car_center_dias * PID_CAR_CENTER_CAM.P;
+  }
+
   car_straight_dias_old = car_straight_dias;
 }
 float Mid_slope = 0;
@@ -138,8 +160,8 @@ void Turn_diff_comp()
 {
   float car_diffcomp_PWM;
   static float car_diffcomp_dias_old = 0;
-  PID_CAR_Diffcomp_CAM.P = 0;
-  PID_CAR_Diffcomp_CAM.D = 0;
+  // PID_CAR_Diffcomp_CAM.P = 0.2;
+  // PID_CAR_Diffcomp_CAM.D = 0;
   car_diffcomp_dias = Car_diff_comp();
 
   car_diffcomp_PWM = PID_CAR_Diffcomp_CAM.P * car_diffcomp_dias + PID_CAR_Diffcomp_CAM.D * (car_diffcomp_dias - car_diffcomp_dias_old);
@@ -147,7 +169,37 @@ void Turn_diff_comp()
   car_diffcomp_dias_old = car_diffcomp_dias;
   Turn_Out = Turn_Out + car_diffcomp_PWM;
 }
+/*************************************************************************
+*  函数名称：void Car_center(void)
+*  功能说明：chezhi滤波
+*  参数说明：无
+*  函数返回：无
+*  修改时间：2020.7.16
+*  备    注：
 
+*************************************************************************/
+float car_center(void)
+{
+  // PID_init_center();
+  float car_center_dias_sum = 0;
+  int car_center_start = 50;
+  int car_center_end = 55;
+  int cnt = 0;
+  for (int i = car_center_start; i < car_center_end; ++i)
+  {
+    if (New_Mid[i] != 999)
+    {
+      car_center_dias_sum += New_Mid[i];
+      cnt += 1;
+    }
+  }
+  if (cnt == 0)
+  {
+    return 0;
+  }
+  return car_center_dias_sum / cnt;
+  // centerAngle=PID_realize_center(car_center_dias);
+}
 /*************************************************************************
 *  函数名称：void Straight_offset_filter(void)
 *  功能说明：chezhi滤波
@@ -166,4 +218,24 @@ void Straight_offset_filter(void)
   Straight_offset_filter[1] = Straight_offset_filter[0];
   Straight_offset_filter[0] = car_straight_dias;
   car_straight_dias = Straight_offset_filter[0] * 0.4 + Straight_offset_filter[1] * 0.3 + Straight_offset_filter[2] * 0.2 + Straight_offset_filter[3] * 0.1;
+}
+
+/*************************************************************************
+*  函数名称：void Center_offset_filter(void)
+*  功能说明：chezheng滤波
+*  参数说明：无
+*  函数返回：无
+*  修改时间：2020.7.16
+*  备    注：
+
+*************************************************************************/
+
+void Center_offset_filter(void)
+{
+  static float Center_offset_filter[4] = {0, 0, 0, 0}; //offset滤波数组
+  Center_offset_filter[3] = Center_offset_filter[2];
+  Center_offset_filter[2] = Center_offset_filter[1];
+  Center_offset_filter[1] = Center_offset_filter[0];
+  Center_offset_filter[0] = car_center_dias;
+  car_center_dias = Center_offset_filter[0] * 0.5 + Center_offset_filter[1] * 0.2 + Center_offset_filter[2] * 0.2 + Center_offset_filter[3] * 0.1;
 }

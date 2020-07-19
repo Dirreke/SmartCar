@@ -79,7 +79,7 @@ void Dubug_key(void)
             switch (ips_num)
             {
             case 2:
-                DIFF_KKK += 0.1;
+                PID_CAR_CENTER_CAM.P += 0.1;
                 break;
             case 3:
                 speedgoal += 0.1;
@@ -88,7 +88,7 @@ void Dubug_key(void)
                 DIFF_KK += 0.1;
                 break;
             case 5:
-                PID_SPEED.I += 1;
+                PID_CAR_Diffcomp_CAM.P += 0.1;
                 break;
             case 6:
                 //PID_TURN_CAM_EXT.P += 0.1;
@@ -264,7 +264,7 @@ void Dubug_key(void)
             switch (ips_num)
             {
             case 2:
-                DIFF_KKK -= 0.1;
+                PID_CAR_CENTER_CAM.P -= 0.1;
                 break;
             case 3:
                 speedgoal -= 0.1;
@@ -273,7 +273,7 @@ void Dubug_key(void)
                 DIFF_KK -= 0.1;
                 break;
             case 5:
-                PID_SPEED.I -= 1;
+                PID_CAR_Diffcomp_CAM.P -= 0.1;
                 break;
             case 6:
                 //PID_TURN_CAM_EXT.P -= 0.1;
@@ -459,11 +459,11 @@ void ips_show_debug(int ips_num)
 
     /** pages **/
     case 2:                                  //阈值
-        ips200_showstr(0, 12, "DIFF_KKK: "); //显示字符串
+        ips200_showstr(0, 12, "PID_CENTER_CAM.P: "); //显示字符串
         //ips200_showfloat(0, 13, 66.6667, 2, 4);    //显示一个浮点数并去除整数部分无效0
         //ips200_showuint16(0,1,666);                //显示一个16位无符号整数
         //ips200_showint32(0,3,-666,3);              //显示一个32位有符号数并去除无效0
-        ips200_showfloat(0, 13, DIFF_KKK, 3, 2);
+        ips200_showfloat(0, 13, PID_CAR_CENTER_CAM.P, 3, 2);
         break;
     case 3:
         ips200_showstr(0, 12, "speed: "); //显示字符串
@@ -474,8 +474,8 @@ void ips_show_debug(int ips_num)
         ips200_showfloat(0, 13, DIFF_KK, 4, 2);
         break;
     case 5:
-        ips200_showstr(0, 12, "I");
-        ips200_showfloat(0, 13, PID_SPEED.I, 4, 2);
+        ips200_showstr(0, 12, "PID_CAR_Diffcomp_CAM.P");
+        ips200_showfloat(0, 13, PID_CAR_Diffcomp_CAM.P, 4, 2);
         break;
     case 6:
         ips200_showstr(0, 12, "PID_CAR_STRAIGHT_CAM.P");

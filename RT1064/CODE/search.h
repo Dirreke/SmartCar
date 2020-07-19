@@ -28,6 +28,8 @@ extern int Lef_circle;
 extern int Rig_circle;
 extern int Lef_break_point;
 extern int Rig_break_point;
+extern bool Lef_circle_pre_flag;
+extern bool Rig_circle_pre_flag;
 // extern int Lef_break_point_und = 0;
 // extern int Rig_break_point_und = 0;
 
@@ -44,6 +46,7 @@ extern int stop_line;
 
 void Allwhite_find(void);
 void Pic_find_circle(void);
+void Pic_find_circle_pre(void);
 void break_point_find_und(bool L,bool R);
 void start_stop_find(void);
 void mag_find(void);
