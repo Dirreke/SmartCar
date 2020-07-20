@@ -18,7 +18,6 @@
  ********************************************************************************************************************/
 
 #include "headfile.h"
-#include "isr.h"
 
 void CSI_IRQHandler(void)
 {
@@ -26,12 +25,16 @@ void CSI_IRQHandler(void)
     __DSB();                //数据同步隔离
 }
 
+float loop_time = 0;
+float loop_time2 = 0;
+int feisu_flag = 0;
 void PIT_IRQHandler(void)
 {
     if (PIT_FLAG_GET(PIT_CH0))
     {
         PIT_FLAG_CLEAR(PIT_CH0);
         EM_main();
+        //EM_Get();
         if (DEBUG_CHOICE == 3)
         {
             Kalman_Filter();
@@ -41,8 +44,17 @@ void PIT_IRQHandler(void)
             Turn_Servo();
         }
         // Turn_diff_comp();
+        if (gpio_get(DEBUG_KEY0))
+        {
+            loop_time += 0.002;
+            loop_time2 += 0.002;
+        }
+        else
+        {
+            loop_time = 0;
+        }
 
-        ICM_main_isr();
+        //ICM_main_isr();
         // ICM_get();
         Get_Speed();
         lib_set_fun();

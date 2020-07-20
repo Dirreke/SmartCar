@@ -126,14 +126,26 @@ void Moto_Out(void)
   Motor1_temp = MotorOut1_add + MotorOut1;
   Motor2_temp = MotorOut2_add + MotorOut2;
 
-  if (Motor1_temp > 18000) //如果车子前倾，则车模的速度控制输出为正，反之为负
+  if (Motor1_temp >= 18000) //如果车子前倾，则车模的速度控制输出为正，反之为负
+  {
     Motor1_temp = 18000;
-  if (Motor1_temp < -18000)
+    feisu_flag = 1;
+  }
+  if (Motor1_temp <= -18000)
+  {
     Motor1_temp = -18000;
-  if (Motor2_temp > 18000) //如果车子前倾，则车模的速度控制输出为正，反之为负
+    feisu_flag = -1;
+  }
+  if (Motor2_temp >= 18000) //如果车子前倾，则车模的速度控制输出为正，反之为负
+  {
     Motor2_temp = 18000;
-  if (Motor2_temp < -18000)
+    feisu_flag = 2;
+  }
+  if (Motor2_temp <= -18000)
+  {
     Motor2_temp = -18000;
+    feisu_flag = -2;
+  }
 
   if (MotorOut1 >= 0) //正转
   {

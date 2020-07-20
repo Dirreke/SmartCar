@@ -169,7 +169,7 @@ void EM_straight_offset_fig(void)
       mix_choice = 3;
     }
     cos_angle = r / rm;
-    EM_straight_offset = acos(cos_angle) / ANGLE_RANGE * SERVO_RANGE;
+    EM_straight_offset = acos(cos_angle) * SERVO_DIVIDE_ANGLE_SCALE;
   }
   else if (pl >= temp2 && pr < temp2)
   {
@@ -186,7 +186,7 @@ void EM_straight_offset_fig(void)
       mix_choice = 3;
     }
     cos_angle = l / lm;
-    EM_straight_offset = -acos(cos_angle) / ANGLE_RANGE * SERVO_RANGE;
+    EM_straight_offset = -acos(cos_angle) * SERVO_DIVIDE_ANGLE_SCALE;
   }
   else
   {
@@ -205,7 +205,7 @@ void EM_straight_offset_fig(void)
         mix_choice = 3;
       }
       cos_angle = l / lm;
-      EM_straight_offset = -acos(cos_angle) / ANGLE_RANGE * SERVO_RANGE;
+      EM_straight_offset = -acos(cos_angle) * SERVO_DIVIDE_ANGLE_SCALE;
       //    err = (lm-rm);
     }
     else if (lm < rm - temp)
@@ -223,13 +223,13 @@ void EM_straight_offset_fig(void)
         mix_choice = 3;
       }
       cos_angle = r / rm;
-      EM_straight_offset = acos(cos_angle) / ANGLE_RANGE * SERVO_RANGE;
+      EM_straight_offset = acos(cos_angle) * SERVO_DIVIDE_ANGLE_SCALE;
       //    err = (rm-lm);
     }
     else
     {
-      EM_straight_offset1 = -acos(cos_angle) / ANGLE_RANGE * SERVO_RANGE;
-      EM_straight_offset2 = acos(cos_angle) / ANGLE_RANGE * SERVO_RANGE;
+      EM_straight_offset1 = -acos(cos_angle) * SERVO_DIVIDE_ANGLE_SCALE;
+      EM_straight_offset2 = acos(cos_angle) * SERVO_DIVIDE_ANGLE_SCALE;
       // EM_straight_offset = (EM_straight_offset1 * (lm-rm) + EM_straight_offset2* (rm-lm)) /2/temp;
       // EM_straight_offset = (EM_straight_offset1-EM_straight_offset2)/2/temp*(lm-rm);
       EM_straight_offset = (EM_straight_offset1 - EM_straight_offset2) / 2 / temp * (lm - rm - temp) + EM_straight_offset1;

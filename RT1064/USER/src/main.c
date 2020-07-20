@@ -46,7 +46,7 @@ uint32 use_time;
 
 int main(void)
 {
-
+    int temp_flag = 0;
     DisableGlobalIRQ();
     /** board init **/
     board_init();          //务必保留，本函数用于初始化MPU 时钟 调试串口
@@ -69,13 +69,18 @@ int main(void)
 
     NVIC_SetPriority(GPIO2_Combined_16_31_IRQn, 0); //设置中断优先级 范围0-15 越小优先级越高
     // gyro_y_init();                                  //陀螺仪校正初始化
-    Para_Init();                                    //各个变量初始化
+    Para_Init(); //各个变量初始化
 
     EnableGlobalIRQ(0);
     /** main loop **/
 
     while (1)
     {
+        if (temp_flag < 100)
+        {
+            loop_time = -999;
+        }
+
         if (mt9v03x_csi_finish_flag) //图像采集完成
         {
             mt9v03x_csi_finish_flag = 0; //清除采集完成标志位
@@ -84,6 +89,13 @@ int main(void)
             camera_dispose_main();
 
             Send_Data();
+            feisu_flag = 0;
+            loop_time2 = 0;
+            if (temp_flag < 100)
+            {
+                loop_time = 0;
+                temp_flag++;
+            }
             Dubug_key();
 
             //使用缩放显示函数，根据原始图像大小 以及设置需要显示的大小自动进行缩放或者放大显示。

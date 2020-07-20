@@ -91,7 +91,7 @@ void Turn_Cam_New(void)
   
   car_center_dias = car_center();
   //car_straight_angle = car_straight(car_center_dias);
-  car_straight_dias = M_Slope_fig() * SERVO_RANGE / ANGLE_RANGE;
+  car_straight_dias = M_Slope_fig() * SERVO_DIVIDE_ANGLE_SCALE;
 
   Center_offset_filter();
   Straight_offset_filter();
@@ -236,7 +236,7 @@ float Car_diff_comp(void)
 {
   
   if (CarSpeed1 + CarSpeed2 > 3)
-    return Turn_Out - atan(2 * (CarSpeed1 - CarSpeed2) / ((CarSpeed1 + CarSpeed2) * CAR_DIFF_K)) / ANGLE_RANGE * SERVO_RANGE;
+    return Turn_Out - atan(2 * (CarSpeed1 - CarSpeed2) / ((CarSpeed1 + CarSpeed2) * CAR_DIFF_K))  * SERVO_DIVIDE_ANGLE_SCALE;
   else
     return 0;
 }

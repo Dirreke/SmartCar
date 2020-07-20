@@ -677,7 +677,7 @@ void mag_find(void)
     {
         start_waited++;
     }
-    if (start_waited >= 600)
+    if (loop_time > 6)//(start_waited >= 600)
     {
         gpio_interrupt_init(C25, FALLING, GPIO_INT_CONFIG);
         start_waited = 0;
@@ -802,22 +802,22 @@ void Road_rec(void)
     if (Road == 0)
     {
         /* ÉãÏñÍ·ÅÐÆÂ */
-        if (New_Lef[22] > New_Lef[20] && New_Lef[20] > New_Lef[18] && New_Lef[18] > New_Lef[16] && New_Lef[16] > New_Lef[14] && New_Lef[15] > New_Lef[13] && New_Lef[14] > New_Lef[12] && New_Lef[13] > New_Lef[11] && New_Lef[12] > New_Lef[10] &&
-            New_Rig[22] < New_Rig[20] && New_Rig[20] < New_Rig[18] && New_Rig[18] < New_Rig[16] && New_Rig[16] < New_Rig[14] && New_Rig[15] < New_Rig[13] && New_Rig[14] < New_Rig[12] && New_Rig[13] < New_Rig[11] && New_Rig[12] < New_Rig[10] &&
-            New_Lef[6] > -300 && New_Rig[6] < 300 && New_Lef[8] > -300 && New_Rig[8] < 300)
-        {
-            Road40_count++;
-            if (Road40_count > 2)
-            {
-                Road = 4;
-                Road4_flag = 0;
-                return;
-            }
-        }
-        else
-        {
-            Road40_count = 0;
-        }
+        // if (New_Lef[22] > New_Lef[20] && New_Lef[20] > New_Lef[18] && New_Lef[18] > New_Lef[16] && New_Lef[16] > New_Lef[14] && New_Lef[15] > New_Lef[13] && New_Lef[14] > New_Lef[12] && New_Lef[13] > New_Lef[11] && New_Lef[12] > New_Lef[10] &&
+        //     New_Rig[22] < New_Rig[20] && New_Rig[20] < New_Rig[18] && New_Rig[18] < New_Rig[16] && New_Rig[16] < New_Rig[14] && New_Rig[15] < New_Rig[13] && New_Rig[14] < New_Rig[12] && New_Rig[13] < New_Rig[11] && New_Rig[12] < New_Rig[10] &&
+        //     New_Lef[6] > -300 && New_Rig[6] < 300 && New_Lef[8] > -300 && New_Rig[8] < 300)
+        // {
+        //     Road40_count++;
+        //     if (Road40_count > 2)
+        //     {
+        //         Road = 4;
+        //         Road4_flag = 0;
+        //         return;
+        //     }
+        // }
+        // else
+        // {
+        //     Road40_count = 0;
+        // }
 
         // /* ICMÅÐÆÂ */
         // if (icm_gyro_y_w < -30 * (CarSpeed1 + CarSpeed2) && icm_gyro_y_w < -60)
@@ -1308,7 +1308,7 @@ void Road1_zhuangtaiji(void)
             {
                 continue;
             }
-            if (i > 50 && Rig[i] - Rig[i - 2] < 8 && Rig[i - 2] - Rig[i - 4] < 8 && Rig[i] - Rig[i - 2] > 0 && Rig[i - 2] - Rig[i - 4] > 0)
+            if (i > 40 && Rig[i] - Rig[i - 2] < 8 && Rig[i - 2] - Rig[i - 4] < 8 && Rig[i] - Rig[i - 2] > 0 && Rig[i - 2] - Rig[i - 4] > 0)
             {
                 Road14_count++;
                 //
@@ -1551,7 +1551,7 @@ void Road2_zhuangtaiji(void)
             {
                 continue;
             }
-            if (i > 50 && Lef[i - 2] - Lef[i] < 8 && Lef[i - 4] - Lef[i - 2] < 8 && Lef[i - 2] - Lef[i] > 0 && Lef[i - 4] - Lef[i - 2] > 0)
+            if (i > 40 && Lef[i - 2] - Lef[i] < 8 && Lef[i - 4] - Lef[i - 2] < 8 && Lef[i - 2] - Lef[i] > 0 && Lef[i - 4] - Lef[i - 2] > 0)
             {
                 Road24_count++;
                 if (Road24_count > 1)
@@ -1820,7 +1820,7 @@ void Road4_zhuangtaiji(void)
 
     if (Road4_flag == 0)
     {
-        lib_speed_set(2.0);
+        //lib_speed_set(2.0);
         if (icm_gyro_y_angle < -8)
         {
             Road4_count0++;

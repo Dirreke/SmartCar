@@ -703,7 +703,7 @@ void Turn_Cam_New(void)
   float car_straight_PWM;
   car_center_dias = car_center();
   //car_straight_angle = car_straight(car_center_dias);
-  car_straight_dias = M_Slope_fig() * SERVO_RANGE / ANGLE_RANGE;
+  car_straight_dias = M_Slope_fig() * SERVO_DIVIDE_ANGLE_SCALE;
   Center_offset_filter();
   Straight_offset_filter();
   car_center_diff = car_center_dias - car_center_dias_old;

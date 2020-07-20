@@ -3,7 +3,6 @@
 float CarSpeed1 = 0, CarSpeed2 = 0;
 float SpeedGoal = 0;
 
-
 /*************************************************************************
 *  函数名称：void qtimer_AB_init(void)
 *  功能说明：编码器初始化
@@ -14,10 +13,10 @@ float SpeedGoal = 0;
 *************************************************************************/
 void qtimer_AB_init(void)
 {
-     //初始化 QTIMER_1 A相使用QTIMER1_TIMER0_D0 B相使用QTIMER1_TIMER1_D1
-    qtimer_quad_init(QTIMER_1,QTIMER1_TIMER0_C0,QTIMER1_TIMER1_C1);
-    //初始化 QTIMER_1 A相使用QTIMER1_TIMER2_D2 B相使用QTIMER1_TIMER3_D3
-    qtimer_quad_init(QTIMER_1,QTIMER1_TIMER2_C2,QTIMER1_TIMER3_C24);
+  //初始化 QTIMER_1 A相使用QTIMER1_TIMER0_D0 B相使用QTIMER1_TIMER1_D1
+  qtimer_quad_init(QTIMER_1, QTIMER1_TIMER0_C0, QTIMER1_TIMER1_C1);
+  //初始化 QTIMER_1 A相使用QTIMER1_TIMER2_D2 B相使用QTIMER1_TIMER3_D3
+  qtimer_quad_init(QTIMER_1, QTIMER1_TIMER2_C2, QTIMER1_TIMER3_C24);
 }
 
 /*************************************************************************
@@ -28,12 +27,12 @@ void qtimer_AB_init(void)
 *  修改时间：2020.06.20
 *  备    注：
 *************************************************************************/
-void Get_Speed(void) 
+void Get_Speed(void)
 {
   int16 qd1_result;
   int16 qd2_result;
 
-/*   static float Speed10 = 0, Speed11 = 0, Speed12 = 0, Speed13 = 0;
+  /*   static float Speed10 = 0, Speed11 = 0, Speed12 = 0, Speed13 = 0;
   static float Speed20 = 0, Speed21 = 0, Speed22 = 0, Speed23 = 0; */
 
   qd1_result = -qtimer_quad_get(QTIMER_1, QTIMER1_TIMER0_C0);
@@ -46,7 +45,7 @@ void Get_Speed(void)
 
   CarSpeed1 = speed_mean_filter1(CarSpeed1);
   CarSpeed2 = speed_mean_filter2(CarSpeed2);
-/*   Speed13 = Speed12;
+  /*   Speed13 = Speed12;
   Speed12 = Speed11;
   Speed11 = Speed10;
   Speed10 = CarSpeed1;
@@ -85,7 +84,7 @@ float speed_mean_filter1(float D_new)
     sum -= D[num - FILTER_ARRAY_SIZE];
     D[num - FILTER_ARRAY_SIZE] = D_new;
     num++;
-    return sum / FILTER_ARRAY_SIZE;
+    return sum * FILTER_ARRAY_SIZE_INVERSE;
   }
 }
 
@@ -109,38 +108,19 @@ float speed_mean_filter2(float D_new)
     sum -= D[num - FILTER_ARRAY_SIZE];
     D[num - FILTER_ARRAY_SIZE] = D_new;
     num++;
-    return sum / FILTER_ARRAY_SIZE;
+    return sum * FILTER_ARRAY_SIZE_INVERSE;
   }
 }
 
-
 void lib_speed_set(float a)
 {
-  if(a - SpeedGoal >= 0.1 || a-SpeedGoal <= -0.1)
+  if (a - SpeedGoal >= 0.1 || a - SpeedGoal <= -0.1)
   {
     speed_change_flag = 1;
   }
   SpeedGoal = a;
   // speed_change_flag = 1;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 //得到差速状态
 char get_diff_state(void)
@@ -149,10 +129,12 @@ char get_diff_state(void)
 }
 
 //开关差速
-void diff_on(void){
+void diff_on(void)
+{
   diff_state = DIFF_ON_VAL;
 }
 
-void diff_off(void){
+void diff_off(void)
+{
   diff_state = DIFF_OFF_VAL;
 }

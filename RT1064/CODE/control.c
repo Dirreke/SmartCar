@@ -219,7 +219,7 @@ void Turn_Servo()
   }
   else if (Road == 4)
   {
-    Turn_Out = Turn_Cam_Out * 0.2;//Turn_EM_Out;
+    Turn_Out = 0; //Turn_Cam_Out * 0.2;//Turn_EM_Out;
   }
   else if (Road == 3)
   {
@@ -261,7 +261,7 @@ void Turn_Servo()
       }
     }
   }
-  Turn_diff_comp();
+  //Turn_diff_comp();
   Servo_Duty(-Turn_Out); //舵机控制
 }
 
@@ -281,68 +281,82 @@ void SpeedTarget_fig(void)
   float diff_K0;   // 差速率=差速比均速，左右轮各一半
   float Turn_Cam_Out_temp = Turn_Cam_Out;
   // Turn_Cam_Out_temp = (Turn_Cam_Out > 490) ? 490 : ((Turn_Cam_Out < -490) ? -490 : Turn_Cam_Out);
-
+  /* 开关差速 diff_K0计算 */
   if (get_diff_state() == DIFF_ON_VAL)
   {
-    //开关差速在Para中定义
-    if (fabs(Turn_Cam_Out_temp) < 46)
-    {
-      angle_val = 0;
+    { //Turn_Cam_Out的限幅，死区
+      //开关差速在Para中定义
+      if (fabs(Turn_Cam_Out_temp) < 46)
+      {
+        angle_val = 0;
+      }
+      else if (Turn_Cam_Out_temp > SERVO_RANGE)
+      {
+        angle_val = ANGLE_RANGE; //((Turn_Cam_Out_temp - SERVO_RANGE) * DIFF_KKK + SERVO_RANGE) * ANGLE_DIVIDE_SERVO_SCALE;
+      }
+      else if (Turn_Cam_Out_temp < -SERVO_RANGE)
+      {
+        angle_val = -ANGLE_RANGE; //((Turn_Cam_Out_temp + SERVO_RANGE) * DIFF_KKK - SERVO_RANGE) * ANGLE_DIVIDE_SERVO_SCALE;
+      }
+      else
+      {
+        angle_val = Turn_Cam_Out_temp * ANGLE_DIVIDE_SERVO_SCALE; // * DIFF_KK;
+      }
+      // angle_val = (fabs(Turn_Cam_Out_temp) < 46) ? 0 : Turn_Cam_Out_temp / SERVO_RANGE * ANGLE_RANGE;
+      // angle_val = (Turn_Cam_Out_temp > SERVO_RANGE) ? ((Turn_Cam_Out_temp - SERVO_RANGE) * DIFF_KKK + SERVO_RANGE) / SERVO_RANGE * ANGLE_RANGE : Turn_Cam_Out_temp / SERVO_RANGE * ANGLE_RANGE;
+      // angle_val = (Turn_Cam_Out_temp < -SERVO_RANGE) ? ((Turn_Cam_Out_temp + SERVO_RANGE) * DIFF_KKK - SERVO_RANGE) / SERVO_RANGE * ANGLE_RANGE : Turn_Cam_Out_temp / SERVO_RANGE * ANGLE_RANGE;
+      // if (angle_val > 1.5)
+      // {
+      //   angle_val = 1.5;
+      // }
+      // else if (angle_val < -1.5)
+      // {
+      //   angle_val = -1.5;
+      // }
     }
-    else if (Turn_Cam_Out_temp > SERVO_RANGE)
-    {
-      angle_val = ((Turn_Cam_Out_temp - SERVO_RANGE) * DIFF_KKK + SERVO_RANGE) / SERVO_RANGE * ANGLE_RANGE;
-    }
-    else if (Turn_Cam_Out_temp < -SERVO_RANGE)
-    {
-      angle_val = ((Turn_Cam_Out_temp + SERVO_RANGE) * DIFF_KKK - SERVO_RANGE) / SERVO_RANGE * ANGLE_RANGE;
-    }
-    else
-    {
-      angle_val = Turn_Cam_Out_temp / SERVO_RANGE * ANGLE_RANGE * DIFF_KK;
-    }
-    // angle_val = (fabs(Turn_Cam_Out_temp) < 46) ? 0 : Turn_Cam_Out_temp / SERVO_RANGE * ANGLE_RANGE;
-    // angle_val = (Turn_Cam_Out_temp > SERVO_RANGE) ? ((Turn_Cam_Out_temp - SERVO_RANGE) * DIFF_KKK + SERVO_RANGE) / SERVO_RANGE * ANGLE_RANGE : Turn_Cam_Out_temp / SERVO_RANGE * ANGLE_RANGE;
-    // angle_val = (Turn_Cam_Out_temp < -SERVO_RANGE) ? ((Turn_Cam_Out_temp + SERVO_RANGE) * DIFF_KKK - SERVO_RANGE) / SERVO_RANGE * ANGLE_RANGE : Turn_Cam_Out_temp / SERVO_RANGE * ANGLE_RANGE;
-    if (angle_val > 1.5)
-    {
-      angle_val = 1.5;
-    }
-    else if (angle_val < -1.5)
-    {
-      angle_val = -1.5;
-    }
-    diff_K0 = CAR_DIFF_K * tan(angle_val);
     //可串PD控制器
-    if (Road == 4 || Road == 3) //出库差速？先不开了
-    {
-      diff_K0 = 0;
+    { //特定道路关差速（出库、坡)
+      if (Road == 4 || Road == 3)
+      {
+        diff_K0 = 0;
+      }
+      else
+      {
+        diff_K0 = CAR_DIFF_K * tan(angle_val);
+      }
     }
   }
   else if (get_diff_state() == DIFF_OFF_VAL)
   {
     diff_K0 = 0;
   }
+  /* 入库差速增益补偿 */
   if (Road == 7 && Road7_flag == 2)
   {
     diff_K0 *= 2;
   }
+  /* 左右轮目标速度计算 */
   speedTarget1 = SpeedGoal * (1 + diff_K0 / 2); //左侧车轮
   speedTarget2 = SpeedGoal * (1 - diff_K0 / 2); //右侧车轮
+
   //后面可加上下坡部分
 
-  if (barn_reset_flag == 1)
-  {
-    if (CarSpeed1 >= 3 || CarSpeed2 >= 3)
-    {
-      //SpeedGoal = 0;
-    }
-  }
+  // if (barn_reset_flag == 1)
+  // {
+  //   if (CarSpeed1 >= 3 || CarSpeed2 >= 3)
+  //   {
+  //     //SpeedGoal = 0;
+  //   }
+  // }
 }
 void lib_set_fun(void)
 {
   static bool ss_flag;
   static bool tt_flag = 1;
+  if(!gpio_get(DEBUG_KEY0))
+  {
+    return;
+  }
   if (Road == 7)
   {
     if ((Road7_flag == 0 || Road7_flag == 1 || Road7_flag == 2 || Road7_flag == 6) && tt_flag)
@@ -364,27 +378,23 @@ void lib_set_fun(void)
       lib_speed_set(1.0);
     }
   }
-  else if (Road != 3)
-  {
-    if (EM_Value_2 < 0.3 && EM_Value_3 < 0.3 && EM_Value_1 < 0.3 && EM_Value_4 < 0.3)
-    {
-      lib_speed_set(0);
-    }
-  }
   else if (Road == 0)
   {
     if (Road0_flag == 4 && ss_flag)
     {
+      lib_speed_set(2.5);
       speed_change_flag = 1;
       ss_flag = 0;
     }
     else if (Road0_flag == 5 && ss_flag)
     {
+      lib_speed_set(2.5);
       speed_change_flag = 1;
       ss_flag = 0;
     }
     else if (Road0_flag == 0)
     {
+      lib_speed_set(speedgoal);
       ss_flag = 1;
       tt_flag = 1;
     }
@@ -392,6 +402,14 @@ void lib_set_fun(void)
   else if (Road == 1 || Road == 2)
   {
     // speed_
+  }
+
+  if (Road != 3)
+  {
+    if (EM_Value_2 < 0.2 && EM_Value_3 < 0.2 && EM_Value_1 < 0.2 && EM_Value_4 < 0.2)
+    {
+      lib_speed_set(0);
+    }
   }
 }
 /*************************************************************************
@@ -422,17 +440,22 @@ void Speed_Control_New(void)
   static bool frame_flag1 = 0, frame_flag2 = 0;
   static bool Lef_pp = 0, Rig_pp = 0;
   static bool Lef_BB = 0, Rig_BB = 0;
-
+  /* 计算速度偏差 */
   SpeedE1 = speedTarget1 - CarSpeed1;
   SpeedE2 = speedTarget2 - CarSpeed2;
-  // set flagW
+  /* 变设定速大bang */
   if (speed_change_flag)
   {
+    //停车减速bang
     if (SpeedGoal == 0)
     {
-      Lef_pp = 1;
-      Rig_pp = 1;
+      MotorOut1 = 0;
+      MotorOut2 = 0;
+      return;
+      //Lef_pp = 1;
+      //Rig_pp = 1;
     }
+    //加速bang
     else
     {
       Lef_BB = 1;
@@ -510,12 +533,15 @@ void Speed_Control_New(void)
     frame_flag2 = 0;
     frame2 = 0;
   }
-  //BBC
+  /* 速度控制 */
+
+  /******* 左轮 *******/
+  //刹车BBC
   if (Lef_pp)
   {
     if (CarSpeed1 > SpeedGoal)
     {
-      MotorOut1 = -MOTOR_RANGE;
+      MotorOut1 = 0;//-MOTOR_RANGE;
     }
     else
     {
@@ -528,14 +554,18 @@ void Speed_Control_New(void)
       MotorOut1 = 0;
     }
   }
+  //加速BBC
   else if (a_flag1)
   {
+    //不刹车时
     if (speedTarget1 > 0)
     {
+      //加速状态速度小于设定速度5000
       if (CarSpeed1 < speedTarget1 * 1.0)
       {
         MotorOut1 = speedTarget1 * 5000; //speedTarget1
       }
+      //加速状态速度稍大于设定速度6帧2500
       else if (CarSpeed1 < speedTarget1 * 1.1) //0.8
       {
         cnt1++;
@@ -545,12 +575,14 @@ void Speed_Control_New(void)
           MotorOut1 = speedTarget1 * 2500;
         }
       }
+      //加速状态速度更大直接2500
       else
       {
         a_flag1 = 0;
         MotorOut1 = speedTarget1 * 2500;
       }
     }
+    //刹车时
     else
     {
       if (CarSpeed1 < speedTarget1 * 1.0)
@@ -573,6 +605,7 @@ void Speed_Control_New(void)
       }
     }
   }
+  //减速BBC
   else if (d_flag1)
   {
     if (speedTarget1 > 0)
@@ -618,45 +651,50 @@ void Speed_Control_New(void)
       }
     }
   }
+  //PI
   else
   {
-    /******* 左轮 *******/
-    if (SpeedE1 < 0.15 && SpeedE1 > -0.15 && frame_flag1 == 0)
-    {
-      /* 首次进入置位，开始数帧 */
-      frame_flag1 = 1;
-      frame1 = 0;
+    { //速度偏差E1小 剪除积分作用10帧
+      if (SpeedE1 < 0.15 && SpeedE1 > -0.15 && frame_flag1 == 0)
+      {
+        /* 首次进入置位，开始数帧 */
+        frame_flag1 = 1;
+        frame1 = 0;
+      }
+      if (frame_flag1)
+      {
+        frame1++;
+      }
+      if (frame1 <= 10 && frame_flag1 == 1)
+      {
+        /* 小于10帧 且开始数帧*/
+        Speed_kI1 = 0;
+      }
+      else
+      {
+        /* 继续数帧 不重复进入置位 I不为0 */
+        frame1 = 11;
+        Speed_kI1 = PID_SPEED.I;
+      }
     }
-    if (frame_flag1)
-    {
-      frame1++;
-    }
-
     SpeedEE1 = SpeedE1 - OldE1;
-    if (SpeedEE1 > 0.1 || SpeedEE1 < -0.1)
-    {
-      Speed_kP1 = 0;
+    { // 速度变化EE1大 剪除比例作用
+      if (SpeedEE1 > 0.1 || SpeedEE1 < -0.1)
+      {
+        Speed_kP1 = 0;
+      }
+      else
+      {
+        Speed_kP1 = PID_SPEED.P;
+      }
     }
-    else
-    {
-      Speed_kP1 = PID_SPEED.P;
+    { // 增量PI
+      SpeedControlOutE1 = (Speed_kP1 * SpeedEE1 + Speed_kI1 * SpeedE1);
+      MotorOut1 += SpeedControlOutE1;
     }
-    if (frame1 <= 10 && frame_flag1 == 1)
-    {
-      /* 小于10帧 且开始数帧*/
-      Speed_kI1 = 0;
-    }
-    else
-    {
-      /* 继续数帧 不重复进入置位 I不为0 */
-      frame1 = 11;
-      Speed_kI1 = PID_SPEED.I;
-    }
-
-    SpeedControlOutE1 = (Speed_kP1 * SpeedEE1 + Speed_kI1 * SpeedE1);
-    MotorOut1 += SpeedControlOutE1;
   }
 
+  /******* 右轮 *******/
   if (Rig_pp)
   {
     if (CarSpeed2 > SpeedGoal)
@@ -766,7 +804,6 @@ void Speed_Control_New(void)
   }
   else
   {
-    /******* 右轮 *******/
     if (SpeedE2 < 0.15 && SpeedE2 > -0.15 && frame_flag2 == 0)
     {
       /* 首次进入置位，开始数帧 */
