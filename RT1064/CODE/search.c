@@ -819,21 +819,21 @@ void Road_rec(void)
         //     Road40_count = 0;
         // }
 
-        // /* ICM判坡 */
-        // if (icm_gyro_y_w < -30 * (CarSpeed1 + CarSpeed2) && icm_gyro_y_w < -60)
-        // {
-        //     Road40_count++;
-        //     if (Road40_count > 1)
-        //     {
-        //         Road = 4;
-        //         Road4_flag = 0;
-        //         return;
-        //     }
-        // }
-        // else
-        // {
-        //     Road40_count = 0;
-        // }
+        /* ICM判坡 */
+        if (icm_gyro_y_w < -30 * (CarSpeed1 + CarSpeed2) && icm_gyro_y_w < -60)
+        {
+            Road40_count++;
+            if (Road40_count > 1)
+            {
+                Road = 4;
+                Road4_flag = 0;
+                return;
+            }
+        }
+        else
+        {
+            Road40_count = 0;
+        }
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////普通赛道→圆环
         //先判断是否有左上连续右连续，作为Road1_flag0的置位条件，如果不满足就else if判断直接进Road1_flag=1的条件
         if (Rig[39] - Rig[37] < 5 && Rig[37] - Rig[35] < 5 && Rig[35] - Rig[33] < 5 && Rig[33] - Rig[31] < 5 && Rig[31] - Rig[29] < 5 && Rig[29] - Rig[27] < 5 && Rig[27] - Rig[25] < 5 && Rig[25] - Rig[23] < 5 &&

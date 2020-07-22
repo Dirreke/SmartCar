@@ -16,14 +16,11 @@
  * @Taobao   		https://seekfree.taobao.com/
  * @date       		2019-04-30
  ********************************************************************************************************************/
- 
-
 
 #ifndef _isr_h
 #define _isr_h
 
-
 extern float loop_time;
-extern float loop_time2 ;
-extern int feisu_flag ;
+extern float loop_time2;
+extern int feisu_flag;
 #endif

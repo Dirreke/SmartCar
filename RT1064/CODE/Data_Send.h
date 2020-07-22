@@ -22,7 +22,7 @@ extern void Send_Data(void);
 // extern float Rig_slope;
 // extern int Lef_circle;
 // extern int Rig_circle;
-extern uint16 Pic_new[600];
+extern uint16 Pic_new[4000];
 extern int cnt;
 extern float Turn_P_EM;
 // extern float speedTarget1;

@@ -2,7 +2,7 @@
 
 #define ori_pic
 
-uint16 Pic_new[600];
+uint16 Pic_new[4000];
 int cnt;
 int cntt = 1;
 uint8 ch = 0;
@@ -249,8 +249,8 @@ void Variable_update(void)
   Variable[3] = CarSpeed1;
   Variable[4] = CarSpeed2;    //EM_Value_1; //speedTarget1; //Allwhiteend;
   Variable[5] = speedTarget1; //EM_Value_2;
-  Variable[6] = speedTarget2; //EM_Value_3;
-  Variable[7] = EM_Value_2 + EM_Value_3;
+  Variable[6] = car_straight_dias;//speedTarget2; //EM_Value_3;
+  Variable[7] = car_center_dias;//EM_Value_2 + EM_Value_3;
   if (Road == 0)
   {
     Variable[8] = Road0_flag;

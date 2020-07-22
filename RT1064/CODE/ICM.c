@@ -109,26 +109,26 @@ void gyro_y_integration(void)
             一开始写了int16不够，改了int，然后发现哪有算角度只有int的。。
             所以用float并换算吧（2000/2^15 = 0.06103515625）
 *************************************************************************/
-// float icm_gyro_y_angle = 0;
-// float icm_gyro_y_float = 0;
+//float icm_gyro_y_angle = 0;
+//float icm_gyro_y_float = 0;
 void ICM_main(void)
 {
 
-    // if (Road != 4)
-    // {
-    //     get_icm20602_gyro_spi();
-    //     icm_gyro_y_w = (icm_gyro_y + icm_gyro_y_offset) * 0.06103515625;
-    // }
+    if (Road != 4)
+    {
+        get_icm20602_gyro_spi();
+        icm_gyro_y_w = (icm_gyro_y + icm_gyro_y_offset) * 0.06103515625;
+    }
 }
 
 void ICM_main_isr(void)
 {
-    // if (Road == 4)
-    // {
-    //     get_icm20602_gyro_spi();
-    //     icm_gyro_y_w = (icm_gyro_y + icm_gyro_y_offset) * 0.06103515625;
-    //     icm_gyro_y_angle += icm_gyro_y_w * 0.002;
-    // }
+    if (Road == 4)
+    {
+        get_icm20602_gyro_spi();
+        icm_gyro_y_w = (icm_gyro_y + icm_gyro_y_offset) * 0.06103515625;
+        icm_gyro_y_angle += icm_gyro_y_w * 0.002;
+    }
 }
 
 #if 0

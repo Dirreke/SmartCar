@@ -503,8 +503,8 @@ void EM_main(void)
   EM_Get();
   EM_center_offset_fig();
   EM_center_offset_filter();
-  EM_straight_offset_fig();
-  EM_straight_offset_filter();
+  //EM_straight_offset_fig();
+  //EM_straight_offset_filter();
   Turn_EM();
   // EM_Ring_Rec();
   // //EM_Ramp_Rec();

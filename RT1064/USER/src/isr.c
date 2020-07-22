@@ -34,37 +34,37 @@ void PIT_IRQHandler(void)
     {
         PIT_FLAG_CLEAR(PIT_CH0);
         EM_main();
-        //EM_Get();
-        if (DEBUG_CHOICE == 3)
-        {
-            Kalman_Filter();
-        }
-        else if (DEBUG_CHOICE == 1 || DEBUG_CHOICE == 2)
-        {
-            Turn_Servo();
-        }
-        // Turn_diff_comp();
-        if (gpio_get(DEBUG_KEY0))
-        {
-            loop_time += 0.002;
-            loop_time2 += 0.002;
-        }
-        else
-        {
-            loop_time = 0;
-        }
+            //EM_Get();
+            if (DEBUG_CHOICE == 3)
+            {
+                Kalman_Filter();
+            }
+            else if (DEBUG_CHOICE == 1 || DEBUG_CHOICE == 2)
+            {
+                Turn_Servo();
+            }
+            // Turn_diff_comp();
+            if (gpio_get(DEBUG_KEY0))
+            {
+                loop_time += 0.002;
+                loop_time2 += 0.002;
+            }
+            else
+            {
+                loop_time = 0;
+            }
 
-        //ICM_main_isr();
-        // ICM_get();
-        Get_Speed();
-        lib_set_fun();
-        SpeedTarget_fig();
-        //    BBC();
-        Speed_Control_New();
-        BB_add();
-        Moto_Out();
-        Mean_Turn_Out();
-    }
+            ICM_main_isr();
+            // ICM_get();
+            Get_Speed();
+            lib_set_fun();
+            SpeedTarget_fig();
+            //    BBC();
+            Speed_Control_New();
+            BB_add();
+            Moto_Out();
+            Mean_Turn_Out();
+        }
 
     __DSB();
 }

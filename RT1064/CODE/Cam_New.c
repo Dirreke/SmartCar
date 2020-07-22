@@ -65,7 +65,13 @@ float M_Slope_fig(void)
     count = 0;
     jcp_old = jump_change_point;
   } while (jump_change_point != FIG_AREA_FAR);
-  {                                         //如果看到这段注释 下面是算斜率 可以折起来了
+
+  if (cnt_max < 18) //点太少直接返回上一帧
+  {
+    return atan(Mid_slope * UNDISTORT_PYK * UNDISTORT_XPK) > 0 ? 1.57 - atan(Mid_slope * UNDISTORT_PYK * UNDISTORT_XPK) : -1.57 + atan(-Mid_slope * UNDISTORT_PYK * UNDISTORT_XPK); //延续上一帧
+  }
+
+  { //如果看到这段注释 下面是算斜率 可以折起来了
     for (i = long_end; i < long_start; i++) //从下往上搜的 start大，end小
     {
       if (i <= FIG_AREA_NEAR && i >= FIG_AREA_FAR && New_Mid[i] != 999)

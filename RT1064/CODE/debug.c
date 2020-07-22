@@ -85,7 +85,7 @@ void Dubug_key(void)
                 speedgoal += 0.1;
                 break;
             case 4:
-                DIFF_KK += 0.1;
+                threshold_offset += 1;
                 break;
             case 5:
                 PID_CAR_Diffcomp_CAM.P += 0.1;
@@ -270,7 +270,7 @@ void Dubug_key(void)
                 speedgoal -= 0.1;
                 break;
             case 4:
-                DIFF_KK -= 0.1;
+                threshold_offset -= 1;
                 break;
             case 5:
                 PID_CAR_Diffcomp_CAM.P -= 0.1;
@@ -470,8 +470,8 @@ void ips_show_debug(int ips_num)
         ips200_showfloat(0, 13, speedgoal, 2, 2);
         break;
     case 4:
-        ips200_showstr(0, 12, "DIFF_KK");
-        ips200_showfloat(0, 13, DIFF_KK, 4, 2);
+        ips200_showstr(0, 12, "threshold_offset");
+        ips200_showfloat(0, 13, threshold_offset, 4, 2);
         break;
     case 5:
         ips200_showstr(0, 12, "PID_CAR_Diffcomp_CAM.P");
