@@ -353,7 +353,7 @@ void lib_set_fun(void)
 {
   static bool ss_flag;
   static bool tt_flag = 1;
-  if(!gpio_get(DEBUG_KEY0))
+  if (!gpio_get(DEBUG_KEY0))
   {
     return;
   }
@@ -406,7 +406,7 @@ void lib_set_fun(void)
 
   if (Road != 3)
   {
-    if (EM_Value_2 < 0.2 && EM_Value_3 < 0.2 && EM_Value_1 < 0.2 && EM_Value_4 < 0.2)
+    if (EM_Value_2 < 0.3 && EM_Value_3 < 0.3 && EM_Value_1 < 0.3) //&& EM_Value_4 < 0.2)
     {
       lib_speed_set(0);
     }
@@ -534,14 +534,14 @@ void Speed_Control_New(void)
     frame2 = 0;
   }
   /* 速度控制 */
-
+  // d_flag1 = 0;
   /******* 左轮 *******/
   //刹车BBC
   if (Lef_pp)
   {
     if (CarSpeed1 > SpeedGoal)
     {
-      MotorOut1 = 0;//-MOTOR_RANGE;
+      MotorOut1 = 0; //-MOTOR_RANGE;
     }
     else
     {
@@ -694,6 +694,7 @@ void Speed_Control_New(void)
     }
   }
 
+  // d_flag2 = 0;
   /******* 右轮 *******/
   if (Rig_pp)
   {

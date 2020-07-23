@@ -677,7 +677,7 @@ void mag_find(void)
     {
         start_waited++;
     }
-    if (loop_time > 6)//(start_waited >= 600)
+    if (loop_time > 6) //(start_waited >= 600)
     {
         gpio_interrupt_init(C25, FALLING, GPIO_INT_CONFIG);
         start_waited = 0;
@@ -722,8 +722,8 @@ void Road_rec(void)
                 lib_speed_set(speedgoal);
             }
         }
-        if (Lef_slope == 998 && Rig_slope == 998 && Road7_flag != 2 &&
-            ((Lef_edge < 10 && Rig_edge < 10) || (Lef_edge < 2 && Rig_edge < 12) || (Rig_edge < 2 && Lef_edge < 12)))
+        if (fabs(Lef_slope) > 1.5 && fabs(Rig_slope) > 1.5 && Road7_flag != 2 &&
+            ((Lef_edge < 10 && Rig_edge < 10) || (Lef_edge < 4 && Rig_edge < 12) || (Rig_edge < 4 && Lef_edge < 12)))
         {
             if (Lef[21] - Lef[23] < 5 && Lef[23] - Lef[25] < 5 && Rig[23] - Lef[21] < 5 && Rig[25] - Rig[23] < 5 && Lef[21] - Lef[23] >= 0 && Lef[23] - Lef[25] >= 0 && Rig[23] - Lef[21] >= 0 && Rig[25] - Rig[23] >= 0)
                 Road0_count++;
@@ -942,6 +942,10 @@ void Road_rec(void)
             }
         }
         //十字状态机
+        if (crossing_flag_flag)
+        {
+            Road0_flag = 1;
+        }
         if (whitecnt > 1700 && ((Lef_edge > 4 && Rig_edge > 4) || Lef_edge > 12 || Rig_edge > 12) && Allwhitestart <= 45 && Allwhitestart > (Fir_row + 5) && Allwhitestart - Allwhiteend > 3)
         {
             Road0_flag = 1;
@@ -1219,7 +1223,7 @@ void Road1_zhuangtaiji(void)
         if (Rig_circle == 0 &&
             // Lef_circle == 1 &&
             Lef_slope != 998 &&
-              Rig[39] - Rig[37] < 5 && Rig[37] - Rig[35] < 5 && Rig[35] - Rig[33] < 5 && Rig[33] - Rig[31] < 5 && Rig[31] - Rig[29] < 5 && Rig[29] - Rig[27] < 5 && Rig[27] - Rig[25] < 5 && Rig[25] - Rig[23] < 5 && Rig_slope >= 0 &&( (EM_Value_2 + EM_Value_3 > 4.0)||(EM_Value_2 > 2.6 && Lef_circle == 1)))
+            Rig[39] - Rig[37] < 5 && Rig[37] - Rig[35] < 5 && Rig[35] - Rig[33] < 5 && Rig[33] - Rig[31] < 5 && Rig[31] - Rig[29] < 5 && Rig[29] - Rig[27] < 5 && Rig[27] - Rig[25] < 5 && Rig[25] - Rig[23] < 5 && Rig_slope >= 0 && ((EM_Value_2 + EM_Value_3 > 4.0) || (EM_Value_2 > 2.6 && Lef_circle == 1)))
         //if (EM_Value_2 + EM_Value_3 > 4.3) //弯内识别：左右两边仅有一边发生丢线
         {
             Road11_count++;
@@ -1429,7 +1433,8 @@ void Road1_zhuangtaiji(void)
     }
     else if (Road1_flag == 6)
     {
-        if (EM_Value_1 < 0.6 && EM_Value_4 < 0.6 && Lef_edge < 10)
+        // if (EM_Value_1 < 0.6 && EM_Value_4 < 0.6 && Lef_edge < 10)
+        if (Lef_edge < 10)
         {
             Road17_count++;
             if (Road17_count > 1)
@@ -1461,7 +1466,7 @@ void Road2_zhuangtaiji(void)
         if (Lef_circle == 0 &&
             // Rig_circle == 1 &&
             Rig_slope != 998 &&
-            Lef[25] - Lef[27] < 5 && Lef[27] - Lef[29] < 5 && Lef[29] - Lef[31] < 5 && Lef[31] - Lef[33] < 5 && Lef[33] - Lef[35] < 5 && Lef[35] - Lef[37] < 5 && Lef[37] - Lef[39] < 5 && Lef[23] - Lef[25] < 5 && (Lef_slope <= 0 || Lef_slope == 998) &&( (EM_Value_2 + EM_Value_3 > 4.0)||(EM_Value_3>2.6 && Rig_circle == 1)))
+            Lef[25] - Lef[27] < 5 && Lef[27] - Lef[29] < 5 && Lef[29] - Lef[31] < 5 && Lef[31] - Lef[33] < 5 && Lef[33] - Lef[35] < 5 && Lef[35] - Lef[37] < 5 && Lef[37] - Lef[39] < 5 && Lef[23] - Lef[25] < 5 && (Lef_slope <= 0 || Lef_slope == 998) && ((EM_Value_2 + EM_Value_3 > 4.0) || (EM_Value_3 > 2.6 && Rig_circle == 1)))
         //if (EM_Value_2 + EM_Value_3 > 4.3) //弯内识别：左右两边仅有一边发生丢线
         {
             Road21_count++;
@@ -1674,7 +1679,8 @@ void Road2_zhuangtaiji(void)
     }
     else if (Road2_flag == 6)
     {
-        if (EM_Value_1 < 0.6 && EM_Value_4 < 0.6 && Rig_edge < 10)
+        // if (EM_Value_1 < 0.6 && EM_Value_4 < 0.6 && Rig_edge < 10)
+        if (Rig_edge < 10)
         {
             Road27_count++;
             if (Road27_count > 1)
@@ -2007,7 +2013,7 @@ void Pic_find_circle_pre(void)
     Lef_circle_pre_flag = 0;
     Rig_circle_pre_flag = 0;
 
-    for (int i = Fir_row; i < Last_row - 20; ++i)
+    for (int i = Fir_row; i < Last_row - 30; ++i) //30=20+10
     {
         if (Lef[i + 1] > 5 && Lef[i + 3] > 5 && Lef[i + 5] > 5 && Lef[i + 7] < 30 &&
             Lef[i + 1] - Lef[i + 3] < 5 && Lef[i + 3] - Lef[i + 5] < 10 && Lef[i + 5] - Lef[i + 7] < 15 &&
@@ -2031,7 +2037,7 @@ void Pic_find_circle_pre(void)
         }
     }
     break_sum = 0;
-    for (int i = Fir_row; i < Last_row - 20; ++i)
+    for (int i = Fir_row; i < Last_row - 30; ++i) //30=20+10
     {
         if (Rig[i + 3] < 75 && Rig[i + 1] < 75 && Rig[i + 5] < 75 && Rig[i + 7] > 50 &&
             Rig[i + 3] - Rig[i + 1] < 5 && Rig[i + 5] - Rig[i + 3] < 10 && Rig[i + 7] - Rig[i + 5] < 15 &&
@@ -2053,5 +2059,130 @@ void Pic_find_circle_pre(void)
             }
             return;
         }
+    }
+}
+bool crossing_flag_flag;
+void crossing_find2(void)
+{
+    crossing_flag_flag = 0;
+    int white_line_threshold[40] = {70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 69, 68, 67, 66, 65, 64, 63, 62, 61, 60, 58, 56, 54, 52, 50, 48, 46, 44, 42, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40};
+    // int road_half_width_original[40] = {40, 40, 40, 39, 38, 37, 36, 35, 34, 33, 32, 31, 30, 29, 28, 27, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4};
+
+    uint8 count;
+    uint8 count2; //找每行最大连续全白点
+    uint8 whiteline_start_temp;
+    uint8 whiteline_start;
+    uint8 whiteline_end;
+    uint8 whitecol_start_temp;
+    uint8 whitecol_start;
+    uint8 whitecol_end;
+
+    uint8 whiteline_count = 0;
+    uint8 whiteline_count2 = 0; //找最大连续全白行
+    uint8 whitecol_count = 0;
+    uint8 whitecol_count2 = 0; //找最大连续全白列
+    bool whiteline_flag;
+    for (int i = Fir_row; i < Last_row - 12; ++i)
+    {
+        count2 = 0;
+        count = 0;
+        for (int j = Fir_col; j < Last_col; ++j)
+        {
+            if (Pixle[i][j] || Pixle[i][j + 1])
+            {
+                count++;
+            }
+            else
+            {
+                if (count > count2)
+                {
+                    count2 = count;
+                }
+                count = 0;
+            }
+        }
+        if (count > count2)
+        {
+            count2 = count;
+        }
+        if (count2 > white_line_threshold[59 - i])
+        {
+            if (whiteline_start_temp == 0)
+            {
+                whiteline_start_temp = i;
+            }
+            whiteline_count++;
+        }
+        else
+        {
+            if (whiteline_count > whiteline_count2)
+            {
+                whiteline_count2 = whiteline_count;
+                whiteline_count = 0;
+                whiteline_start = whiteline_start_temp;
+                whiteline_end = i;
+                whiteline_start_temp = 0;
+            }
+        }
+    }
+    if (whiteline_count > whiteline_count2)
+    {
+        whiteline_count2 = whiteline_count;
+        whiteline_count = 0;
+        whiteline_start = whiteline_start_temp;
+        whiteline_end = Last_row - 12;
+        whiteline_start_temp = 0;
+    }
+    // if (whiteline_start < 45)
+    // {
+    //     ;
+    // }
+    // else
+    // {
+    //     return;
+    // }
+
+    for (int j = Fir_col; j < Last_col; ++j)
+    {
+        count2 = 0;
+        count = 0;
+        for (int i = Fir_row; i < Last_row; ++i)
+        {
+            if (Pixle[i][j] || Pixle[i + 1][j])
+            {
+                count++;
+            }
+            else
+            {
+                if (count > count2)
+                {
+                    count2 = count;
+                }
+                count = 0;
+            }
+        }
+        if (count > count2)
+        {
+            count2 = count;
+        }
+        if (count2 > 35)
+        {
+            whitecol_start_temp = j;
+            whitecol_count++;
+        }
+        else
+        {
+            if (whitecol_count > whitecol_count2)
+            {
+                whitecol_count2 = whitecol_count;
+                whitecol_count = 0;
+                // whitecol_start = whitecol_start_temp;
+                // whitecol_end = i;
+            }
+        }
+    }
+    if (whitecol_count2 > 4 && whiteline_count2 > 5 && whiteline_end < 40)
+    {
+        crossing_flag_flag = 1;
     }
 }

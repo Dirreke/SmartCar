@@ -117,6 +117,7 @@ void ICM_main(void)
     if (Road != 4)
     {
         get_icm20602_gyro_spi();
+        icm_gyro_y_angle = 0;
         icm_gyro_y_w = (icm_gyro_y + icm_gyro_y_offset) * 0.06103515625;
     }
 }

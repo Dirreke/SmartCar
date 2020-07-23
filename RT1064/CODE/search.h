@@ -60,3 +60,5 @@ void Road2_zhuangtaiji(void);
 void Road3_zhuangtaiji(void);
 void Road4_zhuangtaiji(void);
 void Road7_zhuangtaiji(void);
+extern bool crossing_flag_flag;
+extern void crossing_find2(void);

@@ -51,6 +51,7 @@ void camera_dispose_main(void) //摄像头处理主函数
     Pic_find_circle_pre();
     Pic_find_circle(); //寻找环状黑线及拐点
     start_stop_find();
+    crossing_find2();
     crossing_find();
     Road_rec(); //利用左右边线斜率识别赛道
     Threshold_change();

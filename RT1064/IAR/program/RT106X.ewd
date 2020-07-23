@@ -84,7 +84,7 @@
                 </option>
                 <option>
                     <name>OCDynDriverList</name>
-                    <state>JLINK_ID</state>
+                    <state>CMSISDAP_ID</state>
                 </option>
                 <option>
                     <name>OCLastSavedByProductVersion</name>
@@ -320,7 +320,7 @@
                 </option>
                 <option>
                     <name>CMSISDAPMultiTargetEnable</name>
-                    <state>0</state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>CMSISDAPMultiTarget</name>
@@ -413,11 +413,11 @@
                 </option>
                 <option>
                     <name>CMSISDAPMultiCPUEnable</name>
-                    <state>0</state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>CMSISDAPMultiCPUNumber</name>
-                    <state>0</state>
+                    <state>4</state>
                 </option>
                 <option>
                     <name>OCProbeCfgOverride</name>

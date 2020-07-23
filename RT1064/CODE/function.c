@@ -21,11 +21,11 @@ void Para_Init()
         PID_CENTER_EM.D = 12;     //9
         PID_STRAIGHT_EM.P = 0;    //0.7;//0.5;
         PID_STRAIGHT_EM.D = 0;    //0.6;//0.4;
-        PID_CAR_CENTER_CAM.P = 0.5;
+        PID_CAR_CENTER_CAM.P = 0.3;//0.5;
         //PID_CAR_CENTER_CAM.D = 0;
-        PID_CAR_STRAIGHT_CAM.P = 0.7; //0.5;0.6;
-        PID_CAR_STRAIGHT_CAM.D = 0;   //0.4;
-        PID_CAR_Diffcomp_CAM.P = 0.6;
+        PID_CAR_STRAIGHT_CAM.P = 0.6;//0.7;
+        PID_CAR_STRAIGHT_CAM.D = 0;
+        PID_CAR_Diffcomp_CAM.P = 0;//0.6;
         PID_CAR_Diffcomp_CAM.D = 0;
         barn_reset_flag = 0;
         DEBUG_CHOICE = 2;
@@ -36,8 +36,8 @@ void Para_Init()
         //diff.h and speed.h init
         //        lib_speed_init();
 
-        lib_speed_set(2.8);
-        speedgoal = 2.8;
+        lib_speed_set(2.5);
+        speedgoal = 2.5;
 #ifdef DIFF0
         lib_active_diff_init();
         lib_active_diff_set_p(0.1);

@@ -116,12 +116,17 @@ void Moto_Out(void)
   //速度控制输出限幅
   if (MotorOut1 > 18000) //如果车子前倾，则车模的速度控制输出为正，反之为负
     MotorOut1 = 18000;
-  if (MotorOut1 < -18000)
-    MotorOut1 = -18000;
+  if (MotorOut1 < 0)
+    MotorOut1 = 0;
+  // if (MotorOut1 < -18000)
+  //   MotorOut1 = -18000;
   if (MotorOut2 > 18000) //如果车子前倾，则车模的速度控制输出为正，反之为负
     MotorOut2 = 18000;
-  if (MotorOut2 < -18000)
-    MotorOut2 = -18000;
+
+  if (MotorOut2 < 0)
+    MotorOut2 = 0;
+  // if (MotorOut2 < -18000)
+  //   MotorOut2 = -18000;
 
   Motor1_temp = MotorOut1_add + MotorOut1;
   Motor2_temp = MotorOut2_add + MotorOut2;
