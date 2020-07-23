@@ -76,7 +76,7 @@ int main(void)
 
     while (1)
     {
-        if (temp_flag < 100)
+        if (temp_flag < 1)
         {
             loop_time = -999;
         }
