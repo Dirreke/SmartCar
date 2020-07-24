@@ -50,7 +50,7 @@ int main(void)
     DisableGlobalIRQ();
     /** board init **/
     board_init();          //务必保留，本函数用于初始化MPU 时钟 调试串口
-    systick_delay_ms(100); //延时100ms，等待主板其他外设上电成功
+    systick_delay_ms(300); //延时100ms，等待主板其他外设上电成功
 
     /** program init **/
     //seekfree_wireless_init();  //初始化无线串口模块
