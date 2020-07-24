@@ -942,10 +942,7 @@ void Road_rec(void)
             }
         }
         //十字状态机
-        if (crossing_flag_flag)
-        {
-            Road0_flag = 1;
-        }
+
         if (whitecnt > 1700 && ((Lef_edge > 4 && Rig_edge > 4) || Lef_edge > 12 || Rig_edge > 12) && Allwhitestart <= 45 && Allwhitestart > (Fir_row + 5) && Allwhitestart - Allwhiteend > 3)
         {
             Road0_flag = 1;
@@ -953,6 +950,12 @@ void Road_rec(void)
         else if (Allwhitestart > 45 && Allwhiteend != 20 && (Allwhiteend < 40 || (Allwhiteend < 52 && Road0_flag == 2)) && Allwhitestart - Allwhiteend > 3 && whitecnt > 2000)
         {
             Road0_flag = 2;
+        }
+        else if (crossing_flag_flag)
+        {
+            Road0_flag = 1;
+            Allwhitestart = whiteline_end;
+            Allwhiteend = whiteline_start;
         }
 
         else
@@ -1205,6 +1208,247 @@ void TurnRight_Process(void)
 }
 
 /*************************************************************************
+*  函数名称：void TurnLeft_Process(void)
+*  功能说明：左转进程
+*  参数说明：无
+*  函数返回：无
+*  修改时间：2020.06.17
+*  备    注：
+*************************************************************************/
+void TurnLeftCircle_Process(void)
+{
+    static int Road14_count = 0; //, Road00_count = 0; //turn_stop_flag = 0,
+    int temp = 40;
+    int dis = 0, dis1 = 0;
+    for (int i = Last_row - 8; i > Fir_row; --i)
+    {
+        if (Rig[i] >= Last_col)
+        {
+            continue;
+        }
+        if (Rig[i + 2] - Rig[i] < 8 && Rig[i + 2] - Rig[i] > 0)
+        {
+            if (Rig[i] >= 40)
+            {
+                continue;
+            }
+            else
+            {
+                    temp = i;
+                    break;
+            }
+        }
+        else
+        {
+            if (Rig[i + 2] - Rig[i] < 10 && Rig[i] < 40)
+            {
+                temp = i;
+            }
+            else
+            {
+              break;
+            }
+        }
+    }
+
+    // if (temp == 40 && Road1_flag != 4) //&& turn_stop_flag == 1)
+    // {
+    //     Road00_count++;
+    //     if (Road00_count == 2)
+    //     {
+    //         Road00_count = 0;
+    //         Road0_flag = 0;
+    //         // turn_stop_flag = 0;
+    //     }
+
+    //     return;
+    // }
+    // else
+    // {
+    //     Road00_count = 0;
+    // }
+    if (temp != 40)
+    {
+        dis = Rig[temp + 1] - Rig[temp];
+        for (int i = temp; i > Fir_row; --i)
+        {
+            if (Rig[i - 1] > 40)
+            {
+                turn_stop = i;
+                break;
+            }
+            dis1 = Rig[i] - Rig[i - 1];
+            if (dis1 < 0)
+            {
+                turn_stop = i;
+                break;
+            }
+            else if (dis1 < dis)
+            {
+
+                if (i == Fir_row + 1)
+                {
+                    turn_stop = i - 1;
+                }
+                continue;
+            }
+            else if (dis1 <= 2 * dis + 1)
+            {
+                dis = dis1;
+
+                if (i == Fir_row + 1)
+                {
+                    turn_stop = i - 1;
+                }
+                continue;
+            }
+            else
+            {
+                turn_stop = i;
+                break;
+            }
+        }
+    }
+    // if (turn_stop < 28)
+    // {
+    //     turn_stop_flag = 1;
+    // }
+    if (Road1_flag != 4 && Rig[turn_stop] < 36 && dis > 4)
+    {
+        Road14_count++;
+        if (Road14_count == 2)
+        {
+            Road1_flag = 4;   //turn left flag
+            Road14_count = 0; //reset
+        }
+    }
+    else
+    {
+        Road14_count = 0;
+    }
+
+    return;
+}
+
+/*************************************************************************
+*  函数名称：void TurnRight_Process(void)
+*  功能说明：右转进程
+*  参数说明：无
+*  函数返回：无
+*  修改时间：2020.06.17
+*  备    注：
+*************************************************************************/
+void TurnRightCircle_Process(void)
+{
+    static int Road24_count = 0; //, Road00_count = 0; //turn_stop_flag = 0,
+    int temp = 40;
+    int dis = 0, dis1 = 0;
+    for (int i = Last_row - 8; i > Fir_row; --i)
+    {
+        if (Lef[i] <= Fir_col)
+        {
+            continue;
+        }
+        if (Lef[i] - Lef[i + 2] < 8 && Lef[i] - Lef[i + 2] > 0)
+        {
+            if (Lef[i] <= 40)
+            {
+                continue;
+            }
+            else
+            {
+                    temp = i;
+                    break;
+            }
+        }
+        else
+        {
+            if (Lef[i] - Lef[i + 2] < 10 && Lef[i] > 40)
+            {
+                temp = i;
+            }
+            else
+            {
+              break;
+            }
+        }
+    }
+
+    // if (temp == 40 && Road0_flag != 4) // && turn_stop_flag == 1)
+    // {
+    //     Road00_count++;
+    //     if (Road00_count >= 3)
+    //     {
+    //         Road00_count = 0;
+    //         Road0_flag = 0;
+    //         road_change_flag = 1;
+    //         // turn_stop_flag = 0;
+    //     }
+
+    //     return;
+    // }
+    // else
+    // {
+    //     Road00_count = 0;
+    // }
+
+    if (temp != 40)
+    {
+        dis = Lef[temp] - Lef[temp + 1];
+        for (int i = temp; i > Fir_row; --i)
+        {
+            if (Lef[i - 1] < 40)
+            {
+                turn_stop = i;
+                break;
+            }
+            dis1 = Lef[i - 1] - Lef[i];
+            if (dis1 < 0)
+            {
+                turn_stop = i;
+                break;
+            }
+            else if (dis1 < dis)
+            {
+                if (i == Fir_row + 1)
+                {
+                    turn_stop = i - 1;
+                }
+                continue;
+            }
+            else if (dis1 <= 2 * dis + 1)
+            {
+                dis = dis1;
+                if (i == Fir_row + 1)
+                {
+                    turn_stop = i - 1;
+                }
+                continue;
+            }
+            else
+            {
+                turn_stop = i;
+                break;
+            }
+        }
+    }
+    if (Road2_flag != 4 && Lef[turn_stop] > 43 && dis > 4)
+    {
+        Road24_count++;
+        if (Road24_count == 2)
+        {
+            Road2_flag = 4;   //turn flag
+            Road24_count = 0; //reset
+        }
+    }
+    else
+    {
+        Road24_count = 0;
+    }
+    return;
+}
+
+/*************************************************************************
 *  函数名称：void Road1_zhuangtaiji(void)
 *  功能说明：左圆环状态机
 *  参数说明：无
@@ -1268,6 +1512,7 @@ void Road1_zhuangtaiji(void)
         {
             Road12_count = 0;
         }
+        TurnLeftCircle_Process();
         // for (int i = 35; i > Fir_row; i--)
         // {
         //     if (Last_col - Rig[i] < 2 || Last_col - Rig[i - 1] < 2)
@@ -1306,29 +1551,32 @@ void Road1_zhuangtaiji(void)
     else if (Road1_flag == 2) //进左圆环2/4 开始补线进弯道
     {
         // Road14_count++;
-        for (int i = Last_row; i > Fir_row; i--)
-        {
-            if (Last_col - Rig[i] < 2 || Last_col - Rig[i - 1] < 2)
-            {
-                continue;
-            }
-            if (i > 40 && Rig[i] - Rig[i - 2] < 8 && Rig[i - 2] - Rig[i - 4] < 8 && Rig[i] - Rig[i - 2] > 0 && Rig[i - 2] - Rig[i - 4] > 0)
-            {
-                Road14_count++;
-                //
-                if (Road14_count > 1)
-                {
-                    Road1_flag = 4;
-                    Road14_count = 0;
-                    break;
-                }
-            }
-            else
-            {
-                Road14_count = 0;
-                break;
-            }
-        }
+        /////////////////////////////////////
+        TurnLeftCircle_Process();
+        /////////////////////////////////////////////
+        // for (int i = Last_row; i > Fir_row; i--)
+        // {
+        //     if (Last_col - Rig[i] < 2 || Last_col - Rig[i - 1] < 2)
+        //     {
+        //         continue;
+        //     }
+        // if (i > 40 && Rig[i] - Rig[i - 2] < 8 && Rig[i - 2] - Rig[i - 4] < 8 && Rig[i] - Rig[i - 2] > 0 && Rig[i - 2] - Rig[i - 4] > 0)
+        // {
+        //     Road14_count++;
+        //     //
+        //     if (Road14_count > 1)
+        //     {
+        //         Road1_flag = 4;
+        //         Road14_count = 0;
+        //         break;
+        //     }
+        // }
+        // else
+        // {
+        //     Road14_count = 0;
+        //     break;
+        // }
+        //}
         // if (Road14_count > (int)(DIS_IN_CIRCLE * 10000 / (SpeedGoal * CAMERA_FPS)) + 1) //宏定义在function.h
         // {
         //     Road1_flag = 4;
@@ -1369,7 +1617,7 @@ void Road1_zhuangtaiji(void)
                 break;
             }
         }
-        if (Allwhitestart > 30 && Allwhitestart < 40 && Allwhitestart - Allwhiteend > 2) //Rig_circlr 不好，改!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        if (Allwhitestart > 25 && Allwhitestart < 40 && Allwhitestart - Allwhiteend > 2) //Rig_circlr 不好，改!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         {
             Road13_count++;
             if (Road13_count > 2)
@@ -1511,6 +1759,7 @@ void Road2_zhuangtaiji(void)
         {
             Road22_count = 0;
         }
+        TurnRightCircle_Process();
         // for (int i = 25; i > Fir_row; i--)
         // {
         //     if (Lef[i] - Fir_col < 2 || Lef[i - 1] - Fir_col < 2)
@@ -1550,29 +1799,32 @@ void Road2_zhuangtaiji(void)
     else if (Road2_flag == 2) //
     {
         // Road24_count++;
-        for (int i = Last_row; i > Fir_row; i--)
-        {
-            if (Lef[i] - Fir_col < 2 || Lef[i - 1] - Fir_col < 2)
-            {
-                continue;
-            }
-            if (i > 40 && Lef[i - 2] - Lef[i] < 8 && Lef[i - 4] - Lef[i - 2] < 8 && Lef[i - 2] - Lef[i] > 0 && Lef[i - 4] - Lef[i - 2] > 0)
-            {
-                Road24_count++;
-                if (Road24_count > 1)
-                {
-                    Road24_count = 0;
-                    Road2_flag = 4;
-                    break;
-                }
-            }
-            else
-            {
-                Road24_count = 0;
-                break;
-            }
-        }
+        TurnRightCircle_Process();
 
+        ////////////////////////////////////////
+        // for (int i = Last_row; i > Fir_row; i--)
+        // {
+        //     if (Lef[i] - Fir_col < 2 || Lef[i - 1] - Fir_col < 2)
+        //     {
+        //         continue;
+        //     }
+        //     if (i > 40 && Lef[i - 2] - Lef[i] < 8 && Lef[i - 4] - Lef[i - 2] < 8 && Lef[i - 2] - Lef[i] > 0 && Lef[i - 4] - Lef[i - 2] > 0)
+        //     {
+        //         Road24_count++;
+        //         if (Road24_count > 1)
+        //         {
+        //             Road24_count = 0;
+        //             Road2_flag = 4;
+        //             break;
+        //         }
+        //     }
+        //     else
+        //     {
+        //         Road24_count = 0;
+        //         break;
+        //     }
+        // }
+        /////////////////////////////
         // if (Road24_count == (int)(DIS_IN_CIRCLE * 10000 / (SpeedGoal * CAMERA_FPS)) + 1)
         // {
         //     Road24_count = 0;
@@ -1614,7 +1866,7 @@ void Road2_zhuangtaiji(void)
             }
         }
 
-        if (Allwhitestart > 30 && Allwhitestart < 40 && Allwhitestart - Allwhiteend > 2)
+        if (Allwhitestart > 25 && Allwhitestart < 40 && Allwhitestart - Allwhiteend > 2)
         {
             Road23_count++;
             if (Road23_count > 2)
@@ -1865,7 +2117,6 @@ void Road4_zhuangtaiji(void)
     }
     else if (Road4_flag == 3)
     {
-
         if (icm_gyro_y_angle < 4)
         {
             Road4_count3++;
@@ -2062,20 +2313,22 @@ void Pic_find_circle_pre(void)
     }
 }
 bool crossing_flag_flag;
+uint8 whiteline_start;
+uint8 whiteline_end; //这里的start和end与之前的是反的，近是end远是start
 void crossing_find2(void)
 {
+    whiteline_start = 0;
+    whiteline_end = 0;
     crossing_flag_flag = 0;
     int white_line_threshold[40] = {70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 69, 68, 67, 66, 65, 64, 63, 62, 61, 60, 58, 56, 54, 52, 50, 48, 46, 44, 42, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40};
     // int road_half_width_original[40] = {40, 40, 40, 39, 38, 37, 36, 35, 34, 33, 32, 31, 30, 29, 28, 27, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4};
 
     uint8 count;
     uint8 count2; //找每行最大连续全白点
-    uint8 whiteline_start_temp;
-    uint8 whiteline_start;
-    uint8 whiteline_end;
-    uint8 whitecol_start_temp;
-    uint8 whitecol_start;
-    uint8 whitecol_end;
+    uint8 whiteline_start_temp = 0;
+    uint8 whitecol_start_temp = 0;
+    uint8 whitecol_start = 0;
+    uint8 whitecol_end = 0;
 
     uint8 whiteline_count = 0;
     uint8 whiteline_count2 = 0; //找最大连续全白行
@@ -2181,7 +2434,7 @@ void crossing_find2(void)
             }
         }
     }
-    if (whitecol_count2 > 4 && whiteline_count2 > 5 && whiteline_end < 40)
+    if (whitecol_count2 > 4 && whiteline_count2 > 4 && whiteline_end < 40)
     {
         crossing_flag_flag = 1;
     }

@@ -9,7 +9,8 @@
 
 extern int Allwhitestart;
 extern int Allwhiteend;
-
+extern uint8 whiteline_start;
+extern uint8 whiteline_end;
 extern int Road;
 extern int Road1_flag;
 extern int Road2_flag;

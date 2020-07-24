@@ -1299,7 +1299,7 @@ void Pic_Fix_Line(void)
         if (Road0_flag == 1)
         {
             /* 左边线补线 */
-            for (int i = Fir_row; i < Allwhiteend; ++i)
+            for (int i = Fir_row; i < Allwhiteend-3; ++i)
             {
                 if (Lef[i] <= Fir_col + 15 || Lef[i] >= Last_col - 20)
                 {
@@ -1307,15 +1307,50 @@ void Pic_Fix_Line(void)
                 }
                 if (Lef[i] - Lef[i + 2] < 5 && Lef[i + 1] - Lef[i + 3] < 5 && Lef[i] - Lef[i + 2] >= 0 && Lef[i + 1] - Lef[i + 3] >= 0)
                 {
-                    xtemp = Lef[i];
-                    ytemp = i;
+                    xtemp = Lef[i+3];
+                    ytemp = i+3;
                     get_flag = 1;
                     break;
                 }
             }
+            /* 01十字补线改 */
+            {
+                if (!get_flag)
+                {
+                    for (int i = Fir_row; i < Allwhiteend; ++i)
+                    {
+                        for (int j = Rig[i] - 2; j > Lef[i] && j > 10; --j)
+                        {
+                            if (Pixle[i][j] == 1 && Pixle[i][j - 1] == 1 && Pixle[i][j - 2] == 1 && Pixle[i][j - 3] == 1 && Pixle[i][j - 4] == 1 && Pixle[i][j - 5] == 1 &&
+                                Pixle[i][j - 6] == 0 && Pixle[i][j - 7] == 0 && Pixle[i][j - 8] == 0)
+                            {
+                                Lef[i] = j - 6;
+                                break;
+                            }
+                        }
+                    }
+
+                    for (int i = Fir_row; i < Allwhiteend-3; ++i)
+                    {
+                        if (Lef[i] <= Fir_col + 15 || Lef[i] >= Last_col - 20)
+                        {
+                            continue;
+                        }
+                        if (Lef[i] - Lef[i + 2] < 5 && Lef[i + 1] - Lef[i + 3] < 5 && Lef[i] - Lef[i + 2] >= 0 && Lef[i + 1] - Lef[i + 3] >= 0)
+                        {
+                            xtemp = Lef[i+3];
+                            ytemp = i+3;
+                            get_flag = 1;
+                            break;
+                        }
+                    }
+                }
+            }
+            /* 改了个trash */
+
             if (get_flag == 1)
             {
-                for (int i = 55; i > Allwhitestart; i--)
+                for (int i = 55; i > Allwhitestart+3; i--)
                 {
                     if (Lef[i] <= Fir_col)
                     {
@@ -1324,12 +1359,12 @@ void Pic_Fix_Line(void)
 
                     if (Lef[i - 2] - Lef[i] < 5 && Lef[i - 3] - Lef[i - 1] < 5 && Lef[i - 2] - Lef[i] > 0 && Lef[i - 3] - Lef[i - 1] > 0)
                     {
-                        slope = Slope(Lef[i], i, xtemp, ytemp); //Slope(int F1x,int F1y,int F2x,int F2y)
+                        slope = Slope(Lef[i-3], i-3, xtemp, ytemp); //Slope(int F1x,int F1y,int F2x,int F2y)
                         if (slope != 999)
                         {
                             for (int j = ytemp; j < 55; j++)
                             {
-                                Lef[j] = (int)(Lef[i] - (i - j) / slope);
+                                Lef[j] = (int)(Lef[i-3] - (i-3 - j) / slope);
                             }
                             Pic_undistort(1, 0);
                             break;
@@ -1339,7 +1374,7 @@ void Pic_Fix_Line(void)
             }
             else
             {
-                for (int i = 55; i > Allwhitestart; i--)
+                for (int i = 55; i > Allwhitestart+5; i--)
                 {
                     if (abs(Lef[i] - Fir_col) < 5)
                     {
@@ -1362,7 +1397,7 @@ void Pic_Fix_Line(void)
             }
             /* 右边线补线 */
             get_flag = 0; //清空标志位
-            for (int i = Fir_row; i < Allwhiteend; ++i)
+            for (int i = Fir_row; i < Allwhiteend-3; ++i)
             {
                 if (Rig[i] >= Last_col - 15 || Rig[i] <= Fir_col + 20)
                 {
@@ -1370,15 +1405,50 @@ void Pic_Fix_Line(void)
                 }
                 if (Rig[i + 2] - Rig[i] < 5 && Rig[i + 3] - Rig[i + 1] < 5 && Rig[i + 2] - Rig[i] >= 0 && Rig[i + 3] - Rig[i + 1] >= 0)
                 {
-                    xtemp = Rig[i];
-                    ytemp = i;
+                    xtemp = Rig[i+3];
+                    ytemp = i+3;
                     get_flag = 1;
                     break;
                 }
             }
+
+            /* 01十字补线改 */
+            if (!get_flag)
+            {
+                for (int i = Fir_row; i < Allwhiteend; ++i)
+                {
+                    for (int j = Lef[i] + 10; j < Rig[i] + 8 && j < 78; ++j)
+                    {
+                        if (Pixle[i][j] == 1 && Pixle[i][j - 1] == 1 && Pixle[i][j - 2] == 1 && Pixle[i][j - 3] == 1 && Pixle[i][j - 4] == 1 && Pixle[i][j - 5] == 1 &&
+                            Pixle[i][j - 6] == 0 && Pixle[i][j - 7] == 0 && Pixle[i][j - 8] == 0)
+                        {
+                            Rig[i] = j - 6;
+                            break;
+                        }
+                    }
+                }
+
+                for (int i = Fir_row; i < Allwhiteend-3; ++i)
+                {
+                    if (Rig[i] >= Last_col - 15 || Rig[i] <= Fir_col + 20)
+                    {
+                        continue;
+                    }
+                    if (Rig[i + 2] - Rig[i] < 5 && Rig[i + 3] - Rig[i + 1] < 5 && Rig[i + 2] - Rig[i] >= 0 && Rig[i + 3] - Rig[i + 1] >= 0)
+                    {
+                        xtemp = Rig[i+3];
+                        ytemp = i+3;
+                        get_flag = 1;
+                        break;
+                    }
+                }
+            }
+
+            /* 改了个trash */
+
             if (get_flag == 1)
             {
-                for (int i = 55; i > Allwhitestart; i--)
+                for (int i = 55; i > Allwhitestart+3; i--)
                 {
                     if (Rig[i] >= Last_col)
                     {
@@ -1387,12 +1457,12 @@ void Pic_Fix_Line(void)
 
                     if (Rig[i] - Rig[i - 2] < 5 && Rig[i - 1] - Rig[i - 3] < 5 && Rig[i] - Rig[i - 2] > 0 && Rig[i - 1] - Rig[i - 3] > 0)
                     {
-                        slope = Slope(Rig[i], i, xtemp, ytemp); //Slope(int F1x,int F1y,int F2x,int F2y)
+                        slope = Slope(Rig[i-3], i-3, xtemp, ytemp); //Slope(int F1x,int F1y,int F2x,int F2y)
                         if (slope != 999)
                         {
                             for (int j = ytemp; j < 55; j++)
                             {
-                                Rig[j] = (int)(Rig[i] - (i - j) / slope);
+                                Rig[j] = (int)(Rig[i-3] - (i-3 - j) / slope);
                             }
                             Pic_undistort(0, 1);
                             break;
@@ -1402,7 +1472,7 @@ void Pic_Fix_Line(void)
             }
             else
             {
-                for (int i = 55; i > Allwhitestart; i--)
+                for (int i = 55; i > Allwhitestart+5; i--)
                 {
                     if (Last_col - Rig[i] < 5)
                     {
@@ -1534,7 +1604,7 @@ void Pic_Fix_Line(void)
             //         break;
             //     }
             // }
-            return;
+            //return;
         }
         // else if (Road0_flag == 3)
         // {
@@ -1578,7 +1648,7 @@ void Pic_Fix_Line(void)
                 Rig[i] = 78;
             }
             Pic_undistort(0, 1);
-            return;
+            //return;
         }
         else if (Road0_flag == 5)
         {
@@ -1587,7 +1657,7 @@ void Pic_Fix_Line(void)
                 Lef[i] = 1;
             }
             Pic_undistort(1, 0);
-            return;
+            //return;
         }
     }
 

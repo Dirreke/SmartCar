@@ -382,13 +382,13 @@ void lib_set_fun(void)
   {
     if (Road0_flag == 4 && ss_flag)
     {
-      lib_speed_set(2.5);
+      lib_speed_set(2.8);
       speed_change_flag = 1;
       ss_flag = 0;
     }
     else if (Road0_flag == 5 && ss_flag)
     {
-      lib_speed_set(2.5);
+      lib_speed_set(2.8);
       speed_change_flag = 1;
       ss_flag = 0;
     }
@@ -451,9 +451,9 @@ void Speed_Control_New(void)
     {
       MotorOut1 = 0;
       MotorOut2 = 0;
-      return;
-      //Lef_pp = 1;
-      //Rig_pp = 1;
+      //return;
+      Lef_pp = 1;
+      Rig_pp = 1;
     }
     //¼ÓËÙbang
     else
@@ -541,7 +541,7 @@ void Speed_Control_New(void)
   {
     if (CarSpeed1 > SpeedGoal)
     {
-      MotorOut1 = 0; //-MOTOR_RANGE;
+      MotorOut1 = -MOTOR_RANGE;
     }
     else
     {
@@ -1015,6 +1015,12 @@ void Mean_Turn_Out(void)
     turn_num++;
     mean_turn_out = turn_sum / turn_num;
   }
+
+  if ((Road == 1 && Road1_flag == 5) || (Road == 2 && Road2_flag == 5))
+  {
+    turn_sum = 0;
+    turn_num = 0;
+  }
 }
 
 /*************************************************************************
@@ -1106,7 +1112,7 @@ int8 BB_add_flag_set(void)
 void BB_add(void)
 {
   int BB_add_flag = 0;
-  int temp = 2000; //2000;
+  int temp = 1000; //2000;
   int temp2 = 500; //500;
   BB_add_flag = BB_add_flag_set();
   if (BB_add_flag == 0)
