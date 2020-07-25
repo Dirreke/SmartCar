@@ -1,7 +1,7 @@
 #include "headfile.h"
 // #include "math.h"
 uint8 Image_Use[CAMERA_H][CAMERA_W];
-uint16 Pixle[CAMERA_H][CAMERA_W]; //二值化后用于OLED显uint16氖???//u16
+uint8 Pixle[CAMERA_H][CAMERA_W]; //二值化后用于OLED显uint16氖???//u16
 
 int threshold_offset = 0;
 int threshold_offset2 = 0;
@@ -1282,7 +1282,7 @@ void Pic_Fix_Line(void)
     static int xtemp_static, ytemp_static;
     int Circle_inner_end_cnt = 0;
     bool Circle_inner_end_flag = 0;
-    //static float stat_slope;
+    //static float stat_slope;-
     //static float stat_slope2;
     //static char road1_flag1 = 1; //0表示已计算完进圆环斜率，1表示已经出圆环，再次进圆环时计算补线斜率
     //static char road2_flag1 = 1;

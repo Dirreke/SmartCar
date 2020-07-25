@@ -119,6 +119,8 @@ void lib_speed_set(float a)
     speed_change_flag = 1;
   }
   SpeedGoal = a;
+  MotorOut1 = 2500 * speedTarget1;
+  MotorOut2 = 2500 * speedTarget2;
   // speed_change_flag = 1;
 }
 

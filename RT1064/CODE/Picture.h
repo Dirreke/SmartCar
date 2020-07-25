@@ -77,7 +77,7 @@ void Pic_seedfill_grow(uint8 flag[CAMERA_H][CAMERA_W], int i, int j);
 #endif 
 
 extern uint8 Image_Use[CAMERA_H][CAMERA_W];
-extern uint16 Pixle[CAMERA_H][CAMERA_W]; //二值化后用于OLED显uint16氖???//u16
+extern uint8 Pixle[CAMERA_H][CAMERA_W]; //二值化后用于OLED显uint16氖???//u16
 
 extern int threshold_offset;
 extern int threshold_offset2;

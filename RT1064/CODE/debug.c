@@ -3,6 +3,7 @@
 
 int DEBUG_CHOICE = 1;
 float speedgoal;
+float curvespeedgoal;
 void Debug_Init(void)
 {
     gpio_init(B10, GPI, 1, GPIO_PIN_CONFIG);
@@ -17,7 +18,7 @@ void Debug_Init(void)
 void Dubug_key(void)
 {
     static int ips_num = 0;
-    const int page_num = 10;
+    const int page_num = 13;
     static bool qipao_flag;
     if (gpio_get(DEBUG_KEY0))
     {
@@ -88,18 +89,20 @@ void Dubug_key(void)
                 threshold_offset += 1;
                 break;
             case 5:
-                PID_CAR_Diffcomp_CAM.P += 0.1;
+                curvespeedgoal += 0.1; //PID_CAR_Diffcomp_CAM.P += 0.1;
                 break;
             case 6:
                 //PID_TURN_CAM_EXT.P += 0.1;
                 PID_CAR_STRAIGHT_CAM.P += 0.01;
                 break;
             case 7:
+                PID_SPEED.P += 1;
                 //PID_TURN_CAM_EXT.D += 0.1;
-                PID_CAR_STRAIGHT_CAM.D += 0.01;
+                //PID_CAR_STRAIGHT_CAM.D += 0.01;
                 break;
             case 8:
-                DEBUG_CHOICE++;
+                PID_SPEED.I += 1;
+                //DEBUG_CHOICE++;
                 break;
             case 9:
                 if (get_diff_state() == DIFF_ON_VAL)
@@ -110,6 +113,12 @@ void Dubug_key(void)
                 {
                     diff_on();
                 }
+                break;
+            case 10:
+                PID_diff.P += 0.1;
+                break;
+            case 11:
+                PID_diff0.P += 0.1;
                 break;
             case 0:
                 Road += 1;
@@ -273,18 +282,20 @@ void Dubug_key(void)
                 threshold_offset -= 1;
                 break;
             case 5:
-                PID_CAR_Diffcomp_CAM.P -= 0.1;
+                curvespeedgoal -= 0.1; //PID_CAR_Diffcomp_CAM.P -= 0.1;
                 break;
             case 6:
                 //PID_TURN_CAM_EXT.P -= 0.1;
                 PID_CAR_STRAIGHT_CAM.P -= 0.01;
                 break;
             case 7:
+                PID_SPEED.P -= 1;
                 //PID_TURN_CAM_EXT.D -= 0.1;
-                PID_CAR_STRAIGHT_CAM.D -= 0.01;
+                //PID_CAR_STRAIGHT_CAM.D -= 0.01;
                 break;
             case 8:
-                DEBUG_CHOICE--;
+                PID_SPEED.I -= 1;
+                //DEBUG_CHOICE--;
                 break;
             case 9:
                 if (get_diff_state() == DIFF_ON_VAL)
@@ -295,6 +306,12 @@ void Dubug_key(void)
                 {
                     diff_on();
                 }
+                break;
+            case 10:
+                PID_diff.P -= 0.1;
+                break;
+            case 11:
+                PID_diff0.P -= 0.1;
                 break;
             case 0:
                 Road -= 1;
@@ -458,7 +475,7 @@ void ips_show_debug(int ips_num)
     {
 
     /** pages **/
-    case 2:                                  //阈值
+    case 2:                                          //阈值
         ips200_showstr(0, 12, "PID_CENTER_CAM.P: "); //显示字符串
         //ips200_showfloat(0, 13, 66.6667, 2, 4);    //显示一个浮点数并去除整数部分无效0
         //ips200_showuint16(0,1,666);                //显示一个16位无符号整数
@@ -474,20 +491,20 @@ void ips_show_debug(int ips_num)
         ips200_showfloat(0, 13, threshold_offset, 4, 2);
         break;
     case 5:
-        ips200_showstr(0, 12, "PID_CAR_Diffcomp_CAM.P");
-        ips200_showfloat(0, 13, PID_CAR_Diffcomp_CAM.P, 4, 2);
+        ips200_showstr(0, 12, "curvespeedgoal");
+        ips200_showfloat(0, 13, curvespeedgoal, 4, 2);
         break;
     case 6:
         ips200_showstr(0, 12, "PID_CAR_STRAIGHT_CAM.P");
         ips200_showfloat(0, 13, PID_CAR_STRAIGHT_CAM.P, 4, 2); //PID_TURN_CAM_EXT.P, 4, 2);
         break;
     case 7:
-        ips200_showstr(0, 12, "CamStraightD");
-        ips200_showfloat(0, 13, PID_CAR_STRAIGHT_CAM.D, 4, 2); //PID_TURN_CAM_EXT.D, 4, 2);
+        ips200_showstr(0, 12, "motor p CamStraightD");
+        ips200_showfloat(0, 13, PID_SPEED.P, 4, 2); //PID_TURN_CAM_EXT.D, 4, 2);
         break;
     case 8:
-        ips200_showstr(0, 12, "DEBUG_CHOICE");
-        ips200_showint32(0, 13, DEBUG_CHOICE, 3);
+        ips200_showstr(0, 12, "motor i DEBUG_CHOICE");
+        ips200_showint32(0, 13, PID_SPEED.I, 3);
         break;
     case 9:
         ips200_showstr(0, 12, "diff_change");
@@ -499,6 +516,14 @@ void ips_show_debug(int ips_num)
         {
             ips200_showstr(0, 13, "DIFF_OFF_VAL");
         }
+        break;
+    case 10:
+        ips200_showstr(0, 12, "PID_diff.P");
+        ips200_showfloat(0, 13, PID_diff.P, 4, 2);
+        break;
+    case 11:
+        ips200_showstr(0, 12, "PID_diff0.P");
+        ips200_showfloat(0, 13, PID_diff0.P, 4, 2);
         break;
     case 0:
         ips200_showstr(0, 12, "Road");

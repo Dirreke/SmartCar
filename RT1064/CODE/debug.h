@@ -8,6 +8,7 @@
 
 extern int DEBUG_CHOICE;
 extern float speedgoal;
+extern float curvespeedgoal;
 
 void Debug_Init(void);
 void Dubug_key(void);

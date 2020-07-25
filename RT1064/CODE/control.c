@@ -164,7 +164,7 @@ void Turn_Servo()
 
   else if (Road == 1)
   {
-    if (Road1_flag == 5)
+    if (Road1_flag == 5 || Road2_flag == 3)
     {
       // if (Turn_Cam_Out > -0.5 * SERVO_RANGE)
       // {
@@ -192,7 +192,7 @@ void Turn_Servo()
 
   else if (Road == 2)
   {
-    if (Road2_flag == 5)
+    if (Road2_flag == 5 || Road2_flag == 3)
     {
       // if (Turn_Cam_Out < 0.5 * SERVO_RANGE)
       // {
@@ -219,7 +219,7 @@ void Turn_Servo()
   }
   else if (Road == 4)
   {
-    Turn_Out = 0; //Turn_Cam_Out * 0.2;//Turn_EM_Out;
+    Turn_Out = Turn_EM_Out;
   }
   else if (Road == 3)
   {
@@ -273,60 +273,72 @@ void Turn_Servo()
 *  修改时间：2020.6.20
 *  备    注：
 *************************************************************************/
-float DIFF_KKK = 0;
-float DIFF_KK = 1;
+// float DIFF_KKK = 0;
+// float DIFF_KK = 1;
+PID PID_diff;
+PID PID_diff0;
 void SpeedTarget_fig(void)
 {
   float angle_val; // 用来表示实际转向角度
   float diff_K0;   // 差速率=差速比均速，左右轮各一半
   float Turn_Cam_Out_temp = Turn_Cam_Out;
+  float PID_diff_P;
+  angle_val = Turn_Cam_Out_temp * ANGLE_DIVIDE_SERVO_SCALE;
+
   // Turn_Cam_Out_temp = (Turn_Cam_Out > 490) ? 490 : ((Turn_Cam_Out < -490) ? -490 : Turn_Cam_Out);
   /* 开关差速 diff_K0计算 */
-  if (get_diff_state() == DIFF_ON_VAL)
-  {
-    { //Turn_Cam_Out的限幅，死区
-      //开关差速在Para中定义
-      if (fabs(Turn_Cam_Out_temp) < 46)
-      {
-        angle_val = 0;
-      }
-      else if (Turn_Cam_Out_temp > SERVO_RANGE)
-      {
-        angle_val = ANGLE_RANGE; //((Turn_Cam_Out_temp - SERVO_RANGE) * DIFF_KKK + SERVO_RANGE) * ANGLE_DIVIDE_SERVO_SCALE;
-      }
-      else if (Turn_Cam_Out_temp < -SERVO_RANGE)
-      {
-        angle_val = -ANGLE_RANGE; //((Turn_Cam_Out_temp + SERVO_RANGE) * DIFF_KKK - SERVO_RANGE) * ANGLE_DIVIDE_SERVO_SCALE;
-      }
-      else
-      {
-        angle_val = Turn_Cam_Out_temp * ANGLE_DIVIDE_SERVO_SCALE; // * DIFF_KK;
-      }
-      // angle_val = (fabs(Turn_Cam_Out_temp) < 46) ? 0 : Turn_Cam_Out_temp / SERVO_RANGE * ANGLE_RANGE;
-      // angle_val = (Turn_Cam_Out_temp > SERVO_RANGE) ? ((Turn_Cam_Out_temp - SERVO_RANGE) * DIFF_KKK + SERVO_RANGE) / SERVO_RANGE * ANGLE_RANGE : Turn_Cam_Out_temp / SERVO_RANGE * ANGLE_RANGE;
-      // angle_val = (Turn_Cam_Out_temp < -SERVO_RANGE) ? ((Turn_Cam_Out_temp + SERVO_RANGE) * DIFF_KKK - SERVO_RANGE) / SERVO_RANGE * ANGLE_RANGE : Turn_Cam_Out_temp / SERVO_RANGE * ANGLE_RANGE;
-      // if (angle_val > 1.5)
-      // {
-      //   angle_val = 1.5;
-      // }
-      // else if (angle_val < -1.5)
-      // {
-      //   angle_val = -1.5;
-      // }
+  // if (get_diff_state() == DIFF_ON_VAL)
+  // {
+  { //Turn_Cam_Out的限幅，死区
+    //开关差速在Para中定义
+    if (fabs(Turn_Cam_Out_temp) < 46)
+    {
+      angle_val = 0;
+      diff_off();
     }
-    //可串PD控制器
-    { //特定道路关差速（出库、坡)
-      if (Road == 4 || Road == 3)
-      {
-        diff_K0 = 0;
-      }
-      else
-      {
-        diff_K0 = CAR_DIFF_K * tan(angle_val);
-      }
+    else if (Turn_Cam_Out_temp > SERVO_RANGE)
+    {
+      // angle_val = ANGLE_RANGE; //((Turn_Cam_Out_temp - SERVO_RANGE) * DIFF_KKK + SERVO_RANGE) * ANGLE_DIVIDE_SERVO_SCALE;
+      diff_on();
+      PID_diff_P = PID_diff.P;
+    }
+    else if (Turn_Cam_Out_temp < -SERVO_RANGE)
+    {
+      // angle_val = -ANGLE_RANGE; //((Turn_Cam_Out_temp + SERVO_RANGE) * DIFF_KKK - SERVO_RANGE) * ANGLE_DIVIDE_SERVO_SCALE;
+      diff_on();
+      PID_diff_P = PID_diff.P;
+    }
+    else
+    {
+      angle_val = Turn_Cam_Out_temp * ANGLE_DIVIDE_SERVO_SCALE; // * DIFF_KK;
+      diff_on();
+      PID_diff_P = PID_diff0.P;
+    }
+    // angle_val = (fabs(Turn_Cam_Out_temp) < 46) ? 0 : Turn_Cam_Out_temp / SERVO_RANGE * ANGLE_RANGE;
+    // angle_val = (Turn_Cam_Out_temp > SERVO_RANGE) ? ((Turn_Cam_Out_temp - SERVO_RANGE) * DIFF_KKK + SERVO_RANGE) / SERVO_RANGE * ANGLE_RANGE : Turn_Cam_Out_temp / SERVO_RANGE * ANGLE_RANGE;
+    // angle_val = (Turn_Cam_Out_temp < -SERVO_RANGE) ? ((Turn_Cam_Out_temp + SERVO_RANGE) * DIFF_KKK - SERVO_RANGE) / SERVO_RANGE * ANGLE_RANGE : Turn_Cam_Out_temp / SERVO_RANGE * ANGLE_RANGE;
+    // if (angle_val > 1.5)
+    // {
+    //   angle_val = 1.5;
+    // }
+    // else if (angle_val < -1.5)
+    // {
+    //   angle_val = -1.5;
+    // }
+  }
+  //可串PD控制器
+  { //特定道路关差速（出库、坡)
+    if (Road == 4 || Road == 3)
+    {
+      diff_K0 = 0;
+    }
+    else
+    {
+      diff_K0 = CAR_DIFF_K * tan(angle_val);
     }
   }
-  else if (get_diff_state() == DIFF_OFF_VAL)
+  // }
+  if (get_diff_state() == DIFF_OFF_VAL)
   {
     diff_K0 = 0;
   }
@@ -335,6 +347,11 @@ void SpeedTarget_fig(void)
   {
     diff_K0 *= 2;
   }
+  else
+  {
+    diff_K0 = diff_K0 * PID_diff_P;
+  }
+
   /* 左右轮目标速度计算 */
   speedTarget1 = SpeedGoal * (1 + diff_K0 / 2); //左侧车轮
   speedTarget2 = SpeedGoal * (1 - diff_K0 / 2); //右侧车轮
@@ -382,13 +399,13 @@ void lib_set_fun(void)
   {
     if (Road0_flag == 4 && ss_flag)
     {
-      lib_speed_set(2.8);
+      lib_speed_set(curvespeedgoal);
       speed_change_flag = 1;
       ss_flag = 0;
     }
     else if (Road0_flag == 5 && ss_flag)
     {
-      lib_speed_set(2.8);
+      lib_speed_set(curvespeedgoal);
       speed_change_flag = 1;
       ss_flag = 0;
     }
@@ -404,7 +421,7 @@ void lib_set_fun(void)
     // speed_
   }
 
-  if (Road != 3)
+  if (Road != 3 && loop_time > 0.5)
   {
     if (EM_Value_2 < 0.3 && EM_Value_3 < 0.3 && EM_Value_1 < 0.3) //&& EM_Value_4 < 0.2)
     {
@@ -533,6 +550,24 @@ void Speed_Control_New(void)
     frame_flag2 = 0;
     frame2 = 0;
   }
+  //弯道不bang
+  if (fabs(Turn_Out) > 100)
+  {
+    if (a_flag1 == 1)
+    {
+      MotorOut1 = SpeedGoal * 2500;
+    }
+    if (a_flag2 == 1)
+    {
+      MotorOut2 = SpeedGoal * 2500;
+    }
+
+    a_flag1 = 0;
+    // d_flag1 = 0;
+    a_flag2 = 0;
+    // d_flag2 = 0;
+  }
+
   /* 速度控制 */
   // d_flag1 = 0;
   /******* 左轮 *******/
@@ -1039,30 +1074,46 @@ int8 BB_add_flag_set(void)
   // {
   if (Turn_Out < -100 || Road0_flag == 4 || (Road1_flag > 1 && Road1_flag < 6) || ((Road1_flag == 1 || Road1_flag == 6) && Turn_Out < -50))
   {
-    if (CarSpeed1 - CarSpeed2 > 0.15)
+    if (CarSpeed1 - CarSpeed2 > 0.1)
     {
       BB_add_flag = 4;
+    }
+    if (CarSpeed1 - CarSpeed2 > 0.5)
+    {
+      BB_add_flag = 14;
     }
   }
   else if (Turn_Out > 100 || Road0_flag == 5 || (Road2_flag > 1 && Road2_flag < 6) || ((Road2_flag == 1 || Road2_flag == 6) && Turn_Out > 50))
   {
-    if (CarSpeed2 - CarSpeed1 > 0.15)
+    if (CarSpeed2 - CarSpeed1 > 0.1)
     {
       BB_add_flag = 5;
+    }
+    if (CarSpeed2 - CarSpeed1 > 0.5)
+    {
+      BB_add_flag = 15;
     }
   }
   else if (Turn_Out < 50 && Road == 0)
   {
-    if (CarSpeed1 - CarSpeed2 > 0.5)
+    if (CarSpeed1 - CarSpeed2 > 0.3)
     {
       BB_add_flag = 0;
+    }
+    if (CarSpeed1 - CarSpeed2 > 0.6)
+    {
+      BB_add_flag = 10;
     }
   }
   else if (Turn_Out > -50 && Road == 0)
   {
-    if (CarSpeed2 - CarSpeed1 > 0.5 && Turn_Out > -50)
+    if (CarSpeed2 - CarSpeed1 > 0.3)
     {
       BB_add_flag = 1;
+    }
+    if (CarSpeed2 - CarSpeed1 > 0.6)
+    {
+      BB_add_flag = 11;
     }
   }
   // else if (Road == 0 && Road0_flag < 3)
@@ -1077,22 +1128,22 @@ int8 BB_add_flag_set(void)
   //   }
   // }
   // }
-  if (BB_add_flag == 0)
+  if (BB_add_flag % 10 == 0)
   {
     if (CarSpeed1 - CarSpeed2 < 0.2 || Turn_Out > 70) //70budui DEBUG
       BB_add_flag = -1;
   }
-  else if (BB_add_flag == 1)
+  else if (BB_add_flag % 10 == 1)
   {
     if (CarSpeed2 - CarSpeed1 < 0.2 || Turn_Out < -70)
       BB_add_flag = -1;
   }
-  else if (BB_add_flag == 4)
+  else if (BB_add_flag % 10 == 4)
   {
     if (CarSpeed2 - CarSpeed1 > 0.1)
       BB_add_flag = -1;
   }
-  else if (BB_add_flag == 5)
+  else if (BB_add_flag % 10 == 5)
   {
     if (CarSpeed1 - CarSpeed2 > 0.1)
     {
@@ -1115,22 +1166,33 @@ void BB_add(void)
   int temp = 1000; //2000;
   int temp2 = 500; //500;
   BB_add_flag = BB_add_flag_set();
-  if (BB_add_flag == 0)
+  if (BB_add_flag / 10 == 0)
+  {
+    temp = 1000; //2000;
+    temp2 = 500; //500;
+  }
+  else if (BB_add_flag / 10 == 1)
+  {
+    temp = 2000;  //2000;
+    temp2 = 1000; //500;
+  }
+
+  if (BB_add_flag % 10 == 0)
   {
     MotorOut1_add = -temp2;
     MotorOut2_add = temp;
   }
-  else if (BB_add_flag == 1)
+  else if (BB_add_flag % 10 == 1)
   {
     MotorOut1_add = temp;
     MotorOut2_add = -temp2;
   }
-  else if (BB_add_flag == 4)
+  else if (BB_add_flag % 10 == 4)
   {
     MotorOut1_add = -temp2;
     MotorOut2_add = temp;
   }
-  else if (BB_add_flag == 5)
+  else if (BB_add_flag % 10 == 5)
   {
     MotorOut1_add = temp;
     MotorOut2_add = -temp2;
