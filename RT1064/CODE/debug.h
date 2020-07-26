@@ -7,8 +7,8 @@
 #define DEBUG_KEY5 B10
 
 extern int DEBUG_CHOICE;
-extern float speedgoal;
-extern float curvespeedgoal;
+// extern float speedgoal;
+// extern float curvespeedgoal;
 
 void Debug_Init(void);
 void Dubug_key(void);

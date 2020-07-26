@@ -15,7 +15,7 @@ extern float Turn_EM_Out1 ,Turn_EM_Out2 ,Turn_EM_Out;
 extern PID PID_CENTER_EM ,PID_STRAIGHT_EM;
 
 extern bool speed_change_flag;
-extern bool road_change_flag;
+// extern bool road_change_flag;
 extern int mix_choice;
 
 extern float DIFF_KKK;
@@ -42,6 +42,20 @@ void Mean_Turn_Out(void);
 int8 BB_add_flag_set(void);
 void BB_add(void);
 
+void Road7_flag_shift(bool reset0);
+void Road4_flag_shift(bool reset0);
+void Road2_flag_shift(bool reset0);
+void Road1_flag_shift(bool reset0);
+void Road0_flag_shift(bool reset0);
+void Road_shift(void);
+void Curve_shift(void);
+
+
+
+
+
+
+
 //debug
 extern PID PID_SPEED,PID2_SPEED;
 extern PID PID_diff;
@@ -51,3 +65,5 @@ extern PID PID_diff0;
 // float Turn_D;
   extern float SpeedE1, SpeedE2;
   extern float SpeedEE1, SpeedEE2;
+
+extern uint8 ramp_out_time;

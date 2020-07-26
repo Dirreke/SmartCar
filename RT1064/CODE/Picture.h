@@ -41,7 +41,7 @@
 extern uint8 Sobel_Threshold_FarFar;
 extern uint8 Sobel_Threshold_Far; 
 extern uint8 Sobel_Threshold_Near;   
-
+void Picture_pre_main(void);
 void camera_dispose_main(void);
 
 __ramfunc void Get_Use_Image(void);

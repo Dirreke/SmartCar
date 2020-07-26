@@ -78,7 +78,7 @@ int main(void)
     {
         if (temp_flag < 1)
         {
-            loop_time = -999;
+            loop_time = 9999;
         }
 
         if (mt9v03x_csi_finish_flag) //图像采集完成
@@ -86,6 +86,9 @@ int main(void)
             mt9v03x_csi_finish_flag = 0; //清除采集完成标志位
             mag_find();
             ICM_main();
+            Picture_pre_main();
+            Road_rec();
+            Road_shift();
             camera_dispose_main();
 
             Send_Data();

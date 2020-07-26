@@ -16,7 +16,7 @@
         <LeaveTargetRunning>_ 0</LeaveTargetRunning>
     </JLinkDriver>
     <DebugChecksum>
-        <Checksum>2870819510</Checksum>
+        <Checksum>2350158311</Checksum>
     </DebugChecksum>
     <Exceptions>
         <StopOnUncaught>_ 0</StopOnUncaught>
@@ -121,7 +121,7 @@
     </Jet>
     <PlDriver>
         <FirstRun>0</FirstRun>
-        <MemConfigValue>D:\Program Files (x86)\IAR Systems\Embedded Workbench 8.3\arm\CONFIG\debugger\NXP\MIMXRT1064xxx6A.ddf</MemConfigValue>
+        <MemConfigValue>I:\IAR\arm\CONFIG\debugger\NXP\MIMXRT1064xxx6A.ddf</MemConfigValue>
     </PlDriver>
     <SWOManager>
         <SamplingDivider>8192</SamplingDivider>
@@ -180,7 +180,11 @@
         <mode>0</mode>
     </DisassembleMode>
     <Breakpoints2>
-        <Count>0</Count>
+        <Bp0>_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\..\CODE\control.c}.1325.5" 0 0 1 "" 0 "" 0</Bp0>
+        <Bp1>_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\..\CODE\control.c}.1401.5" 0 0 1 "" 0 "" 0</Bp1>
+        <Bp2>_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\..\CODE\control.c}.1411.5" 0 0 1 "" 0 "" 0</Bp2>
+        <Bp3>_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\..\CODE\control.c}.1310.3" 0 0 1 "" 0 "" 0</Bp3>
+        <Count>4</Count>
     </Breakpoints2>
     <TermIOLog>
         <LoggingEnabled>_ 0</LoggingEnabled>

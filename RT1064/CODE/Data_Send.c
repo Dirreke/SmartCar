@@ -249,8 +249,8 @@ void Variable_update(void)
   Variable[3] = CarSpeed1;
   Variable[4] = CarSpeed2;    //EM_Value_1; //speedTarget1; //Allwhiteend;
   Variable[5] = speedTarget1; //EM_Value_2;
-  Variable[6] = car_straight_dias;//speedTarget2; //EM_Value_3;
-  Variable[7] = car_center_dias;//EM_Value_2 + EM_Value_3;
+  Variable[6] = speedTarget2;//speedTarget2; //EM_Value_3;
+  Variable[7] = PID_CAR_STRAIGHT_CAM.P;//EM_Value_2 + EM_Value_3;
   if (Road == 0)
   {
     Variable[8] = Road0_flag;
@@ -285,7 +285,7 @@ void Variable_update(void)
   Variable[12] = MotorOut2;//EM_Value_2;//MotorOut2;         //Turn_EM_Out;  //Lef_break_point*100+Rig_break_point;
   Variable[13] = EM_Value_3;
   Variable[14] = EM_Value_2;//speed_change_flag;//car_center_dias;   //100 + Lef_circle * 10 + Rig_circle; /*Rig_circle;*/ //Road6_flag ;//CarSpeed2;
-  Variable[15] = loop_time;//EM_Value_1;         // Mid_slope; //Allwhitestart * 100 + Allwhiteend;              //EM_Value_2+EM_Value_3; //whitecnt;//Road1_turnout;//limit_pos(EM_Value_1/1.5-EM_Value_2/3.5);//speedTarget1;//map_line[MIN(50,AllWhileStartLine)];
+  Variable[15] = loop_time*0.001;//EM_Value_1;         // Mid_slope; //Allwhitestart * 100 + Allwhiteend;              //EM_Value_2+EM_Value_3; //whitecnt;//Road1_turnout;//limit_pos(EM_Value_1/1.5-EM_Value_2/3.5);//speedTarget1;//map_line[MIN(50,AllWhileStartLine)];
 }
 
 void Pic_send_new2(void)

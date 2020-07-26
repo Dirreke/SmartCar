@@ -9,8 +9,9 @@ float speedTarget1, speedTarget2;
 float Turn_P_EM;
 float Turn_D_EM;
 bool speed_change_flag = 0;
-bool road_change_flag = 0;
+// bool road_change_flag = 0;
 
+uint8 ramp_out_time = 0;
 float Turn_EM_Out1 = 0, Turn_EM_Out2 = 0, Turn_EM_Out = 0;
 PID PID_CENTER_EM, PID_STRAIGHT_EM;
 
@@ -296,13 +297,13 @@ void SpeedTarget_fig(void)
       angle_val = 0;
       diff_off();
     }
-    else if (Turn_Cam_Out_temp > SERVO_RANGE)
+    else if (Turn_Cam_Out_temp > 262.5*PID_CAR_STRAIGHT_CAM.P)//SERVO_RANGE)
     {
       // angle_val = ANGLE_RANGE; //((Turn_Cam_Out_temp - SERVO_RANGE) * DIFF_KKK + SERVO_RANGE) * ANGLE_DIVIDE_SERVO_SCALE;
       diff_on();
       PID_diff_P = PID_diff.P;
     }
-    else if (Turn_Cam_Out_temp < -SERVO_RANGE)
+    else if (Turn_Cam_Out_temp < -262.5*PID_CAR_STRAIGHT_CAM.P)//-SERVO_RANGE)
     {
       // angle_val = -ANGLE_RANGE; //((Turn_Cam_Out_temp + SERVO_RANGE) * DIFF_KKK - SERVO_RANGE) * ANGLE_DIVIDE_SERVO_SCALE;
       diff_on();
@@ -366,6 +367,7 @@ void SpeedTarget_fig(void)
   //   }
   // }
 }
+#if 0
 void lib_set_fun(void)
 {
   static bool ss_flag;
@@ -421,14 +423,15 @@ void lib_set_fun(void)
     // speed_
   }
 
-  if (Road != 3 && loop_time > 0.5)
+  if (Road != 3 && loop_time > 500)
   {
-    if (EM_Value_2 < 0.3 && EM_Value_3 < 0.3 && EM_Value_1 < 0.3) //&& EM_Value_4 < 0.2)
+    if (EM_Value_2 < 0.3 && EM_Value_3 < 0.3 && EM_Value_1 < 0.3 && EM_Value_4 < 0.3)
     {
       lib_speed_set(0);
     }
   }
 }
+#endif
 /*************************************************************************
 *  函数名称：void Speed_Control(L_flag)
 *  功能说明：速度PI+bang
@@ -441,6 +444,7 @@ PID PID_SPEED, PID2_SPEED;
 
 float SpeedE1, SpeedE2;
 float SpeedEE1, SpeedEE2;
+float SpeedGoalE1,SpeedGoalE2;
 
 void Speed_Control_New(void)
 {
@@ -460,6 +464,8 @@ void Speed_Control_New(void)
   /* 计算速度偏差 */
   SpeedE1 = speedTarget1 - CarSpeed1;
   SpeedE2 = speedTarget2 - CarSpeed2;
+  SpeedGoalE1 = SpeedGoal - CarSpeed1;
+  SpeedGoalE2 = SpeedGoal - CarSpeed1;
   /* 变设定速大bang */
   if (speed_change_flag)
   {
@@ -481,10 +487,10 @@ void Speed_Control_New(void)
     speed_change_flag = 0;
   }
 
-  if (SpeedE1 > 1)
+  if (SpeedGoalE1 > 1)
   {
     //即使速度目标不改变但speede1>1.5也直接进BB
-    if (SpeedE1 > 1.5)
+    if (SpeedGoalE1 > 1.5)
     {
       a_flag1 = 1;
       Lef_BB = 0;
@@ -498,10 +504,10 @@ void Speed_Control_New(void)
     frame_flag1 = 0;
     frame1 = 0;
   }
-  if (SpeedE2 > 1)
+  if (SpeedGoalE2 > 1)
   {
     //即使速度目标不改变但speede2>1.5也直接进BB
-    if (SpeedE2 > 1.5)
+    if (SpeedGoalE2 > 1.5)
     {
       a_flag2 = 1;
       Rig_BB = 0;
@@ -516,10 +522,10 @@ void Speed_Control_New(void)
     frame2 = 0;
   }
 
-  if (SpeedE1 < -1)
+  if (SpeedGoalE1 < -1)
   {
     //同上
-    if (SpeedE1 < -1.5)
+    if (SpeedGoalE1 < -1.5)
     {
       d_flag1 = 1;
       Lef_BB = 0;
@@ -533,10 +539,10 @@ void Speed_Control_New(void)
     frame_flag1 = 0;
     frame1 = 0;
   }
-  if (SpeedE2 < -1)
+  if (SpeedGoalE2 < -1)
   {
     //同上
-    if (SpeedE2 < -1.5)
+    if (SpeedGoalE2 < -1.5)
     {
       d_flag2 = 1;
       Rig_BB = 0;
@@ -593,7 +599,7 @@ void Speed_Control_New(void)
   else if (a_flag1)
   {
     //不刹车时
-    if (speedTarget1 > 0)
+    if (speedTarget1 > 0)//DEBUG!!! (speedTarget1 + SpeedGoal)/2 ?
     {
       //加速状态速度小于设定速度5000
       if (CarSpeed1 < speedTarget1 * 1.0)
@@ -1201,5 +1207,451 @@ void BB_add(void)
   {
     MotorOut1_add = 0;
     MotorOut2_add = 0;
+  }
+}
+
+/*************************************************************************
+*  函数名称：void Road_shift(void)
+*  功能说明：
+*  参数说明：
+*  函数返回：
+*  修改时间：2020.7.26
+*  备    注：用于
+*************************************************************************/
+void Road_shift(void)
+{
+  static int Road_old = 0;
+  if (Road == Road_old)
+  {
+    switch (Road)
+    {
+    case 0:
+      Road0_flag_shift(0);
+      break;
+    case 1:
+      Road1_flag_shift(0);
+      break;
+    case 2:
+      Road2_flag_shift(0);
+      break;
+    case 3:
+      return;
+    case 4:
+      Road4_flag_shift(0);
+      break;
+    case 7:
+      Road7_flag_shift(0);
+      break;
+    default:
+      break;
+    }
+    return;
+  }
+  // Road_flag_change_flag = 1
+  switch (Road_old)
+  {
+  case 0:
+    Road0_flag_shift(1);
+    break;
+  case 1:
+    Road1_flag_shift(1);
+    break;
+  case 2:
+    Road2_flag_shift(1);
+    break;
+  case 4:
+    Road4_flag_shift(1);
+    break;
+  case 7:
+    Road7_flag_shift(1);
+    break;
+  default:
+    break;
+  }
+
+  switch (Road)
+  {
+  case 0:
+
+    Road0_flag_shift(0);
+    break;
+  case 1:
+    Road1_flag_shift(0);
+    break;
+  case 2:
+    Road2_flag_shift(0);
+    break;
+  case 4:
+    Road4_flag_shift(0);
+    break;
+  case 7:
+    Road7_flag_shift(0);
+    break;
+  default:
+    break;
+  }
+}
+
+/*************************************************************************
+*  函数名称：void Road0_flag_shift(void)
+*  功能说明：
+*  参数说明：
+*  函数返回：
+*  修改时间：2020.7.26
+*  备    注：用于
+*************************************************************************/
+
+void Road0_flag_shift(bool reset0)
+{
+  static int Road0_flag_old;
+
+  if (!reset0)
+  {
+    if (Road0_flag == Road0_flag_old)
+      return;
+  }
+  switch (Road0_flag_old)
+  {
+  case -1:
+
+    break;
+  case 0:
+
+  case 1:
+
+  case 2:
+    break;
+  case 4:
+    // goto: case 5
+  case 5:
+
+    lib_speed_set(DEFAULT_SPEED);
+    MotorOut1 = SpeedGoal * SPEED_MOTOR_SCALE_LOW;
+    MotorOut2 = MotorOut1; //SpeedGoal * SPEED_MOTOR_SCALE_LOW;
+    break;
+  default:
+    break;
+  }
+  if (reset0)
+  {
+    Road0_flag_old = -1;
+    return;
+  }
+  switch (Road0_flag)
+  {
+  case 0:
+
+  case 1:
+
+  case 2:
+    lib_speed_set(STRAIGHT_SPEED);
+    break;
+  case 4:
+    //goto case 5:
+  case 5:
+
+    lib_speed_set(CURVE_SPEED);
+    MotorOut1 = SpeedGoal * SPEED_MOTOR_SCALE_HIGH;
+    MotorOut2 = MotorOut1; //SpeedGoal * SPEED_MOTOR_SCALE_HIGH;
+    break;
+  default:
+    break;
+  }
+  Road0_flag_old = Road0_flag;
+}
+/*************************************************************************
+*  函数名称：void Road1_flag_shift(void)
+*  功能说明：
+*  参数说明：
+*  函数返回：
+*  修改时间：2020.7.26
+*  备    注：用于
+*************************************************************************/
+
+void Road1_flag_shift(bool reset0)
+{
+  static int Road1_flag_old;
+  if (!reset0)
+  {
+
+    if (Road1_flag == Road1_flag_old)
+      return;
+  }
+  switch (Road1_flag_old)
+  {
+  case -1:
+
+    break;
+  case 0:
+
+  case 1:
+
+  case 2:
+
+  case 3:
+
+  case 4:
+  case 5:
+
+  case 6:
+
+  default:
+    break;
+  }
+  if (reset0)
+  {
+    Road1_flag_old = -1;
+    MotorOut1 = SpeedGoal * SPEED_MOTOR_SCALE_LOW;
+    MotorOut2 = MotorOut1; //SpeedGoal * SPEED_MOTOR_SCALE_LOW;
+    return;
+  }
+  switch (Road1_flag)
+  {
+  case 0:
+    break;
+  case 1:
+    lib_speed_set(CURVE_SPEED);
+    MotorOut1 = SpeedGoal * SPEED_MOTOR_SCALE_HIGH;
+    MotorOut2 = MotorOut1; //SpeedGoal * SPEED_MOTOR_SCALE_LOW;
+    break;
+  case 2:
+
+  case 3:
+
+  case 4:
+  case 5:
+
+  case 6:
+
+  default:
+    break;
+  }
+  Road1_flag_old = Road1_flag;
+}
+/*************************************************************************
+*  函数名称：void Road2_flag_shift(void)
+*  功能说明：
+*  参数说明：
+*  函数返回：
+*  修改时间：2020.7.26
+*  备    注：用于
+*************************************************************************/
+
+void Road2_flag_shift(bool reset0)
+{
+  static int Road2_flag_old;
+  if (!reset0)
+  {
+    if (Road2_flag == Road2_flag_old)
+      return;
+  }
+  switch (Road2_flag_old)
+  {
+  case -1:
+
+    break;
+  case 0:
+
+  case 1:
+
+  case 2:
+
+  case 3:
+
+  case 4:
+  case 5:
+
+  case 6:
+
+  default:
+    break;
+  }
+  if (reset0)
+  {
+    Road2_flag_old = -1;
+    MotorOut1 = SpeedGoal * SPEED_MOTOR_SCALE_LOW;
+    MotorOut2 = MotorOut1; //SpeedGoal * SPEED_MOTOR_SCALE_LOW;
+    return;
+  }
+  switch (Road2_flag)
+  {
+  case 0:
+    break;
+  case 1:
+    lib_speed_set(CURVE_SPEED);
+    MotorOut1 = SpeedGoal * SPEED_MOTOR_SCALE_HIGH;
+    MotorOut2 = MotorOut1; //SpeedGoal * SPEED_MOTOR_SCALE_LOW;
+    break;
+  case 2:
+
+  case 3:
+
+  case 4:
+  case 5:
+
+  case 6:
+
+  default:
+    break;
+  }
+  Road2_flag_old = Road2_flag;
+}
+
+/*************************************************************************
+*  函数名称：void Road4_flag_shift(void)
+*  功能说明：
+*  参数说明：
+*  函数返回：
+*  修改时间：2020.7.26
+*  备    注：用于
+*************************************************************************/
+
+void Road4_flag_shift(bool reset0)
+{
+  static int Road4_flag_old;
+  if (!reset0)
+  {
+
+    if (Road4_flag == Road4_flag_old)
+      return;
+  }
+  switch (Road4_flag_old)
+  {
+  case -1:
+
+    break;
+  case 0:
+
+  case 1:
+
+  case 2:
+
+  case 3:
+
+  default:
+    break;
+  }
+  if (reset0)
+  {
+    Road4_flag_old = -1;
+    ramp_out_time = loop_time;
+    // ramp_reset_flag = 0;
+    return;
+  }
+  switch (Road4_flag)
+  {
+  case 0:
+    break;
+  case 1:
+    lib_speed_set(UP_RAMP_SPEED);
+    break;
+  case 2:
+    lib_speed_set(ON_RAMP_SPEED);
+    break;
+  case 3:
+    lib_speed_set(DOWN_RAMP_SPEED);
+    break;
+  default:
+    break;
+  }
+  Road4_flag_old = Road4_flag;
+}
+/*************************************************************************
+*  函数名称：void Road7_flag_shift(void)
+*  功能说明：
+*  参数说明：
+*  函数返回：
+*  修改时间：2020.7.26
+*  备    注：用于
+*************************************************************************/
+void Road7_flag_shift(bool reset0)
+{
+  static int Road7_flag_old;
+  if (!reset0)
+  {
+    if (Road7_flag == Road7_flag_old)
+      return;
+  }
+  switch (Road7_flag_old)
+  {
+  case 0:
+
+  case 1:
+
+  case 2:
+
+  case 3:
+
+  case 4:
+  case 5:
+
+  case 6:
+
+  default:
+    break;
+  }
+  if (reset0)
+  {
+    Road7_flag_old = -1;
+    return;
+  }
+  switch (Road7_flag)
+  {
+  case 0:
+    lib_speed_set(PRE_STOP_SPEED);
+    break;
+  case 1:
+    lib_speed_set(RUSH_STOP_SPEED);
+    break;
+  case 6:
+    lib_speed_set(EMERGENCY_STOP_SPEED);
+    break;
+  case 2:
+    // lib_speed_set(TURN_STOP_SPEED);
+    break;
+  case 3:
+    break;
+  case 4:
+    lib_speed_set(0);
+    break;
+  case 5:
+  default:
+    break;
+  }
+  Road7_flag_old = Road7_flag;
+}
+
+/*************************************************************************
+*  函数名称：void Curve_shift(void)
+*  功能说明：
+*  参数说明：
+*  函数b返回：
+*  修改时间：2020.7.26
+*  备    注：用于
+*************************************************************************/
+void Curve_shift(void)
+{
+  bool enter_curve_flag = 0;
+  bool in_curve_flag = 0;
+  bool out_curve_flag = 0;
+
+  if (1)
+  {
+    ;
+  }
+  enter_curve_flag = 1;
+  if (fabs(Mid_slope) < 0)
+  {
+    enter_curve_flag = 0;
+  }
+
+  if (1)
+  {
+    in_curve_flag = 1;
+  }
+
+  if (1)
+  {
+    out_curve_flag = 1;
   }
 }

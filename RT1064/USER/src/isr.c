@@ -25,7 +25,7 @@ void CSI_IRQHandler(void)
     __DSB();                //数据同步隔离
 }
 
-float loop_time = 0;
+uint16 loop_time = 0;
 float loop_time2 = 0;
 int feisu_flag = 0;
 void PIT_IRQHandler(void)
@@ -33,38 +33,45 @@ void PIT_IRQHandler(void)
     if (PIT_FLAG_GET(PIT_CH0))
     {
         PIT_FLAG_CLEAR(PIT_CH0);
-        EM_main();
-            //EM_Get();
-            if (DEBUG_CHOICE == 3)
+        if (Road != 3 && loop_time > 500)
+        {
+            if (EM_Value_2 < 0.3 && EM_Value_3 < 0.3 && EM_Value_1 < 0.3 && EM_Value_4 < 0.3)
             {
-                Kalman_Filter();
+                lib_speed_set(0);
             }
-            else if (DEBUG_CHOICE == 1 || DEBUG_CHOICE == 2)
-            {
-                Turn_Servo();
-            }
-            // Turn_diff_comp();
-            if (gpio_get(DEBUG_KEY0))
-            {
-                loop_time += 0.002;
-                loop_time2 += 0.002;
-            }
-            else
-            {
-                loop_time = 0;
-            }
-
-            ICM_main_isr();
-            // ICM_get();
-            Get_Speed();
-            lib_set_fun();
-            SpeedTarget_fig();
-            //    BBC();
-            Speed_Control_New();
-            BB_add();
-            Moto_Out();
-            Mean_Turn_Out();
         }
+        EM_main();
+        //EM_Get();
+        if (DEBUG_CHOICE == 3)
+        {
+            Kalman_Filter();
+        }
+        else if (DEBUG_CHOICE == 1 || DEBUG_CHOICE == 2)
+        {
+            Turn_Servo();
+        }
+        // Turn_diff_comp();
+        if (gpio_get(DEBUG_KEY0))
+        {
+            loop_time += 2;
+            loop_time2 += 0.002;
+        }
+        else
+        {
+            loop_time = 0;
+        }
+
+        ICM_main_isr();
+        // ICM_get();
+        Get_Speed();
+        // lib_set_fun();
+        SpeedTarget_fig();
+        //    BBC();
+        Speed_Control_New();
+        BB_add();
+        Moto_Out();
+        Mean_Turn_Out();
+    }
 
     __DSB();
 }

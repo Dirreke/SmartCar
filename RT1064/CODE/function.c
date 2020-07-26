@@ -9,7 +9,7 @@ void Para_Init()
         threshold_offset = 0;
 
         PID_SPEED.P = 50;    //2.9;//0.50
-        PID_SPEED.I = 20;//10;    //0.25;//0.0014;
+        PID_SPEED.I = 20;    //10;    //0.25;//0.0014;
         PID_SPEED.D = 0.000; //0.030
                              //PID2_SPEED.P=100;//2.9;//0.50
                              //PID2_SPEED.I=100;//0.25;//0.0014;
@@ -17,17 +17,17 @@ void Para_Init()
                              // PID_TURN.D=-0.0042*325;//-0.0053;//-0.004//3.7ÊÔ¸Ä-0.0035;
         // PID_TURN_CAM_EXT.P = 0.85;
         // PID_TURN_CAM_EXT.D = 1.8; //0.8;
-        PID_CENTER_EM.P = 9;      //4
-        PID_CENTER_EM.D = 12;     //9
+        PID_CENTER_EM.P = 9;        //4
+        PID_CENTER_EM.D = 12;       //9
         PID_STRAIGHT_EM.P = 0.7;    //0.7;//0.5;
         PID_STRAIGHT_EM.D = 0.6;    //0.6;//0.4;
-        PID_CAR_CENTER_CAM.P = 0.5;//0.3;//0.5;
+        PID_CAR_CENTER_CAM.P = 0.5; //0.3;//0.5;
         PID_CAR_CENTER_CAM.D = 0;
-        PID_CAR_STRAIGHT_CAM.P = 0.8;//0.7;//0.6;//0.7;
+        PID_CAR_STRAIGHT_CAM.P = 0.8; //0.7;//0.6;//0.7;
         PID_CAR_STRAIGHT_CAM.D = 0;
-        PID_CAR_Diffcomp_CAM.P = 0;//0.6;//0;//0.6;
+        PID_CAR_Diffcomp_CAM.P = 0; //0.6;//0;//0.6;
         PID_CAR_Diffcomp_CAM.D = 0;
-        PID_diff.P = 0.3;//1;
+        PID_diff.P = 0.3; //1;
         PID_diff0.P = 0;
         barn_reset_flag = 0;
         DEBUG_CHOICE = 2;
@@ -38,9 +38,7 @@ void Para_Init()
         //diff.h and speed.h init
         //        lib_speed_init();
 
-        lib_speed_set(2.8);
-        speedgoal = 2.8;
-        curvespeedgoal = 2.5;
+        SPEED_INIT();
 #ifdef DIFF0
         lib_active_diff_init();
         lib_active_diff_set_p(0.1);
@@ -49,4 +47,30 @@ void Para_Init()
         //¿ª²îËÙ
         //diff_on();
         diff_off();
+}
+
+float DEFAULT_SPEED = 0;
+float STRAIGHT_SPEED = 0;
+float CURVE_SPEED = 0;
+float PRE_STOP_SPEED = 0;
+float RUSH_STOP_SPEED = 0;
+float EMERGENCY_STOP_SPEED = 0;
+float UP_RAMP_SPEED = 0;
+float ON_RAMP_SPEED = 0;
+float DOWN_RAMP_SPEED = 0;
+int SPEED_MOTOR_SCALE_HIGH = 0;
+
+void SPEED_INIT(void)
+{
+ DEFAULT_SPEED = 2.8;
+ STRAIGHT_SPEED = 2.8;
+ CURVE_SPEED = 2.5;
+ PRE_STOP_SPEED = 2.5;
+ RUSH_STOP_SPEED = 2.0;
+ EMERGENCY_STOP_SPEED = 1.0;
+ UP_RAMP_SPEED = 2.0;
+ ON_RAMP_SPEED = 1.0;
+ DOWN_RAMP_SPEED = 1.0;
+
+ SPEED_MOTOR_SCALE_HIGH = 2500;
 }

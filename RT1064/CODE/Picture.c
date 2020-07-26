@@ -29,7 +29,7 @@ float Lef_slope = 0, Rig_slope = 0;
 float Cam_offset = 0;
 
 /*************************************************************************
-*  函数名称：void camera_dispose_main(void)
+*  函数名称：void Picture_pre_main(void)
 *  功能说明：图像处理主函数
 *  参数说明：无
 *  函数返回：无
@@ -37,7 +37,7 @@ float Cam_offset = 0;
 *  备    注：
 *************************************************************************/
 
-void camera_dispose_main(void) //摄像头处理主函数
+void Picture_pre_main(void) //摄像头处理主函数
 {
     Get_Use_Image(); //图像预处理
     sobel();
@@ -53,7 +53,18 @@ void camera_dispose_main(void) //摄像头处理主函数
     start_stop_find();
     crossing_find2();
     crossing_find();
-    Road_rec(); //利用左右边线斜率识别赛道
+}
+/*************************************************************************
+*  函数名称：void camera_dispose_main(void)
+*  功能说明：图像处理主函数
+*  参数说明：无
+*  函数返回：无
+*  修改时间：2019.5.31
+*  备    注：
+*************************************************************************/
+
+void camera_dispose_main(void) //摄像头处理主函数
+{
     Threshold_change();
     Pic_Fix_Line(); //补线处理
     LR_Slope_fig();

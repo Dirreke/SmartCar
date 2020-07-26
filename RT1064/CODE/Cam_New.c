@@ -6,7 +6,7 @@ PID PID_CAR_STRAIGHT_CAM;
 PID PID_CAR_CENTER_CAM;
 void Turn_Cam_New(void)
 {
-  //PID_CAR_STRAIGHT_CAM.P = 1;
+  PID_CAR_STRAIGHT_CAM.P = (((CarSpeed1 + CarSpeed2) * 0.5 - 2.3) > 0 ? ((CarSpeed1 + CarSpeed2) * 0.5 - 2.3) * 0.75 + 0.6 : 0.6); //2.8 0.95 2.5 0.6
   //PID_CAR_STRAIGHT_CAM.D = 0;
   static float car_straight_dias_old = 0;
   car_straight_dias = M_Slope_fig() * SERVO_DIVIDE_ANGLE_SCALE;
@@ -71,7 +71,7 @@ float M_Slope_fig(void)
     return atan(Mid_slope * UNDISTORT_PYK * UNDISTORT_XPK) > 0 ? 1.57 - atan(Mid_slope * UNDISTORT_PYK * UNDISTORT_XPK) : -1.57 + atan(-Mid_slope * UNDISTORT_PYK * UNDISTORT_XPK); //延续上一帧
   }
 
-  { //如果看到这段注释 下面是算斜率 可以折起来了
+  {                                         //如果看到这段注释 下面是算斜率 可以折起来了
     for (i = long_end; i < long_start; i++) //从下往上搜的 start大，end小
     {
       if (i <= FIG_AREA_NEAR && i >= FIG_AREA_FAR && New_Mid[i] != 999)

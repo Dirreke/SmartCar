@@ -20,7 +20,7 @@
 #ifndef _isr_h
 #define _isr_h
 
-extern float loop_time;
+extern uint16 loop_time;
 extern float loop_time2;
 extern int feisu_flag;
 #endif

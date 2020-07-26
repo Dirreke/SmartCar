@@ -12,8 +12,8 @@ bool Rig_circle_pre_flag = 0;
 // int Lef_break_point_und = 0;
 // int Rig_break_point_und = 0;
 
-bool barn_reset_flag; //干簧管及起跑线搜索重打开延时
-
+bool barn_reset_flag = 0; //干簧管及起跑线搜索重打开延时
+// bool ramp_reset_flag = 1;
 bool crossing_flag;
 
 int start_stop_line_flag = 0;
@@ -672,15 +672,15 @@ void start_stop_find(void)
 *************************************************************************/
 void mag_find(void)
 {
-    static int start_waited = 0;
-    if (barn_reset_flag == 0)
-    {
-        start_waited++;
-    }
-    if (loop_time > 6) //(start_waited >= 600)
+    // static int start_waited = 0;
+    // if (barn_reset_flag == 0)
+    // {
+    //     start_waited++;
+    // }
+    if (loop_time > 6000) //(start_waited >= 600)
     {
         gpio_interrupt_init(C25, FALLING, GPIO_INT_CONFIG);
-        start_waited = 0;
+        // start_waited = 0;
         barn_reset_flag = 1;
     }
     if (ganhuangguan_flag == 1)
@@ -719,7 +719,6 @@ void Road_rec(void)
             {
                 Road = 0;
                 Road0_flag = 0;
-                lib_speed_set(speedgoal);
             }
         }
         if (fabs(Lef_slope) > 1.5 && fabs(Rig_slope) > 1.5 && Road7_flag != 2 &&
@@ -733,8 +732,6 @@ void Road_rec(void)
             {
                 Road = 0;
                 Road0_flag = 0;
-                road_change_flag = 1;
-                lib_speed_set(speedgoal);
             }
         }
         else
@@ -820,7 +817,7 @@ void Road_rec(void)
         // }
 
         /* ICM判坡 */
-        if (icm_gyro_y_w < -30 * (CarSpeed1 + CarSpeed2) && icm_gyro_y_w < -60)
+        if (icm_gyro_y_w < -30 * (CarSpeed1 + CarSpeed2) && icm_gyro_y_w < -60 && loop_time - ramp_out_time > 500)
         {
             Road40_count++;
             if (Road40_count > 1)
@@ -1013,10 +1010,10 @@ void TurnLeft_Process(void)
     int dis = 0, dis1 = 0;
     for (int i = Fir_row; i < 48; ++i)
     {
-        if (Rig[i] < 40 && Rig[i + 1] <= 40 && Rig[i + 2] >= 40 && Rig[i + 3] - Rig[i + 1] < 7 &&//Rig[i + 3] > 40 &&
-                                                                                                 Rig[i + 5] -
-                                                                                                 Rig[i + 3] <
-                                                                       7 &&
+        if (Rig[i] < 40 && Rig[i + 1] <= 40 && Rig[i + 2] >= 40 && Rig[i + 3] - Rig[i + 1] < 7 && //Rig[i + 3] > 40 &&
+            Rig[i + 5] -
+                    Rig[i + 3] <
+                7 &&
             Rig[i + 7] - Rig[i + 5] < 7 && Rig[i + 9] - Rig[i + 7] < 7 && Rig[i + 11] - Rig[i + 9] < 7 &&
             Rig[i + 5] - Rig[i + 3] > 0 && Rig[i + 7] - Rig[i + 5] > 0 && Rig[i + 9] - Rig[i + 7] > 0 && Rig[i + 11] - Rig[i + 9] > 0 &&
             Rig[i + 1] - Rig[i] > 0 && Rig[i + 2] - Rig[i + 1] > 0)
@@ -1102,8 +1099,8 @@ void TurnLeft_Process(void)
         {
             Road = 0;
             Road0_flag = 4; //turn left flag
-            road_change_flag = 1;
-            threshold_offset2 = -5;
+            // road_change_flag = 1;
+            // threshold_offset2 = -5;
             Road04_count = 0; //reset
         }
     }
@@ -1147,7 +1144,7 @@ void TurnRight_Process(void)
         {
             Road00_count = 0;
             Road0_flag = 0;
-            road_change_flag = 1;
+            // road_change_flag = 1;
             // turn_stop_flag = 0;
         }
 
@@ -1215,8 +1212,8 @@ void TurnRight_Process(void)
         {
             Road = 0;
             Road0_flag = 5; //turn left flag
-            road_change_flag = 1;
-            threshold_offset2 = -5;
+            // road_change_flag = 1;
+            // threshold_offset2 = -5;
             Road05_count = 0; //reset
         }
     }
@@ -1533,7 +1530,7 @@ void Road1_zhuangtaiji(void)
             if (Road12_count > 1)
             {
                 Road1_flag = 2;
-                road_change_flag = 1;
+                // road_change_flag = 1;
             }
         }
         else
@@ -1721,7 +1718,8 @@ void Road1_zhuangtaiji(void)
             {
                 Road = 0;
                 Road0_flag = 0;
-                road_change_flag = 1;
+                Road1_flag = 0;
+                // road_change_flag = 1;
             }
         }
     }
@@ -1784,7 +1782,7 @@ void Road2_zhuangtaiji(void)
             if (Road22_count > 1)
             {
                 Road2_flag = 2;
-                road_change_flag = 1;
+                // road_change_flag = 1;
             }
         }
         else
@@ -1974,7 +1972,8 @@ void Road2_zhuangtaiji(void)
             {
                 Road = 0;
                 Road0_flag = 0;
-                road_change_flag = 1;
+                Road2_flag = 0;
+                // road_change_flag = 1;
             }
         }
     }
@@ -2038,6 +2037,7 @@ void Road3_zhuangtaiji(void)
             {
                 Road = 0;
                 Road0_flag = 0;
+                Road3_flag = 0;
                 Road32_count = 0;
             }
         }
@@ -2121,7 +2121,6 @@ void Road4_zhuangtaiji(void)
             {
                 Road4_flag = 1;
                 Road4_count0 = 0;
-                lib_speed_set(2.0);
             }
         }
         else
@@ -2134,12 +2133,10 @@ void Road4_zhuangtaiji(void)
         if (icm_gyro_y_angle > 9)
         {
             Road4_flag = 3;
-            lib_speed_set(1.0);
         }
         if (icm_gyro_y_angle > -6)
         {
             Road4_flag = 2;
-            lib_speed_set(1.0);
         }
     }
     else if (Road4_flag == 2)
@@ -2147,22 +2144,21 @@ void Road4_zhuangtaiji(void)
         if (icm_gyro_y_angle > 10)
         {
             Road4_flag = 3;
-            lib_speed_set(1.0);
         }
     }
     else if (Road4_flag == 3)
     {
-        if (icm_gyro_y_angle < 4)
+        if (icm_gyro_y_angle < 6)
         {
             Road4_count3++;
-            if (Road4_count3 > 2)
+            if (Road4_count3 > 1)
             {
                 Road4_count3 = 0;
                 Road = 0;
                 Road0_flag = 0;
-                road_change_flag = 1;
+                Road4_flag = 0;
+                // road_change_flag = 1;
                 icm_gyro_y_angle = 0;
-                lib_speed_set(speedgoal);
             }
         }
     }

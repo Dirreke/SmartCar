@@ -2,8 +2,8 @@
 #include "debug.h"
 
 int DEBUG_CHOICE = 1;
-float speedgoal;
-float curvespeedgoal;
+// float speedgoal;
+// float curvespeedgoal;
 void Debug_Init(void)
 {
     gpio_init(B10, GPI, 1, GPIO_PIN_CONFIG);
@@ -25,9 +25,11 @@ void Dubug_key(void)
         // Road = 0;
         if (qipao_flag == 0)
         {
-            lib_speed_set(speedgoal);
+            lib_speed_set(DEFAULT_SPEED);
             qipao_flag = 1;
+            barn_reset_flag = 0;
         }
+
         return;
     }
     else
@@ -83,13 +85,15 @@ void Dubug_key(void)
                 PID_CAR_CENTER_CAM.P += 0.1;
                 break;
             case 3:
-                speedgoal += 0.1;
+                DEFAULT_SPEED += 0.1;
+                STRAIGHT_SPEED += 0.1;
+                
                 break;
             case 4:
-                threshold_offset += 1;
+                SPEED_MOTOR_SCALE_HIGH += 100;//threshold_offset += 1;
                 break;
             case 5:
-                curvespeedgoal += 0.1; //PID_CAR_Diffcomp_CAM.P += 0.1;
+                CURVE_SPEED += 0.1; //PID_CAR_Diffcomp_CAM.P += 0.1;
                 break;
             case 6:
                 //PID_TURN_CAM_EXT.P += 0.1;
@@ -276,13 +280,14 @@ void Dubug_key(void)
                 PID_CAR_CENTER_CAM.P -= 0.1;
                 break;
             case 3:
-                speedgoal -= 0.1;
+                DEFAULT_SPEED -= 0.1;
+                STRAIGHT_SPEED -= 0.1;
                 break;
             case 4:
-                threshold_offset -= 1;
+                SPEED_MOTOR_SCALE_HIGH -= 100;//threshold_offset -= 1;
                 break;
             case 5:
-                curvespeedgoal -= 0.1; //PID_CAR_Diffcomp_CAM.P -= 0.1;
+                CURVE_SPEED -= 0.1; //PID_CAR_Diffcomp_CAM.P -= 0.1;
                 break;
             case 6:
                 //PID_TURN_CAM_EXT.P -= 0.1;
@@ -484,15 +489,15 @@ void ips_show_debug(int ips_num)
         break;
     case 3:
         ips200_showstr(0, 12, "speed: "); //显示字符串
-        ips200_showfloat(0, 13, speedgoal, 2, 2);
+        ips200_showfloat(0, 13, DEFAULT_SPEED, 2, 2);
         break;
     case 4:
-        ips200_showstr(0, 12, "threshold_offset");
-        ips200_showfloat(0, 13, threshold_offset, 4, 2);
+        ips200_showstr(0, 12, "SPEED_MOTOR_SCALE_HIGH //threshold_offset");
+        ips200_showfloat(0, 13, SPEED_MOTOR_SCALE_HIGH , 4, 2);
         break;
     case 5:
-        ips200_showstr(0, 12, "curvespeedgoal");
-        ips200_showfloat(0, 13, curvespeedgoal, 4, 2);
+        ips200_showstr(0, 12, "CURVE_SPEED");
+        ips200_showfloat(0, 13, CURVE_SPEED, 4, 2);
         break;
     case 6:
         ips200_showstr(0, 12, "PID_CAR_STRAIGHT_CAM.P");
@@ -504,7 +509,8 @@ void ips_show_debug(int ips_num)
         break;
     case 8:
         ips200_showstr(0, 12, "motor i DEBUG_CHOICE");
-        ips200_showint32(0, 13, PID_SPEED.I, 3);
+        ips200_showfloat(0, 13, PID_SPEED.I, 4, 2); //PID_TURN_CAM_EXT.D, 4, 2);
+        //ips200_showint32(0, 13, PID_SPEED.I, 3);
         break;
     case 9:
         ips200_showstr(0, 12, "diff_change");

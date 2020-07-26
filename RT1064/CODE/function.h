@@ -50,5 +50,38 @@ typedef struct PID
 {
     float P, I, D, OUT;
 } PID;
+void SPEED_INIT(void);
+extern float DEFAULT_SPEED;
+extern float STRAIGHT_SPEED;
+extern float CURVE_SPEED;
+extern float PRE_STOP_SPEED;
+extern float RUSH_STOP_SPEED;
+// extern float TURN_STOP_SPEED;
+extern float EMERGENCY_STOP_SPEED;
+extern float UP_RAMP_SPEED;
+extern float ON_RAMP_SPEED;
+extern float DOWN_RAMP_SPEED;
+#define SPEED_MOTOR_SCALE_LOW 2500
+extern int SPEED_MOTOR_SCALE_HIGH;// 3000
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #endif

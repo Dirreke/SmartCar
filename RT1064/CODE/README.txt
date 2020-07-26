@@ -879,3 +879,15 @@ turn fix line error ----- lose all edge lines & mid line
 lib_Speed_set motorout reset to 2500* speedtarget
 
 入弯加减速,还没写
+
+/***************************************************/
+/**20200726**/
+
+43 -> 40 ramp out time  x
+omega curve x 
+s curve (larger) x 
+p with speed x 
+
+TODO :bang change to SpeedGoal rather than target 
+    bang to speed: target -> 0.5*(target + SG) ？
+    
