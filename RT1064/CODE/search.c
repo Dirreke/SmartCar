@@ -1995,22 +1995,50 @@ void Road3_zhuangtaiji(void)
 {
 
     //static int start_count = 0;
-    static int Road31_count = 0;
+    //static int Road31_count = 0;
     static int Road32_count = 0;
+    int out_of_barn_jump_line = 0;
 
+    //int k;
 #ifdef TL2barn
-
     if (Road3_flag == 0)
     {
-        for (int i = Last_row - 3; i > Fir_row + 1; --i)
+        if (loop_distance > 163)
         {
-            if (abs(Lef[i - 1] - Lef[i]) < 10)
+            Road3_flag = 1;
+            return;
+        }
+        /*
+        for (k = Last_row - 3; k > Fir_row + 1; --k)
+        {
+            if (Lef[k] <= 2)
             {
                 continue;
             }
             else
             {
-                start_line = i;
+                break;
+            }
+        }
+        if (k == Fir_row + 1)
+        {
+            Road3_flag = 1;
+            return;
+        }
+        for (; k > Fir_row + 1; --k)
+        {
+            if (Lef[k - 1] <= 2 && Lef[k - 2] <= 2 && Lef[k - 3] <= 2)
+            {
+                start_line = k;
+                break;
+            }
+            if (abs(Lef[k - 1] - Lef[k]) < 10)
+            {
+                continue;
+            }
+            else
+            {
+                start_line = k;
                 break;
             }
         }
@@ -2027,8 +2055,61 @@ void Road3_zhuangtaiji(void)
         {
             Road31_count = 0;
         }
+        */
     }
     else if (Road3_flag == 1)
+    {
+        /* 35后搜连续 */
+        for (int i = 35; i < Last_row - 3; ++i)
+        {
+            if (i == Last_row - 4)
+            {
+                Road32_count++;
+                out_of_barn_jump_line = i + 1;
+                break;
+            }
+            if (Rig[i + 2] - Rig[i] < 6 && Rig[i + 2] - Rig[i] > 0)
+            {
+                continue;
+            }
+            else
+            {
+                out_of_barn_jump_line = i;
+                if (out_of_barn_jump_line < 40)
+                {
+                    return;
+                }
+                break;
+            }
+        }
+
+        for (; out_of_barn_jump_line < Last_row - 3; out_of_barn_jump_line++)
+        {
+            if (out_of_barn_jump_line == Last_row - 4)
+            {
+                Road32_count++;
+                break;
+            }
+            if (Rig[out_of_barn_jump_line] > 65)
+            {
+                continue;
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        if (Road32_count > 2)
+        {
+            Road = 0;
+            Road0_flag = 0;
+            Road3_flag = 0;
+            Road32_count = 0;
+        }
+    }
+    /*
+    else if (Road3_flag == 2)
     {
         if (Rig_slope < -0.25)
         {
@@ -2041,19 +2122,47 @@ void Road3_zhuangtaiji(void)
                 Road32_count = 0;
             }
         }
-        else
-        {
-            Road32_count = 0;
-        }
+    }
+        */
+    else
+    {
+        Road32_count = 0;
     }
 
 #endif
 #ifdef TR2barn
     if (Road3_flag == 0)
     {
-        for (int i = Last_row - 3; i > Fir_row + 1; --i)
+        if (loop_distance > 163)
         {
-            if (abs(Rig[i - 1] - Rig[i]) < 10)
+            Road3_flag = 1;
+            return;
+        }
+        /*
+        for (k = Last_row - 3; k > Fir_row + 1; --k)
+        {
+            if (Rig[k] >= 78)
+            {
+                continue;
+            }
+            else
+            {
+                break;
+            }
+        }
+        if (k == Fir_row + 1)
+        {
+            Road3_flag = 1;
+            return;
+        }
+        for (int i = k; i > Fir_row + 1; --i)
+        {
+            if (Rig[i - 1] >= 78 && Rig[i - 2] >= 78 && Rig[i - 3] >= 78)
+            {
+                start_line = i;
+                break;
+            }
+            if (abs(Rig[i] - Rig[i - 1]) < 10)
             {
                 continue;
             }
@@ -2063,7 +2172,7 @@ void Road3_zhuangtaiji(void)
                 break;
             }
         }
-        if (start_line > 38)
+        if (start_line > 35 - (60 - k)) // 不对称
         {
             Road31_count++;
             if (Road31_count > 1)
@@ -2076,28 +2185,65 @@ void Road3_zhuangtaiji(void)
         {
             Road31_count = 0;
         }
+        */
     }
     else if (Road3_flag == 1)
     {
-        if (Lef_slope > 0.25 && Lef_slope != 999)
+        /* 35后搜连续 */
+        for (int i = 35; i < Last_row - 3; ++i)
         {
-            Road32_count++;
-            if (Road32_count > 2)
+            if (i == Last_row - 4)
             {
-                Road32_count = 0;
-                Road = 0;
-                Road0_flag = 0;
+                Road32_count++;
+                out_of_barn_jump_line = i + 1;
+                break;
+            }
+            if (Lef[i] - Lef[i + 2] < 6 && Lef[i] - Lef[i + 2] > 0)
+            {
+                continue;
+            }
+            else
+            {
+                out_of_barn_jump_line = i;
+                if (out_of_barn_jump_line < 40)
+                {
+                    return;
+                }
+                break;
             }
         }
-        else
+
+        for (; out_of_barn_jump_line < Last_row - 3; out_of_barn_jump_line++)
         {
+            if (out_of_barn_jump_line == Last_row - 4)
+            {
+                Road32_count++;
+                break;
+            }
+            if (Lef[out_of_barn_jump_line] < 15)
+            {
+                continue;
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        if (Road32_count > 2)
+        {
+            Road = 0;
+            Road0_flag = 0;
+            Road3_flag = 0;
             Road32_count = 0;
         }
     }
-
+    else
+    {
+        Road32_count = 0;
+    }
 #endif
 }
-
 /*************************************************************************
 *  函数名称：void Road4_zhuangtaiji(void)
 *  功能说明：坡道状态机

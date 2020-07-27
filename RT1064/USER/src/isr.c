@@ -26,8 +26,9 @@ void CSI_IRQHandler(void)
 }
 
 uint16 loop_time = 0;
-float loop_time2 = 0;
-int feisu_flag = 0;
+//float loop_time2 = 0;
+//int feisu_flag = 0;
+float loop_distance = 0;
 void PIT_IRQHandler(void)
 {
     if (PIT_FLAG_GET(PIT_CH0))
@@ -36,6 +37,7 @@ void PIT_IRQHandler(void)
         if (Road != 3 && loop_time > 500)
         {
             if (EM_Value_2 < 0.3 && EM_Value_3 < 0.3 && EM_Value_1 < 0.3 && EM_Value_4 < 0.3)
+            //if(loop_time > 1500)
             {
                 lib_speed_set(0);
             }
@@ -53,12 +55,9 @@ void PIT_IRQHandler(void)
         // Turn_diff_comp();
         if (gpio_get(DEBUG_KEY0))
         {
-            loop_time += 2;
-            loop_time2 += 0.002;
-        }
-        else
-        {
-            loop_time = 0;
+            loop_time += 2;//ms
+            //loop_time2 += 0.002;
+            loop_distance += CarSpeed1 + CarSpeed2; //mm
         }
 
         ICM_main_isr();

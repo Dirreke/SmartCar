@@ -23,7 +23,8 @@ beiyingjian
 中优先级
 电磁杆硬件              //done
 电磁杆耦合控制      
-边线旁，高亮点滤波等处理     
+边线旁，
+高亮点滤波等处理     
 
 
 
@@ -40,4 +41,4 @@ beiyingjian
 电池充电并放电
 注释wifi代码
 icm、各板固定
-
+若不关电源 要reset（各种road的flag清空）

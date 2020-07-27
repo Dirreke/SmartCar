@@ -42,11 +42,11 @@
 
 uint8 image_head[4] = {0x00, 0xff, 0x01, 0x01};
 
-uint32 use_time;
+//uint32 use_time;
 
 int main(void)
 {
-    int temp_flag = 0;
+    //int temp_flag = 0;
     DisableGlobalIRQ();
     /** board init **/
     board_init();          //务必保留，本函数用于初始化MPU 时钟 调试串口
@@ -76,10 +76,10 @@ int main(void)
 
     while (1)
     {
-        if (temp_flag < 1)
-        {
-            loop_time = 9999;
-        }
+        //if (temp_flag < 1)
+        //{
+        //    loop_time = 9999;
+        //}
 
         if (mt9v03x_csi_finish_flag) //图像采集完成
         {
@@ -92,13 +92,13 @@ int main(void)
             camera_dispose_main();
 
             Send_Data();
-            feisu_flag = 0;
-            loop_time2 = 0;
-            if (temp_flag < 100)
-            {
-                loop_time = 0;
-                temp_flag++;
-            }
+            //feisu_flag = 0;
+            //loop_time2 = 0;
+            //if (temp_flag < 100)
+            //{
+            //   loop_time = 0;
+            //    temp_flag++;
+            //}
             Dubug_key();
 
             //使用缩放显示函数，根据原始图像大小 以及设置需要显示的大小自动进行缩放或者放大显示。

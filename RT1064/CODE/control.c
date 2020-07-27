@@ -11,7 +11,7 @@ float Turn_D_EM;
 bool speed_change_flag = 0;
 // bool road_change_flag = 0;
 
-uint8 ramp_out_time = 0;
+int ramp_out_time = -500;
 float Turn_EM_Out1 = 0, Turn_EM_Out2 = 0, Turn_EM_Out = 0;
 PID PID_CENTER_EM, PID_STRAIGHT_EM;
 
@@ -224,6 +224,11 @@ void Turn_Servo()
   }
   else if (Road == 3)
   {
+    if (Road3_flag == 0)
+    {
+      Turn_Cam_Out = 0;
+      Turn_Out = Turn_Cam_Out;
+    }
     if (Road3_flag == 1)
     {
 #ifdef TL2barn
@@ -297,13 +302,13 @@ void SpeedTarget_fig(void)
       angle_val = 0;
       diff_off();
     }
-    else if (Turn_Cam_Out_temp > 262.5*PID_CAR_STRAIGHT_CAM.P)//SERVO_RANGE)
+    else if (Turn_Cam_Out_temp > 210) //262.5 * PID_CAR_STRAIGHT_CAM.P) //SERVO_RANGE)
     {
       // angle_val = ANGLE_RANGE; //((Turn_Cam_Out_temp - SERVO_RANGE) * DIFF_KKK + SERVO_RANGE) * ANGLE_DIVIDE_SERVO_SCALE;
       diff_on();
       PID_diff_P = PID_diff.P;
     }
-    else if (Turn_Cam_Out_temp < -262.5*PID_CAR_STRAIGHT_CAM.P)//-SERVO_RANGE)
+    else if (Turn_Cam_Out_temp < -210) //-262.5 * PID_CAR_STRAIGHT_CAM.P) //-SERVO_RANGE)
     {
       // angle_val = -ANGLE_RANGE; //((Turn_Cam_Out_temp + SERVO_RANGE) * DIFF_KKK - SERVO_RANGE) * ANGLE_DIVIDE_SERVO_SCALE;
       diff_on();
@@ -444,7 +449,7 @@ PID PID_SPEED, PID2_SPEED;
 
 float SpeedE1, SpeedE2;
 float SpeedEE1, SpeedEE2;
-float SpeedGoalE1,SpeedGoalE2;
+float SpeedGoalE1, SpeedGoalE2;
 
 void Speed_Control_New(void)
 {
@@ -599,7 +604,7 @@ void Speed_Control_New(void)
   else if (a_flag1)
   {
     //不刹车时
-    if (speedTarget1 > 0)//DEBUG!!! (speedTarget1 + SpeedGoal)/2 ?
+    if (speedTarget1 > 0) //DEBUG!!! (speedTarget1 + SpeedGoal)/2 ?
     {
       //加速状态速度小于设定速度5000
       if (CarSpeed1 < speedTarget1 * 1.0)
@@ -1065,152 +1070,6 @@ void Mean_Turn_Out(void)
 }
 
 /*************************************************************************
-*  函数名称：int8 BB_add_flag_set(void)
-*  功能说明：转向BB置位
-*  参数说明：
-*  函数返回：
-*  修改时间：2020.7.13
-*  备    注：用于
-*************************************************************************/
-int8 BB_add_flag_set(void)
-{
-
-  static int8 BB_add_flag = -1;
-  // if (BB_add_flag == -1) //标志位置位
-  // {
-  if (Turn_Out < -100 || Road0_flag == 4 || (Road1_flag > 1 && Road1_flag < 6) || ((Road1_flag == 1 || Road1_flag == 6) && Turn_Out < -50))
-  {
-    if (CarSpeed1 - CarSpeed2 > 0.1)
-    {
-      BB_add_flag = 4;
-    }
-    if (CarSpeed1 - CarSpeed2 > 0.5)
-    {
-      BB_add_flag = 14;
-    }
-  }
-  else if (Turn_Out > 100 || Road0_flag == 5 || (Road2_flag > 1 && Road2_flag < 6) || ((Road2_flag == 1 || Road2_flag == 6) && Turn_Out > 50))
-  {
-    if (CarSpeed2 - CarSpeed1 > 0.1)
-    {
-      BB_add_flag = 5;
-    }
-    if (CarSpeed2 - CarSpeed1 > 0.5)
-    {
-      BB_add_flag = 15;
-    }
-  }
-  else if (Turn_Out < 50 && Road == 0)
-  {
-    if (CarSpeed1 - CarSpeed2 > 0.3)
-    {
-      BB_add_flag = 0;
-    }
-    if (CarSpeed1 - CarSpeed2 > 0.6)
-    {
-      BB_add_flag = 10;
-    }
-  }
-  else if (Turn_Out > -50 && Road == 0)
-  {
-    if (CarSpeed2 - CarSpeed1 > 0.3)
-    {
-      BB_add_flag = 1;
-    }
-    if (CarSpeed2 - CarSpeed1 > 0.6)
-    {
-      BB_add_flag = 11;
-    }
-  }
-  // else if (Road == 0 && Road0_flag < 3)
-  // {
-  //   if (CarSpeed1 - CarSpeed2 > 0.5 && Turn_Out < 50)
-  //   {
-  //     BB_add_flag = 0;
-  //   }
-  //   else if (CarSpeed2 - CarSpeed1 > 0.5 && Turn_Out > -50)
-  //   {
-  //     BB_add_flag = 1;
-  //   }
-  // }
-  // }
-  if (BB_add_flag % 10 == 0)
-  {
-    if (CarSpeed1 - CarSpeed2 < 0.2 || Turn_Out > 70) //70budui DEBUG
-      BB_add_flag = -1;
-  }
-  else if (BB_add_flag % 10 == 1)
-  {
-    if (CarSpeed2 - CarSpeed1 < 0.2 || Turn_Out < -70)
-      BB_add_flag = -1;
-  }
-  else if (BB_add_flag % 10 == 4)
-  {
-    if (CarSpeed2 - CarSpeed1 > 0.1)
-      BB_add_flag = -1;
-  }
-  else if (BB_add_flag % 10 == 5)
-  {
-    if (CarSpeed1 - CarSpeed2 > 0.1)
-    {
-      BB_add_flag = -1;
-    }
-  }
-  return BB_add_flag;
-}
-/*************************************************************************
-*  函数名称：  void BB_add(void)
-*  功能说明：转向BB
-*  参数说明：
-*  函数返回：
-*  修改时间：2020.7.13
-*  备    注：用于
-*************************************************************************/
-void BB_add(void)
-{
-  int BB_add_flag = 0;
-  int temp = 1000; //2000;
-  int temp2 = 500; //500;
-  BB_add_flag = BB_add_flag_set();
-  if (BB_add_flag / 10 == 0)
-  {
-    temp = 1000; //2000;
-    temp2 = 500; //500;
-  }
-  else if (BB_add_flag / 10 == 1)
-  {
-    temp = 2000;  //2000;
-    temp2 = 1000; //500;
-  }
-
-  if (BB_add_flag % 10 == 0)
-  {
-    MotorOut1_add = -temp2;
-    MotorOut2_add = temp;
-  }
-  else if (BB_add_flag % 10 == 1)
-  {
-    MotorOut1_add = temp;
-    MotorOut2_add = -temp2;
-  }
-  else if (BB_add_flag % 10 == 4)
-  {
-    MotorOut1_add = -temp2;
-    MotorOut2_add = temp;
-  }
-  else if (BB_add_flag % 10 == 5)
-  {
-    MotorOut1_add = temp;
-    MotorOut2_add = -temp2;
-  }
-  else
-  {
-    MotorOut1_add = 0;
-    MotorOut2_add = 0;
-  }
-}
-
-/*************************************************************************
 *  函数名称：void Road_shift(void)
 *  功能说明：
 *  参数说明：
@@ -1653,5 +1512,198 @@ void Curve_shift(void)
   if (1)
   {
     out_curve_flag = 1;
+  }
+}
+
+/*************************************************************************
+*  函数名称：int8 BB_add_flag_set(void)
+*  功能说明：转向BB置位
+*  参数说明：
+*  函数返回：
+*  修改时间：2020.7.13
+*  备    注：用于
+*************************************************************************/
+int BB_add_flag_set(void)
+{
+
+  static int BB_add_flag = 0;
+  float Turn_Out_Table[4] = {200, 100, 50, 0};
+  float Speed12_diff[4] = {0.3, 0.1, 0, -0.2};
+  float Speed12_diff2[4] = {0, -0.2, -0.3, -0.5};
+  float Speed12_diff_stop[4] = {0.5, 0.3, 0.1, 0};
+  float speed_diff;
+
+  if (Turn_Out < 0)
+  {
+    speed_diff = CarSpeed2 - CarSpeed1;
+  }
+  else
+  {
+    speed_diff = CarSpeed1 - CarSpeed2;
+  }
+  if (BB_add_flag % 10 != 0)
+  {
+    if (fabs(Turn_Out) <= Turn_Out_Table[BB_add_flag % 10 - 1] ||
+        (BB_add_flag % 10 > 1 && fabs(Turn_Out) <= Turn_Out_Table[BB_add_flag % 10 - 2]) ||
+        (Turn_Out < 0 ^ BB_add_flag / 100 == 1) ||
+        speed_diff > Speed12_diff_stop[BB_add_flag % 10 - 1])
+    {
+      BB_add_flag = 0;
+    }
+  }
+  if (BB_add_flag % 10 == 0)
+  {
+    if (Turn_Out < 0)
+    {
+      BB_add_flag = 100;
+    }
+    else
+    {
+      BB_add_flag = 0;
+    }
+
+    for (int i = 0; i < 4; ++i)
+    {
+      if (fabs(Turn_Out) > Turn_Out_Table[i])
+      {
+        if (speed_diff < Speed12_diff[i])
+        {
+          BB_add_flag += i + 1;
+        }
+        if (speed_diff < Speed12_diff2[i])
+        {
+          BB_add_flag += 10;
+        }
+        break;
+      }
+    }
+  }
+
+  // if (BB_add_flag == -1) //标志位置位
+  // {
+  // if (Turn_Out < -100 || Road0_flag == 4 || (Road1_flag > 1 && Road1_flag < 6) || ((Road1_flag == 1 || Road1_flag == 6) && Turn_Out < -50))
+  // {
+  //   if (CarSpeed1 - CarSpeed2 > 0.1)
+  //   {
+  //     BB_add_flag = 4;
+  //   }
+  //   if (CarSpeed1 - CarSpeed2 > 0.5)
+  //   {
+  //     BB_add_flag = 14;
+  //   }
+  // }
+  // else if (Turn_Out > 100 || Road0_flag == 5 || (Road2_flag > 1 && Road2_flag < 6) || ((Road2_flag == 1 || Road2_flag == 6) && Turn_Out > 50))
+  // {
+  //   if (CarSpeed2 - CarSpeed1 > 0.1)
+  //   {
+  //     BB_add_flag = 5;
+  //   }
+  //   if (CarSpeed2 - CarSpeed1 > 0.5)
+  //   {
+  //     BB_add_flag = 15;
+  //   }
+  // }
+  // else if (Turn_Out < 50 && Road == 0)
+  // {
+  //   if (CarSpeed1 - CarSpeed2 > 0.3)
+  //   {
+  //     BB_add_flag = 0;
+  //   }
+  //   if (CarSpeed1 - CarSpeed2 > 0.6)
+  //   {
+  //     BB_add_flag = 10;
+  //   }
+  // }
+  // else if (Turn_Out > -50 && Road == 0)
+  // {
+  //   if (CarSpeed2 - CarSpeed1 > 0.3)
+  //   {
+  //     BB_add_flag = 1;
+  //   }
+  //   if (CarSpeed2 - CarSpeed1 > 0.6)
+  //   {
+  //     BB_add_flag = 11;
+  //   }
+  // }
+
+  // else if (Road == 0 && Road0_flag < 3)
+  // {
+  //   if (CarSpeed1 - CarSpeed2 > 0.5 && Turn_Out < 50)
+  //   {
+  //     BB_add_flag = 0;
+  //   }
+  //   else if (CarSpeed2 - CarSpeed1 > 0.5 && Turn_Out > -50)
+  //   {
+  //     BB_add_flag = 1;
+  //   }
+  // }
+  // }
+
+  // if (BB_add_flag % 10 == 1)
+  // {
+  //   if (speed_diff < 0.2 || Turn_Out > 70) //70budui DEBUG
+  //     BB_add_flag = 0;
+  // }
+  // else if (BB_add_flag % 10 == 2)
+  // {
+  //   if (CarSpeed2 - CarSpeed1 < 0.2 || Turn_Out < -70)
+  //     BB_add_flag = 0;
+  // }
+  // else if (BB_add_flag % 10 == 3)
+  // {
+  //   if (CarSpeed2 - CarSpeed1 > 0.1)
+  //     BB_add_flag = 0;
+  // }
+  // else if (BB_add_flag % 10 == 4)
+  // {
+  //   if (CarSpeed1 - CarSpeed2 > 0.1)
+  //   {
+  //     BB_add_flag = 0;
+  //   }
+  // }
+  return BB_add_flag;
+}
+/*************************************************************************
+*  函数名称：  void BB_add(void)
+*  功能说明：转向BB
+*  参数说明：
+*  函数返回：
+*  修改时间：2020.7.13
+*  备    注：用于
+*************************************************************************/
+int DDDebug;
+void BB_add(void)
+{
+  int BB_add_flag = 0;
+  int temp;  //2000;
+  int temp2; //500;
+  BB_add_flag = BB_add_flag_set();
+  DDDebug = BB_add_flag;
+  if (BB_add_flag % 10 == 0)
+  {
+    MotorOut1_add = 0;
+    MotorOut2_add = 0;
+    return;
+  }
+  if (BB_add_flag % 100 / 10 == 0)
+  {
+    temp = 1000; //2000;
+    temp2 = 500; //500;
+  }
+  else if (BB_add_flag % 100 / 10 == 1)
+  {
+    temp = 2000;  //2000;
+    temp2 = 1000; //500;
+  }
+
+  if (BB_add_flag / 100 == 0)
+  {
+    MotorOut1_add = -temp2;
+    MotorOut2_add = temp;
+  }
+  else if (BB_add_flag / 100 == 1)
+  {
+    MotorOut1_add = temp;
+    MotorOut2_add = -temp2;
   }
 }

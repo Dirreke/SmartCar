@@ -8,6 +8,8 @@ void Para_Init()
 {
         threshold_offset = 0;
 
+        Road = 3;
+        Road3_flag = 0;
         PID_SPEED.P = 50;    //2.9;//0.50
         PID_SPEED.I = 20;    //10;    //0.25;//0.0014;
         PID_SPEED.D = 0.000; //0.030
@@ -27,7 +29,7 @@ void Para_Init()
         PID_CAR_STRAIGHT_CAM.D = 0;
         PID_CAR_Diffcomp_CAM.P = 0; //0.6;//0;//0.6;
         PID_CAR_Diffcomp_CAM.D = 0;
-        PID_diff.P = 0.3; //1;
+        PID_diff.P = 0.5; //1;
         PID_diff0.P = 0;
         barn_reset_flag = 0;
         DEBUG_CHOICE = 2;

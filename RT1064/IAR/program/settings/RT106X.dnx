@@ -16,7 +16,7 @@
         <LeaveTargetRunning>_ 0</LeaveTargetRunning>
     </JLinkDriver>
     <DebugChecksum>
-        <Checksum>2350158311</Checksum>
+        <Checksum>3324793835</Checksum>
     </DebugChecksum>
     <Exceptions>
         <StopOnUncaught>_ 0</StopOnUncaught>
@@ -113,7 +113,7 @@
     <Jet>
         <JetConnSerialNo>SEEKFREE CMSIS-DAP V1:SF89288174411242</JetConnSerialNo>
         <JetConnFoundProbes>SEEKFREE CMSIS-DAP V1:SF89288174411242:SEEKFREE CMSIS-DAP V2:0:</JetConnFoundProbes>
-        <PrevWtdReset>Core</PrevWtdReset>
+        <PrevWtdReset>Disabled (no reset)</PrevWtdReset>
         <DisableInterrupts>0</DisableInterrupts>
         <LeaveRunning>0</LeaveRunning>
         <MultiCoreRunAll>0</MultiCoreRunAll>
@@ -121,7 +121,7 @@
     </Jet>
     <PlDriver>
         <FirstRun>0</FirstRun>
-        <MemConfigValue>I:\IAR\arm\CONFIG\debugger\NXP\MIMXRT1064xxx6A.ddf</MemConfigValue>
+        <MemConfigValue>E:\IAR\arm\CONFIG\debugger\NXP\MIMXRT1064xxx6A.ddf</MemConfigValue>
     </PlDriver>
     <SWOManager>
         <SamplingDivider>8192</SamplingDivider>
@@ -180,11 +180,24 @@
         <mode>0</mode>
     </DisassembleMode>
     <Breakpoints2>
-        <Bp0>_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\..\CODE\control.c}.1325.5" 0 0 1 "" 0 "" 0</Bp0>
-        <Bp1>_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\..\CODE\control.c}.1401.5" 0 0 1 "" 0 "" 0</Bp1>
-        <Bp2>_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\..\CODE\control.c}.1411.5" 0 0 1 "" 0 "" 0</Bp2>
-        <Bp3>_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\..\CODE\control.c}.1310.3" 0 0 1 "" 0 "" 0</Bp3>
-        <Count>4</Count>
+        <Bp0>_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\..\CODE\control.c}.11.20" 0 0 1 "" 0 "" 0</Bp0>
+        <Bp1>_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\..\USER\src\isr.c}.81.5" 0 0 1 "" 0 "" 0</Bp1>
+        <Bp2>_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\..\CODE\search.c}.790.17" 0 0 1 "" 0 "" 0</Bp2>
+        <Bp3>_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\..\CODE\search.c}.408.14" 0 0 1 "" 0 "" 0</Bp3>
+        <Bp4>_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\..\CODE\search.c}.575.13" 0 0 1 "" 0 "" 0</Bp4>
+        <Bp5>_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\..\CODE\search.c}.595.17" 0 0 1 "" 0 "" 0</Bp5>
+        <Bp6>_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\..\CODE\search.c}.621.13" 0 0 1 "" 0 "" 0</Bp6>
+        <Bp7>_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\..\CODE\search.c}.610.17" 0 0 1 "" 0 "" 0</Bp7>
+        <Bp8>_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\..\CODE\search.c}.565.5" 0 0 1 "" 0 "" 0</Bp8>
+        <Bp9>_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\..\CODE\search.c}.565.5" 0 0 1 "" 0 "" 0</Bp9>
+        <Bp10>_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\..\CODE\search.c}.565.5" 0 0 1 "" 0 "" 0</Bp10>
+        <Bp11>_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\..\CODE\search.c}.565.5" 0 0 1 "" 0 "" 0</Bp11>
+        <Bp12>_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\..\CODE\search.c}.1471.9" 0 0 1 "" 0 "" 0</Bp12>
+        <Bp13>_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\..\CODE\search.c}.790.17" 0 0 1 "" 0 "" 0</Bp13>
+        <Bp14>_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\..\CODE\search.c}.1471.9" 0 0 1 "" 0 "" 0</Bp14>
+        <Bp15>_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\..\CODE\search.c}.978.10" 0 0 1 "" 0 "" 0</Bp15>
+        <Bp16>_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\..\CODE\search.c}.1463.9" 0 0 1 "" 0 "" 0</Bp16>
+        <Count>17</Count>
     </Breakpoints2>
     <TermIOLog>
         <LoggingEnabled>_ 0</LoggingEnabled>

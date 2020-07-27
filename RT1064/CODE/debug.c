@@ -28,6 +28,9 @@ void Dubug_key(void)
             lib_speed_set(DEFAULT_SPEED);
             qipao_flag = 1;
             barn_reset_flag = 0;
+            ramp_out_time = -500;
+            loop_time = 0;
+            loop_distance = 0;
         }
 
         return;

@@ -39,7 +39,7 @@ void Kalman_Filter(void);
 void BBC(void);
 void Mean_Turn_Out(void);
 
-int8 BB_add_flag_set(void);
+int BB_add_flag_set(void);
 void BB_add(void);
 
 void Road7_flag_shift(bool reset0);
@@ -66,4 +66,4 @@ extern PID PID_diff0;
   extern float SpeedE1, SpeedE2;
   extern float SpeedEE1, SpeedEE2;
 
-extern uint8 ramp_out_time;
+extern int ramp_out_time;

@@ -16,3 +16,4 @@ void Dubug_key(void);
 void ips_show_debug(int ips_num);
 void ips_show_debug_pd(int ips_num);
 
+extern int DDDebug;
