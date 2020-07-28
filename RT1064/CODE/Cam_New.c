@@ -6,8 +6,8 @@ PID PID_CAR_STRAIGHT_CAM;
 PID PID_CAR_CENTER_CAM;
 void Turn_Cam_New(void)
 {
-  PID_CAR_STRAIGHT_CAM.P = (((CarSpeed1 + CarSpeed2) * 0.5 - 2.3) > 0 ? ((CarSpeed1 + CarSpeed2) * 0.5 - 2.3) * 0.75 + 0.6 : 0.6); //2.8 0.95 2.5 0.6
-  //PID_CAR_STRAIGHT_CAM.D = 0;
+  PID_CAR_STRAIGHT_CAM.P = ((CarSpeed - 2.3) > 0 ? (CarSpeed - 2.3) * 0.75 + 0.6 : 0.6); //2.8 0.95 2.5 0.6
+  // PID_CAR_STRAIGHT_CAM.D = 0;
   static float car_straight_dias_old = 0;
   car_straight_dias = M_Slope_fig() * SERVO_DIVIDE_ANGLE_SCALE;
   Straight_offset_filter();
@@ -156,8 +156,8 @@ float car_diffcomp_dias;
 float Car_diff_comp(void)
 {
 
-  if (CarSpeed1 + CarSpeed2 > 3)
-    return Turn_Out - atan(2 * (CarSpeed1 - CarSpeed2) / ((CarSpeed1 + CarSpeed2) * CAR_DIFF_K)) * SERVO_DIVIDE_ANGLE_SCALE;
+  if (CarSpeed > 1.5)
+    return Turn_Out - atan(2 * (CarSpeed1 - CarSpeed2) / (CarSpeed * CAR_DIFF_K)) * SERVO_DIVIDE_ANGLE_SCALE;
   else
     return 0;
 }

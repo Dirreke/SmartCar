@@ -89,6 +89,7 @@ int main(void)
             Picture_pre_main();
             Road_rec();
             Road_shift();
+            Curve_shift();
             camera_dispose_main();
 
             Send_Data();

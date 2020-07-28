@@ -891,3 +891,17 @@ p with speed x
 TODO :bang change to SpeedGoal rather than target 
     bang to speed: target -> 0.5*(target + SG) ？
     
+
+/***************************************************/
+/**20200727-28**/
+
+改了那个控制策略 然后内个bb control 内个我想想
+之前不是加了一个内个 弯道加速不大bang 写了个减速均速到了就停bang
+
+差速给了0.5 0.7 1.0表 对应200 250 300
+还改啥了
+焊两板 未胶
+
+
+
+gmy跟syh组了个“四轮之夜”cp 请原地出道！！！！

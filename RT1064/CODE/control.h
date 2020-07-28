@@ -1,25 +1,27 @@
-#include"headfile.h"
+#include "headfile.h"
 
 extern float Turn_Cam_Out;
 extern float Turn_EM_Out;
 extern float Turn_Out;
-extern float MotorOut1,MotorOut2;
+extern float MotorOut1, MotorOut2;
 extern float MotorOut1_add;
 extern float MotorOut2_add;
 
-extern float speedTarget1,speedTarget2;
+extern float speedTarget1, speedTarget2;
 extern float mean_turn_out;
 extern PID PID_SPEED;
 
-extern float Turn_EM_Out1 ,Turn_EM_Out2 ,Turn_EM_Out;
-extern PID PID_CENTER_EM ,PID_STRAIGHT_EM;
+extern float Turn_EM_Out1, Turn_EM_Out2, Turn_EM_Out;
+extern PID PID_CENTER_EM, PID_STRAIGHT_EM;
 
 extern bool speed_change_flag;
 // extern bool road_change_flag;
 extern int mix_choice;
 
-extern float DIFF_KKK;
-extern float DIFF_KK;
+extern bool a_flag1, a_flag2, d_flag1, d_flag2;
+
+// extern float DIFF_KKK;
+// extern float DIFF_KK;
 void Turn_Cam(void);
 PID TurnFuzzyPD_Cam(void);
 
@@ -50,20 +52,15 @@ void Road0_flag_shift(bool reset0);
 void Road_shift(void);
 void Curve_shift(void);
 
-
-
-
-
-
-
 //debug
-extern PID PID_SPEED,PID2_SPEED;
+extern PID PID_SPEED, PID2_SPEED;
 extern PID PID_diff;
 extern PID PID_diff0;
 // extern PID PID_TURN_CAM_EXT;
 // float Turn_P;
 // float Turn_D;
-  extern float SpeedE1, SpeedE2;
-  extern float SpeedEE1, SpeedEE2;
+extern float SpeedE1, SpeedE2;
+extern float SpeedEE1, SpeedEE2;
 
 extern int ramp_out_time;
+extern int curve_state;

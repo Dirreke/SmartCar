@@ -57,7 +57,7 @@ void PIT_IRQHandler(void)
         {
             loop_time += 2;//ms
             //loop_time2 += 0.002;
-            loop_distance += CarSpeed1 + CarSpeed2; //mm
+            loop_distance += CarSpeed * 2; //mm
         }
 
         ICM_main_isr();

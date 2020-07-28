@@ -1,11 +1,11 @@
 #include "headfile.h"
 extern float CarSpeed1;
 extern float CarSpeed2;
+extern float CarSpeed;
 extern float SpeedGoal;
 
 void qtimer_AB_init(void);
 void Get_Speed(void);
-
 
 
 

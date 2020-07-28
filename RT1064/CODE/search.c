@@ -705,6 +705,7 @@ void mag_find(void)
 void Road_rec(void)
 {
     static int Road0_count = 0;
+    static int Road0_count4 = 0;
     static int Road00_count = 0;
     static int Road10_count = 0, Road20_count = 0, Road70_count = 0, Road40_count = 0;
     static int Road100_count = 0;
@@ -712,13 +713,16 @@ void Road_rec(void)
     //½øÖ±Â·
     if (Road != 0)
     {
-        if (Road == 4 && Lef_slope == 998 && Rig_slope == 998)
+        if (Road == 4 && icm_gyro_y_w < 40)
         {
-            Road0_count++;
-            if (Road0_count >= 3)
+            if (Road4_flag > 2 ||  (Road4_flag < 2 && fabs(icm_gyro_y_angle) < 2))
             {
-                Road = 0;
-                Road0_flag = 0;
+                Road0_count4++;
+                if (Road0_count4 > 3)
+                {
+                    Road = 0;
+                    Road0_flag = 0;
+                }
             }
         }
         if (fabs(Lef_slope) > 1.5 && fabs(Rig_slope) > 1.5 && Road7_flag != 2 &&
@@ -817,7 +821,7 @@ void Road_rec(void)
         // }
 
         /* ICMÅÐÆÂ */
-        if (icm_gyro_y_w < -30 * (CarSpeed1 + CarSpeed2) && icm_gyro_y_w < -60 && loop_time - ramp_out_time > 500)
+        if (icm_gyro_y_w < -15 * CarSpeed && icm_gyro_y_w < -60 && loop_time - ramp_out_time > 500)
         {
             Road40_count++;
             if (Road40_count > 1)
@@ -2255,6 +2259,7 @@ void Road3_zhuangtaiji(void)
 void Road4_zhuangtaiji(void)
 {
     static uint8 Road4_count0 = 0;
+    static uint8 Road4_mistake0 = 0;
     static uint8 Road4_count3 = 0;
 
     if (Road4_flag == 0)
@@ -2272,6 +2277,14 @@ void Road4_zhuangtaiji(void)
         else
         {
             Road4_count0 = 0;
+            Road4_mistake0++;
+        }
+
+        if ((Road4_mistake0 > 4 && icm_gyro_y_angle > -4))
+        {
+            Road = 0;
+            Road0_flag = 0;
+            Road4_flag = 0;
         }
     }
     else if (Road4_flag == 1)

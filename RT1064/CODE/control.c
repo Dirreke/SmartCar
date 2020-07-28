@@ -26,7 +26,7 @@ int mix_choice = 0; //1电磁为最小打角，2电磁为最大打角，3电磁不可信，0电磁中心；
 *  备    注：偏移量offset为负说明车身相对赛道中心偏左
              偏移量offset为正说明车身相对赛道中心偏右
 *************************************************************************/
-
+#if 0 
 PID PID_TURN_CAM_EXT;
 void Turn_Cam(void)
 {
@@ -87,7 +87,7 @@ PID TurnFuzzyPD_Cam(void)
   }
   return PID_TURN_CAM;
 }
-
+#endif
 /*********************************************
 ***函数名称：电磁转弯程序
 ***输入参数：平行电感、垂直电感值
@@ -297,27 +297,31 @@ void SpeedTarget_fig(void)
   // {
   { //Turn_Cam_Out的限幅，死区
     //开关差速在Para中定义
-    if (fabs(Turn_Cam_Out_temp) < 46)
+    // if (fabs(Turn_Cam_Out_temp) < 46)
+    // {
+    //   angle_val = 0;
+    //   diff_off();
+    // }
+    if (fabs(Turn_Cam_Out_temp) > 300)
     {
-      angle_val = 0;
-      diff_off();
+      PID_diff_P = 1;
+      diff_on();
     }
-    else if (Turn_Cam_Out_temp > 210) //262.5 * PID_CAR_STRAIGHT_CAM.P) //SERVO_RANGE)
+    else if (Turn_Cam_Out_temp > 250)
+    {
+      PID_diff_P = 0.7;
+      diff_on();
+    }
+    else if (fabs(Turn_Cam_Out_temp) > 200) //262.5 * PID_CAR_STRAIGHT_CAM.P) //SERVO_RANGE)
     {
       // angle_val = ANGLE_RANGE; //((Turn_Cam_Out_temp - SERVO_RANGE) * DIFF_KKK + SERVO_RANGE) * ANGLE_DIVIDE_SERVO_SCALE;
-      diff_on();
-      PID_diff_P = PID_diff.P;
-    }
-    else if (Turn_Cam_Out_temp < -210) //-262.5 * PID_CAR_STRAIGHT_CAM.P) //-SERVO_RANGE)
-    {
-      // angle_val = -ANGLE_RANGE; //((Turn_Cam_Out_temp + SERVO_RANGE) * DIFF_KKK - SERVO_RANGE) * ANGLE_DIVIDE_SERVO_SCALE;
       diff_on();
       PID_diff_P = PID_diff.P;
     }
     else
     {
       angle_val = Turn_Cam_Out_temp * ANGLE_DIVIDE_SERVO_SCALE; // * DIFF_KK;
-      diff_on();
+      diff_off();
       PID_diff_P = PID_diff0.P;
     }
     // angle_val = (fabs(Turn_Cam_Out_temp) < 46) ? 0 : Turn_Cam_Out_temp / SERVO_RANGE * ANGLE_RANGE;
@@ -450,7 +454,7 @@ PID PID_SPEED, PID2_SPEED;
 float SpeedE1, SpeedE2;
 float SpeedEE1, SpeedEE2;
 float SpeedGoalE1, SpeedGoalE2;
-
+bool a_flag1 = 0, a_flag2 = 0, d_flag1 = 0, d_flag2 = 0;
 void Speed_Control_New(void)
 {
 
@@ -460,7 +464,6 @@ void Speed_Control_New(void)
   float SpeedControlOutE1, SpeedControlOutE2;
 
   static uint8 Lef_pp_cnt = 0, Rig_pp_cnt = 0;
-  static bool a_flag1 = 0, a_flag2 = 0, d_flag1 = 0, d_flag2 = 0;
   static int cnt1, cnt2;
   static int frame1 = 0, frame2 = 0;
   static bool frame_flag1 = 0, frame_flag2 = 0;
@@ -567,16 +570,29 @@ void Speed_Control_New(void)
     if (a_flag1 == 1)
     {
       MotorOut1 = SpeedGoal * 2500;
+      a_flag1 = 0;
     }
     if (a_flag2 == 1)
     {
       MotorOut2 = SpeedGoal * 2500;
+      a_flag2 = 0;
     }
-
-    a_flag1 = 0;
-    // d_flag1 = 0;
-    a_flag2 = 0;
-    // d_flag2 = 0;
+    if (d_flag1 == 1)
+    {
+      if (CarSpeed < SpeedGoal)
+      {
+        d_flag1 = 0;
+        MotorOut1 = SpeedGoal * 2500;
+      }
+    }
+    if (d_flag2 == 1)
+    {
+      if (CarSpeed < SpeedGoal)
+      {
+        d_flag2 = 0;
+        MotorOut2 = SpeedGoal * 2500;
+      }
+    }
   }
 
   /* 速度控制 */
@@ -1149,6 +1165,7 @@ void Road_shift(void)
   default:
     break;
   }
+  Road_old = Road;
 }
 
 /*************************************************************************
@@ -1199,7 +1216,19 @@ void Road0_flag_shift(bool reset0)
   switch (Road0_flag)
   {
   case 0:
+    lib_speed_set(STRAIGHT_SPEED);
+    if (CarSpeed < SpeedGoal - 0.3)
+    {
+      a_flag1 = 1;
+      a_flag2 = 1;
+    }
+    else
+    {
+      MotorOut1 = SpeedGoal * SPEED_MOTOR_SCALE_HIGH;
+      MotorOut2 = MotorOut1; //SpeedGoal * SPEED_MOTOR_SCALE_HIGH;
+    }
 
+    break;
   case 1:
 
   case 2:
@@ -1210,8 +1239,19 @@ void Road0_flag_shift(bool reset0)
   case 5:
 
     lib_speed_set(CURVE_SPEED);
-    MotorOut1 = SpeedGoal * SPEED_MOTOR_SCALE_HIGH;
-    MotorOut2 = MotorOut1; //SpeedGoal * SPEED_MOTOR_SCALE_HIGH;
+    if (CarSpeed > SpeedGoal + 0.3)
+    {
+      d_flag1 = 1;
+      d_flag2 = 1;
+    }
+    else
+    {
+      MotorOut1 = SpeedGoal * SPEED_MOTOR_SCALE_HIGH;
+      MotorOut2 = MotorOut1; //SpeedGoal * SPEED_MOTOR_SCALE_HIGH;
+    }
+
+    // MotorOut1 = SpeedGoal * SPEED_MOTOR_SCALE_HIGH;
+    // MotorOut2 = MotorOut1; //SpeedGoal * SPEED_MOTOR_SCALE_HIGH;
     break;
   default:
     break;
@@ -1400,6 +1440,7 @@ void Road4_flag_shift(bool reset0)
   switch (Road4_flag)
   {
   case 0:
+    lib_speed_set(UP_RAMP_SPEED);
     break;
   case 1:
     lib_speed_set(UP_RAMP_SPEED);
@@ -1488,31 +1529,35 @@ void Road7_flag_shift(bool reset0)
 *  修改时间：2020.7.26
 *  备    注：用于
 *************************************************************************/
+int curve_state = 0;
 void Curve_shift(void)
 {
   bool enter_curve_flag = 0;
   bool in_curve_flag = 0;
   bool out_curve_flag = 0;
+  static float old_slope = 0;
 
-  if (1)
+  if (fabs(Turn_Cam_Out) > 70 && fabs(Mid_slope) > 0.3 && fabs(Mid_slope) < 0.56 && fabs(Mid_slope) - fabs(old_slope) > 0)
   {
-    ;
+    enter_curve_flag = 1;
   }
-  enter_curve_flag = 1;
-  if (fabs(Mid_slope) < 0)
+  else if (fabs(Mid_slope) < 0.25 && enter_curve_flag)
   {
     enter_curve_flag = 0;
-  }
-
-  if (1)
-  {
     in_curve_flag = 1;
   }
-
-  if (1)
+  else if (in_curve_flag && fabs(Mid_slope) > 0.3 && fabs(Mid_slope) < 0.65 && fabs(Mid_slope) - fabs(old_slope) > 0)
   {
     out_curve_flag = 1;
+    in_curve_flag = 0;
   }
+  else
+  {
+    out_curve_flag = 0;
+    in_curve_flag = 0;
+    enter_curve_flag = 0;
+  }
+  curve_state = enter_curve_flag * 100 + in_curve_flag * 10 + out_curve_flag;
 }
 
 /*************************************************************************
@@ -1528,31 +1573,41 @@ int BB_add_flag_set(void)
 
   static int BB_add_flag = 0;
   float Turn_Out_Table[4] = {200, 100, 50, 0};
-  float Speed12_diff[4] = {0.3, 0.1, 0, -0.2};
-  float Speed12_diff2[4] = {0, -0.2, -0.3, -0.5};
-  float Speed12_diff_stop[4] = {0.5, 0.3, 0.1, 0};
-  float speed_diff;
+  // float Speed12_diff[4] = {0.3, 0.1, 0, -0.2};
+  // float Speed12_diff2[4] = {0, -0.2, -0.3, -0.5};
+  // float Speed12_diff_stop[4] = {0.5, 0.3, 0.1, 0};
+  float Speed12_diff[4] = {0.12, 0.04, 0, -0.08};
+  float Speed12_diff2[4] = {0, -0.08, -0.12, -0.2};
+  float Speed12_diff_stop[4] = {0.2, 0.12, 0.04, 0};
 
+  float speed_diff;
+  static bool fuhao;
+  if(CarSpeed< 1)
+  {
+    return 0;
+  }
   if (Turn_Out < 0)
   {
-    speed_diff = CarSpeed2 - CarSpeed1;
+    speed_diff = (CarSpeed2 - CarSpeed1) / CarSpeed;
   }
   else
   {
-    speed_diff = CarSpeed1 - CarSpeed2;
+    speed_diff = (CarSpeed1 - CarSpeed2) / CarSpeed;
   }
   if (BB_add_flag % 10 != 0)
   {
-    if (fabs(Turn_Out) <= Turn_Out_Table[BB_add_flag % 10 - 1] ||
-        (BB_add_flag % 10 > 1 && fabs(Turn_Out) <= Turn_Out_Table[BB_add_flag % 10 - 2]) ||
-        (Turn_Out < 0 ^ BB_add_flag / 100 == 1) ||
+    if ((BB_add_flag % 10 > 1 /*fangyuejie*/ && fabs(Turn_Out) >= Turn_Out_Table[BB_add_flag % 10 - 2]) ||
+        fabs(Turn_Out) <= Turn_Out_Table[BB_add_flag % 10 - 1] || /*BBadd_flag==1时用这个*/
+        (Turn_Out < 0 ^ fuhao) ||
         speed_diff > Speed12_diff_stop[BB_add_flag % 10 - 1])
     {
-      BB_add_flag = 0;
+      BB_add_flag = 0; //如果满足条件4，不会add_flag，其他条件重新判bang，都不满足维持上一帧
     }
   }
+  fuhao = Turn_Out < 0;
   if (BB_add_flag % 10 == 0)
   {
+
     if (Turn_Out < 0)
     {
       BB_add_flag = 100;
@@ -1570,9 +1625,20 @@ int BB_add_flag_set(void)
         {
           BB_add_flag += i + 1;
         }
+        else if (i == 3 && -speed_diff < Speed12_diff[i])
+        {
+          BB_add_flag += i + 1;
+          BB_add_flag += 100 - 200 * (BB_add_flag / 100);
+        }
+
         if (speed_diff < Speed12_diff2[i])
         {
           BB_add_flag += 10;
+        }
+        else if (i == 3 && -speed_diff < Speed12_diff2[i])
+        {
+          BB_add_flag += 10;
+          // BB_add_flag += 100 - 200 * (BB_add_flag / 100);
         }
         break;
       }
@@ -1696,12 +1762,12 @@ void BB_add(void)
     temp2 = 1000; //500;
   }
 
-  if (BB_add_flag / 100 == 0)
+  if (BB_add_flag / 100 == 1) //左转
   {
     MotorOut1_add = -temp2;
     MotorOut2_add = temp;
   }
-  else if (BB_add_flag / 100 == 1)
+  else if (BB_add_flag / 100 == 0)
   {
     MotorOut1_add = temp;
     MotorOut2_add = -temp2;

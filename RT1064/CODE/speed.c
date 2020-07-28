@@ -27,6 +27,7 @@ void qtimer_AB_init(void)
 *  修改时间：2020.06.20
 *  备    注：
 *************************************************************************/
+float CarSpeed;
 void Get_Speed(void)
 {
   int16 qd1_result;
@@ -45,6 +46,7 @@ void Get_Speed(void)
 
   CarSpeed1 = speed_mean_filter1(CarSpeed1);
   CarSpeed2 = speed_mean_filter2(CarSpeed2);
+  CarSpeed = (CarSpeed1 + CarSpeed2) * 0.5;
   /*   Speed13 = Speed12;
   Speed12 = Speed11;
   Speed11 = Speed10;
