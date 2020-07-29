@@ -90,10 +90,10 @@ void Dubug_key(void)
             case 3:
                 DEFAULT_SPEED += 0.1;
                 STRAIGHT_SPEED += 0.1;
-                
+
                 break;
             case 4:
-                SPEED_MOTOR_SCALE_HIGH += 100;//threshold_offset += 1;
+                SPEED_MOTOR_SCALE_HIGH += 100; //threshold_offset += 1;
                 break;
             case 5:
                 CURVE_SPEED += 0.1; //PID_CAR_Diffcomp_CAM.P += 0.1;
@@ -129,6 +129,28 @@ void Dubug_key(void)
                 break;
             case 0:
                 Road += 1;
+                switch (Road)
+                {
+                case 0:
+                    Road0_flag = 0;
+                    break;
+                case 1:
+                    Road1_flag = 0;
+                    break;
+                case 2:
+                    Road2_flag = 0;
+                    break;
+                case 3:
+                    Road3_flag = 0;
+                    break;
+                case 4:
+                    Road4_flag = 0;
+                case 7:
+                    Road7_flag = 0;
+                    break;
+                default:
+                    break;
+                }
                 break;
             case 1:
                 switch (Road)
@@ -287,7 +309,7 @@ void Dubug_key(void)
                 STRAIGHT_SPEED -= 0.1;
                 break;
             case 4:
-                SPEED_MOTOR_SCALE_HIGH -= 100;//threshold_offset -= 1;
+                SPEED_MOTOR_SCALE_HIGH -= 100; //threshold_offset -= 1;
                 break;
             case 5:
                 CURVE_SPEED -= 0.1; //PID_CAR_Diffcomp_CAM.P -= 0.1;
@@ -323,6 +345,28 @@ void Dubug_key(void)
                 break;
             case 0:
                 Road -= 1;
+                switch (Road)
+                {
+                case 0:
+                    Road0_flag = 0;
+                    break;
+                case 1:
+                    Road1_flag = 0;
+                    break;
+                case 2:
+                    Road2_flag = 0;
+                    break;
+                case 3:
+                    Road3_flag = 0;
+                    break;
+                case 4:
+                    Road4_flag = 0;
+                case 7:
+                    Road7_flag = 0;
+                    break;
+                default:
+                    break;
+                }
                 break;
             case 1:
                 switch (Road)
@@ -496,7 +540,7 @@ void ips_show_debug(int ips_num)
         break;
     case 4:
         ips200_showstr(0, 12, "SPEED_MOTOR_SCALE_HIGH //threshold_offset");
-        ips200_showfloat(0, 13, SPEED_MOTOR_SCALE_HIGH , 4, 2);
+        ips200_showfloat(0, 13, SPEED_MOTOR_SCALE_HIGH, 4, 2);
         break;
     case 5:
         ips200_showstr(0, 12, "CURVE_SPEED");

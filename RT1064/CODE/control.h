@@ -19,7 +19,7 @@ extern bool speed_change_flag;
 extern int mix_choice;
 
 extern bool a_flag1, a_flag2, d_flag1, d_flag2;
-
+extern bool diff_BB_flag;
 // extern float DIFF_KKK;
 // extern float DIFF_KK;
 void Turn_Cam(void);

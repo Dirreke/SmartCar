@@ -34,7 +34,7 @@ void PIT_IRQHandler(void)
     if (PIT_FLAG_GET(PIT_CH0))
     {
         PIT_FLAG_CLEAR(PIT_CH0);
-        if (Road != 3 && loop_time > 500)
+        if (Road != 3 && loop_time > 500 && Road7_flag != 2 && Road7_flag != 3)
         {
             if (EM_Value_2 < 0.3 && EM_Value_3 < 0.3 && EM_Value_1 < 0.3 && EM_Value_4 < 0.3)
             //if(loop_time > 1500)

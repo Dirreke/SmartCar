@@ -7,7 +7,7 @@
 #define SERVO_MIDDLE 1320 //1.36*20000/20;1140-1500 （1120打死）
 #define SERVO_RANGE 180   //190 limit
 #define MOTOR_RANGE 18000
-#define CAMERA_FPS 100
+#define CAMERA_FPS 150
 #define DIS_IN_CIRCLE 1.1 //0.9
 /**********************search.c去畸变***********************************/
 #define MAP_K0 300 //去畸变后赛道宽，此可用于调整，Road_Width为标准宽度

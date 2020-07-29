@@ -2361,7 +2361,7 @@ void Road7_zhuangtaiji(void)
                     break;
                 }
         }
-        if (barn_line < 26)
+        if (barn_line < 23)
         {
             Road7_flag = 0; //等待转弯，远景行补线
         }
@@ -2389,7 +2389,7 @@ void Road7_zhuangtaiji(void)
         if (Rig_slope < -0.2 && (EM_Value_1 < 0.2 && EM_Value_2 < 0.15 && EM_Value_2 < 0.15 && EM_Value_4 < 0.2))
         {
             Road73_count++;
-            if (Road73_count > 1)
+            if (Road73_count > 2)
             {
                 Road73_count = 0;
                 Road7_flag = 3;
@@ -2408,7 +2408,7 @@ void Road7_zhuangtaiji(void)
                 if (Black_line > 2)
                 {
                     stop_line = i + 2;
-                    if (stop_line > 27) // || Road74_count >= (int)(30 * 100 / (get_speed() * CAMERA_FPS)) + 1)
+                    if (stop_line > 35) // || Road74_count >= (int)(30 * 100 / (get_speed() * CAMERA_FPS)) + 1)
                     {
                         Road74_count++;
                         if (Road74_count > 1)

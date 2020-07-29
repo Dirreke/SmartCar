@@ -16,7 +16,7 @@
         <LeaveTargetRunning>_ 0</LeaveTargetRunning>
     </JLinkDriver>
     <DebugChecksum>
-        <Checksum>589643777</Checksum>
+        <Checksum>973651405</Checksum>
     </DebugChecksum>
     <Exceptions>
         <StopOnUncaught>_ 0</StopOnUncaught>
@@ -113,7 +113,7 @@
     <Jet>
         <JetConnSerialNo>SEEKFREE CMSIS-DAP V1:SF89288174411242</JetConnSerialNo>
         <JetConnFoundProbes>SEEKFREE CMSIS-DAP V1:SF89288174411242:SEEKFREE CMSIS-DAP V2:0:</JetConnFoundProbes>
-        <PrevWtdReset>Disabled (no reset)</PrevWtdReset>
+        <PrevWtdReset>Core</PrevWtdReset>
         <DisableInterrupts>0</DisableInterrupts>
         <LeaveRunning>0</LeaveRunning>
         <MultiCoreRunAll>0</MultiCoreRunAll>
@@ -197,7 +197,12 @@
         <Bp14>_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\..\CODE\search.c}.1475.9" 0 0 1 "" 0 "" 0</Bp14>
         <Bp15>_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\..\CODE\search.c}.979.10" 0 0 1 "" 0 "" 0</Bp15>
         <Bp16>_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\..\CODE\search.c}.1464.9" 0 0 1 "" 0 "" 0</Bp16>
-        <Count>17</Count>
+        <Bp17>_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\..\USER\src\main.c}.103.13" 0 0 1 "" 0 "" 0</Bp17>
+        <Bp18>_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\..\USER\src\main.c}.89.13" 0 0 1 "" 0 "" 0</Bp18>
+        <Bp19>_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\..\CODE\Picture.c}.45.5" 0 0 1 "" 0 "" 0</Bp19>
+        <Bp20>_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\..\CODE\Picture.c}.862.5" 0 0 1 "" 0 "" 0</Bp20>
+        <Bp21>_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\..\CODE\Picture.c}.887.29" 0 0 1 "" 0 "" 0</Bp21>
+        <Count>22</Count>
     </Breakpoints2>
     <TermIOLog>
         <LoggingEnabled>_ 0</LoggingEnabled>

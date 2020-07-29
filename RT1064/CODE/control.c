@@ -283,6 +283,7 @@ void Turn_Servo()
 // float DIFF_KK = 1;
 PID PID_diff;
 PID PID_diff0;
+uint8 diff_BB_flag = 0;
 void SpeedTarget_fig(void)
 {
   float angle_val; // 用来表示实际转向角度
@@ -290,6 +291,7 @@ void SpeedTarget_fig(void)
   float Turn_Cam_Out_temp = Turn_Cam_Out;
   float PID_diff_P;
   angle_val = Turn_Cam_Out_temp * ANGLE_DIVIDE_SERVO_SCALE;
+  diff_BB_flag = 0;
 
   // Turn_Cam_Out_temp = (Turn_Cam_Out > 490) ? 490 : ((Turn_Cam_Out < -490) ? -490 : Turn_Cam_Out);
   /* 开关差速 diff_K0计算 */
@@ -304,15 +306,17 @@ void SpeedTarget_fig(void)
     // }
     if (fabs(Turn_Cam_Out_temp) > 300)
     {
-      PID_diff_P = 1;
+      PID_diff_P = 2;
+      // diff_BB_flag = 1;
       diff_on();
     }
     else if (Turn_Cam_Out_temp > 250)
     {
-      PID_diff_P = 0.7;
+      PID_diff_P = 1;
       diff_on();
+      // diff_BB_flag = 1;
     }
-    else if (fabs(Turn_Cam_Out_temp) > 200) //262.5 * PID_CAR_STRAIGHT_CAM.P) //SERVO_RANGE)
+    else if (fabs(Turn_Cam_Out_temp) > 190) //262.5 * PID_CAR_STRAIGHT_CAM.P) //SERVO_RANGE)
     {
       // angle_val = ANGLE_RANGE; //((Turn_Cam_Out_temp - SERVO_RANGE) * DIFF_KKK + SERVO_RANGE) * ANGLE_DIVIDE_SERVO_SCALE;
       diff_on();
@@ -473,7 +477,7 @@ void Speed_Control_New(void)
   SpeedE1 = speedTarget1 - CarSpeed1;
   SpeedE2 = speedTarget2 - CarSpeed2;
   SpeedGoalE1 = SpeedGoal - CarSpeed1;
-  SpeedGoalE2 = SpeedGoal - CarSpeed1;
+  SpeedGoalE2 = SpeedGoal - CarSpeed2;
   /* 变设定速大bang */
   if (speed_change_flag)
   {
@@ -1179,7 +1183,7 @@ void Road_shift(void)
 
 void Road0_flag_shift(bool reset0)
 {
-  static int Road0_flag_old;
+  static int Road0_flag_old = -1;
 
   if (!reset0)
   {
@@ -1269,7 +1273,7 @@ void Road0_flag_shift(bool reset0)
 
 void Road1_flag_shift(bool reset0)
 {
-  static int Road1_flag_old;
+  static int Road1_flag_old = -1;
   if (!reset0)
   {
 
@@ -1338,7 +1342,7 @@ void Road1_flag_shift(bool reset0)
 
 void Road2_flag_shift(bool reset0)
 {
-  static int Road2_flag_old;
+  static int Road2_flag_old = -1;
   if (!reset0)
   {
     if (Road2_flag == Road2_flag_old)
@@ -1407,7 +1411,7 @@ void Road2_flag_shift(bool reset0)
 
 void Road4_flag_shift(bool reset0)
 {
-  static int Road4_flag_old;
+  static int Road4_flag_old = -1;
   if (!reset0)
   {
 
@@ -1466,7 +1470,7 @@ void Road4_flag_shift(bool reset0)
 *************************************************************************/
 void Road7_flag_shift(bool reset0)
 {
-  static int Road7_flag_old;
+  static int Road7_flag_old = -1;
   if (!reset0)
   {
     if (Road7_flag == Road7_flag_old)
@@ -1504,10 +1508,10 @@ void Road7_flag_shift(bool reset0)
     lib_speed_set(RUSH_STOP_SPEED);
     break;
   case 6:
-    lib_speed_set(EMERGENCY_STOP_SPEED);
+    lib_speed_set(EMERGENCY_STOP_SPEED);  
     break;
   case 2:
-    // lib_speed_set(TURN_STOP_SPEED);
+    lib_speed_set(EMERGENCY_STOP_SPEED);
     break;
   case 3:
     break;
@@ -1582,7 +1586,7 @@ int BB_add_flag_set(void)
 
   float speed_diff;
   static bool fuhao;
-  if(CarSpeed< 1)
+  if (CarSpeed < 1)
   {
     return 0;
   }
@@ -1627,8 +1631,8 @@ int BB_add_flag_set(void)
         }
         else if (i == 3 && -speed_diff < Speed12_diff[i])
         {
-          BB_add_flag += i + 1;
-          BB_add_flag += 100 - 200 * (BB_add_flag / 100);
+          //BB_add_flag += i + 1;
+          //BB_add_flag += 100 - 200 * (BB_add_flag / 100);
         }
 
         if (speed_diff < Speed12_diff2[i])
@@ -1637,8 +1641,8 @@ int BB_add_flag_set(void)
         }
         else if (i == 3 && -speed_diff < Speed12_diff2[i])
         {
-          BB_add_flag += 10;
-          // BB_add_flag += 100 - 200 * (BB_add_flag / 100);
+          BB_add_flag += i + 1;
+          BB_add_flag += 100 - 200 * (BB_add_flag / 100);
         }
         break;
       }

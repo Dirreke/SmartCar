@@ -7,6 +7,11 @@ PID PID_CAR_CENTER_CAM;
 void Turn_Cam_New(void)
 {
   PID_CAR_STRAIGHT_CAM.P = ((CarSpeed - 2.3) > 0 ? (CarSpeed - 2.3) * 0.75 + 0.6 : 0.6); //2.8 0.95 2.5 0.6
+  PID_CAR_CENTER_CAM.P = ((CarSpeed - 2.3) > 0 ? (CarSpeed - 2.3) * 0.6 + 0.3 : 0.3);
+  if (fabs(Mid_slope) > 0.8 && Road0_flag != 4 && Road0_flag != 5 && Road != 1 && Road != 2)
+  {
+    PID_CAR_STRAIGHT_CAM.P *= 0.3;
+  }
   // PID_CAR_STRAIGHT_CAM.D = 0;
   static float car_straight_dias_old = 0;
   car_straight_dias = M_Slope_fig() * SERVO_DIVIDE_ANGLE_SCALE;
