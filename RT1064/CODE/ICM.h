@@ -15,3 +15,7 @@ extern float icm_gyro_y_offset;
 extern float icm_gyro_y_angle;
 // extern float icm_gyro_y_float;
 extern float icm_gyro_y_w;
+
+extern float icm_gyro_z_offset;
+extern float icm_gyro_z_angle;
+extern float icm_gyro_z_w;

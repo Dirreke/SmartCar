@@ -6,8 +6,12 @@ PID PID_CAR_STRAIGHT_CAM;
 PID PID_CAR_CENTER_CAM;
 void Turn_Cam_New(void)
 {
-  PID_CAR_STRAIGHT_CAM.P = ((CarSpeed - 2.3) > 0 ? (CarSpeed - 2.3) * 0.75 + 0.6 : 0.6); //2.8 0.95 2.5 0.6
-  PID_CAR_CENTER_CAM.P = ((CarSpeed - 2.3) > 0 ? (CarSpeed - 2.3) * 0.6 + 0.3 : 0.3);
+  PID_CAR_STRAIGHT_CAM.P = ((CarSpeed - 2.1) > 0 ? (CarSpeed - 2.1) * 0.65 + 0.7 : 0.7); //0.75 +0.6  2.3 0.6 2.8 0.975
+  PID_CAR_CENTER_CAM.P = ((CarSpeed - 2.1) > 0 ? (CarSpeed - 2.1) * 0.6 + 0.3 : 0.3);
+  if (PID_CAR_STRAIGHT_CAM.P > 1.5)
+  {
+    PID_CAR_STRAIGHT_CAM.P = 1.5;
+  }
   if (fabs(Mid_slope) > 0.8 && Road0_flag != 4 && Road0_flag != 5 && Road != 1 && Road != 2)
   {
     PID_CAR_STRAIGHT_CAM.P *= 0.3;
@@ -24,19 +28,29 @@ void Turn_Cam_New(void)
     car_center_dias = 0;
   }
 
-  if (fabs(Mid_slope) < 1)
+  if (fabs(car_center_dias) > 180)
   {
-    Turn_Cam_Out = car_straight_dias * PID_CAR_STRAIGHT_CAM.P + (car_straight_dias - car_straight_dias_old) * PID_CAR_STRAIGHT_CAM.D;
-  }
-  else if (fabs(Mid_slope) < 3)
-  {
+    if (fabs(Mid_slope) >= 3)
+    {
+      PID_CAR_STRAIGHT_CAM.P = 0;
+    }
     Turn_Cam_Out = car_straight_dias * PID_CAR_STRAIGHT_CAM.P + car_center_dias * PID_CAR_CENTER_CAM.P;
   }
   else
   {
-    Turn_Cam_Out = car_center_dias * PID_CAR_CENTER_CAM.P;
+    if (fabs(Mid_slope) < 1)
+    {
+      Turn_Cam_Out = car_straight_dias * PID_CAR_STRAIGHT_CAM.P;
+    }
+    else if (fabs(Mid_slope) < 3)
+    {
+      Turn_Cam_Out = car_straight_dias * PID_CAR_STRAIGHT_CAM.P + car_center_dias * PID_CAR_CENTER_CAM.P;
+    }
+    else
+    {
+      Turn_Cam_Out = car_center_dias * PID_CAR_CENTER_CAM.P;
+    }
   }
-
   car_straight_dias_old = car_straight_dias;
 }
 float Mid_slope = 0;

@@ -22,13 +22,16 @@
 float icm_gyro_y_offset = 0.0;
 float icm_gyro_y_w;
 float icm_gyro_y_angle = 0;
+float icm_gyro_z_offset = 0.0;
+float icm_gyro_z_w;
+float icm_gyro_z_angle = 0;
 
 void gyro_y_init(void)
 {
     icm20602_init_spi();
     int num = 0;
     int sum = 0;
-    //int sumz = 0;
+    int sumz = 0;
 
     while (num < 500)
     {
@@ -37,8 +40,10 @@ void gyro_y_init(void)
         systick_delay_ms(2);
         ++num;
         sum += icm_gyro_y;
+        sumz += icm_gyro_z;
     }
     icm_gyro_y_offset = -sum / 500.0;
+    icm_gyro_z_offset = -sumz / 500.0;
 }
 #if 0
 /*************************************************************************
@@ -114,11 +119,15 @@ void gyro_y_integration(void)
 void ICM_main(void)
 {
 
-    if (Road != 4)
+    if (Road != 4 && Road != 1 && Road != 2)
     {
         get_icm20602_gyro_spi();
         icm_gyro_y_angle = 0;
         icm_gyro_y_w = (icm_gyro_y + icm_gyro_y_offset) * 0.06103515625;
+    }
+    if (Road != 1 && Road != 2)
+    {
+        icm_gyro_z_angle = 0;
     }
 }
 
@@ -129,6 +138,13 @@ void ICM_main_isr(void)
         get_icm20602_gyro_spi();
         icm_gyro_y_w = (icm_gyro_y + icm_gyro_y_offset) * 0.06103515625;
         icm_gyro_y_angle += icm_gyro_y_w * 0.002;
+    }
+
+    if ((Road == 2) || (Road == 1))
+    {
+        get_icm20602_gyro_spi();
+        icm_gyro_z_w = (icm_gyro_z + icm_gyro_z_offset) * 0.06103515625;
+        icm_gyro_z_angle += icm_gyro_z_w * 0.002;
     }
 }
 

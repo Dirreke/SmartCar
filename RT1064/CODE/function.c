@@ -30,7 +30,7 @@ void Para_Init()
         PID_CAR_Diffcomp_CAM.P = 0; //0.6;//0;//0.6;
         PID_CAR_Diffcomp_CAM.D = 0;
         PID_diff.P = 0.5; //1;
-        PID_diff0.P = 0;
+        PID_diff0.P = 0.2;
         barn_reset_flag = 0;
         DEBUG_CHOICE = 2;
 
@@ -61,6 +61,7 @@ float UP_RAMP_SPEED = 0;
 float ON_RAMP_SPEED = 0;
 float DOWN_RAMP_SPEED = 0;
 int SPEED_MOTOR_SCALE_HIGH = 0;
+bool barn_state = 1;
 
 void SPEED_INIT(void)
 {

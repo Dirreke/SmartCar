@@ -42,20 +42,25 @@ void PIT_IRQHandler(void)
                 lib_speed_set(0);
             }
         }
-        EM_main();
-        //EM_Get();
-        if (DEBUG_CHOICE == 3)
-        {
-            Kalman_Filter();
-        }
-        else if (DEBUG_CHOICE == 1 || DEBUG_CHOICE == 2)
-        {
-            Turn_Servo();
-        }
+        EM_Get();
+        // if (DEBUG_CHOICE == 3)
+        // {
+        //     Kalman_Filter();
+        // }
+        // else if (DEBUG_CHOICE == 1 || DEBUG_CHOICE == 2)
+        // {
+        //     Turn_Servo();
+        // }
         // Turn_diff_comp();
+        if (Road == 4)
+        {
+            EM_main();
+            Turn_Out = Turn_EM_Out;
+            Servo_Duty(-Turn_Out);
+        }
         if (gpio_get(DEBUG_KEY0))
         {
-            loop_time += 2;//ms
+            loop_time += 2; //ms
             //loop_time2 += 0.002;
             loop_distance += CarSpeed * 2; //mm
         }
@@ -63,6 +68,8 @@ void PIT_IRQHandler(void)
         ICM_main_isr();
         // ICM_get();
         Get_Speed();
+        Turn_Cam_New();
+        Turn_Servo_Normal();
         // lib_set_fun();
         SpeedTarget_fig();
         //    BBC();

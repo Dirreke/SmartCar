@@ -31,6 +31,13 @@ extern int Lef_break_point;
 extern int Rig_break_point;
 extern bool Lef_circle_pre_flag;
 extern bool Rig_circle_pre_flag;
+
+extern bool Lef_innercurve ;
+extern bool Rig_innercurve ;
+extern uint8 Lef_innercurve_point ;
+extern uint8 Rig_innercurve_point ;
+
+
 // extern int Lef_break_point_und = 0;
 // extern int Rig_break_point_und = 0;
 
@@ -48,6 +55,7 @@ extern int stop_line;
 void Allwhite_find(void);
 void Pic_find_circle(void);
 void Pic_find_circle_pre(void);
+void Pic_find_innercurve(void);
 void break_point_find_und(bool L,bool R);
 void start_stop_find(void);
 void mag_find(void);

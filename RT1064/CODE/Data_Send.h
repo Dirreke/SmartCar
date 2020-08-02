@@ -29,8 +29,6 @@ extern float Turn_P_EM;
 // extern float speedTarget2;
 //extern float angle_dbg_1,angle_dbg_2;//或许debug用——GMY注
 // extern PID PID_SPEED;
-extern float gyroy_1;
-extern int16 icm_gyro_y;
 extern float stat_slope;
 // extern char Road1_turnout;
 //extern float cam_off_dbg;

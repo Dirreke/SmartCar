@@ -127,6 +127,9 @@ void Dubug_key(void)
             case 11:
                 PID_diff0.P += 0.1;
                 break;
+            case 12:
+                barn_state = !barn_state;
+                break;
             case 0:
                 Road += 1;
                 switch (Road)
@@ -305,7 +308,7 @@ void Dubug_key(void)
                 PID_CAR_CENTER_CAM.P -= 0.1;
                 break;
             case 3:
-                DEFAULT_SPEED -= 0.1;
+                //DEFAULT_SPEED -= 0.1;
                 STRAIGHT_SPEED -= 0.1;
                 break;
             case 4:
@@ -342,6 +345,9 @@ void Dubug_key(void)
                 break;
             case 11:
                 PID_diff0.P -= 0.1;
+                break;
+            case 12:
+                barn_state = !barn_state;
                 break;
             case 0:
                 Road -= 1;
@@ -535,8 +541,8 @@ void ips_show_debug(int ips_num)
         ips200_showfloat(0, 13, PID_CAR_CENTER_CAM.P, 3, 2);
         break;
     case 3:
-        ips200_showstr(0, 12, "speed: "); //显示字符串
-        ips200_showfloat(0, 13, DEFAULT_SPEED, 2, 2);
+        ips200_showstr(0, 12, "straight_speed: "); //显示字符串
+        ips200_showfloat(0, 13, STRAIGHT_SPEED, 2, 2);
         break;
     case 4:
         ips200_showstr(0, 12, "SPEED_MOTOR_SCALE_HIGH //threshold_offset");
@@ -577,6 +583,16 @@ void ips_show_debug(int ips_num)
     case 11:
         ips200_showstr(0, 12, "PID_diff0.P");
         ips200_showfloat(0, 13, PID_diff0.P, 4, 2);
+        break;
+    case 12:
+        if (barn_state)
+        {
+            ips200_showstr(0, 12, "L_barn");
+        }
+        else
+        {
+            ips200_showstr(0, 12, "R_barn");
+        }
         break;
     case 0:
         ips200_showstr(0, 12, "Road");

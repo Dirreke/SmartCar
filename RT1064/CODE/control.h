@@ -19,7 +19,8 @@ extern bool speed_change_flag;
 extern int mix_choice;
 
 extern bool a_flag1, a_flag2, d_flag1, d_flag2;
-extern bool diff_BB_flag;
+extern bool a_flag_pre;
+extern uint8 diff_BB_flag;
 // extern float DIFF_KKK;
 // extern float DIFF_KK;
 void Turn_Cam(void);
@@ -31,7 +32,7 @@ void SpeedTarget_fig(void);
 void Speed_Control_New(void);
 
 void Turn_EM(void);
-void Turn_Servo(void);
+void Turn_Servo_Normal(void);
 // float EM_err_cal(float l,float r,float pl, float pr);
 // void TurnFuzzyPD_EM(void);
 // float PD_section(float err);
@@ -63,4 +64,7 @@ extern float SpeedE1, SpeedE2;
 extern float SpeedEE1, SpeedEE2;
 
 extern int ramp_out_time;
+extern int out_circle_time_temp;
 extern int curve_state;
+extern int8 diff_flag1;
+extern int8 diff_flag2;

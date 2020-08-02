@@ -16,7 +16,7 @@
         <LeaveTargetRunning>_ 0</LeaveTargetRunning>
     </JLinkDriver>
     <DebugChecksum>
-        <Checksum>973651405</Checksum>
+        <Checksum>1106796033</Checksum>
     </DebugChecksum>
     <Exceptions>
         <StopOnUncaught>_ 0</StopOnUncaught>
@@ -32,7 +32,7 @@
         <HideCovered>0</HideCovered>
     </CodeCoverage>
     <CallStack>
-        <ShowArgs>0</ShowArgs>
+        <ShowArgs>1</ShowArgs>
     </CallStack>
     <SWOTraceHWSettings>
         <OverrideDefaultClocks>0</OverrideDefaultClocks>
@@ -143,8 +143,9 @@
         <Fmt0>uint8[80]	5	0</Fmt0>
     </array_types>
     <watch_formats>
-        <Fmt0>{W}42:Image_Use	5	2</Fmt0>
-        <Fmt1>{W}42:Pixle	0	9</Fmt1>
+        <Fmt0>{W}1:0x80009d05	4	0</Fmt0>
+        <Fmt1>{W}42:Image_Use	5	2</Fmt1>
+        <Fmt2>{W}42:Pixle	0	9</Fmt2>
     </watch_formats>
     <Trace1>
         <Enabled>0</Enabled>
@@ -180,29 +181,7 @@
         <mode>0</mode>
     </DisassembleMode>
     <Breakpoints2>
-        <Bp0>_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\..\CODE\control.c}.11.20" 0 0 1 "" 0 "" 0</Bp0>
-        <Bp1>_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\..\USER\src\isr.c}.81.5" 0 0 1 "" 0 "" 0</Bp1>
-        <Bp2>_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\..\CODE\search.c}.794.17" 0 0 1 "" 0 "" 0</Bp2>
-        <Bp3>_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\..\CODE\search.c}.408.14" 0 0 1 "" 0 "" 0</Bp3>
-        <Bp4>_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\..\CODE\search.c}.575.13" 0 0 1 "" 0 "" 0</Bp4>
-        <Bp5>_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\..\CODE\search.c}.595.17" 0 0 1 "" 0 "" 0</Bp5>
-        <Bp6>_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\..\CODE\search.c}.621.13" 0 0 1 "" 0 "" 0</Bp6>
-        <Bp7>_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\..\CODE\search.c}.610.17" 0 0 1 "" 0 "" 0</Bp7>
-        <Bp8>_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\..\CODE\search.c}.565.5" 0 0 1 "" 0 "" 0</Bp8>
-        <Bp9>_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\..\CODE\search.c}.565.5" 0 0 1 "" 0 "" 0</Bp9>
-        <Bp10>_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\..\CODE\search.c}.565.5" 0 0 1 "" 0 "" 0</Bp10>
-        <Bp11>_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\..\CODE\search.c}.565.5" 0 0 1 "" 0 "" 0</Bp11>
-        <Bp12>_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\..\CODE\search.c}.1475.9" 0 0 1 "" 0 "" 0</Bp12>
-        <Bp13>_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\..\CODE\search.c}.794.17" 0 0 1 "" 0 "" 0</Bp13>
-        <Bp14>_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\..\CODE\search.c}.1475.9" 0 0 1 "" 0 "" 0</Bp14>
-        <Bp15>_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\..\CODE\search.c}.979.10" 0 0 1 "" 0 "" 0</Bp15>
-        <Bp16>_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\..\CODE\search.c}.1464.9" 0 0 1 "" 0 "" 0</Bp16>
-        <Bp17>_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\..\USER\src\main.c}.103.13" 0 0 1 "" 0 "" 0</Bp17>
-        <Bp18>_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\..\USER\src\main.c}.89.13" 0 0 1 "" 0 "" 0</Bp18>
-        <Bp19>_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\..\CODE\Picture.c}.45.5" 0 0 1 "" 0 "" 0</Bp19>
-        <Bp20>_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\..\CODE\Picture.c}.862.5" 0 0 1 "" 0 "" 0</Bp20>
-        <Bp21>_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\..\CODE\Picture.c}.887.29" 0 0 1 "" 0 "" 0</Bp21>
-        <Count>22</Count>
+        <Count>0</Count>
     </Breakpoints2>
     <TermIOLog>
         <LoggingEnabled>_ 0</LoggingEnabled>
