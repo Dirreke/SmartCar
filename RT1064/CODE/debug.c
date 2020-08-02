@@ -29,6 +29,7 @@ void Dubug_key(void)
             qipao_flag = 1;
             barn_reset_flag = 0;
             ramp_out_time = -500;
+            out_circle_time_temp = -500;
             loop_time = 0;
             loop_distance = 0;
         }

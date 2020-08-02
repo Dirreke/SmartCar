@@ -1807,7 +1807,7 @@ int BB_add_flag_set(void)
         fabs(Turn_Out) <= Turn_Out_Table[BB_add_flag % 10 - 1] || /*BBadd_flag==1时用这个*/
         (Turn_Out < 0 ^ fuhao) ||
         (BB_add_flag % 10 < 4 && speed_diff > Speed12_diff_stop[BB_add_flag % 10 - 1]) ||
-        (BB_add_flag % 10 == 4 && speed_diff > diff_stop_offset * (speed_diff > 0 ? 1 : -1) + Speed12_diff_stop[BB_add_flag % 10 - 1]) )
+        (BB_add_flag % 10 == 4 && speed_diff > diff_stop_offset * (speed_diff > 0 ? 1 : -1) + Speed12_diff_stop[BB_add_flag % 10 - 1]) ||)
     {
       BB_add_flag = 0; //如果满足条件4，不会add_flag，其他条件重新判bang，都不满足维持上一帧
     }
