@@ -43,7 +43,6 @@
 uint8 image_head[4] = {0x00, 0xff, 0x01, 0x01};
 
 //uint32 use_time;
-
 int main(void)
 {
     //int temp_flag = 0;

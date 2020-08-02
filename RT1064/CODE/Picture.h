@@ -98,6 +98,9 @@ extern int Rig_circle_point;
 extern int Lef_edge, Rig_edge;
 extern uint8 Lef_edge_control_line;
 extern uint8 Rig_edge_control_line;
+extern int Lef_break_point_und;
+extern int Rig_break_point_und;
+extern int inner_end_point_und;
 
 extern float Lef_slope, Rig_slope;
 
