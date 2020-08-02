@@ -41,8 +41,8 @@ void Get_Speed(void)
   qtimer_quad_clear(QTIMER_1, QTIMER1_TIMER0_C0);
   qtimer_quad_clear(QTIMER_1, QTIMER1_TIMER2_C2);
 
-  CarSpeed1 = qd1_result / (11.4 * PIT_TIME);//(5.7 * PIT_TIME );
-  CarSpeed2 = qd2_result / (11.4 * PIT_TIME);
+  CarSpeed1 = qd1_result * QTIMER_PIT_SCALE;// / (11.4 * PIT_TIME);//(5.7 * PIT_TIME );
+  CarSpeed2 = qd2_result * QTIMER_PIT_SCALE;// / (11.4 * PIT_TIME); 1/22.8
 
   CarSpeed1 = speed_mean_filter1(CarSpeed1);
   CarSpeed2 = speed_mean_filter2(CarSpeed2);

@@ -4,6 +4,7 @@
 #define TL2barn
 
 #define PIT_TIME 2
+#define QTIMER_PIT_SCALE 0.0438596491228
 #define SERVO_MIDDLE 1320 //1.36*20000/20;1140-1500 £®1120¥ÚÀ¿£©
 #define SERVO_RANGE 180   //190 limit
 #define MOTOR_RANGE 18000
@@ -64,6 +65,7 @@ extern float DOWN_RAMP_SPEED;
 #define SPEED_MOTOR_SCALE_LOW 2500
 extern int SPEED_MOTOR_SCALE_HIGH;// 3000
 extern bool barn_state;
+extern uint8 competition_strategy;
 
 
 
