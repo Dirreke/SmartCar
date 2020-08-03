@@ -821,6 +821,11 @@ void Road_rec(void)
             {
                 Road = 0;
                 Road0_flag = 0;
+                Road1_flag = 0;
+                Road2_flag = 0;
+                Road4_flag = 0;
+                Road7_flag = 0;
+                Road3_flag = 0;
             }
         }
         else
@@ -944,16 +949,15 @@ void Road_rec(void)
                     Road100_count = 0;
                     Road = 1;
                     Road1_flag = 0;
+                    return;
                 }
-
-                return;
             }
             else
             {
                 Road100_count = 0;
             }
 
-            if (Rig_circle == 0 && Lef_circle == 1 && Lef_slope != 998 && Rig_slope >= 0 &&
+            /*             if (Rig_circle == 0 && Lef_circle == 1 && Lef_slope != 998 && Rig_slope >= 0 &&
                 Lef_break_point < 45 && Lef_break_point > 35 && EM_Value_2 + EM_Value_3 > 4.2 && loop_time - out_circle_time_temp > 500)
             //  (New_Lef[54] == -MIDMAP || New_Lef[55] == -MIDMAP || New_Lef[56] == -MIDMAP)&&// && Rig_edge <= 20)
             //左圆环：左边线,右边线：直通到底//&& Rig[11] != 78
@@ -970,7 +974,7 @@ void Road_rec(void)
             else
             {
                 Road10_count = 0;
-            }
+            } */
         }
         /* 右圆环状态机 */
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////普通赛道→圆环
@@ -989,16 +993,15 @@ void Road_rec(void)
                     Road200_count = 0;
                     Road = 2;
                     Road2_flag = 0;
+                    return;
                 }
-
-                return;
             }
             else
             {
                 Road200_count = 0;
             }
 
-            if (Lef_circle == 0 && Rig_circle == 1 && Rig_slope != 998 && (Lef_slope <= 0 || Lef_slope == 998) &&
+            /*             if (Lef_circle == 0 && Rig_circle == 1 && Rig_slope != 998 && (Lef_slope <= 0 || Lef_slope == 998) &&
                 Rig_break_point < 45 && Rig_break_point > 35 && EM_Value_2 + EM_Value_3 > 4.2 && loop_time - out_circle_time_temp > 500)
             //     (New_Rig[54] == MIDMAP || New_Rig[55] == MIDMAP || New_Rig[56] == MIDMAP) &&// && Lef_edge <= 20)
             //右圆环：右边线：突变点→拐点→突变点//&& Lef[11] != 2
@@ -1015,7 +1018,7 @@ void Road_rec(void)
             else
             {
                 Road20_count = 0;
-            }
+            } */
         }
         //弯道状态机
         // else if (((Rig_slope > -0.5 && Rig_slope != 998 && Rig_slope != 999) || Road0_flag == 4) && Rig_slope != 998) //左转弯//(Lef_break_point > 35 && Lef_circle == 1 && Rig_circle == 0)
@@ -1153,7 +1156,7 @@ void TurnLeft_Process(void)
     if (temp == 0 && Road0_flag != 5) //&& turn_stop_flag == 1)
     {
         Road00_count++;
-        if (Road00_count == 2)
+        if (Road00_count >= 2)
         {
             Road00_count = 0;
             Road0_flag = 0;
@@ -1301,7 +1304,7 @@ void TurnRight_Process(void)
                 Lef[i] - Lef[i + 1] > 0 && Lef[i + 1] - Lef[i + 2] > 0)
             {
                 temp = i + 2;
-                break;
+                x break;
             }
         }
     }
@@ -1309,7 +1312,7 @@ void TurnRight_Process(void)
     if (temp == 0 && Road0_flag != 4) // && turn_stop_flag == 1)
     {
         Road00_count++;
-        if (Road00_count >= 3)
+        if (Road00_count >= 2)
         {
             Road00_count = 0;
             Road0_flag = 0;
@@ -1680,7 +1683,7 @@ void Road1_zhuangtaiji(void)
         if (Rig_circle == 0 &&
             //Lef_circle == 1 &&
             Lef_slope != 998 &&
-            Rig[39] - Rig[37] < 5 && Rig[37] - Rig[35] < 5 && Rig[35] - Rig[33] < 5 && Rig[33] - Rig[31] < 5 && Rig[31] - Rig[29] < 5 && Rig[29] - Rig[27] < 5 && Rig[27] - Rig[25] < 5 && Rig[25] - Rig[23] < 5 && 
+            Rig[39] - Rig[37] < 5 && Rig[37] - Rig[35] < 5 && Rig[35] - Rig[33] < 5 && Rig[33] - Rig[31] < 5 && Rig[31] - Rig[29] < 5 && Rig[29] - Rig[27] < 5 && Rig[27] - Rig[25] < 5 && Rig[25] - Rig[23] < 5 &&
             Rig_slope >= 0 && ((EM_Value_2 + EM_Value_3 > 4.0) || (EM_Value_2 > 2.6 && Lef_circle == 1)))
         //if (EM_Value_2 + EM_Value_3 > 4.3) //弯内识别：左右两边仅有一边发生丢线
         {
