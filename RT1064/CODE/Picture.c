@@ -1871,12 +1871,11 @@ void Pic_Fix_Line(void)
                     if (Lef[i] < Fir_col + 2)
                     {
                         no_inner_count++;
-
                     }
-                                            if (no_inner_count >20)
-                        {
-                            no_inner_flag = 1;
-                        }
+                    if (no_inner_count > 20)
+                    {
+                        no_inner_flag = 1;
+                    }
                 }
                 if (no_inner_flag == 0)
                 {
@@ -1906,7 +1905,7 @@ void Pic_Fix_Line(void)
                             New_Lef[j] = -MIDMAP;
                             New_Rig[j] = MIDMAP;
                         }
-                        for (int j = Lef_break_point_und-1; j > inner_end_point_und; --j)
+                        for (int j = Lef_break_point_und - 1; j > inner_end_point_und; --j)
                         {
                             New_Rig[j] = MIDMAP;       //ÓÒ±ßÏßÖÃ¿Õ£»
                             if (New_Lef[j] == -MIDMAP) //×ó±ßÏß¿ÕºóÍ£Ö¹Ê¹ÓÃ×ó±ßÏß£»
@@ -3068,6 +3067,7 @@ void Pic_DrawMid_und(void)
         {
             temp = Rig_break_point_und;
         }
+        
         if (temp < 45 && temp > 15)
         {
             if (New_Lef[temp] == -MIDMAP || New_Rig[temp] == MIDMAP)
@@ -3077,7 +3077,7 @@ void Pic_DrawMid_und(void)
             else
             {
                 Mid_inner_Mid = (New_Lef[temp] + New_Rig[temp]) / 2;
-                Mid_diff_far = New_Mid[temp] - Mid_inner_Mid;
+                Mid_diff_far = New_Mid[temp - 1] - Mid_inner_Mid;
                 Mid_diff_near = New_Mid[temp + 1] - Mid_inner_Mid;
                 for (int i = 59; i > temp; i--)
                 {
@@ -3086,7 +3086,7 @@ void Pic_DrawMid_und(void)
                         New_Mid[i] -= Mid_diff_near;
                     }
                 }
-                for (int i = temp; i > 0; i--)
+                for (int i = temp - 1; i > 0; i--)
                 {
                     if (New_Mid[i] != 999)
                     {

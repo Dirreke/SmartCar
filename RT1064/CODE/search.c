@@ -1680,7 +1680,8 @@ void Road1_zhuangtaiji(void)
         if (Rig_circle == 0 &&
             //Lef_circle == 1 &&
             Lef_slope != 998 &&
-            Rig[39] - Rig[37] < 5 && Rig[37] - Rig[35] < 5 && Rig[35] - Rig[33] < 5 && Rig[33] - Rig[31] < 5 && Rig[31] - Rig[29] < 5 && Rig[29] - Rig[27] < 5 && Rig[27] - Rig[25] < 5 && Rig[25] - Rig[23] < 5 && Rig_slope >= 0 && ((EM_Value_2 + EM_Value_3 > 4.0) || (EM_Value_2 > 2.6 && Lef_circle == 1)))
+            Rig[39] - Rig[37] < 5 && Rig[37] - Rig[35] < 5 && Rig[35] - Rig[33] < 5 && Rig[33] - Rig[31] < 5 && Rig[31] - Rig[29] < 5 && Rig[29] - Rig[27] < 5 && Rig[27] - Rig[25] < 5 && Rig[25] - Rig[23] < 5 && 
+            Rig_slope >= 0 && ((EM_Value_2 + EM_Value_3 > 4.0) || (EM_Value_2 > 2.6 && Lef_circle == 1)))
         //if (EM_Value_2 + EM_Value_3 > 4.3) //弯内识别：左右两边仅有一边发生丢线
         {
             Road11_count++;

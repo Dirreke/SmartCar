@@ -16,7 +16,7 @@
         <LeaveTargetRunning>_ 0</LeaveTargetRunning>
     </JLinkDriver>
     <DebugChecksum>
-        <Checksum>1227660634</Checksum>
+        <Checksum>744888759</Checksum>
     </DebugChecksum>
     <Exceptions>
         <StopOnUncaught>_ 0</StopOnUncaught>
@@ -144,8 +144,9 @@
     </array_types>
     <watch_formats>
         <Fmt0>{W}1:0x80009d05	4	0</Fmt0>
-        <Fmt1>{W}42:Image_Use	5	2</Fmt1>
-        <Fmt2>{W}42:Pixle	0	9</Fmt2>
+        <Fmt1>{W}1:New_Mid	0	5</Fmt1>
+        <Fmt2>{W}42:Image_Use	5	2</Fmt2>
+        <Fmt3>{W}42:Pixle	0	9</Fmt3>
     </watch_formats>
     <Trace1>
         <Enabled>0</Enabled>
