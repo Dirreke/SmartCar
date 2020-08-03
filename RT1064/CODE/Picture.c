@@ -1435,9 +1435,10 @@ void Threshold_change(void)
 *************************************************************************/
 int Lef_break_point_und = 0;
 int Rig_break_point_und = 0;
-int inner_end_point_und = 0;
+
 void Pic_Fix_Line(void)
 {
+    int inner_end_point_und = 0;
     float slope;
     // float slope2;
     static float slope_static;
@@ -1446,8 +1447,8 @@ void Pic_Fix_Line(void)
     // int k;
     int xtemp, ytemp, get_flag = 0;
     static int xtemp_static, ytemp_static;
-    int Circle_inner_end_cnt = 0;
-    bool Circle_inner_end_flag = 0;
+    // int Circle_inner_end_cnt = 0;
+    // bool Circle_inner_end_flag = 0;
     //static float stat_slope;-
     //static float stat_slope2;
     //static char road1_flag1 = 1; //0表示已计算完进圆环斜率，1表示已经出圆环，再次进圆环时计算补线斜率
@@ -1907,23 +1908,23 @@ void Pic_Fix_Line(void)
                         }
                         for (int j = Lef_break_point_und - 1; j > inner_end_point_und; --j)
                         {
-                            New_Rig[j] = MIDMAP;       //右边线置空；
-                            if (New_Lef[j] == -MIDMAP) //左边线空后停止使用左边线；
-                            {
-                                Circle_inner_end_cnt++;
-                                if (Circle_inner_end_cnt > 8)
-                                {
-                                    Circle_inner_end_flag = 1;
-                                }
-                            }
-                            else
-                            {
-                                Circle_inner_end_cnt = 0;
-                            }
-                            if (Circle_inner_end_flag)
-                            {
-                                New_Lef[j] = -MIDMAP;
-                            }
+                            New_Rig[j] = MIDMAP; //右边线置空；
+                            // if (New_Lef[j] == -MIDMAP) //左边线空后停止使用左边线；
+                            // {
+                            //     Circle_inner_end_cnt++;
+                            //     if (Circle_inner_end_cnt > 8)
+                            //     {
+                            //         Circle_inner_end_flag = 1;
+                            //     }
+                            // }
+                            // else
+                            // {
+                            //     Circle_inner_end_cnt = 0;
+                            // }
+                            // if (Circle_inner_end_flag)
+                            // {
+                            //     New_Lef[j] = -MIDMAP;
+                            // }
                             //可以继续写变小后不变大
                         }
                         for (int j = Lef_break_point_und + 1; j < 59; ++j)
@@ -2101,13 +2102,9 @@ void Pic_Fix_Line(void)
             if (Road_flag1 == 0)
             {
                 slope_static = 999;
+                Rig_break_point_und = 0;
                 Road_flag1 = 1;
             }
-            // road2_flag2 = 0;
-            Rig[16] = 79;
-            Rig[17] = 79;
-            Rig[18] = 79;
-            Rig[19] = 79;
 
             for (int i = Fir_row; i < Last_row - 20; i++)
             {
@@ -2126,66 +2123,103 @@ void Pic_Fix_Line(void)
                     break;
                 }
             }
-            // if (Rig_circle_point == 0)
-            // {
-            //     road2_flag2 = 1;
-            // }
-            if (slope_static != 999)
             {
-                for (int k = Fir_row + 3; k < ytemp_static; k++)
+                // if (Rig_circle_point == 0)
+                // {
+                //     road2_flag2 = 1;
+                // }
+                // 找不到内环边线
+                for (int i = 55; i > 30; --i)
                 {
-                    Lef[k] = (int)(xtemp_static - (ytemp_static - k) / slope_static);
-                    Rig[k] = 78;
-                }
-                for (int k = ytemp_static; k < 55; k++)
-                {
-
-                    Lef[k] = (int)(xtemp_static - (ytemp_static - k) / slope_static);
-                    //Lef[k] = (int)((k - ytemp_static) * 2 / slope_static / 3) + xtemp_static;
-                    Rig[k] = 78;
-                }
-                Pic_undistort(1, 1);
-            }
-            else
-            {
-                // Rig_break_point_und = 0;
-                for (int i = FIG_AREA_NEAR; i > FIG_AREA_FAR; --i)
-                {
-                    if (New_Rig[i] != MIDMAP && New_Rig[i] > 50 && New_Rig[i] < Rig_break_point_max)
+                    if (Last_col - Rig[i] < 2)
                     {
-                        Rig_break_point_max = New_Rig[i];
-                        Rig_break_point_und = i;
+                        no_inner_count++;
                     }
-                } // 去畸后内环中点
-                // break_point_find_und(1, 0);
-                if (Rig_break_point_und != 0)
-                {
-                    for (int j = Rig_break_point_und; j >= FIG_AREA_FAR; --j)
+                    if (no_inner_count > 20)
                     {
-                        New_Lef[j] = -MIDMAP;     //右边线置空；
-                        if (New_Rig[j] == MIDMAP) //左边线空后停止使用左边线；
+                        no_inner_flag = 1;
+                    }
+                }
+                if (!no_inner_flag)
+                {
+                    for (int i = FIG_AREA_NEAR; i > FIG_AREA_FAR; --i)
+                    {
+                        if (New_Rig[i] < MIDMAP - 200 && New_Rig[i] > 50 && New_Rig[i] < Rig_break_point_max)
                         {
-                            Circle_inner_end_cnt++;
-                            if (Circle_inner_end_cnt > 8)
+                            Rig_break_point_max = New_Rig[i];
+                            Rig_break_point_und = i;
+                            point_temp = 1;
+                        }
+                        if (point_temp)
+                        {
+                            if (New_Rig[i] > MIDMAP + 150 && New_Lef[i - 1] > MIDMAP + 150)
                             {
-                                Circle_inner_end_flag = 1;
+                                inner_end_point_und = i - 1;
+                                break;
                             }
                         }
-                        else
+                    } // 去畸后内环中点
+
+                    if (Rig_break_point_und != 0)
+                    {
+                        for (int j = inner_end_point_und; j > FIG_AREA_FAR; --j)
                         {
-                            Circle_inner_end_cnt = 0;
+                            New_Lef[j] = -MIDMAP;
+                            New_Rig[j] = MIDMAP;
                         }
-                        if (Circle_inner_end_flag)
+                        for (int j = Rig_break_point_und - 1; j > inner_end_point_und; --j)
+                        {
+                            New_Lef[j] = -MIDMAP; //右边线置空；
+                            // if (New_Rig[j] == MIDMAP) //左边线空后停止使用左边线；
+                            // {
+                            //     Circle_inner_end_cnt++;
+                            //     if (Circle_inner_end_cnt > 8)
+                            //     {
+                            //         Circle_inner_end_flag = 1;
+                            //     }
+                            // }
+                            // else
+                            // {
+                            //     Circle_inner_end_cnt = 0;
+                            // }
+                            // if (Circle_inner_end_flag)
+                            // {
+                            //     New_Rig[j] = MIDMAP;
+                            // }
+                            //可以继续写变小后不变大
+                        }
+                        for (int j = Rig_break_point_und + 1; j < 59; ++j)
                         {
                             New_Rig[j] = MIDMAP;
                         }
-                        //可以继续写变小后不变大
                     }
-                    for (int j = Rig_break_point_und; j < 59; ++j)
+                    else
                     {
-                        New_Rig[j] = MIDMAP;
+                        no_inner_flag = 1;
                     }
                 }
+                if (no_inner_flag)
+                {
+                    Rig_break_point_und = 0;
+                    if (slope_static != 999)
+                    {
+                        for (int k = Fir_row + 3; k < ytemp_static; k++)
+                        {
+                            Lef[k] = (int)(xtemp_static - (ytemp_static - k) / slope_static);
+                            Rig[k] = 78;
+                        }
+                        for (int k = ytemp_static; k < 55; k++)
+                        {
+
+                            Lef[k] = (int)(xtemp_static - (ytemp_static - k) / slope_static);
+                            //Lef[k] = (int)((k - ytemp_static) * 2 / slope_static / 3) + xtemp_static;
+                            Rig[k] = 78;
+                        }
+                        Pic_undistort(1, 1);
+                    }
+                }
+
+                // break_point_find_und(1, 0);
             }
         }
         else if (Road2_flag == 2)
@@ -3067,7 +3101,7 @@ void Pic_DrawMid_und(void)
         {
             temp = Rig_break_point_und;
         }
-        
+
         if (temp < 45 && temp > 15)
         {
             if (New_Lef[temp] == -MIDMAP || New_Rig[temp] == MIDMAP)
