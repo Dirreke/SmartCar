@@ -6,7 +6,7 @@ PID PID_CAR_STRAIGHT_CAM;
 PID PID_CAR_CENTER_CAM;
 void Turn_Cam_New(void)
 {
-  PID_CAR_STRAIGHT_CAM.P = ((CarSpeed - 2.1) > 0 ? (CarSpeed - 2.1) * 0.65 + 0.7 : 0.7); //0.75 +0.6  2.3 0.6 2.8 0.975
+  PID_CAR_STRAIGHT_CAM.P = ((CarSpeed - 2.1) > 0 ? (CarSpeed - 2.1) * 0.8 + 0.55 : 0.55); //0.7 +0.6 1.09 1.11 0.74 0.71
   PID_CAR_CENTER_CAM.P = ((CarSpeed - 2.1) > 0 ? (CarSpeed - 2.1) * 0.6 + 0.3 : 0.3);
   if (PID_CAR_STRAIGHT_CAM.P > 1.5)
   {

@@ -1784,7 +1784,7 @@ int BB_add_flag_set(void)
   // float Speed12_diff_stop[4] = {0.5, 0.3, 0.1, 0.2};
   float Speed12_diff[4] = {0.12, 0.04, 0, -0.08};
   float Speed12_diff2[4] = {0, -0.08, -0.12, -0.2};
-  float Speed12_diff_stop[4] = {0.2, 0.12, 0.04, 0.08};//0.08 = 0.2 / 2.5
+  float Speed12_diff_stop[4] = {0.2, 0.12, 0.04, 0.04}; //0.08 = 0.1 / 2.5
 
   float speed_diff;
   float diff_stop_offset = 0.04; //= 0.1 / 2.5
@@ -1839,7 +1839,7 @@ int BB_add_flag_set(void)
         //BB_add_flag += 100 - 200 * (BB_add_flag / 100);
         // }
 
-        if (speed_diff < Speed12_diff2[i])
+        if (speed_diff < Speed12_diff2[i] && (Road != 0 || Road0_flag != 0))
         {
           BB_add_flag += 10;
         }

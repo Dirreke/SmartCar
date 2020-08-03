@@ -2607,7 +2607,7 @@ void Road7_zhuangtaiji(void)
         {
             Road7_flag = 1;
         }
-        else if (barn_line < 30)
+        else if (barn_line < 28)
         {
             Road7_flag = 2;
         }
