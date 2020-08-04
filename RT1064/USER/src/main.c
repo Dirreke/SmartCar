@@ -41,7 +41,7 @@
 #include "headfile.h"
 
 uint8 image_head[4] = {0x00, 0xff, 0x01, 0x01};
-
+uint8 wosijile = 0;
 //uint32 use_time;
 int main(void)
 {
@@ -63,8 +63,8 @@ int main(void)
     pit_interrupt_ms(PIT_CH0, PIT_TIME);
     qtimer_AB_init(); //解码器初始化
     EM_Init();        //ADC初始化
-    gpio_init(C25, GPI, 1, GPIO_PIN_CONFIG);
-    gpio_interrupt_init(C25, FALLING, GPIO_INT_CONFIG); //初始化GPIO C23 中断模式 使用默认引脚配置GPIO_INT_CONFIG
+    // gpio_init(C25, GPI, 1, GPIO_PIN_CONFIG);
+    // gpio_interrupt_init(C25, FALLING, GPIO_INT_CONFIG); //初始化GPIO C23 中断模式 使用默认引脚配置GPIO_INT_CONFIG
 
     NVIC_SetPriority(GPIO2_Combined_16_31_IRQn, 0); //设置中断优先级 范围0-15 越小优先级越高
     gyro_y_init();                                  //陀螺仪校正初始化
@@ -83,17 +83,24 @@ int main(void)
         if (mt9v03x_csi_finish_flag) //图像采集完成
         {
             mt9v03x_csi_finish_flag = 0; //清除采集完成标志位
-            mag_find();
+            // mag_find();
+            wosijile = 1;
             ICM_main();
+            wosijile = 2;
             Picture_pre_main();
+            wosijile = 3;
             Road_rec();
-
+wosijile = 4;
             Curve_shift();
+            wosijile = 5;
             camera_dispose_main();
+            wosijile = 6;
             //Turn_Servo_Normal();
             Road_shift();
+            wosijile = 7;
             //SpeedTarget_fig();
             Send_Data();
+            wosijile = 8;
             //feisu_flag = 0;
             //loop_time2 = 0;
             //if (temp_flag < 100)
@@ -102,6 +109,7 @@ int main(void)
             //    temp_flag++;
             //}
             Dubug_key();
+            wosijile = 9;
 
             //使用缩放显示函数，根据原始图像大小 以及设置需要显示的大小自动进行缩放或者放大显示。
             //总钻风采集到的图像分辨率为 188*120 ，2.0寸IPS屏显示分辨率为 320*240 ，图像拉伸全屏显示。

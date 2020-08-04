@@ -175,7 +175,7 @@ float car_diffcomp_dias;
 float Car_diff_comp(void)
 {
 
-  if (CarSpeed > 1.5)
+  if (CarSpeed > 1.5 && CAR_DIFF_K != 0)
     return Turn_Out - atan(2 * (CarSpeed1 - CarSpeed2) / (CarSpeed * CAR_DIFF_K)) * SERVO_DIVIDE_ANGLE_SCALE;
   else
     return 0;

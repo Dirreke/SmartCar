@@ -18,7 +18,7 @@ void Debug_Init(void)
 void Dubug_key(void)
 {
     static int ips_num = 0;
-    const int page_num = 13;
+    const int page_num = 14;
     static bool qipao_flag;
     if (gpio_get(DEBUG_KEY0))
     {
@@ -130,6 +130,10 @@ void Dubug_key(void)
                 break;
             case 12:
                 barn_state = !barn_state;
+                break;
+            case 13:
+                competition_strategy += 1;
+                Para_Init();
                 break;
             case 0:
                 Road += 1;
@@ -349,6 +353,10 @@ void Dubug_key(void)
                 break;
             case 12:
                 barn_state = !barn_state;
+                break;
+            case 13:
+                competition_strategy -= 1;
+                Para_Init();
                 break;
             case 0:
                 Road -= 1;
@@ -594,6 +602,10 @@ void ips_show_debug(int ips_num)
         {
             ips200_showstr(0, 12, "R_barn");
         }
+        break;
+    case 13:
+        ips200_showstr(0, 12, "competition_strategy");
+        ips200_showint32(0, 13, competition_strategy, 3);
         break;
     case 0:
         ips200_showstr(0, 12, "Road");

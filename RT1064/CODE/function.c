@@ -36,7 +36,7 @@ void Para_Init()
                 PID_diff0.P = 0.2;
                 barn_reset_flag = 0;
                 DEBUG_CHOICE = 2;
-
+                
                 MotorOut1 = 0;
                 MotorOut2 = 0;
                 break;
@@ -69,6 +69,7 @@ void Para_Init()
                 barn_reset_flag = 0;
                 DEBUG_CHOICE = 2;
 
+                
                 MotorOut1 = 0;
                 MotorOut2 = 0;
                 break;
@@ -102,15 +103,33 @@ bool barn_state = 1;
 
 void SPEED_INIT(void)
 {
-        DEFAULT_SPEED = 2.8;
-        STRAIGHT_SPEED = 2.8;
-        CURVE_SPEED = 2.5;
-        PRE_STOP_SPEED = 2.5;
-        RUSH_STOP_SPEED = 2.0;
-        EMERGENCY_STOP_SPEED = 1.0;
-        UP_RAMP_SPEED = 2.0;
-        ON_RAMP_SPEED = 1.0;
-        DOWN_RAMP_SPEED = 1.0;
+        switch (competition_strategy)
+        {
+        case 0:
+                DEFAULT_SPEED = 3.0;
+                STRAIGHT_SPEED = 3.2;
+                CURVE_SPEED = 2.8;
+                PRE_STOP_SPEED = 2.5;
+                RUSH_STOP_SPEED = 2.0;
+                EMERGENCY_STOP_SPEED = 1.0;
+                UP_RAMP_SPEED = 2.0;
+                ON_RAMP_SPEED = 1.0;
+                DOWN_RAMP_SPEED = 1.0;
 
-        SPEED_MOTOR_SCALE_HIGH = 2500;
+                SPEED_MOTOR_SCALE_HIGH = 2500;
+                break;
+        default:
+                DEFAULT_SPEED = 2.8;
+                STRAIGHT_SPEED = 2.8;
+                CURVE_SPEED = 2.5;
+                PRE_STOP_SPEED = 2.5;
+                RUSH_STOP_SPEED = 2.0;
+                EMERGENCY_STOP_SPEED = 1.0;
+                UP_RAMP_SPEED = 2.0;
+                ON_RAMP_SPEED = 1.0;
+                DOWN_RAMP_SPEED = 1.0;
+
+                SPEED_MOTOR_SCALE_HIGH = 2500;
+                break;
+        }
 }

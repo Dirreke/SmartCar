@@ -93,4 +93,5 @@
 #include "Cam_New.h"
 #include "isr.h"
 
+extern uint8 wosijile;
 #endif

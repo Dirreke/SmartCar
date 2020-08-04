@@ -1257,7 +1257,7 @@ void LR_Slope_fig()
     }
     if (abs(max - min) > 25)
     {
-        if (count * xysum - xsum * ysum)
+        if (count * xysum - xsum * ysum && count * y2sum - ysum * ysum)
         {
             Lef_slope = -(count * y2sum - ysum * ysum) / (count * xysum - xsum * ysum); //-(count * xysum - xsum * ysum) / (count * x2sum - xsum * xsum);
         }
@@ -1346,7 +1346,7 @@ void LR_Slope_fig()
 float Slope(int F1x, int F1y, int F2x, int F2y)
 {
     float slope = 0;
-    if (F2y == F1y)
+    if (F2x == F1x || F2y == F1y)
     {
         return 999;
     }
@@ -3035,6 +3035,14 @@ void Pic_DrawMid_und(void)
             if (New_Rig[i] != MIDMAP)
             {
                 New_Mid[i] = New_Rig[i] - Road_Half_Width_change_r;
+                if (New_Mid[i] > MIDMAP && New_Mid[i] != 999)
+                {
+                    New_Mid[i] = MIDMAP;
+                }
+                else if (New_Mid[i] < -MIDMAP)
+                {
+                    New_Mid[i] = -MIDMAP;
+                }
             }
             else
             {
@@ -3054,6 +3062,14 @@ void Pic_DrawMid_und(void)
             if (New_Lef[i] != -MIDMAP)
             {
                 New_Mid[i] = New_Lef[i] + Road_Half_Width_change_l;
+                if (New_Mid[i] > MIDMAP && New_Mid[i] != 999)
+                {
+                    New_Mid[i] = MIDMAP;
+                }
+                else if (New_Mid[i] < -MIDMAP)
+                {
+                    New_Mid[i] = -MIDMAP;
+                }
             }
             else
             {

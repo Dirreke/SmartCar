@@ -655,7 +655,7 @@ void Speed_Control_New(void)
     if (speedTarget1 > 0) //DEBUG!!! (speedTarget1 + SpeedGoal)/2 ?
     {
       //加速状态速度小于设定速度5000bang
-      if (CarSpeed1 < speedTarget1 * 1.0)
+      if (CarSpeed1 < speedTarget1 * 0.9)//1.0)
       {
         MotorOut1 = MOTOR_RANGE; //speedTarget1 * 5000; //speedTarget1
       }
@@ -704,7 +704,7 @@ void Speed_Control_New(void)
   {
     if (speedTarget1 > 0)
     {
-      if (CarSpeed1 > speedTarget1 * 1.0 + 0.15)
+      if (CarSpeed1 > speedTarget1 * 1.1)//0 + 0.15)
       {
         MotorOut1 = -MOTOR_RANGE; //speedTarget1 * -3000;
       }
@@ -829,7 +829,7 @@ void Speed_Control_New(void)
   {
     if (speedTarget2 > 0)
     {
-      if (CarSpeed2 < speedTarget2 * 1.0)
+      if (CarSpeed2 < speedTarget2 * 0.9)//1.0)
       {
         MotorOut2 = MOTOR_RANGE; //speedTarget2 * 5000;
       }
@@ -874,7 +874,7 @@ void Speed_Control_New(void)
   {
     if (speedTarget2 > 0)
     {
-      if (CarSpeed2 > speedTarget2 * 1.0 + 0.15)
+      if (CarSpeed2 > speedTarget2 * 1.1)//1.0 + 0.15)
       {
         MotorOut2 = -MOTOR_RANGE; //speedTarget2 * -3000;
       }

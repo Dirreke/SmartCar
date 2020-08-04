@@ -243,14 +243,14 @@ void Variable_update(void)
   // Variable[14] = Allwhitestart * 100 + Allwhiteend;
   // Variable[15] = 100 + Lef_circle * 10 + Rig_circle; //whitecnt;//Road1_turnout;//limit_pos(EM_Value_1/1.5-EM_Value_2/3.5);//speedTarget1;//map_line[MIN(50,AllWhileStartLine)];
 
-  Variable[0] = DDDebug;                           //EM_Value_4;//crossing_flag_flag;                 //Mid_intercept;//MotorOut1_add;      //Cam_offset;   //EM_Value_1;// Cam_offset;//cntt;//ToF_distance;
-  Variable[1] = Turn_Out;                          //EM_Value_2; //Turn_Cam_Out;//cnt;//Turn_Cam_Out;//;//stat_slope;//gyroy_1;//Turn_Cam_Out;//Car_W;
-  Variable[2] = Lef_innercurve_point * 100 + Rig_innercurve_point;//mean_turn_out;//Allwhitestart * 100 + Allwhiteend; //Picture_Failure; //curve_state * 100 + Mid_slope; //Allwhitestart * 100 + Allwhiteend; //EM_Value_1;//Cam_offset;
+  Variable[0] = DDDebug;                //EM_Value_4;//crossing_flag_flag;                 //Mid_intercept;//MotorOut1_add;      //Cam_offset;   //EM_Value_1;// Cam_offset;//cntt;//ToF_distance;
+  Variable[1] = Turn_Out;               //EM_Value_2; //Turn_Cam_Out;//cnt;//Turn_Cam_Out;//;//stat_slope;//gyroy_1;//Turn_Cam_Out;//Car_W;
+  Variable[2] = PID_CAR_STRAIGHT_CAM.P; //icm_gyro_y_w;//Lef_innercurve_point * 100 + Rig_innercurve_point;//mean_turn_out;//Allwhitestart * 100 + Allwhiteend; //Picture_Failure; //curve_state * 100 + Mid_slope; //Allwhitestart * 100 + Allwhiteend; //EM_Value_1;//Cam_offset;
   Variable[3] = CarSpeed1;
-  Variable[4] = CarSpeed2;                       //EM_Value_1; //speedTarget1; //Allwhiteend;
-  Variable[5] = speedTarget1;//Lef_innercurve_point;//icm_gyro_z_w;//speedTarget1;                    //EM_Value_2;
-  Variable[6] = speedTarget2;//icm_gyro_z_offset;//speedTarget2;                    //speedTarget2; //EM_Value_3;
-  Variable[7] = loop_distance * 1.0 / loop_time; //PID_CAR_STRAIGHT_CAM.P;//EM_Value_2 + EM_Value_3;
+  Variable[4] = CarSpeed2;                          //EM_Value_1; //speedTarget1; //Allwhiteend;
+  Variable[5] = speedTarget1;                       //Lef_innercurve_point;//icm_gyro_z_w;//speedTarget1;                    //EM_Value_2;
+  Variable[6] = speedTarget2;                       //icm_gyro_z_offset;//speedTarget2;                    //speedTarget2; //EM_Value_3;
+  Variable[7] = loop_distance / (loop_time + 0.01); //PID_CAR_STRAIGHT_CAM.P;//EM_Value_2 + EM_Value_3;
   if (Road == 0)
   {
     Variable[8] = Road0_flag;
@@ -282,10 +282,10 @@ void Variable_update(void)
   Variable[9] = Lef_slope;  //EM_offset;
   Variable[10] = Rig_slope; //speedTarget2;//Turn_Cam_Out;
   Variable[11] = MotorOut1;
-  Variable[12] = MotorOut2;         //EM_Value_2;//MotorOut2;         //Turn_EM_Out;  //Lef_break_point*100+Rig_break_point;
-  Variable[13] = (int)(EM_Value_2*100)*100+EM_Value_3;        //icm_gyro_y_w;      //MotorOut1_add;
-  Variable[14] = Mid_slope;//icm_gyro_z_angle;        //icm_gyro_y_angle;  //MotorOut2_add;//speed_change_flag;//car_center_dias;   //100 + Lef_circle * 10 + Rig_circle; /*Rig_circle;*/ //Road6_flag ;//CarSpeed2;
-  Variable[15] = loop_time * 0.001; //EM_Value_1;         // Mid_slope; //Allwhitestart * 100 + Allwhiteend;              //EM_Value_2+EM_Value_3; //whitecnt;//Road1_turnout;//limit_pos(EM_Value_1/1.5-EM_Value_2/3.5);//speedTarget1;//map_line[MIN(50,AllWhileStartLine)];
+  Variable[12] = MotorOut2;                                  //EM_Value_2;//MotorOut2;         //Turn_EM_Out;  //Lef_break_point*100+Rig_break_point;
+  Variable[13] = (int)(EM_Value_2 * 100) * 100 + EM_Value_3; //icm_gyro_y_w;      //MotorOut1_add;
+  Variable[14] = Mid_slope;                                  //icm_gyro_z_angle;        //icm_gyro_y_angle;  //MotorOut2_add;//speed_change_flag;//car_center_dias;   //100 + Lef_circle * 10 + Rig_circle; /*Rig_circle;*/ //Road6_flag ;//CarSpeed2;
+  Variable[15] = loop_time * 0.001;                          //EM_Value_1;         // Mid_slope; //Allwhitestart * 100 + Allwhiteend;              //EM_Value_2+EM_Value_3; //whitecnt;//Road1_turnout;//limit_pos(EM_Value_1/1.5-EM_Value_2/3.5);//speedTarget1;//map_line[MIN(50,AllWhileStartLine)];
 }
 
 void Pic_send_new2(void)

@@ -34,6 +34,7 @@ void PIT_IRQHandler(void)
     if (PIT_FLAG_GET(PIT_CH0))
     {
         PIT_FLAG_CLEAR(PIT_CH0);
+        wosijile += 16;
         if (Road != 3 && loop_time > 500 && Road7_flag != 2 && Road7_flag != 3)
         {
             if (EM_Value_2 < 0.3 && EM_Value_3 < 0.3 && EM_Value_1 < 0.3 && EM_Value_4 < 0.3)
@@ -66,6 +67,7 @@ void PIT_IRQHandler(void)
         }
 
         ICM_main_isr();
+
         // ICM_get();
         Get_Speed();
         Turn_Cam_New();
@@ -77,20 +79,21 @@ void PIT_IRQHandler(void)
         BB_add();
         Moto_Out();
         Mean_Turn_Out();
+        wosijile -=16;
     }
 
     __DSB();
 }
 
-void GPIO2_Combined_16_31_IRQHandler(void)
-{
+// void GPIO2_Combined_16_31_IRQHandler(void)
+// {
 
-    CLEAR_GPIO_FLAG(C23); //清除中断标志位
+//     CLEAR_GPIO_FLAG(C23); //清除中断标志位
 
-    ganhuangguan_flag = 1;
+//     ganhuangguan_flag = 1;
 
-    gpio_interrupt_init(C23, NO_INT, GPIO_INT_CONFIG);
-}
+//     gpio_interrupt_init(C23, NO_INT, GPIO_INT_CONFIG);
+// }
 
 void GPIO2_Combined_0_15_IRQHandler(void)
 {
