@@ -2975,7 +2975,7 @@ void Pic_DrawMid_und(void)
     int i;
     int Road_Half_Width_change_r = 0;
     int Road_Half_Width_change_l = 0;
-    uint16 Mid_inner_Mid = 0;
+    int Mid_inner_Mid = 0;
     int Mid_diff_far = 0;
     int Mid_diff_near = 0;
     // if (Road0_flag == 4 || (Road == 1 && Road1_flag != 0 && Road1_flag != 5)) //×ó
