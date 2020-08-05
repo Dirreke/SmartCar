@@ -32,6 +32,7 @@
 #define CAR_DIFF_K 0.7750                      //小车两轮宽比两轮长，暂设为0，此时无差速，车宽15.5，车长20
 #define CAR_LENGTH 20                          //车长cm
 #define CAR_LENGTH_P 148.5149
+#define CAR_DIFF_SERVO_RANGE 250
 /********************* EM.c ******************************************/
 #define EM2EM1K2 4 // EM_Value_2/EM_Value_1的平方
 

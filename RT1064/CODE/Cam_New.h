@@ -15,3 +15,4 @@ float Car_diff_comp(void);
 void Turn_diff_comp(void);
 float car_center(void);
 void Center_offset_filter(void);
+void Turn_Cam_dias(void);

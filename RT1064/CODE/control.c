@@ -325,19 +325,19 @@ void SpeedTarget_fig(void)
     //   angle_val = 0;
     //   diff_off();
     // }
-    if (fabs(Turn_Cam_Out_temp) > 300)
+    if (fabs(Turn_Cam_Out_temp) > CAR_DIFF_SERVO_RANGE + 50) //300
     {
       PID_diff_P = 2;
       // diff_BB_flag = 1;
       diff_on();
     }
-    else if (Turn_Cam_Out_temp > 250)
+    else if (Turn_Cam_Out_temp > CAR_DIFF_SERVO_RANGE)
     {
       PID_diff_P = 1;
       diff_on();
       // diff_BB_flag = 1;
     }
-    else if (fabs(Turn_Cam_Out_temp) > 190) //262.5 * PID_CAR_STRAIGHT_CAM.P) //SERVO_RANGE)
+    else if (fabs(Turn_Cam_Out_temp) > SERVO_RANGE + 10) //262.5 * PID_CAR_STRAIGHT_CAM.P) //SERVO_RANGE)
     {
       // angle_val = ANGLE_RANGE; //((Turn_Cam_Out_temp - SERVO_RANGE) * DIFF_KKK + SERVO_RANGE) * ANGLE_DIVIDE_SERVO_SCALE;
       diff_on();
@@ -591,7 +591,7 @@ void Speed_Control_New(void)
     frame2 = 0;
   }
   //弯道不bang
-  if (fabs(Turn_Out) > 100 && fabs(Turn_Out) < 250)
+  if (fabs(Turn_Out) > 100 && fabs(Turn_Out) < CAR_DIFF_SERVO_RANGE)
   {
 
     if (a_flag1 == 1)
@@ -621,7 +621,7 @@ void Speed_Control_New(void)
       }
     }
   }
-  else if (fabs(Turn_Out) >= 250 && (diff_flag1 < 0 || diff_flag2 < 0) && CarSpeed1 < 6 && CarSpeed2 < 6) //差速bang，Turn_Out>250 标志位，给18000和0的Bang)
+  else if (fabs(Turn_Out) >= CAR_DIFF_SERVO_RANGE && (diff_flag1 < 0 || diff_flag2 < 0) && CarSpeed1 < 5 && CarSpeed2 < 5) //差速bang，Turn_Out>250 标志位，给18000和0的Bang)
   {
     diff_flag1 = 3;
     diff_flag2 = 3;
@@ -655,12 +655,12 @@ void Speed_Control_New(void)
     if (speedTarget1 > 0) //DEBUG!!! (speedTarget1 + SpeedGoal)/2 ?
     {
       //加速状态速度小于设定速度5000bang
-      if (CarSpeed1 < speedTarget1 * 0.9)//1.0)
+      if (CarSpeed1 < speedTarget1 * 0.9) //1.0)
       {
         MotorOut1 = MOTOR_RANGE; //speedTarget1 * 5000; //speedTarget1
       }
       //加速状态速度稍大于设定速度6帧2500huifu
-      else if (CarSpeed1 < speedTarget1 * 1.1) //0.8
+      else if (CarSpeed1 < speedTarget1 * 1.0 + 0.1) //0.8
       {
         cnt1++;
         if (cnt1 > 5)
@@ -704,7 +704,7 @@ void Speed_Control_New(void)
   {
     if (speedTarget1 > 0)
     {
-      if (CarSpeed1 > speedTarget1 * 1.1)//0 + 0.15)
+      if (CarSpeed1 > speedTarget1 * 1.1) //0 + 0.15)
       {
         MotorOut1 = -MOTOR_RANGE; //speedTarget1 * -3000;
       }
@@ -791,11 +791,11 @@ void Speed_Control_New(void)
   if (diff_flag1 > 0)
   //差速 舵机打死 BBC
   {
-    if (Turn_Out >= 250)
+    if (Turn_Out >= CAR_DIFF_SERVO_RANGE)
     {
       MotorOut1 = MOTOR_RANGE;
     }
-    else if (Turn_Out <= -250)
+    else if (Turn_Out <= -CAR_DIFF_SERVO_RANGE)
     {
       MotorOut1 = 0;
     }
@@ -829,7 +829,7 @@ void Speed_Control_New(void)
   {
     if (speedTarget2 > 0)
     {
-      if (CarSpeed2 < speedTarget2 * 0.9)//1.0)
+      if (CarSpeed2 < speedTarget2 * 0.9) //1.0)
       {
         MotorOut2 = MOTOR_RANGE; //speedTarget2 * 5000;
       }
@@ -874,7 +874,7 @@ void Speed_Control_New(void)
   {
     if (speedTarget2 > 0)
     {
-      if (CarSpeed2 > speedTarget2 * 1.1)//1.0 + 0.15)
+      if (CarSpeed2 > speedTarget2 * 1.1) //1.0 + 0.15)
       {
         MotorOut2 = -MOTOR_RANGE; //speedTarget2 * -3000;
       }
@@ -956,11 +956,11 @@ void Speed_Control_New(void)
   if (diff_flag2 > 0)
   //差速 舵机打死 BBC
   {
-    if (Turn_Out >= 250)
+    if (Turn_Out >= CAR_DIFF_SERVO_RANGE)
     {
       MotorOut2 = 0;
     }
-    else if (Turn_Out <= -250)
+    else if (Turn_Out <= -CAR_DIFF_SERVO_RANGE)
     {
       MotorOut2 = MOTOR_RANGE;
     }
@@ -1783,12 +1783,13 @@ int BB_add_flag_set(void)
   // float Speed12_diff2[4] = {0, -0.2, -0.3, -0.5};
   // float Speed12_diff_stop[4] = {0.5, 0.3, 0.1, 0.2};
   float Speed12_diff[4] = {0.12, 0.04, 0, -0.08};
-  float Speed12_diff2[4] = {0, -0.08, -0.12, -0.2};
+  float Speed12_diff2[4] = {0, -0.08, -0.12, -0.16};
   float Speed12_diff_stop[4] = {0.2, 0.12, 0.04, 0.04}; //0.08 = 0.1 / 2.5
 
   float speed_diff;
   float diff_stop_offset = 0.04; //= 0.1 / 2.5
   static bool fuhao;
+  static bool diff_4_sign;
   if (CarSpeed < 1)
   {
     return 0;
@@ -1807,7 +1808,7 @@ int BB_add_flag_set(void)
         fabs(Turn_Out) <= Turn_Out_Table[BB_add_flag % 10 - 1] || /*BBadd_flag==1时用这个*/
         (Turn_Out < 0 ^ fuhao) ||
         (BB_add_flag % 10 < 4 && speed_diff > Speed12_diff_stop[BB_add_flag % 10 - 1]) ||
-        (BB_add_flag % 10 == 4 && speed_diff > diff_stop_offset * (speed_diff > 0 ? 1 : -1) + Speed12_diff_stop[BB_add_flag % 10 - 1]))
+        (BB_add_flag % 10 == 4 && speed_diff > diff_stop_offset * (diff_4_sign > 0 ? 1 : -1) + Speed12_diff_stop[BB_add_flag % 10 - 1]))
     {
       BB_add_flag = 0; //如果满足条件4，不会add_flag，其他条件重新判bang，都不满足维持上一帧
     }
@@ -1832,6 +1833,10 @@ int BB_add_flag_set(void)
         if (speed_diff < Speed12_diff[i])
         {
           BB_add_flag += i + 1;
+          if (i == 3)
+          {
+            diff_4_sign = speed_diff > 0;
+          }
         }
         // else if (i == 3 && -speed_diff < Speed12_diff[i] )
         // {
@@ -1847,12 +1852,14 @@ int BB_add_flag_set(void)
         {
           BB_add_flag += i + 1;
           BB_add_flag += 100 - 200 * (BB_add_flag / 100);
+          diff_4_sign = speed_diff > 0;
         }
+
         /* -50~50角度时 ****
-        右转左减右: 左轮快 speed_diff正，需要大bang条件 只有小bang 恢复条件0.2+0.1   *0.4
-                    右轮快 speed_diff负，大小bang都有              恢复条件0.2-0.1
-        左转右减左: 右轮快 speed_diff正，需要大bang条件 只有小bang 恢复条件0.2+0.1
-                    左轮快 speed_diff负，大小bang都有              恢复条件0.2-0.1
+        右转左减右: 左轮快 speed_diff正，需要大bang条件 只有小bang 恢复条件0.1+0.1   *0.4
+                    右轮快 speed_diff负，大小bang都有              恢复条件0.1-0.1
+        左转右减左: 右轮快 speed_diff正，需要大bang条件 只有小bang 恢复条件0.1+0.1
+                    左轮快 speed_diff负，大小bang都有              恢复条件0.1-0.1
          */
         break;
       }

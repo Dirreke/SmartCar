@@ -76,6 +76,7 @@ void camera_dispose_main(void) //摄像头处理主函数
     // Pic_offset_filter(); //offset滤波
 
     Get_pic_with_edge(); //获得带边线灰度图
+    Turn_Cam_dias();
     //Turn_Cam_New();
 }
 
