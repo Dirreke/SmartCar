@@ -378,7 +378,7 @@ void SpeedTarget_fig(void)
     diff_K0 = 0;
   }
   /* 入库差速增益补偿 */
-  if (Road == 7 && Road7_flag == 2)
+  if ((Road == 7 && Road7_flag == 2) || (Road == 3 && Road3_flag == 1))
   {
     diff_K0 *= 2;
   }
@@ -799,12 +799,18 @@ void Speed_Control_New(void)
     {
       MotorOut1 = 0;
     }
-    diff_flag1--;
-    if (diff_flag1 == 0)
+    else
     {
       MotorOut1 = SpeedGoal * SPEED_MOTOR_SCALE_LOW;
       diff_flag1 = -1;
     }
+    
+    // diff_flag1--;
+    // if (diff_flag1 == 0)
+    // {
+    //   MotorOut1 = SpeedGoal * SPEED_MOTOR_SCALE_LOW;
+    //   diff_flag1 = -1;
+    // }
   }
   // d_flag2 = 0;
   /******* 右轮 *******/
@@ -964,12 +970,17 @@ void Speed_Control_New(void)
     {
       MotorOut2 = MOTOR_RANGE;
     }
-    diff_flag2--;
-    if (diff_flag2 == 0)
+    else
     {
       MotorOut2 = SpeedGoal * SPEED_MOTOR_SCALE_LOW;
       diff_flag2 = -1;
     }
+    // diff_flag2--;
+    // if (diff_flag2 == 0)
+    // {
+    //   MotorOut2 = SpeedGoal * SPEED_MOTOR_SCALE_LOW;
+    //   diff_flag2 = -1;
+    // }
   }
 
   OldE1 = SpeedE1;
@@ -1348,7 +1359,7 @@ void Road_shift(void)
 *  修改时间：2020.7.26
 *  备    注：用于
 *************************************************************************/
-bool a_flag_pre = 0;
+// bool a_flag_pre = 0;
 
 void Road0_flag_shift(bool reset0)
 {
@@ -1358,21 +1369,29 @@ void Road0_flag_shift(bool reset0)
   {
     if (Road0_flag == Road0_flag_old)
     {
-      if (Road0_flag <= 2 && a_flag_pre)
+      if (Road0_flag <= 2 && !Road0_flag0_flag)
       {
         if (fabs(Turn_Out) < 50)
         {
-          if (CarSpeed < SpeedGoal - 0.3)
+          if (CarSpeed1 < SpeedGoal - 0.3)
           {
             a_flag1 = 1;
-            a_flag2 = 1;
           }
           else
           {
             MotorOut1 = SpeedGoal * SPEED_MOTOR_SCALE_HIGH;
-            MotorOut2 = MotorOut1; //SpeedGoal * SPEED_MOTOR_SCALE_HIGH;
           }
-          a_flag_pre = 0;
+
+          if (CarSpeed2 < SpeedGoal - 0.3)
+          {
+            a_flag2 = 1;
+          }
+          else
+          {
+            MotorOut2 = SpeedGoal * SPEED_MOTOR_SCALE_HIGH;
+          }
+          // a_flag_pre = 0;
+          Road0_flag0_flag = 1;
         }
       }
       return;
@@ -1411,19 +1430,28 @@ void Road0_flag_shift(bool reset0)
     lib_speed_set(STRAIGHT_SPEED);
     if (fabs(Turn_Out) > 50)
     {
-      a_flag_pre = 1;
+      // a_flag_pre = 1;
+      Road0_flag0_flag = 0;
     }
     else
     {
-      if (CarSpeed < SpeedGoal - 0.3)
+      Road0_flag0_flag = 1;
+      if (CarSpeed1 < SpeedGoal - 0.3)
       {
         a_flag1 = 1;
-        a_flag2 = 1;
       }
       else
       {
         MotorOut1 = SpeedGoal * SPEED_MOTOR_SCALE_HIGH;
-        MotorOut2 = MotorOut1; //SpeedGoal * SPEED_MOTOR_SCALE_HIGH;
+      }
+
+      if (CarSpeed2 < SpeedGoal - 0.3)
+      {
+        a_flag2 = 1;
+      }
+      else
+      {
+        MotorOut2 = SpeedGoal * SPEED_MOTOR_SCALE_HIGH;
       }
     }
 
@@ -1646,7 +1674,6 @@ void Road4_flag_shift(bool reset0)
   switch (Road4_flag)
   {
   case 0:
-    lib_speed_set(UP_RAMP_SPEED);
     break;
   case 1:
     lib_speed_set(UP_RAMP_SPEED);
@@ -1828,7 +1855,7 @@ int BB_add_flag_set(void)
 
     for (int i = 0; i < 4; ++i)
     {
-      if (fabs(Turn_Out) > Turn_Out_Table[i])
+      if (fabs(Turn_Out) >= Turn_Out_Table[i])
       {
         if (speed_diff < Speed12_diff[i])
         {
@@ -1844,11 +1871,11 @@ int BB_add_flag_set(void)
         //BB_add_flag += 100 - 200 * (BB_add_flag / 100);
         // }
 
-        if (speed_diff < Speed12_diff2[i] && (Road != 0 || Road0_flag != 0))
+        if (speed_diff <= Speed12_diff2[i] && (Road != 0 || Road0_flag != 0))
         {
           BB_add_flag += 10;
         }
-        else if (i == 3 && -speed_diff < Speed12_diff2[i])
+        else if (i == 3 && -speed_diff <= Speed12_diff2[i])
         {
           BB_add_flag += i + 1;
           BB_add_flag += 100 - 200 * (BB_add_flag / 100);

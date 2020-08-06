@@ -75,49 +75,59 @@ int main(void)
 
     while (1)
     {
+
         //if (temp_flag < 1)
         //{
         //    loop_time = 9999;
         //}
 
-        if (mt9v03x_csi_finish_flag) //图像采集完成
+        while (!mt9v03x_csi_finish_flag) //图像采集完成
         {
-            mt9v03x_csi_finish_flag = 0; //清除采集完成标志位
-            // mag_find();
-            wosijile = 1;
-            ICM_main();
-            wosijile = 2;
-            Picture_pre_main();
-            wosijile = 3;
-            Road_rec();
-wosijile = 4;
-            Curve_shift();
-            wosijile = 5;
-            camera_dispose_main();
-            wosijile = 6;
-            //Turn_Servo_Normal();
-            Road_shift();
-            wosijile = 7;
-            //SpeedTarget_fig();
-            Send_Data();
-            wosijile = 8;
-            //feisu_flag = 0;
-            //loop_time2 = 0;
-            //if (temp_flag < 100)
-            //{
-            //   loop_time = 0;
-            //    temp_flag++;
-            //}
-            Dubug_key();
-            wosijile = 9;
-
-            //使用缩放显示函数，根据原始图像大小 以及设置需要显示的大小自动进行缩放或者放大显示。
-            //总钻风采集到的图像分辨率为 188*120 ，2.0寸IPS屏显示分辨率为 320*240 ，图像拉伸全屏显示。
-            //上位机显示的图像分辨率为 80*60 ， 采集第15-174列 ， 1-120行 ， 每两行取一行。
-            //ips200_displayimage032_zoom(mt9v03x_csi_image[0], MT9V03X_CSI_W, MT9V03X_CSI_H, 320, 240);	//屏幕显示摄像头图像
-            //seekfree_wireless_send_buff(image_head,sizeof(image_head));//由于sizeof计算字符串的长度包含了最后一个\0，因此需要减一。数组不用
-            //seekfree_wireless_send_buff(*Image_Use,80*60);//Image_Use后80*60
+            ;
         }
+
+        wosijile = 1;
+        Debug_key();
+        wosijile = 9;
+
+        if (!kaiji_flag)
+        {
+            lib_speed_set(0);
+            continue;
+        }
+
+        mt9v03x_csi_finish_flag = 0; //清除采集完成标志位
+        // mag_find();
+        ICM_main();
+        wosijile = 2;
+        Picture_pre_main();
+        wosijile = 3;
+        Road_rec();
+        wosijile = 4;
+        Curve_shift();
+        wosijile = 5;
+        camera_dispose_main();
+        wosijile = 6;
+        //Turn_Servo_Normal();
+        Road_shift();
+        wosijile = 7;
+        //SpeedTarget_fig();
+        Send_Data();
+        wosijile = 8;
+        //feisu_flag = 0;
+        //loop_time2 = 0;
+        //if (temp_flag < 100)
+        //{
+        //   loop_time = 0;
+        //    temp_flag++;
+        //}
+
+        //使用缩放显示函数，根据原始图像大小 以及设置需要显示的大小自动进行缩放或者放大显示。
+        //总钻风采集到的图像分辨率为 188*120 ，2.0寸IPS屏显示分辨率为 320*240 ，图像拉伸全屏显示。
+        //上位机显示的图像分辨率为 80*60 ， 采集第15-174列 ， 1-120行 ， 每两行取一行。
+        //ips200_displayimage032_zoom(mt9v03x_csi_image[0], MT9V03X_CSI_W, MT9V03X_CSI_H, 320, 240);	//屏幕显示摄像头图像
+        //seekfree_wireless_send_buff(image_head,sizeof(image_head));//由于sizeof计算字符串的长度包含了最后一个\0，因此需要减一。数组不用
+        //seekfree_wireless_send_buff(*Image_Use,80*60);//Image_Use后80*60
 
         //更改占空比为  百分之100*2000/PWM_DUTY_MAX  PWM_DUTY_MAX在fsl_pwm.h文件中 默认为50000
         //      占空比对应关系  0：D0  1：D1  2：D12  3：D13

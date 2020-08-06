@@ -12,14 +12,19 @@ void Turn_Cam_New(void)
   {
     PID_CAR_STRAIGHT_CAM.P = 1.5;
   }
-  if (Road != 7 && Road0_flag != 4 && Road0_flag != 5 && Road != 1 && Road != 2)
+  PID_CAR_STRAIGHT_CAM.P *= Cam_P_New;
+  if (Road == 0 && Road0_flag0_flag && Road0_flag < 3)
   {
     PID_CAR_STRAIGHT_CAM.P *= 0.3;
+  }
+  else if ((Road == 2 && Road2_flag == 1) || (Road == 1 && Road1_flag == 1))
+  {
+    PID_CAR_STRAIGHT_CAM.P *= 0.75; //0.83;
   }
   // PID_CAR_STRAIGHT_CAM.D = 0;
   // static float car_straight_dias_old = 0;
 
-  if (fabs(car_center_dias) > 180)
+  if (fabs(car_center_dias) > 120)
   {
     if (fabs(Mid_slope) >= 3)
     {
@@ -45,12 +50,17 @@ void Turn_Cam_New(void)
   //car_straight_dias_old = car_straight_dias;
 }
 
-void Turn_Cam_dias(void){
+void Turn_Cam_dias(void)
+{
+  float temp;
+  static float car_straight_dias_old;
   car_straight_dias = M_Slope_fig() * SERVO_DIVIDE_ANGLE_SCALE;
   Straight_offset_filter();
   car_center_dias = car_center();
   Center_offset_filter();
-
+  temp = car_center_dias + PID_CAR_STRAIGHT_CAM.D * (car_center_dias - car_straight_dias_old);
+  car_straight_dias_old = car_straight_dias;
+  car_straight_dias = temp;
   if (fabs(car_center_dias) < 10)
   {
     car_center_dias = 0;
@@ -164,7 +174,7 @@ int gmyshuoqianbuchulai(int temp)
   }
   return turn;
 }
-
+#if 0
 /*************************************************************************
 *  函数名称：void Car_diff_comp(void)
 *  功能说明：chasu buchang
@@ -197,6 +207,7 @@ void Turn_diff_comp()
   car_diffcomp_dias_old = car_diffcomp_dias;
   Turn_Out = Turn_Out + car_diffcomp_PWM;
 }
+#endif
 /*************************************************************************
 *  函数名称：void Car_center(void)
 *  功能说明：chezhi滤波

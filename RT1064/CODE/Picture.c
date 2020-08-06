@@ -322,16 +322,17 @@ void Pic_noi_elim(void)
              每一行只检测两个跳变点。
              ////然后利用求平均值绘制中心线，单写
 *************************************************************************/
-bool Picture_Failure = 0;
+// bool Picture_Failure = 0;
 void Pic_DrawLRside(void)
 {
-    Picture_Failure = 0;
+    // Picture_Failure = 0;
     const int Middle = 41;
     int i = 0, j = 0;
     bool search_flag1 = 0, search_flag2 = 0;
     bool Side_flag;
     bool Side_true = 0;
     bool Lef_nostart_flag = 1, Rig_nostart_flag = 1;
+    int side_temp[LCDH];
     //int direction_offset = 0;
     // int Circle_+Road_End = 0;
     Lef_circle_point = 0;
@@ -728,9 +729,21 @@ void Pic_DrawLRside(void)
 
         //     }
         // }
-        for (i = Fir_row; i < Last_row - 28; ++i)
+        for (i = 0; i < CAMERA_H; i++)
         {
-            if (Lef[i] - Fir_col > 10 || Lef[i + 1] - Fir_col > 10)
+            side_temp[i] = Rig[i];
+        }
+        for (i = Fir_row + 1; i < Last_row - 28; ++i)
+        {
+            // if (Lef[i] - Fir_col > 10 || Lef[i + 1] - Fir_col > 10)
+            // {
+            //     continue;
+            // }
+            if ((Pixle[i][75] == 1 && Pixle[i - 1][73] == 0) || (Pixle[i][74] == 1 && Pixle[i - 1][72] == 0))
+            {
+                ;
+            }
+            else
             {
                 continue;
             }
@@ -792,6 +805,17 @@ void Pic_DrawLRside(void)
                     {
                         Lef_circle_point = 0;
                     }
+                    else if (Pixle[i][Rig[i - 1] + 1] == 0 || Pixle[i + 1][Rig[i - 1] + 1] == 0)
+                    {
+                        Lef_circle_point = 0;
+                    }
+                    if (Lef_circle_point == 0)
+                    {
+                        for (int k = Fir_row; k < i; ++k)
+                        {
+                            Rig[k] = side_temp[k];
+                        }
+                    }
                     break;
                 }
             }
@@ -800,9 +824,21 @@ void Pic_DrawLRside(void)
     Side_true = 0;
     if (Road2_flag == 1 || Road2_flag == 2)
     {
+        for (i = 0; i < CAMERA_H; i++)
+        {
+            side_temp[i] = Lef[i];
+        }
         for (i = Fir_row; i < Last_row - 28; ++i)
         {
-            if (Last_col - Rig[i] > 10 || Last_col - Rig[i + 1] > 10)
+            // if (Last_col - Rig[i] > 10 || Last_col - Rig[i + 1] > 10)
+            // {
+            //     continue;
+            // }
+            if ((Pixle[i][75] == 1 && Pixle[i - 1][73] == 0) || (Pixle[i][74] == 1 && Pixle[i - 1][72] == 0))
+            {
+                ;
+            }
+            else
             {
                 continue;
             }
@@ -864,12 +900,24 @@ void Pic_DrawLRside(void)
                     {
                         Rig_circle_point = 0;
                     }
+                    else if (Pixle[i][Lef[i - 1] - 1] == 0 || Pixle[i + 1][Lef[i - 1] - 1] == 0)
+                    {
+                        Rig_circle_point = 0;
+                    }
+
+                    if (Rig_circle_point == 0)
+                    {
+                        for (int k = Fir_row; k < i; ++k)
+                        {
+                            Lef[k] = side_temp[i];
+                        }
+                    }
                     break;
                 }
             }
         }
     }
-
+#if 0
     if (Road0_flag == 4) //|| Road0_flag == 5)
     {
         for (i = Last_row - 5; i > Last_row - 10; --i)
@@ -939,6 +987,7 @@ void Pic_DrawLRside(void)
             }
         }
     }
+#endif
 }
 /*************************************************************************
  *  函数名称：void Pic_undistort(int L, int R)
@@ -1848,7 +1897,7 @@ void Pic_Fix_Line(void)
                 {
                     continue;
                 }
-                if (Lef[i - 4] - Lef[i - 2] < 5 && Lef[i - 2] - Lef[i] < 5 && Lef[i] - Lef[i + 1] > 15 && Pixle[i + 2][Lef[i] - 5] == 1) // 开始的时候前面18-20行是0
+                if (Lef[i - 4] - Lef[i - 2] < 5 && Lef[i - 2] - Lef[i] < 5 && Lef[i] - Lef[i + 1] > 15 && Pixle[i + 2][Lef[i] - 5] == 1 && (Lef[i + 1] - Fir_col < 8 || Lef[i + 2] - Fir_col < 10)) // 开始的时候前面18-20行是0
                 {
 
                     slope_static = Slope(Lef[i], i, 79, 50); // 固定点补线斜率
@@ -2113,7 +2162,7 @@ void Pic_Fix_Line(void)
                 {
                     continue;
                 }
-                if (Rig[i] - Rig[i - 2] < 5 && Rig[i - 2] - Rig[i - 4] < 5 && Rig[i + 1] - Rig[i] > 15 && Pixle[i + 2][Rig[i] + 5] == 1)
+                if (Rig[i] - Rig[i - 2] < 5 && Rig[i - 2] - Rig[i - 4] < 5 && Rig[i + 1] - Rig[i] > 15 && Pixle[i + 2][Rig[i] + 5] == 1 && (Last_col - Rig[i + 1] < 8 || Last_col - Rig[i + 2] < 8))
                 {
                     //slope_static = Slope(Rig[i], i, 0, 54);
                     slope_static = Slope(Rig[i], i, 0, 50);

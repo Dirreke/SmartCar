@@ -2,6 +2,8 @@
 #include "debug.h"
 
 int DEBUG_CHOICE = 1;
+bool kaiji_flag = 0;
+float Cam_P_New = 0.8;
 // float speedgoal;
 // float curvespeedgoal;
 void Debug_Init(void)
@@ -15,10 +17,10 @@ void Debug_Init(void)
     ips200_clear(WHITE);
 }
 
-void Dubug_key(void)
+void Debug_key(void)
 {
     static int ips_num = 0;
-    const int page_num = 14;
+    const int page_num = 15;
     static bool qipao_flag;
     if (gpio_get(DEBUG_KEY0))
     {
@@ -39,6 +41,7 @@ void Dubug_key(void)
     else
     {
         qipao_flag = 0;
+        kaiji_flag = 1;
         lib_speed_set(0);
     }
 
@@ -113,14 +116,7 @@ void Dubug_key(void)
                 //DEBUG_CHOICE++;
                 break;
             case 9:
-                if (get_diff_state() == DIFF_ON_VAL)
-                {
-                    diff_off();
-                }
-                else
-                {
-                    diff_on();
-                }
+                PID_CAR_STRAIGHT_CAM.D += 0.1;
                 break;
             case 10:
                 PID_diff.P += 0.1;
@@ -134,6 +130,9 @@ void Dubug_key(void)
             case 13:
                 competition_strategy += 1;
                 Para_Init();
+                break;
+            case 14:
+                Cam_P_New += 0.01;
                 break;
             case 0:
                 Road += 1;
@@ -336,14 +335,7 @@ void Dubug_key(void)
                 //DEBUG_CHOICE--;
                 break;
             case 9:
-                if (get_diff_state() == DIFF_ON_VAL)
-                {
-                    diff_off();
-                }
-                else
-                {
-                    diff_on();
-                }
+                PID_CAR_STRAIGHT_CAM.D -= 0.1;
                 break;
             case 10:
                 PID_diff.P -= 0.1;
@@ -357,6 +349,9 @@ void Dubug_key(void)
             case 13:
                 competition_strategy -= 1;
                 Para_Init();
+                break;
+            case 14:
+                Cam_P_New -= 0.01;
                 break;
             case 0:
                 Road -= 1;
@@ -575,15 +570,8 @@ void ips_show_debug(int ips_num)
         //ips200_showint32(0, 13, PID_SPEED.I, 3);
         break;
     case 9:
-        ips200_showstr(0, 12, "diff_change");
-        if (get_diff_state() == DIFF_ON_VAL)
-        {
-            ips200_showstr(0, 13, "DIFF_ON_VAL");
-        }
-        else
-        {
-            ips200_showstr(0, 13, "DIFF_OFF_VAL");
-        }
+        ips200_showstr(0, 12, "PID_CAR_STRAIGHT_CAM.D");
+        ips200_showfloat(0, 13, PID_CAR_STRAIGHT_CAM.D, 4, 2); 
         break;
     case 10:
         ips200_showstr(0, 12, "PID_diff.P");
@@ -606,6 +594,10 @@ void ips_show_debug(int ips_num)
     case 13:
         ips200_showstr(0, 12, "competition_strategy");
         ips200_showint32(0, 13, competition_strategy, 3);
+        break;
+    case 14:
+        ips200_showstr(0, 12, "fuck p new");
+        ips200_showfloat(0, 13, Cam_P_New, 4, 2);
         break;
     case 0:
         ips200_showstr(0, 12, "Road");

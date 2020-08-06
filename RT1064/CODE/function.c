@@ -30,8 +30,8 @@ void Para_Init()
                 PID_CAR_CENTER_CAM.D = 0;
                 PID_CAR_STRAIGHT_CAM.P = 0.8; //0.7;//0.6;//0.7;
                 PID_CAR_STRAIGHT_CAM.D = 0;
-                PID_CAR_Diffcomp_CAM.P = 0; //0.6;//0;//0.6;
-                PID_CAR_Diffcomp_CAM.D = 0;
+                //PID_CAR_Diffcomp_CAM.P = 0; //0.6;//0;//0.6;
+                //PID_CAR_Diffcomp_CAM.D = 0;
                 PID_diff.P = 0.5; //1;
                 PID_diff0.P = 0.2;
                 barn_reset_flag = 0;
@@ -62,8 +62,8 @@ void Para_Init()
                 PID_CAR_CENTER_CAM.D = 0;
                 PID_CAR_STRAIGHT_CAM.P = 0.8; //0.7;//0.6;//0.7;
                 PID_CAR_STRAIGHT_CAM.D = 0;
-                PID_CAR_Diffcomp_CAM.P = 0; //0.6;//0;//0.6;
-                PID_CAR_Diffcomp_CAM.D = 0;
+                //PID_CAR_Diffcomp_CAM.P = 0; //0.6;//0;//0.6;
+                //PID_CAR_Diffcomp_CAM.D = 0;
                 PID_diff.P = 0.5; //1;
                 PID_diff0.P = 0.2;
                 barn_reset_flag = 0;
@@ -114,7 +114,7 @@ void SPEED_INIT(void)
                 EMERGENCY_STOP_SPEED = 1.0;
                 UP_RAMP_SPEED = 2.0;
                 ON_RAMP_SPEED = 1.0;
-                DOWN_RAMP_SPEED = 1.0;
+                DOWN_RAMP_SPEED = DEFAULT_SPEED;
 
                 SPEED_MOTOR_SCALE_HIGH = 2500;
                 break;
@@ -127,7 +127,7 @@ void SPEED_INIT(void)
                 EMERGENCY_STOP_SPEED = 1.0;
                 UP_RAMP_SPEED = 2.0;
                 ON_RAMP_SPEED = 1.0;
-                DOWN_RAMP_SPEED = 1.0;
+                DOWN_RAMP_SPEED = DEFAULT_SPEED;
 
                 SPEED_MOTOR_SCALE_HIGH = 2500;
                 break;

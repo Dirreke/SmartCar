@@ -27,6 +27,7 @@ int Road2_flag = 0;
 int Road7_flag = 0;
 int Road3_flag = 0;
 int Road4_flag = 0;
+bool Road0_flag0_flag = 0;
 bool ganhuangguan_flag = 0;
 
 int stop_line = Fir_row;
@@ -476,7 +477,7 @@ void start_stop_find(void)
 
     // if (Road == 0 && Road0_flag == 0)
     // {
-    if (barn_reset_flag == 0)
+    if (loop_time<6000)
     {
         return;
     }
@@ -764,7 +765,7 @@ void mag_find(void)
     // }
     if (loop_time > 6000) //(start_waited >= 600)
     {
-        gpio_interrupt_init(C25, FALLING, GPIO_INT_CONFIG);
+        //gpio_interrupt_init(C25, FALLING, GPIO_INT_CONFIG);
         // start_waited = 0;
         barn_reset_flag = 1;
     }
@@ -798,7 +799,7 @@ void Road_rec(void)
     //进直路
     if (Road != 0)
     {
-        if (Road == 4 && icm_gyro_y_w < 40)
+        if (Road == 4 && fabs(icm_gyro_y_w < 40))
         {
             if (Road4_flag > 2 || (Road4_flag < 2 && fabs(icm_gyro_y_angle) < 2))
             {
@@ -834,7 +835,7 @@ void Road_rec(void)
         }
     }
     //起跑线
-    if (Road == 0 && Road0_flag == 0)
+    if (Road == 0 )//&& Road0_flag == 0)
     {
         if (start_stop_line_flag == 1)
         {
@@ -915,8 +916,8 @@ void Road_rec(void)
         // }
 
         /* ICM判坡 */
-        //if (icm_gyro_y_w < -15 * CarSpeed && icm_gyro_y_w < -60 && loop_time - ramp_out_time > 500)
-        if (icm_gyro_y_w> 15 * CarSpeed && icm_gyro_y_w > 60 && loop_time - ramp_out_time > 500)
+        if (icm_gyro_y_w < -15 * CarSpeed && icm_gyro_y_w < -60 && loop_time - ramp_out_time > 500)
+        //if (icm_gyro_y_w> 15 * CarSpeed && icm_gyro_y_w > 60 && loop_time - ramp_out_time > 500)
         {
             Road40_count++;
             if (Road40_count > 1)
@@ -2487,7 +2488,7 @@ void Road4_zhuangtaiji(void)
     if (Road4_flag == 0)
     {
         //lib_speed_set(2.0);
-        if (icm_gyro_y_angle > 8)//< -8)
+        if (icm_gyro_y_angle < -8)//> 8)//< -8)
         {
             Road4_count0++;
             if (Road4_count0 > 2)
@@ -2502,7 +2503,7 @@ void Road4_zhuangtaiji(void)
             Road4_mistake0++;
         }
 
-        if (Road4_mistake0 > 4 && icm_gyro_y_angle  < 4)//> -4))
+        if (Road4_mistake0 > 4 && icm_gyro_y_angle  > -4)// < 4)//> -4))
         {
             Road = 0;
             Road0_flag = 0;
@@ -2511,25 +2512,25 @@ void Road4_zhuangtaiji(void)
     }
     else if (Road4_flag == 1)
     {
-        if (icm_gyro_y_angle < -9)//> 9)
+        if (icm_gyro_y_angle > 9)//< -9)//> 9)
         {
             Road4_flag = 3;
         }
-        if (icm_gyro_y_angle < 6)//> -6)
+        if (icm_gyro_y_angle > -6)//< 6)//> -6)
         {
             Road4_flag = 2;
         }
     }
     else if (Road4_flag == 2)
     {
-        if (icm_gyro_y_angle < -10)//> 10)
+        if (icm_gyro_y_angle > 10)//< -10)//> 10)
         {
             Road4_flag = 3;
         }
     }
     else if (Road4_flag == 3)
     {
-        if (icm_gyro_y_angle  > -6)//< 6)
+        if (icm_gyro_y_angle  < 6)//> -6)//< 6)
         {
             Road4_count3++;
             if (Road4_count3 > 1)
