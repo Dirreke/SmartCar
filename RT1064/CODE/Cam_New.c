@@ -4,8 +4,8 @@ float car_straight_dias;
 float car_center_dias;
 PID PID_CAR_STRAIGHT_CAM;
 PID PID_CAR_CENTER_CAM;
-float car_straight_b;
-float car_straight_k;
+float car_straight_b = 0.45;
+float car_straight_k = 0.7;
 void Turn_Cam_New(void)
 {
   PID_CAR_STRAIGHT_CAM.P = ((CarSpeed - 2.1) > 0 ? (CarSpeed - 2.1) * car_straight_k + car_straight_b:car_straight_b);//0.7 + 0.4 : 0.4);//1.08 0.94 2.8 *0.8 3.0 *0.7 //0.7 +0.6 1.09 1.11 0.74 0.71
@@ -51,16 +51,30 @@ void Turn_Cam_New(void)
   }
   //car_straight_dias_old = car_straight_dias;
 }
-
+// float DDDDeubg_Turn_diff;
+// float DDDDDDebug2;
 void Turn_Cam_dias(void)
 {
   float temp;
   static float car_straight_dias_old;
+  // static float DDDDDDebug;
   car_straight_dias = M_Slope_fig() * SERVO_DIVIDE_ANGLE_SCALE;
+  // DDDDeubg_Turn_diff = car_straight_dias - DDDDDDebug;
+  // DDDDDDebug = car_straight_dias;
+
   Straight_offset_filter();
   car_center_dias = car_center();
   Center_offset_filter();
-  temp = car_straight_dias + PID_CAR_STRAIGHT_CAM.D * (car_straight_dias - car_straight_dias_old);
+  if(Road == 0 && Road0_flag < 3 && Road0_flag0_flag && fabs(car_straight_dias - car_straight_dias_old) < 30 )
+  {
+    temp = car_straight_dias + PID_CAR_STRAIGHT_CAM.D * (car_straight_dias - car_straight_dias_old);
+    // DDDDDDebug2 = car_straight_dias - car_straight_dias_old;
+  }
+  else
+  {
+    temp = car_straight_dias;
+  }
+  
   car_straight_dias_old = car_straight_dias;
   car_straight_dias = temp;
   if (fabs(car_center_dias) < 10)
@@ -79,7 +93,7 @@ float M_Slope_fig(void)
   int jcp_old = FIG_AREA_NEAR;
   int count = 0, cnt_max = 0;
   int long_start = FIG_AREA_NEAR, long_end = 0;
-  do //è¿™ä¸ªdoåé¢æ˜¯ç®—è·³å˜ç‚¹çš„ï¼Œè¦æ˜¯ä¸è¿ç»­ç®—ä¸ªpæ–œç‡ï¼Œå–æœ€é•¿è¿ç»­æ®µç®—ä¸ªæ–œç‡p
+  do //Õâ¸ödoºóÃæÊÇËãÌø±äµãµÄ£¬ÒªÊÇ²»Á¬ĞøËã¸öpĞ±ÂÊ£¬È¡×î³¤Á¬Ğø¶ÎËã¸öĞ±ÂÊp
   {
     jump_change_point = gmyshuoqianbuchulai(jcp_old - 2);
 
@@ -100,13 +114,13 @@ float M_Slope_fig(void)
     jcp_old = jump_change_point;
   } while (jump_change_point != FIG_AREA_FAR);
 
-  if (cnt_max < 18) //ç‚¹å¤ªå°‘ç›´æ¥è¿”å›ä¸Šä¸€å¸§
+  if (cnt_max < 18) //µãÌ«ÉÙÖ±½Ó·µ»ØÉÏÒ»Ö¡
   {
-    return atan(Mid_slope * UNDISTORT_PYK * UNDISTORT_XPK) > 0 ? 1.57 - atan(Mid_slope * UNDISTORT_PYK * UNDISTORT_XPK) : -1.57 + atan(-Mid_slope * UNDISTORT_PYK * UNDISTORT_XPK); //å»¶ç»­ä¸Šä¸€å¸§
+    return atan(Mid_slope * UNDISTORT_PYK * UNDISTORT_XPK) > 0 ? 1.57 - atan(Mid_slope * UNDISTORT_PYK * UNDISTORT_XPK) : -1.57 + atan(-Mid_slope * UNDISTORT_PYK * UNDISTORT_XPK); //ÑÓĞøÉÏÒ»Ö¡
   }
 
-  {                                         //å¦‚æœçœ‹åˆ°è¿™æ®µæ³¨é‡Š ä¸‹é¢æ˜¯ç®—æ–œç‡ å¯ä»¥æŠ˜èµ·æ¥äº†
-    for (i = long_end; i < long_start; i++) //ä»ä¸‹å¾€ä¸Šæœçš„ startå¤§ï¼Œendå°
+  {                                         //Èç¹û¿´µ½Õâ¶Î×¢ÊÍ ÏÂÃæÊÇËãĞ±ÂÊ ¿ÉÒÔÕÛÆğÀ´ÁË
+    for (i = long_end; i < long_start; i++) //´ÓÏÂÍùÉÏËÑµÄ start´ó£¬endĞ¡
     {
       if (i <= FIG_AREA_NEAR && i >= FIG_AREA_FAR && New_Mid[i] != 999)
       {
@@ -141,7 +155,7 @@ float M_Slope_fig(void)
       Mid_slope = 998;
     }
   }
-  { //å¦‚æœçœ‹åˆ°è¿™æ®µæ³¨é‡Š ä¸‹é¢æ²¡æœ‰ç¥å¥‡æ“ä½œäº† æ–œç‡ç®—çš„ä¸å¯¹ returnå¼§åº¦ï¼ï¼å¥½äº†æŠ˜èµ·æ¥å§/* æ˜¯å¯¹æ–œç‡è¿›è¡Œäº†ä¸€äº›ç¥å¥‡æ“ä½œ */
+  { //Èç¹û¿´µ½Õâ¶Î×¢ÊÍ ÏÂÃæÃ»ÓĞÉñÆæ²Ù×÷ÁË Ğ±ÂÊËãµÄ²»¶Ô return»¡¶È£¡£¡ºÃÁËÕÛÆğÀ´°É/* ÊÇ¶ÔĞ±ÂÊ½øĞĞÁËÒ»Ğ©ÉñÆæ²Ù×÷ */
 
     if (Mid_slope == 999 || Mid_slope == 998)
     {
@@ -162,7 +176,7 @@ int gmyshuoqianbuchulai(int temp)
     return FIG_AREA_FAR;
   }
   turn = temp;
-  for (int i = turn; i > FIG_AREA_FAR; --i) //ä»ä»¿åˆ¶ç‰ˆæ”¹æˆäº†å±±å¯¨ç‰ˆ æŠ˜èµ·æ¥å§
+  for (int i = turn; i > FIG_AREA_FAR; --i) //´Ó·ÂÖÆ°æ¸Ä³ÉÁËÉ½Õ¯°æ ÕÛÆğÀ´°É
   {
     dis = abs(New_Mid[i + 1] - New_Mid[i]);
     if (dis <= 15)
@@ -178,12 +192,12 @@ int gmyshuoqianbuchulai(int temp)
 }
 #if 0
 /*************************************************************************
-*  å‡½æ•°åç§°ï¼švoid Car_diff_comp(void)
-*  åŠŸèƒ½è¯´æ˜ï¼šchasu buchang
-*  å‚æ•°è¯´æ˜ï¼šæ— 
-*  å‡½æ•°è¿”å›ï¼šæ— 
-*  ä¿®æ”¹æ—¶é—´ï¼š2020.7.16
-*  å¤‡    æ³¨ï¼š
+*  º¯ÊıÃû³Æ£ºvoid Car_diff_comp(void)
+*  ¹¦ÄÜËµÃ÷£ºchasu buchang
+*  ²ÎÊıËµÃ÷£ºÎŞ
+*  º¯Êı·µ»Ø£ºÎŞ
+*  ĞŞ¸ÄÊ±¼ä£º2020.7.16
+*  ±¸    ×¢£º
 
 *************************************************************************/
 float car_diffcomp_dias;
@@ -211,12 +225,12 @@ void Turn_diff_comp()
 }
 #endif
 /*************************************************************************
-*  å‡½æ•°åç§°ï¼švoid Car_center(void)
-*  åŠŸèƒ½è¯´æ˜ï¼šchezhiæ»¤æ³¢
-*  å‚æ•°è¯´æ˜ï¼šæ— 
-*  å‡½æ•°è¿”å›ï¼šæ— 
-*  ä¿®æ”¹æ—¶é—´ï¼š2020.7.16
-*  å¤‡    æ³¨ï¼š
+*  º¯ÊıÃû³Æ£ºvoid Car_center(void)
+*  ¹¦ÄÜËµÃ÷£ºchezhiÂË²¨
+*  ²ÎÊıËµÃ÷£ºÎŞ
+*  º¯Êı·µ»Ø£ºÎŞ
+*  ĞŞ¸ÄÊ±¼ä£º2020.7.16
+*  ±¸    ×¢£º
 
 *************************************************************************/
 float car_center(void)
@@ -242,38 +256,53 @@ float car_center(void)
   // centerAngle=PID_realize_center(car_center_dias);
 }
 /*************************************************************************
-*  å‡½æ•°åç§°ï¼švoid Straight_offset_filter(void)
-*  åŠŸèƒ½è¯´æ˜ï¼šchezhiæ»¤æ³¢
-*  å‚æ•°è¯´æ˜ï¼šæ— 
-*  å‡½æ•°è¿”å›ï¼šæ— 
-*  ä¿®æ”¹æ—¶é—´ï¼š2020.7.16
-*  å¤‡    æ³¨ï¼š
+*  º¯ÊıÃû³Æ£ºvoid Straight_offset_filter(void)
+*  ¹¦ÄÜËµÃ÷£ºchezhiÂË²¨
+*  ²ÎÊıËµÃ÷£ºÎŞ
+*  º¯Êı·µ»Ø£ºÎŞ
+*  ĞŞ¸ÄÊ±¼ä£º2020.7.16
+*  ±¸    ×¢£º
 
 *************************************************************************/
 
 void Straight_offset_filter(void)
 {
-  static float Straight_offset_filter[4] = {0, 0, 0, 0}; //offsetæ»¤æ³¢æ•°ç»„
+  static float Straight_offset_filter[4] = {0, 0, 0, 0}; //offsetÂË²¨Êı×é
   Straight_offset_filter[3] = Straight_offset_filter[2];
   Straight_offset_filter[2] = Straight_offset_filter[1];
   Straight_offset_filter[1] = Straight_offset_filter[0];
-  Straight_offset_filter[0] = car_straight_dias;
-  car_straight_dias = Straight_offset_filter[0] * 0.4 + Straight_offset_filter[1] * 0.3 + Straight_offset_filter[2] * 0.2 + Straight_offset_filter[3] * 0.1;
+  if(Straight_offset_filter[1] - car_straight_dias > 250)
+  {
+    Straight_offset_filter[0] = Straight_offset_filter[1] - 50;
+    car_straight_dias = Straight_offset_filter[0];
+  }
+  else if(Straight_offset_filter[1] - car_straight_dias < - 250)
+  {
+    Straight_offset_filter[0] = Straight_offset_filter[1] + 50;
+    car_straight_dias = Straight_offset_filter[0];
+  }
+  else
+  {
+     Straight_offset_filter[0] = car_straight_dias;
+    car_straight_dias = Straight_offset_filter[0] * 0.4 + Straight_offset_filter[1] * 0.3 + Straight_offset_filter[2] * 0.2 + Straight_offset_filter[3] * 0.1;
+  }
+  
+ 
 }
 
 /*************************************************************************
-*  å‡½æ•°åç§°ï¼švoid Center_offset_filter(void)
-*  åŠŸèƒ½è¯´æ˜ï¼šchezhengæ»¤æ³¢
-*  å‚æ•°è¯´æ˜ï¼šæ— 
-*  å‡½æ•°è¿”å›ï¼šæ— 
-*  ä¿®æ”¹æ—¶é—´ï¼š2020.7.16
-*  å¤‡    æ³¨ï¼š
+*  º¯ÊıÃû³Æ£ºvoid Center_offset_filter(void)
+*  ¹¦ÄÜËµÃ÷£ºchezhengÂË²¨
+*  ²ÎÊıËµÃ÷£ºÎŞ
+*  º¯Êı·µ»Ø£ºÎŞ
+*  ĞŞ¸ÄÊ±¼ä£º2020.7.16
+*  ±¸    ×¢£º
 
 *************************************************************************/
 
 void Center_offset_filter(void)
 {
-  static float Center_offset_filter[4] = {0, 0, 0, 0}; //offsetæ»¤æ³¢æ•°ç»„
+  static float Center_offset_filter[4] = {0, 0, 0, 0}; //offsetÂË²¨Êı×é
   Center_offset_filter[3] = Center_offset_filter[2];
   Center_offset_filter[2] = Center_offset_filter[1];
   Center_offset_filter[1] = Center_offset_filter[0];

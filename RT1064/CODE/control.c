@@ -495,6 +495,7 @@ void Speed_Control_New(void)
   static bool frame_flag1 = 0, frame_flag2 = 0;
   static bool Lef_pp = 0, Rig_pp = 0;
   static bool Lef_BB = 0, Rig_BB = 0;
+  static float Turn_Out_old;
   /* 计算速度偏差 */
   SpeedE1 = speedTarget1 - CarSpeed1;
   SpeedE2 = speedTarget2 - CarSpeed2;
@@ -621,11 +622,12 @@ void Speed_Control_New(void)
       }
     }
   }
-  else if (fabs(Turn_Out) >= CAR_DIFF_SERVO_RANGE && (diff_flag1 < 0 || diff_flag2 < 0) && CarSpeed1 < 5 && CarSpeed2 < 5) //差速bang，Turn_Out>250 标志位，给18000和0的Bang)
+  else if (fabs(Turn_Out) >= CAR_DIFF_SERVO_RANGE && (fabs(Turn_Out_old)-fabs(Turn_Out)<30||((Turn_Out>0 ^ Turn_Out_old>0) == 0))&& (diff_flag1 < 0 || diff_flag2 < 0) && CarSpeed1 < 5 && CarSpeed2 < 5) //差速bang，Turn_Out>250 标志位，给18000和0的Bang)
   {
     diff_flag1 = 3;
     diff_flag2 = 3;
   }
+  Turn_Out_old = Turn_Out;
 
   /* 速度控制 */
   // d_flag1 = 0;
@@ -1371,7 +1373,7 @@ void Road0_flag_shift(bool reset0)
     {
       if (Road0_flag <= 2 && !Road0_flag0_flag)
       {
-        if (fabs(Turn_Out) < 50)
+        if (fabs(Turn_Out) < 100)
         {
           if (CarSpeed1 < SpeedGoal - 0.3)
           {
@@ -1428,7 +1430,7 @@ void Road0_flag_shift(bool reset0)
   {
   case 0:
     lib_speed_set(STRAIGHT_SPEED);
-    if (fabs(Turn_Out) > 50)
+    if (fabs(Turn_Out) > 100)
     {
       // a_flag_pre = 1;
       Road0_flag0_flag = 0;
@@ -1743,6 +1745,7 @@ void Road7_flag_shift(bool reset0)
     lib_speed_set(EMERGENCY_STOP_SPEED);
     break;
   case 3:
+  lib_speed_set(STOP_SPEED);
     break;
   case 4:
     lib_speed_set(0);
@@ -1808,10 +1811,10 @@ int BB_add_flag_set(void)
   float Turn_Out_Table[4] = {200, 100, 50, 0};
   // float Speed12_diff[4] = {0.3, 0.1, 0, -0.2};
   // float Speed12_diff2[4] = {0, -0.2, -0.3, -0.5};
-  // float Speed12_diff_stop[4] = {0.5, 0.3, 0.1, 0.2};
+  // float Speed12_diff_stop[4] = {0.5, 0.3, 0.1, 0.1};
   float Speed12_diff[4] = {0.12, 0.04, 0, -0.08};
   float Speed12_diff2[4] = {0, -0.08, -0.12, -0.16};
-  float Speed12_diff_stop[4] = {0.2, 0.12, 0.04, 0.04}; //0.08 = 0.1 / 2.5
+  float Speed12_diff_stop[4] = {0.12, 0.04, 0, 0.04};//{0.2, 0.12, 0.04, 0.04}; //0.08 = 0.1 / 2.5
 
   float speed_diff;
   float diff_stop_offset = 0.04; //= 0.1 / 2.5

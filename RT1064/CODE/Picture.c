@@ -3,7 +3,7 @@
 uint8 Image_Use[CAMERA_H][CAMERA_W];
 uint8 Pixle[CAMERA_H][CAMERA_W]; //二值化后用于OLED显uint16氖???//u16
 
-int threshold_offset = 0;
+int threshold_offset = 10;
 int threshold_offset2 = 0;
 int threshold_offset3 = -10;
 
@@ -1438,6 +1438,23 @@ void Threshold_change(void)
     }
     else if (Road == 1)
     {
+                switch (Road1_flag)
+        {
+        case 0:
+        case 1:
+        case 2:
+        threshold_offset2 = -10;
+            break;
+        case 4:
+        case 3:
+        threshold_offset2 = -5;
+        break;
+        case 5:
+        case 6:
+        threshold_offset2 = -5;
+        break;
+        default:
+            break;
         // switch (Road1_flag)
         // {
         // case 4:
@@ -1452,10 +1469,28 @@ void Threshold_change(void)
         //     threshold_offset2 = 0;
         //     break;
         // }
-        threshold_offset2 = -5;
+        //threshold_offset2 = -5;
+    }
     }
     else if (Road == 2)
     {
+                switch (Road2_flag)
+        {
+        case 0:
+        case 1:
+        case 2:
+        threshold_offset2 = -10;
+            break;
+        case 4:
+        case 3:
+        threshold_offset2 = -5;
+        break;
+        case 5:
+        case 6:
+        threshold_offset2 = -5;
+        break;
+        default:
+            break;
         // switch (Road2_flag)
         // {
         // case 4:
@@ -1468,7 +1503,8 @@ void Threshold_change(void)
         //     threshold_offset2 = 0;
         //     break;
         // }
-        threshold_offset2 = -5;
+        //threshold_offset2 = -5;
+    }
     }
 }
 

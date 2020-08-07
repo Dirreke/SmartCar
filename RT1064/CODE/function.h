@@ -58,6 +58,7 @@ extern float STRAIGHT_SPEED;
 extern float CURVE_SPEED;
 extern float PRE_STOP_SPEED;
 extern float RUSH_STOP_SPEED;
+extern float STOP_SPEED;
 // extern float TURN_STOP_SPEED;
 extern float EMERGENCY_STOP_SPEED;
 extern float UP_RAMP_SPEED;

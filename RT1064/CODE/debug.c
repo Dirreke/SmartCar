@@ -4,7 +4,7 @@
 int DEBUG_CHOICE = 1;
 bool kaiji_flag = 0;
 float Cam_P_New = 0.8;
-float stop_time = 2;
+float stop_time = 16;
 // float speedgoal;
 // float curvespeedgoal;
 void Debug_Init(void)
@@ -21,7 +21,7 @@ void Debug_Init(void)
 void Debug_key(void)
 {
     static int ips_num = 0;
-    const int page_num = 19;
+    const int page_num = 20;
     static bool qipao_flag;
     if (gpio_get(DEBUG_KEY0))
     {

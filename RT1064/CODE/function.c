@@ -1,8 +1,8 @@
 #include "headfile.h"
 
-uint8 Sobel_Threshold_FarFar = 40; //70;
-uint8 Sobel_Threshold_Far = 50;    // 80;
-uint8 Sobel_Threshold_Near = 70;   //100;
+uint8 Sobel_Threshold_FarFar = 60;//40; //70;
+uint8 Sobel_Threshold_Far = 90;//50;    // 80;
+uint8 Sobel_Threshold_Near = 120;//70;   //100;
 int8 competition_strategy = 0;
 
 void Para_Init()
@@ -10,7 +10,7 @@ void Para_Init()
         switch (competition_strategy)
         {
         case 0:
-                threshold_offset = 0;
+                threshold_offset = 10;
                 Road = 3;
                 Road3_flag = 0;
                 PID_SPEED.P = 50;    //2.9;//0.50
@@ -29,7 +29,7 @@ void Para_Init()
                 PID_CAR_CENTER_CAM.P = 0.5; //0.3;//0.5;
                 PID_CAR_CENTER_CAM.D = 0;
                 PID_CAR_STRAIGHT_CAM.P = 0.8; //0.7;//0.6;//0.7;
-                PID_CAR_STRAIGHT_CAM.D = 0;
+                PID_CAR_STRAIGHT_CAM.D = 30;
                 //PID_CAR_Diffcomp_CAM.P = 0; //0.6;//0;//0.6;
                 //PID_CAR_Diffcomp_CAM.D = 0;
                 PID_diff.P = 0.5; //1;
@@ -42,7 +42,7 @@ void Para_Init()
                 break;
 
         default:
-                threshold_offset = 0;
+                threshold_offset = 10;
                 Road = 3;
                 Road3_flag = 0;
                 PID_SPEED.P = 50;    //2.9;//0.50
@@ -61,7 +61,7 @@ void Para_Init()
                 PID_CAR_CENTER_CAM.P = 0.5; //0.3;//0.5;
                 PID_CAR_CENTER_CAM.D = 0;
                 PID_CAR_STRAIGHT_CAM.P = 0.8; //0.7;//0.6;//0.7;
-                PID_CAR_STRAIGHT_CAM.D = 0;
+                PID_CAR_STRAIGHT_CAM.D = 30;
                 //PID_CAR_Diffcomp_CAM.P = 0; //0.6;//0;//0.6;
                 //PID_CAR_Diffcomp_CAM.D = 0;
                 PID_diff.P = 0.5; //1;
@@ -93,6 +93,7 @@ float STRAIGHT_SPEED = 0;
 float CURVE_SPEED = 0;
 float PRE_STOP_SPEED = 0;
 float RUSH_STOP_SPEED = 0;
+float STOP_SPEED = 0;
 float EMERGENCY_STOP_SPEED = 0;
 float UP_RAMP_SPEED = 0;
 float ON_RAMP_SPEED = 0;
@@ -110,6 +111,7 @@ void SPEED_INIT(void)
                 CURVE_SPEED = 2.7;
                 PRE_STOP_SPEED = 2.5;
                 RUSH_STOP_SPEED = 2.0;
+                STOP_SPEED = 0.5;
                 EMERGENCY_STOP_SPEED = 1.0;
                 UP_RAMP_SPEED = 2.0;
                 ON_RAMP_SPEED = 1.0;
@@ -123,6 +125,7 @@ void SPEED_INIT(void)
                 CURVE_SPEED = 2.3;
                 PRE_STOP_SPEED = 2.0;
                 RUSH_STOP_SPEED = 1.5;
+                STOP_SPEED = 0.5;
                 EMERGENCY_STOP_SPEED = 1.0;
                 UP_RAMP_SPEED = 2.0;
                 ON_RAMP_SPEED = 1.0;

@@ -661,7 +661,7 @@ void start_stop_find(void)
             }
         }
     }
-    for (int i = Rig_end; i < R_STOP; ++i)
+    for (int i = Rig_end; i < R_STOP-3; ++i)
     {
         if (Rig[i + 2] - Rig[i] < 5 && Rig[i + 3] - Rig[i + 1] < 5 &&
             (Rig[i + 4] - Rig[i + 2] >= 5 || Rig[i + 4] - Rig[i + 2] <= 0) &&
@@ -699,7 +699,7 @@ void start_stop_find(void)
                 }
             }
         }
-        for (int i = Lef_end; i < L_STOP; ++i)
+        for (int i = Lef_end; i < L_STOP-3; ++i)
         {
             if (Lef[i] - Lef[i + 2] < 5 && Lef[i + 1] - Lef[i + 3] < 5 &&
                 (Lef[i + 2] - Lef[i + 4] >= 5 || Lef[i + 2] - Lef[i + 4] <= 0) &&
@@ -936,7 +936,7 @@ void Road_rec(void)
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////普通赛道→圆环
         //先判断是否有左上连续右连续，作为Road1_flag0的置位条件，如果不满足就else if判断直接进Road1_flag=1的条件
         if (Rig[39] - Rig[37] < 5 && Rig[37] - Rig[35] < 5 && Rig[35] - Rig[33] < 5 && Rig[33] - Rig[31] < 5 && Rig[31] - Rig[29] < 5 && Rig[29] - Rig[27] < 5 && Rig[27] - Rig[25] < 5 && Rig[25] - Rig[23] < 5 &&
-            Rig[39] - Rig[37] > 0 && Rig[37] - Rig[35] > 0 && Rig[35] - Rig[33] > 0 && Rig[33] - Rig[31] > 0 && Rig[31] - Rig[29] > 0 && Rig[29] - Rig[27] > 0 && Rig[27] - Rig[25] > 0 && Rig[25] - Rig[23] > 0)
+            Rig[39] - Rig[37] >= 0 && Rig[37] - Rig[35] >= 0 && Rig[35] - Rig[33] > 0 && Rig[33] - Rig[31] > 0 && Rig[31] - Rig[29] > 0 && Rig[29] - Rig[27] > 0 && Rig[27] - Rig[25] > 0 && Rig[25] - Rig[23] > 0)
 
         {
             if (Lef_circle_pre_flag == 1 && Rig_circle_pre_flag == 0 &&
@@ -2500,6 +2500,7 @@ void Road4_zhuangtaiji(void)
                 Road4_flag = 1;
                 Road4_count0 = 0;
             }
+            Road4_mistake0 = 0;
         }
         else
         {
@@ -2512,6 +2513,7 @@ void Road4_zhuangtaiji(void)
             Road = 0;
             Road0_flag = 0;
             Road4_flag = 0;
+            Road4_mistake0 = 0;
         }
     }
     else if (Road4_flag == 1)
@@ -2545,6 +2547,7 @@ void Road4_zhuangtaiji(void)
                 Road4_flag = 0;
                 // road_change_flag = 1;
                 icm_gyro_y_angle = 0;
+                Road4_mistake0 = 0;
             }
         }
     }
