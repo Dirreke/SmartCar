@@ -95,17 +95,16 @@ void Debug_key(void)
             case 3:
                 DEFAULT_SPEED += 0.1;
                 STRAIGHT_SPEED += 0.1;
-
                 break;
             case 4:
                 SPEED_MOTOR_SCALE_HIGH += 100; //threshold_offset += 1;
                 break;
-            case 5:
+            case 14:
                 CURVE_SPEED += 0.1; //PID_CAR_Diffcomp_CAM.P += 0.1;
                 break;
             case 6:
                 //PID_TURN_CAM_EXT.P += 0.1;
-                PID_CAR_STRAIGHT_CAM.P += 0.01;
+                car_straight_b += 0.01;//PID_CAR_STRAIGHT_CAM.P += 0.01;
                 break;
             case 7:
                 PID_SPEED.P += 1;
@@ -132,8 +131,8 @@ void Debug_key(void)
                 competition_strategy += 1;
                 Para_Init();
                 break;
-            case 14:
-                Cam_P_New += 0.01;
+            case 5:
+                car_straight_k += 0.01;//Cam_P_New += 0.01;
                 break;
             case 0:
                 Road += 1;
@@ -192,6 +191,12 @@ void Debug_key(void)
                 break;
             case 17:
                 stop_time += 0.1;
+                break;
+            case 18:
+                Sobel_Threshold_Far += 1;
+                break;
+            case 19:
+                Sobel_Threshold_Near += 1;
                 break;
                 /* 
 
@@ -325,12 +330,12 @@ void Debug_key(void)
             case 4:
                 SPEED_MOTOR_SCALE_HIGH -= 100; //threshold_offset -= 1;
                 break;
-            case 5:
+            case 14:
                 CURVE_SPEED -= 0.1; //PID_CAR_Diffcomp_CAM.P -= 0.1;
                 break;
             case 6:
                 //PID_TURN_CAM_EXT.P -= 0.1;
-                PID_CAR_STRAIGHT_CAM.P -= 0.01;
+                car_straight_b -= 0.01;//PID_CAR_STRAIGHT_CAM.P -= 0.01;
                 break;
             case 7:
                 PID_SPEED.P -= 1;
@@ -357,8 +362,8 @@ void Debug_key(void)
                 competition_strategy -= 1;
                 Para_Init();
                 break;
-            case 14:
-                Cam_P_New -= 0.01;
+            case 5:
+                car_straight_k -= 0.01;//Cam_P_New -= 0.01;
                 break;
             case 0:
                 Road -= 1;
@@ -419,6 +424,12 @@ void Debug_key(void)
                 break;
             case 17:
                 stop_time -= 0.1;
+                break;
+            case 18:
+                Sobel_Threshold_Far -= 1;
+                break;
+            case 19:
+                Sobel_Threshold_Near -= 1;
                 break;
                 /*             case 15:
                 threshold_offset -= 1;
@@ -566,13 +577,13 @@ void ips_show_debug(int ips_num)
         ips200_showstr(0, 12, "SPEED_MOTOR_SCALE_HIGH //threshold_offset");
         ips200_showfloat(0, 13, SPEED_MOTOR_SCALE_HIGH, 4, 2);
         break;
-    case 5:
+    case 14:
         ips200_showstr(0, 12, "CURVE_SPEED");
         ips200_showfloat(0, 13, CURVE_SPEED, 4, 2);
         break;
     case 6:
-        ips200_showstr(0, 12, "PID_CAR_STRAIGHT_CAM.P");
-        ips200_showfloat(0, 13, PID_CAR_STRAIGHT_CAM.P, 4, 2); //PID_TURN_CAM_EXT.P, 4, 2);
+        ips200_showstr(0, 12, "fuck b");
+        ips200_showfloat(0, 13, car_straight_b, 4, 2); //PID_TURN_CAM_EXT.P, 4, 2);
         break;
     case 7:
         ips200_showstr(0, 12, "motor p CamStraightD");
@@ -609,9 +620,9 @@ void ips_show_debug(int ips_num)
         ips200_showstr(0, 12, "competition_strategy");
         ips200_showint32(0, 13, competition_strategy, 3);
         break;
-    case 14:
-        ips200_showstr(0, 12, "fuck p new");
-        ips200_showfloat(0, 13, Cam_P_New, 4, 2);
+    case 5:
+        ips200_showstr(0, 12, "fuck k");
+        ips200_showfloat(0, 13, car_straight_k, 4, 2);
         break;
     case 0:
         ips200_showstr(0, 12, "Road");
@@ -659,6 +670,14 @@ void ips_show_debug(int ips_num)
         ips200_showfloat(0, 13, stop_time, 4, 2);
         
         break;
+    case 18:
+        ips200_showstr(0, 12, "Sobel_Threshold_Far");
+        ips200_showfloat(0, 13, Sobel_Threshold_Far, 4, 2);
+                break;
+            case 19:
+        ips200_showstr(0, 12, "Sobel_Threshold_Near");
+        ips200_showfloat(0, 13, Sobel_Threshold_Near, 4, 2);
+                break;
         /*     
     case 17:
         ips200_showstr(0, 12, "Sobel_Threshold_Near: ");

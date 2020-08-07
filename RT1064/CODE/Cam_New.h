@@ -7,6 +7,8 @@ extern float car_straight_dias;
 extern float car_center_dias;
 extern float car_diffcomp_dias;
 extern float car_diffcomp_PWM;
+extern float car_straight_k;
+extern float car_straight_b;
 void Turn_Cam_New(void);
 float M_Slope_fig(void);
 int gmyshuoqianbuchulai(int temp);

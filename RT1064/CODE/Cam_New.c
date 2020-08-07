@@ -4,9 +4,11 @@ float car_straight_dias;
 float car_center_dias;
 PID PID_CAR_STRAIGHT_CAM;
 PID PID_CAR_CENTER_CAM;
+float car_straight_b;
+float car_straight_k;
 void Turn_Cam_New(void)
 {
-  PID_CAR_STRAIGHT_CAM.P = ((CarSpeed - 2.1) > 0 ? (CarSpeed - 2.1) * 0.7 + 0.4 : 0.4);//1.08 0.94 2.8 *0.8 3.0 *0.7 //0.7 +0.6 1.09 1.11 0.74 0.71
+  PID_CAR_STRAIGHT_CAM.P = ((CarSpeed - 2.1) > 0 ? (CarSpeed - 2.1) * car_straight_k + car_straight_b:car_straight_b);//0.7 + 0.4 : 0.4);//1.08 0.94 2.8 *0.8 3.0 *0.7 //0.7 +0.6 1.09 1.11 0.74 0.71
   PID_CAR_CENTER_CAM.P = ((CarSpeed - 2.1) > 0 ? (CarSpeed - 2.1) * 0.6 + 0.3 : 0.3);
   if (PID_CAR_STRAIGHT_CAM.P > 1.5)
   {
