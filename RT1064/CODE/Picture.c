@@ -739,7 +739,7 @@ void Pic_DrawLRside(void)
             // {
             //     continue;
             // }
-            if ((Pixle[i][75] == 1 && Pixle[i - 1][73] == 0) || (Pixle[i][74] == 1 && Pixle[i - 1][72] == 0))
+          if ((Pixle[i][4] == 1 &&Pixle[i-1][4] == 0 &&Pixle[i][6] == 1 && Pixle[i - 1][6] == 0) || (Pixle[i][5] == 1 &&Pixle[i-1][5] == 0&&Pixle[i][7] == 1 && Pixle[i - 1][7] == 0))
             {
                 ;
             }
@@ -747,7 +747,7 @@ void Pic_DrawLRside(void)
             {
                 continue;
             }
-            for (j = Lef[i]; j < 40; j++)
+            for (j = Fir_col; j < 40; j++)
             {
                 if (Pixle[i][j] == 1 && Pixle[i][j - 1] == 1 && Pixle[i][j - 2] == 1 && Pixle[i][j - 3] == 1 && Pixle[i][j - 4] == 1 && Pixle[i][j - 5] == 1 && Pixle[i][j - 6] == 1 && Pixle[i][j + 1] == 0 && Pixle[i][j + 2] == 0 && Pixle[i][j + 3] == 0)
                 {
@@ -759,7 +759,7 @@ void Pic_DrawLRside(void)
             if (Side_true == 1)
             {
                 Side_true = 0;
-                for (j = Lef[i + 1]; j < 40; j++)
+                for (j = Fir_col; j < 40; j++)
                 {
                     if (Pixle[i + 1][j] == 1 && Pixle[i + 1][j - 1] == 1 && Pixle[i + 1][j - 2] == 1 && Pixle[i + 1][j - 3] == 1 && Pixle[i + 1][j - 4] == 1 && Pixle[i + 1][j - 5] == 1 && Pixle[i + 1][j - 6] == 1 && Pixle[i + 1][j + 1] == 0 && Pixle[i + 1][j + 2] == 0 && Pixle[i + 1][j + 3] == 0)
                     {
@@ -834,7 +834,8 @@ void Pic_DrawLRside(void)
             // {
             //     continue;
             // }
-            if ((Pixle[i][75] == 1 && Pixle[i - 1][73] == 0) || (Pixle[i][74] == 1 && Pixle[i - 1][72] == 0))
+         
+            if ((Pixle[i][75] == 1 &&Pixle[i][73] == 1 &&Pixle[i-1][75] == 0 && Pixle[i - 1][73] == 0) || (Pixle[i][74] == 1 &&Pixle[i][72] == 1 &&Pixle[i-1][74] == 0 && Pixle[i - 1][72] == 0))
             {
                 ;
             }
@@ -842,7 +843,7 @@ void Pic_DrawLRside(void)
             {
                 continue;
             }
-            for (j = Rig[i]; j > 40; j--)
+            for (j = Last_col; j > 40; j--)
             {
                 if (Pixle[i][j] == 1 && Pixle[i][j + 1] == 1 && Pixle[i][j + 2] == 1 && Pixle[i][j + 3] == 1 && Pixle[i][j + 4] == 1 && Pixle[i][j + 5] == 1 && Pixle[i][j + 6] == 1 && Pixle[i][j - 1] == 0 && Pixle[i][j - 2] == 0 && Pixle[i][j - 3] == 0)
                 {
@@ -854,7 +855,7 @@ void Pic_DrawLRside(void)
             if (Side_true == 1)
             {
                 Side_true = 0;
-                for (j = Rig[i + 1]; j > 40; j--)
+                for (j = Last_col; j > 40; j--)
                 {
                     if (Pixle[i + 1][j] == 1 && Pixle[i + 1][j + 1] == 1 && Pixle[i + 1][j + 2] == 1 && Pixle[i + 1][j + 3] == 1 && Pixle[i + 1][j + 4] == 1 && Pixle[i + 1][j + 5] == 1 && Pixle[i + 1][j + 6] == 1 && Pixle[i + 1][j - 1] == 0 && Pixle[i + 1][j - 2] == 0 && Pixle[i + 1][j - 3] == 0)
                     {

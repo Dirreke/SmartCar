@@ -29,6 +29,7 @@ uint16 loop_time = 0;
 //float loop_time2 = 0;
 //int feisu_flag = 0;
 float loop_distance = 0;
+
 void PIT_IRQHandler(void)
 {
     if (PIT_FLAG_GET(PIT_CH0))
@@ -37,7 +38,7 @@ void PIT_IRQHandler(void)
         wosijile += 16;
         if (Road != 3 && loop_time > 500 && Road7_flag != 2 && Road7_flag != 3)
         {
-            if (EM_Value_2 < 0.3 && EM_Value_3 < 0.3 && EM_Value_1 < 0.3 && EM_Value_4 < 0.3)
+            if ((EM_Value_2 < 0.3 && EM_Value_3 < 0.3 && EM_Value_1 < 0.3 && EM_Value_4 < 0.3)||loop_time > stop_time*1000)
             //if(loop_time > 1500)
             {
                 lib_speed_set(0);

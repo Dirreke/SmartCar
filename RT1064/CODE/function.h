@@ -66,7 +66,7 @@ extern float DOWN_RAMP_SPEED;
 #define SPEED_MOTOR_SCALE_LOW 2500
 extern int SPEED_MOTOR_SCALE_HIGH;// 3000
 extern bool barn_state;
-extern uint8 competition_strategy;
+extern int8 competition_strategy;
 
 
 

@@ -4,6 +4,7 @@
 int DEBUG_CHOICE = 1;
 bool kaiji_flag = 0;
 float Cam_P_New = 0.8;
+float stop_time = 2;
 // float speedgoal;
 // float curvespeedgoal;
 void Debug_Init(void)
@@ -20,7 +21,7 @@ void Debug_Init(void)
 void Debug_key(void)
 {
     static int ips_num = 0;
-    const int page_num = 15;
+    const int page_num = 19;
     static bool qipao_flag;
     if (gpio_get(DEBUG_KEY0))
     {
@@ -183,18 +184,24 @@ void Debug_key(void)
                     break;
                 }
                 break;
-
-                /*
-            case 32:
+            case 15:
+                threshold_offset += 1;
+                break;
+            case 16:
                 Sobel_Threshold_FarFar += 1;
                 break;
-            case 33:
+            case 17:
+                stop_time += 0.1;
+                break;
+                /* 
+
+            case 16:
                 Sobel_Threshold_Far += 1;
                 break;
-            case 34:
+            case 17:
                 Sobel_Threshold_Near += 1;
-                break;
-                */
+                break; */
+
             /* 舵机PD仅调参用
             case 2:
                 Turn_Cam_P_Table0[0] += 0.01;
@@ -403,17 +410,24 @@ void Debug_key(void)
                     break;
                 }
                 break;
-                /*
-            case 32:
+
+            case 15:
+                threshold_offset -= 1;
+                break;
+            case 16:
                 Sobel_Threshold_FarFar -= 1;
                 break;
-            case 33:
-                Sobel_Threshold_Far -= 1;
+            case 17:
+                stop_time -= 0.1;
                 break;
-            case 34:
+                /*             case 15:
+                threshold_offset -= 1;
+                break;
+
+            case 17:
                 Sobel_Threshold_Near -= 1;
-                break;
-                */
+                break; */
+
                 /* 舵机PD仅调参用
             case 2:
                 Turn_Cam_P_Table0[0] -= 0.01;
@@ -571,7 +585,7 @@ void ips_show_debug(int ips_num)
         break;
     case 9:
         ips200_showstr(0, 12, "PID_CAR_STRAIGHT_CAM.D");
-        ips200_showfloat(0, 13, PID_CAR_STRAIGHT_CAM.D, 4, 2); 
+        ips200_showfloat(0, 13, PID_CAR_STRAIGHT_CAM.D, 4, 2);
         break;
     case 10:
         ips200_showstr(0, 12, "PID_diff.P");
@@ -631,20 +645,26 @@ void ips_show_debug(int ips_num)
             break;
         }
         break;
-        /*
-    case 32:
+
+    case 15:
+        ips200_showstr(0, 12, "threshold_offset: ");
+        ips200_showint32(0, 13, threshold_offset, 3);
+        break;
+    case 16:
         ips200_showstr(0, 12, "Sobel_Threshold_FarFar: ");
         ips200_showuint8(0, 13, Sobel_Threshold_FarFar);
         break;
-    case 33:
-        ips200_showstr(0, 12, "Sobel_Threshold_Far: ");
-        ips200_showuint8(0, 13, Sobel_Threshold_Far);
+    case 17:
+        ips200_showstr(0, 12, "tingche shijian");
+        ips200_showfloat(0, 13, stop_time, 4, 2);
+        
         break;
-    case 34:
+        /*     
+    case 17:
         ips200_showstr(0, 12, "Sobel_Threshold_Near: ");
         ips200_showuint8(0, 13, Sobel_Threshold_Near);
-        break;
-        */
+        break; */
+
     default:
         // ips_show_debug_pd(ips_num);
         // ips200_showint32(0, 11, ips_num, 2);

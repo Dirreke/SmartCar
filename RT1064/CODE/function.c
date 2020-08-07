@@ -1,9 +1,9 @@
 #include "headfile.h"
 
-uint8 Sobel_Threshold_FarFar = 70;
-uint8 Sobel_Threshold_Far = 80;
-uint8 Sobel_Threshold_Near = 100;
-uint8 competition_strategy = 0;
+uint8 Sobel_Threshold_FarFar = 40; //70;
+uint8 Sobel_Threshold_Far = 50;    // 80;
+uint8 Sobel_Threshold_Near = 70;   //100;
+int8 competition_strategy = 0;
 
 void Para_Init()
 {
@@ -36,7 +36,7 @@ void Para_Init()
                 PID_diff0.P = 0.2;
                 barn_reset_flag = 0;
                 DEBUG_CHOICE = 2;
-                
+
                 MotorOut1 = 0;
                 MotorOut2 = 0;
                 break;
@@ -69,7 +69,6 @@ void Para_Init()
                 barn_reset_flag = 0;
                 DEBUG_CHOICE = 2;
 
-                
                 MotorOut1 = 0;
                 MotorOut2 = 0;
                 break;
@@ -105,12 +104,25 @@ void SPEED_INIT(void)
 {
         switch (competition_strategy)
         {
-        case 0:
-                DEFAULT_SPEED = 3.0;
-                STRAIGHT_SPEED = 3.2;
-                CURVE_SPEED = 2.8;
+        case 1:
+                DEFAULT_SPEED = 3.5;
+                STRAIGHT_SPEED = 3.5;
+                CURVE_SPEED = 2.7;
                 PRE_STOP_SPEED = 2.5;
                 RUSH_STOP_SPEED = 2.0;
+                EMERGENCY_STOP_SPEED = 1.0;
+                UP_RAMP_SPEED = 2.0;
+                ON_RAMP_SPEED = 1.0;
+                DOWN_RAMP_SPEED = DEFAULT_SPEED;
+
+                SPEED_MOTOR_SCALE_HIGH = 2500;
+                break;
+        case -1:
+                DEFAULT_SPEED = 2.5;
+                STRAIGHT_SPEED = 2.5;
+                CURVE_SPEED = 2.3;
+                PRE_STOP_SPEED = 2.0;
+                RUSH_STOP_SPEED = 1.5;
                 EMERGENCY_STOP_SPEED = 1.0;
                 UP_RAMP_SPEED = 2.0;
                 ON_RAMP_SPEED = 1.0;

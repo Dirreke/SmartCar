@@ -46,4 +46,5 @@ beiyingjian 63070主板 done
 icm、各板固定
 若不关电源 要reset//（各种road的flag清空）
 粘磁铁
+去掉我死机了
 

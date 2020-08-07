@@ -283,7 +283,7 @@ void Variable_update(void)
   Variable[10] = Rig_slope; //speedTarget2;//Turn_Cam_Out;
   Variable[11] = MotorOut1;
   Variable[12] = MotorOut2;                                  //EM_Value_2;//MotorOut2;         //Turn_EM_Out;  //Lef_break_point*100+Rig_break_point;
-  Variable[13] = Road0_flag0_flag;//(int)(EM_Value_2 * 100) * 100 + EM_Value_3; //icm_gyro_y_w;      //MotorOut1_add;
+  Variable[13] = (int)(EM_Value_2 * 100) * 100 + EM_Value_3; //icm_gyro_y_w;      //MotorOut1_add;
   Variable[14] = Mid_slope;                                  //icm_gyro_z_angle;        //icm_gyro_y_angle;  //MotorOut2_add;//speed_change_flag;//car_center_dias;   //100 + Lef_circle * 10 + Rig_circle; /*Rig_circle;*/ //Road6_flag ;//CarSpeed2;
   Variable[15] = loop_time * 0.001;                          //EM_Value_1;         // Mid_slope; //Allwhitestart * 100 + Allwhiteend;              //EM_Value_2+EM_Value_3; //whitecnt;//Road1_turnout;//limit_pos(EM_Value_1/1.5-EM_Value_2/3.5);//speedTarget1;//map_line[MIN(50,AllWhileStartLine)];
 }

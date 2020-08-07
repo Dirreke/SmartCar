@@ -477,7 +477,7 @@ void start_stop_find(void)
 
     // if (Road == 0 && Road0_flag == 0)
     // {
-    if (loop_time<6000)
+    if (loop_time < 6000)
     {
         return;
     }
@@ -793,7 +793,8 @@ void Road_rec(void)
     static int Road0_count = 0;
     static int Road0_count4 = 0;
     static int Road00_count = 0;
-    static int Road10_count = 0, Road20_count = 0, Road70_count = 0, Road40_count = 0;
+    //static int Road10_count = 0, Road20_count = 0
+    static int Road70_count = 0, Road40_count = 0;
     static int Road100_count = 0;
     static int Road200_count = 0;
     //进直路
@@ -835,7 +836,7 @@ void Road_rec(void)
         }
     }
     //起跑线
-    if (Road == 0 )//&& Road0_flag == 0)
+    if (Road == 0) //&& Road0_flag == 0)
     {
         if (start_stop_line_flag == 1)
         {
@@ -949,7 +950,7 @@ void Road_rec(void)
                 {
                     Road100_count = 0;
                     Road = 1;
-                    Road1_flag = 0;
+                    Road1_flag = 1;
                 }
                 return;
             }
@@ -993,7 +994,7 @@ void Road_rec(void)
                 {
                     Road200_count = 0;
                     Road = 2;
-                    Road2_flag = 0;
+                    Road2_flag = 1;
                 }
                 return;
             }
@@ -1676,7 +1677,7 @@ void TurnRightCircle_Process(void)
 
 void Road1_zhuangtaiji(void)
 {
-    static int Road0_count = 0, Road11_count = 0, Road12_count = 0, Road13_count = 0, Road14_count = 0, Road15_count = 0, Road16_count = 0, Road17_count = 0;
+    static int Road0_count = 0, Road11_count = 0, Road12_count = 0, Road13_count = 0,  Road15_count = 0, Road16_count = 0, Road17_count = 0;//Road14_count = 0,
     int dis = 0, dis1 = 0;
     if (Road1_flag == 0) //准备进左圆环
     {
@@ -1717,6 +1718,8 @@ void Road1_zhuangtaiji(void)
     }
     else if (Road1_flag == 1) //进左圆环1/4
     {
+
+        /* 进12 */
         if (Lef_circle_point != 0)
         {
             Road12_count++;
@@ -1730,6 +1733,7 @@ void Road1_zhuangtaiji(void)
         {
             Road12_count = 0;
         }
+        /* 进14 */
         TurnLeftCircle_Process();
         // for (int i = 35; i > Fir_row; i--)
         // {
@@ -1944,7 +1948,7 @@ void Road1_zhuangtaiji(void)
 
 void Road2_zhuangtaiji(void)
 {
-    static int Road0_count = 0, Road21_count = 0, Road22_count = 0, Road23_count = 0, Road24_count = 0, Road25_count = 0, Road26_count = 0, Road27_count = 0;
+    static int Road0_count = 0, Road21_count = 0, Road22_count = 0, Road23_count = 0,  Road25_count = 0, Road26_count = 0, Road27_count = 0;//Road24_count = 0,
     int dis = 0, dis1 = 0;
     if (Road2_flag == 0) //
     {
@@ -2488,7 +2492,7 @@ void Road4_zhuangtaiji(void)
     if (Road4_flag == 0)
     {
         //lib_speed_set(2.0);
-        if (icm_gyro_y_angle < -8)//> 8)//< -8)
+        if (icm_gyro_y_angle < -8) //> 8)//< -8)
         {
             Road4_count0++;
             if (Road4_count0 > 2)
@@ -2503,7 +2507,7 @@ void Road4_zhuangtaiji(void)
             Road4_mistake0++;
         }
 
-        if (Road4_mistake0 > 4 && icm_gyro_y_angle  > -4)// < 4)//> -4))
+        if (Road4_mistake0 > 4 && icm_gyro_y_angle > -4) // < 4)//> -4))
         {
             Road = 0;
             Road0_flag = 0;
@@ -2512,25 +2516,25 @@ void Road4_zhuangtaiji(void)
     }
     else if (Road4_flag == 1)
     {
-        if (icm_gyro_y_angle > 9)//< -9)//> 9)
+        if (icm_gyro_y_angle > 9) //< -9)//> 9)
         {
             Road4_flag = 3;
         }
-        if (icm_gyro_y_angle > -6)//< 6)//> -6)
+        if (icm_gyro_y_angle > -6) //< 6)//> -6)
         {
             Road4_flag = 2;
         }
     }
     else if (Road4_flag == 2)
     {
-        if (icm_gyro_y_angle > 10)//< -10)//> 10)
+        if (icm_gyro_y_angle > 10) //< -10)//> 10)
         {
             Road4_flag = 3;
         }
     }
     else if (Road4_flag == 3)
     {
-        if (icm_gyro_y_angle  < 6)//> -6)//< 6)
+        if (icm_gyro_y_angle < 6) //> -6)//< 6)
         {
             Road4_count3++;
             if (Road4_count3 > 1)
@@ -2761,15 +2765,15 @@ void crossing_find2(void)
     uint8 count;
     uint8 count2; //找每行最大连续全白点
     uint8 whiteline_start_temp = 0;
-    uint8 whitecol_start_temp = 0;
-    uint8 whitecol_start = 0;
-    uint8 whitecol_end = 0;
+    //uint8 whitecol_start_temp = 0;
+    //uint8 whitecol_start = 0;
+    //uint8 whitecol_end = 0;
 
     uint8 whiteline_count = 0;
     uint8 whiteline_count2 = 0; //找最大连续全白行
     uint8 whitecol_count = 0;
     uint8 whitecol_count2 = 0; //找最大连续全白列
-    bool whiteline_flag;
+    //bool whiteline_flag;
     for (int i = Fir_row; i < Last_row - 12; ++i)
     {
         count2 = 0;
@@ -2795,10 +2799,10 @@ void crossing_find2(void)
         }
         if (count2 > white_line_threshold[59 - i])
         {
-            if (whiteline_start_temp == 0)
-            {
-                whiteline_start_temp = i;
-            }
+            //if (whiteline_start_temp == 0)
+            //{
+            //    whiteline_start_temp = i;
+            //}
             whiteline_count++;
         }
         else
@@ -2809,7 +2813,7 @@ void crossing_find2(void)
                 whiteline_count = 0;
                 whiteline_start = whiteline_start_temp;
                 whiteline_end = i;
-                whiteline_start_temp = 0;
+                //whiteline_start_temp = 0;
             }
         }
     }
@@ -2855,7 +2859,7 @@ void crossing_find2(void)
         }
         if (count2 > 35)
         {
-            whitecol_start_temp = j;
+            //whitecol_start_temp = j;
             whitecol_count++;
         }
         else

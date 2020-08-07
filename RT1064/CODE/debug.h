@@ -19,3 +19,4 @@ void ips_show_debug_pd(int ips_num);
 
 extern int DDDebug;
 extern float Cam_P_New;
+extern float stop_time;
