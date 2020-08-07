@@ -522,7 +522,7 @@ void Speed_Control_New(void)
     speed_change_flag = 0;
   }
 
-  if (SpeedGoalE1 > 1)
+  if (SpeedGoalE1 > 1 && ((Road0_flag < 3 && Road == 0 )|| Road == 3))
   {
     //即使速度目标不改变但speede1>1.5也直接进BB
     if (SpeedGoalE1 > 1.5)
@@ -539,7 +539,7 @@ void Speed_Control_New(void)
     frame_flag1 = 0;
     frame1 = 0;
   }
-  if (SpeedGoalE2 > 1)
+  if (SpeedGoalE2 > 1 && ((Road0_flag < 3 && Road == 0 )|| Road == 3))
   {
     //即使速度目标不改变但speede2>1.5也直接进BB
     if (SpeedGoalE2 > 1.5)
@@ -557,7 +557,7 @@ void Speed_Control_New(void)
     frame2 = 0;
   }
 
-  if (SpeedGoalE1 < -1)
+  if (SpeedGoalE1 < -1 && ((Road0_flag < 3 && Road == 0 )|| Road == 4 || Road == 7))
   {
     //同上
     if (SpeedGoalE1 < -1.5)
@@ -622,7 +622,7 @@ void Speed_Control_New(void)
       }
     }
   }
-  else if (fabs(Turn_Out) >= CAR_DIFF_SERVO_RANGE && (fabs(Turn_Out_old)-fabs(Turn_Out)<30||((Turn_Out>0 ^ Turn_Out_old>0) == 0))&& (diff_flag1 < 0 || diff_flag2 < 0) && CarSpeed1 < 5 && CarSpeed2 < 5) //差速bang，Turn_Out>250 标志位，给18000和0的Bang)
+  else if (fabs(Turn_Out) >= CAR_DIFF_SERVO_RANGE && (fabs(Turn_Out_old)-fabs(Turn_Out)<10||((Turn_Out>0 ^ Turn_Out_old>0) == 0))&& (diff_flag1 < 0 || diff_flag2 < 0) && CarSpeed1 < 5 && CarSpeed2 < 5) //差速bang，Turn_Out>250 标志位，给18000和0的Bang)
   {
     diff_flag1 = 3;
     diff_flag2 = 3;

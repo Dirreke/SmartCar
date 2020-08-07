@@ -1124,7 +1124,7 @@ void TurnLeft_Process(void)
     //start
     for (int i = Fir_row; i < 48; ++i)
     {
-        if (Rig[i] < middle_temp && Rig[i + 1] <= middle_temp && Rig[i + 2] >= middle_temp && Rig[i + 3] - Rig[i + 1] < 7 && //Rig[i + 3] > 40 &&
+        if (Rig[i] < middle_temp && Rig[i + 1] <= middle_temp && Rig[i + 2] >= middle_temp && Rig[i + 3] - Rig[i + 1] < 9 && //Rig[i + 3] > 40 &&
             Rig[i + 5] - Rig[i + 3] < 7 && Rig[i + 7] - Rig[i + 5] < 7 && Rig[i + 9] - Rig[i + 7] < 7 && Rig[i + 11] - Rig[i + 9] < 7 &&
             Rig[i + 5] - Rig[i + 3] > 0 && Rig[i + 7] - Rig[i + 5] > 0 && Rig[i + 9] - Rig[i + 7] > 0 && Rig[i + 11] - Rig[i + 9] > 0 &&
             Rig[i + 1] - Rig[i] > 0 && Rig[i + 2] - Rig[i + 1] > 0)
@@ -1143,7 +1143,7 @@ void TurnLeft_Process(void)
         dis_origin_temp = 2;
         for (int i = Fir_row; i < 48; ++i)
         {
-            if (Rig[i] < middle_temp && Rig[i + 1] <= middle_temp && Rig[i + 2] >= middle_temp && Rig[i + 3] - Rig[i + 1] < 7 && //Rig[i + 3] > 40 &&
+            if (Rig[i] < middle_temp && Rig[i + 1] <= middle_temp && Rig[i + 2] >= middle_temp && Rig[i + 3] - Rig[i + 1] < 9 && //Rig[i + 3] > 40 &&
                 Rig[i + 5] - Rig[i + 3] < 7 && Rig[i + 7] - Rig[i + 5] < 7 && Rig[i + 9] - Rig[i + 7] < 7 && Rig[i + 11] - Rig[i + 9] < 7 &&
                 Rig[i + 5] - Rig[i + 3] > 0 && Rig[i + 7] - Rig[i + 5] > 0 && Rig[i + 9] - Rig[i + 7] > 0 && Rig[i + 11] - Rig[i + 9] > 0 &&
                 Rig[i + 1] - Rig[i] > 0 && Rig[i + 2] - Rig[i + 1] > 0)
@@ -1283,7 +1283,7 @@ void TurnRight_Process(void)
     //start
     for (int i = Fir_row; i < 48; ++i)
     {
-        if (Lef[i] > middle_temp && Lef[i + 1] >= middle_temp && Lef[i + 2] <= middle_temp && Lef[i + 1] - Lef[i + 3] < 7 && //Lef[i + 3] < 40 &&
+        if (Lef[i] > middle_temp && Lef[i + 1] >= middle_temp && Lef[i + 2] <= middle_temp && Lef[i + 1] - Lef[i + 3] < 9 && //Lef[i + 3] < 40 &&
             Lef[i + 3] - Lef[i + 5] < 7 && Lef[i + 5] - Lef[i + 7] < 7 && Lef[i + 7] - Lef[i + 9] < 7 && Lef[i + 9] - Lef[i + 11] < 7 &&
             Lef[i + 3] - Lef[i + 5] > 0 && Lef[i + 5] - Lef[i + 7] > 0 && Lef[i + 7] - Lef[i + 9] > 0 && Lef[i + 9] - Lef[i + 11] > 0 &&
             Lef[i] - Lef[i + 1] > 0 && Lef[i + 1] - Lef[i + 2] > 0)
@@ -1300,7 +1300,7 @@ void TurnRight_Process(void)
         dis_origin_temp = 2;
         for (int i = Fir_row; i < 48; ++i)
         {
-            if (Lef[i] > middle_temp && Lef[i + 1] >= middle_temp && Lef[i + 2] <= middle_temp && Lef[i + 1] - Lef[i + 3] < 7 && //Lef[i + 3] < 40 &&
+            if (Lef[i] > middle_temp && Lef[i + 1] >= middle_temp && Lef[i + 2] <= middle_temp && Lef[i + 1] - Lef[i + 3] < 9 && //Lef[i + 3] < 40 &&
                 Lef[i + 3] - Lef[i + 5] < 7 && Lef[i + 5] - Lef[i + 7] < 7 && Lef[i + 7] - Lef[i + 9] < 7 && Lef[i + 9] - Lef[i + 11] < 7 &&
                 Lef[i + 3] - Lef[i + 5] > 0 && Lef[i + 5] - Lef[i + 7] > 0 && Lef[i + 7] - Lef[i + 9] > 0 && Lef[i + 9] - Lef[i + 11] > 0 &&
                 Lef[i] - Lef[i + 1] > 0 && Lef[i + 1] - Lef[i + 2] > 0)

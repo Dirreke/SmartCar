@@ -4,7 +4,7 @@
 int DEBUG_CHOICE = 1;
 bool kaiji_flag = 0;
 float Cam_P_New = 0.8;
-float stop_time = 16;
+float stop_time = 2;
 // float speedgoal;
 // float curvespeedgoal;
 void Debug_Init(void)
@@ -116,7 +116,7 @@ void Debug_key(void)
                 //DEBUG_CHOICE++;
                 break;
             case 9:
-                PID_CAR_STRAIGHT_CAM.D += 0.1;
+                PID_CAR_STRAIGHT_CAM.D += 1;
                 break;
             case 10:
                 PID_diff.P += 0.1;
@@ -190,7 +190,7 @@ void Debug_key(void)
                 Sobel_Threshold_FarFar += 1;
                 break;
             case 17:
-                stop_time += 0.1;
+                stop_time += 0.5;
                 break;
             case 18:
                 Sobel_Threshold_Far += 1;
@@ -347,7 +347,7 @@ void Debug_key(void)
                 //DEBUG_CHOICE--;
                 break;
             case 9:
-                PID_CAR_STRAIGHT_CAM.D -= 0.1;
+                PID_CAR_STRAIGHT_CAM.D -= 1;
                 break;
             case 10:
                 PID_diff.P -= 0.1;
@@ -423,7 +423,7 @@ void Debug_key(void)
                 Sobel_Threshold_FarFar -= 1;
                 break;
             case 17:
-                stop_time -= 0.1;
+                stop_time -= 0.5;
                 break;
             case 18:
                 Sobel_Threshold_Far -= 1;
