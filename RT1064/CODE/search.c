@@ -31,6 +31,7 @@ bool Road0_flag0_flag = 0;
 bool ganhuangguan_flag = 0;
 
 int stop_line = Fir_row;
+float ramp_ANGLE_3 = 9;
 
 volatile int turn_stop = 0; //×ªÍäÓÃ
 
@@ -477,7 +478,7 @@ void start_stop_find(void)
 
     // if (Road == 0 && Road0_flag == 0)
     // {
-    if (loop_time < 6000)
+    if (!Road7_judge_EN)
     {
         return;
     }
@@ -919,7 +920,7 @@ void Road_rec(void)
         // }
 
         /* ICMÅÐÆÂ */
-        if (icm_gyro_y_w < -15 * CarSpeed && icm_gyro_y_w < -60 && loop_time - ramp_out_time > 500 && Road4_judge_EN)
+        if (icm_gyro_y_w < -60 && loop_time - ramp_out_time > 500 && Road4_judge_EN)//icm_gyro_y_w < -15 * CarSpeed && 
         //if (icm_gyro_y_w> 15 * CarSpeed && icm_gyro_y_w > 60 && loop_time - ramp_out_time > 500)
         {
             Road40_count++;
@@ -2525,32 +2526,31 @@ void Road4_zhuangtaiji(void)
         {
             Road4_count0 = 0;
             Road4_mistake0++;
-        }
-
-        if (Road4_mistake0 > 4 && icm_gyro_y_angle > -4) // < 4)//> -4))
-        {
-            Road = 0;
-            Road0_flag = 0;
-            Road4_flag = 0;
-            Road4_mistake0 = 0;
+            if (Road4_mistake0 > 4 && icm_gyro_y_angle > -4) // < 4)//> -4))
+            {
+                Road = 0;
+                Road0_flag = 0;
+                Road4_flag = 0;
+                Road4_mistake0 = 0;
+            }
         }
     }
     else if (Road4_flag == 1)
     {
         Road4_mistake0 = 0;
-        if (icm_gyro_y_angle > 9) //< -9)//> 9)
-        {
-            Road4_flag = 3;
-        }
         if (icm_gyro_y_angle > -6) //< 6)//> -6)
         {
             Road4_flag = 2;
+        }
+        if (icm_gyro_y_angle > ramp_ANGLE_3) //< -9)//> 9)
+        {
+            Road4_flag = 3;
         }
     }
     else if (Road4_flag == 2)
     {
         Road4_mistake0 = 0;
-        if (icm_gyro_y_angle > 10) //< -10)//> 10)
+        if (icm_gyro_y_angle > ramp_ANGLE_3) //< -10)//> 10)
         {
             Road4_flag = 3;
         }

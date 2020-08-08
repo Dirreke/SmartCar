@@ -11,8 +11,8 @@ float Road1_starttime = 0;
 float Road1_stoptime = -500;
 float Road2_starttime = 0;
 float Road2_stoptime = -500;
-float Road7_starttime = 0;
-float Road7_stoptime = -500;
+float Road7_starttime = 6000;
+float Road7_stoptime = 5500;
 
 
 void judge_EN_set(void)

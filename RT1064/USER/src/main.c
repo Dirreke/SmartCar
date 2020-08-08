@@ -41,7 +41,6 @@
 #include "headfile.h"
 
 uint8 image_head[4] = {0x00, 0xff, 0x01, 0x01};
-uint8 wosijile = 0;
 //uint32 use_time;
 int main(void)
 {
@@ -86,9 +85,7 @@ int main(void)
             ;
         }
 
-        wosijile = 1;
         Debug_key();
-        wosijile = 9;
 
         if (!kaiji_flag)
         {
@@ -99,21 +96,15 @@ int main(void)
         mt9v03x_csi_finish_flag = 0; //清除采集完成标志位
         // mag_find();
         ICM_main();
-        wosijile = 2;
         Picture_pre_main();
-        wosijile = 3;
         judge_EN_set();
         Road_rec();
         NB_set();
-        wosijile = 4;
         camera_dispose_main();
-        wosijile = 6;
         //Turn_Servo_Normal();
         Road_shift();
-        wosijile = 7;
         //SpeedTarget_fig();
         Send_Data();
-        wosijile = 8;
         //feisu_flag = 0;
         //loop_time2 = 0;
         //if (temp_flag < 100)

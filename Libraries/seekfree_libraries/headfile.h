@@ -94,5 +94,4 @@
 #include "isr.h"
 #include "NB.h"
 
-extern uint8 wosijile;
 #endif

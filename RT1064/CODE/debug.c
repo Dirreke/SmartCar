@@ -4,7 +4,6 @@
 // int DEBUG_CHOICE = 1;
 bool kaiji_flag = 0;
 float Cam_P_New = 0.8;
-float stop_time = 16;
 bool ips_choice = 0;
 // float speedgoal;
 // float curvespeedgoal;
@@ -22,10 +21,10 @@ void Debug_Init(void)
 void Debug_key(void)
 {
     static int ips_num = 0;
-    int page_num0 = 20;
+    int page_num0 = 19;
     const int page_num1 = 49;
     int NB_Use_No = 0;
-    static int page_num =20;
+    static int page_num = 19;
     static bool qipao_flag;
     static bool guanpingmu_flag = 0;
     if (gpio_get(DEBUG_KEY0))
@@ -64,6 +63,7 @@ void Debug_key(void)
         if(ips_choice)
         {
             ips_choice = 0;
+            ips200_clear(WHITE);
             ips_num = 0;
             page_num = page_num0;
         }        
@@ -73,6 +73,7 @@ void Debug_key(void)
         if(!ips_choice)
         {
             ips_num = 0;
+            ips200_clear(WHITE);
             ips_choice = 1;
             page_num = page_num1;
         }
@@ -182,54 +183,35 @@ void Debug_key(void)
             systick_delay_ms(50);
             if (!gpio_get(DEBUG_KEY3))
             {
-                switch (ips_num)
+                switch (19 - ips_num)
                 {
-                case 2:
-                    PID_CAR_CENTER_CAM.P += 0.1;
-                    break;
-                case 3:
-                    DEFAULT_SPEED += 0.1;
-                    STRAIGHT_SPEED += 0.1;
-                    break;
-                case 4:
-                    SPEED_MOTOR_SCALE_HIGH += 100; //threshold_offset += 1;
-                    break;
-                case 14:
-                    CURVE_SPEED += 0.1; //PID_CAR_Diffcomp_CAM.P += 0.1;
-                    break;
-                case 6:
-                    //PID_TURN_CAM_EXT.P += 0.1;
-                    car_straight_b += 0.01;//PID_CAR_STRAIGHT_CAM.P += 0.01;
-                    break;
-                case 7:
-                    PID_SPEED.P += 1;
-                    //PID_TURN_CAM_EXT.D += 0.1;
-                    //PID_CAR_STRAIGHT_CAM.D += 0.01;
-                    break;
-                case 8:
-                    PID_SPEED.I += 1;
-                    //DEBUG_CHOICE++;
-                    break;
-                case 9:
-                    PID_CAR_STRAIGHT_CAM.D += 0.1;
-                    break;
-                case 10:
-                    PID_diff.P += 0.1;
-                    break;
-                case 11:
-                    PID_diff0.P += 0.1;
-                    break;
-                case 12:
-                    barn_state = !barn_state;
-                    break;
-                case 13:
+
+                case 1:
                     competition_strategy += 1;
                     Para_Init();
                     break;
-                case 5:
-                    car_straight_k += 0.01;//Cam_P_New += 0.01;
+                case 2:
+                    STRAIGHT_SPEED += 0.1;
                     break;
-                case 0:
+                case 3:
+                    CURVE_SPEED += 0.1;
+                    break;
+                case 4:
+                    UP_RAMP_SPEED += 0.1; //threshold_offset += 1;
+                    break;
+                case 5:
+                    ON_RAMP_SPEED += 0.1; //PID_CAR_Diffcomp_CAM.P += 0.1;
+                    break;
+                case 6:
+                    PRE_STOP_SPEED += 0.1;//PID_CAR_STRAIGHT_CAM.P += 0.01;
+                    break;
+                case 7:
+                    RUSH_STOP_SPEED += 0.1;
+                    break;
+                case 8:
+                    EMERGENCY_STOP_SPEED += 0.1;
+                    break;
+                case 9:
                     Road += 1;
                     switch (Road)
                     {
@@ -254,7 +236,7 @@ void Debug_key(void)
                         break;
                     }
                     break;
-                case 1:
+                case 10:
                     switch (Road)
                     {
                     case 0:
@@ -278,40 +260,34 @@ void Debug_key(void)
                         break;
                     }
                     break;
+                case 11:
+                    ramp_ANGLE_3 += 0.5;
+                    break;
+                case 12:
+                    If_Use_EM_Stop =! If_Use_EM_Stop;
+                    break;
+                case 13:
+                    If_Use_EM_On_Ramp  =! If_Use_EM_On_Ramp;
+                    break;
+                case 14:
+                    PID_CAR_STRAIGHT_CAM.D += 1;
+                    break;
                 case 15:
-                    threshold_offset += 1;
+                    PID_diff0.P += 0.05;
                     break;
                 case 16:
-                    Sobel_Threshold_FarFar += 1;
+                    PID_diff.P += 0.05;
                     break;
                 case 17:
-                    stop_time += 0.1;
+                    car_straight_b += 0.01;
                     break;
                 case 18:
-                    Sobel_Threshold_Far += 1;
+                    car_straight_k += 0.01;
                     break;
                 case 19:
-                    Sobel_Threshold_Near += 1;
+                    barn_state = !barn_state;
                     break;
-                    /* 
-
-                case 16:
-                    Sobel_Threshold_Far += 1;
-                    break;
-                case 17:
-                    Sobel_Threshold_Near += 1;
-                    break; */
-
-               
                 default:
-                    // if (ips_num < 21)
-                    // {
-                    //     Turn_Cam_Straight_P_Table[ips_num - 10] += 0.05;
-                    // }
-                    // else if (ips_num < 32)
-                    // {
-                    //     Turn_Cam_Straight_D_Table[ips_num - 21] += 0.05;
-                    // }
                     break;
                 }
                 return;
@@ -322,129 +298,113 @@ void Debug_key(void)
             systick_delay_ms(50);
             if (!gpio_get(DEBUG_KEY4))
             {
-                switch (ips_num)
+                switch (19 - ips_num)
                 {
-                case 2:
-                    PID_CAR_CENTER_CAM.P -= 0.1;
-                    break;
-                case 3:
-                    //DEFAULT_SPEED -= 0.1;
-                    STRAIGHT_SPEED -= 0.1;
-                    break;
-                case 4:
-                    SPEED_MOTOR_SCALE_HIGH -= 100; //threshold_offset -= 1;
-                    break;
-                case 14:
-                    CURVE_SPEED -= 0.1; //PID_CAR_Diffcomp_CAM.P -= 0.1;
-                    break;
-                case 6:
-                    //PID_TURN_CAM_EXT.P -= 0.1;
-                    car_straight_b -= 0.01;//PID_CAR_STRAIGHT_CAM.P -= 0.01;
-                    break;
-                case 7:
-                    PID_SPEED.P -= 1;
-                    //PID_TURN_CAM_EXT.D -= 0.1;
-                    //PID_CAR_STRAIGHT_CAM.D -= 0.01;
-                    break;
-                case 8:
-                    PID_SPEED.I -= 1;
-                    //DEBUG_CHOICE--;
-                    break;
-                case 9:
-                    PID_CAR_STRAIGHT_CAM.D -= 0.1;
-                    break;
-                case 10:
-                    PID_diff.P -= 0.1;
-                    break;
-                case 11:
-                    PID_diff0.P -= 0.1;
-                    break;
-                case 12:
-                    barn_state = !barn_state;
-                    break;
-                case 13:
-                    competition_strategy -= 1;
-                    Para_Init();
-                    break;
-                case 5:
-                    car_straight_k -= 0.01;//Cam_P_New -= 0.01;
-                    break;
-                case 0:
-                    Road -= 1;
-                    switch (Road)
-                    {
-                    case 0:
-                        Road0_flag = 0;
-                        break;
-                    case 1:
-                        Road1_flag = 0;
-                        break;
-                    case 2:
-                        Road2_flag = 0;
-                        break;
-                    case 3:
-                        Road3_flag = 0;
-                        break;
-                    case 4:
-                        Road4_flag = 0;
-                    case 7:
-                        Road7_flag = 0;
-                        break;
-                    default:
-                        break;
-                    }
-                    break;
-                case 1:
-                    switch (Road)
-                    {
-                    case 0:
-                        Road0_flag--;
-                        break;
-                    case 1:
-                        Road1_flag--;
-                        break;
-                    case 2:
-                        Road2_flag--;
-                        break;
-                    case 3:
-                        Road3_flag--;
-                        break;
-                    case 4:
-                        Road4_flag--;
-                        break;
-                    case 7:
-                        Road7_flag--;
-                        break;
-                    default:
-                        break;
-                    }
-                    break;
 
-                case 15:
-                    threshold_offset -= 1;
-                    break;
-                case 16:
-                    Sobel_Threshold_FarFar -= 1;
-                    break;
-                case 17:
-                    stop_time -= 0.1;
-                    break;
-                case 18:
-                    Sobel_Threshold_Far -= 1;
-                    break;
-                case 19:
-                    Sobel_Threshold_Near -= 1;
-                    break;
-                default:
-                    // if (ips_num < 21)
-                    // {
-                    //     Turn_Cam_Straight_P_Table[ips_num - 10] -= 0.05;
-                    // }
-                    // else if (ips_num < 32)
-                    // {
-                    //     Turn_Cam_Straight_D_Table[ips_num - 21] -= 0.05;
-                    // }
-                    break;
+                    case 1:
+                        competition_strategy -= 1;
+                        Para_Init();
+                        break;
+                    case 2:
+                        STRAIGHT_SPEED -= 0.1;
+                        break;
+                    case 3:
+                        CURVE_SPEED -= 0.1;
+                        break;
+                    case 4:
+                        UP_RAMP_SPEED -= 0.1; //threshold_offset += 1;
+                        break;
+                    case 5:
+                        ON_RAMP_SPEED -= 0.1; //PID_CAR_Diffcomp_CAM.P += 0.1;
+                        break;
+                    case 6:
+                        PRE_STOP_SPEED -= 0.1;//PID_CAR_STRAIGHT_CAM.P += 0.01;
+                        break;
+                    case 7:
+                        RUSH_STOP_SPEED -= 0.1;
+                        break;
+                    case 8:
+                        EMERGENCY_STOP_SPEED -= 0.1;
+                        break;
+                    case 9:
+                        Road -= 1;
+                        switch (Road)
+                        {
+                        case 0:
+                            Road0_flag = 0;
+                            break;
+                        case 1:
+                            Road1_flag = 0;
+                            break;
+                        case 2:
+                            Road2_flag = 0;
+                            break;
+                        case 3:
+                            Road3_flag = 0;
+                            break;
+                        case 4:
+                            Road4_flag = 0;
+                        case 7:
+                            Road7_flag = 0;
+                            break;
+                        default:
+                            break;
+                        }
+                        break;
+                    case 10:
+                        switch (Road)
+                        {
+                        case 0:
+                            Road0_flag--;
+                            break;
+                        case 1:
+                            Road1_flag--;
+                            break;
+                        case 2:
+                            Road2_flag--;
+                            break;
+                        case 3:
+                            Road3_flag--;
+                            break;
+                        case 4:
+                            Road4_flag--;
+                        case 7:
+                            Road7_flag--;
+                            break;
+                        default:
+                            break;
+                        }
+                        break;
+                    case 11:
+                        ramp_ANGLE_3 -= 0.5;
+                        break;
+                    case 12:
+                        If_Use_EM_Stop =! If_Use_EM_Stop;
+                        break;
+                    case 13:
+                        If_Use_EM_On_Ramp  =! If_Use_EM_On_Ramp;
+                        break;
+                    case 14:
+                        PID_CAR_STRAIGHT_CAM.D -= 1;
+                        break;
+                    case 15:
+                        PID_diff0.P -= 0.05;
+                        break;
+                    case 16:
+                        PID_diff.P -= 0.05;
+                        break;
+                    case 17:
+                        car_straight_b -= 0.01;
+                        break;
+                    case 18:
+                        car_straight_k -= 0.01;
+                        break;
+                    case 19:
+                        barn_state = !barn_state;
+                        break;
+
+                    default:
+                        break;
                 }
                 return;
             }
@@ -497,24 +457,28 @@ void DEBUG_KEY_adjust(int ips_num)
 
                 case 42:
                     Road7_starttime += 500;
+                    Road7_stoptime = Road7_starttime;
                     break;
                 case 41:
                     Road7_stoptime += 500;
                     break;
                 case 44:
                     Road1_starttime += 500;
+                    Road1_stoptime = Road1_starttime;
                     break;
                 case 43:
                     Road1_stoptime += 500;
                     break;
                 case 46:
                     Road2_starttime += 500;
+                    Road2_stoptime = Road2_starttime;
                     break;
                 case 45:
                     Road2_stoptime += 500;
                     break;
                 case 48:
                     Road4_starttime += 500;
+                    Road4_stoptime = Road4_starttime;
                     break;
                 case 47:
                     Road4_stoptime += 500;
@@ -565,24 +529,28 @@ void DEBUG_KEY_adjust(int ips_num)
 
                 case 42:
                     Road7_starttime -= 500;
+                    Road7_stoptime = Road7_starttime;
                     break;
                 case 41:
                     Road7_stoptime -= 500;
                     break;
                 case 44:
                     Road1_starttime -= 500;
+                    Road1_stoptime = Road1_starttime;
                     break;
                 case 43:
                     Road1_stoptime -= 500;
                     break;
                 case 46:
                     Road2_starttime -= 500;
+                    Road2_stoptime = Road2_starttime;
                     break;
                 case 45:
                     Road2_stoptime -= 500;
                     break;
                 case 48:
                     Road4_starttime -= 500;
+                    Road4_stoptime = Road4_starttime;
                     break;
                 case 47:
                     Road4_stoptime -= 500;
@@ -596,160 +564,6 @@ void DEBUG_KEY_adjust(int ips_num)
     }
 
 }
-
-void ips_show_debug_gmy0(int ips_num)
-{
-    const int PAGE_X = 100;
-    const int PAGE_NUM_X = 200;
-    /** ips show image **/
-    //ips200_clear(WHITE);
-    ips200_displayimage032_zoom(Image_Use[20], 80, 40, 320, 160);
-    //systick_delay_ms(300);
-    ips200_showstr(PAGE_X, 14, "page");
-    ips200_showuint16(PAGE_NUM_X, 14, ips_num);
-    switch (ips_num)
-    {
-
-    /** pages **/
-    case 2:                                          //阈值
-        ips200_showstr(0, 12, "PID_CENTER_CAM.P: "); //显示字符串
-        //ips200_showfloat(0, 13, 66.6667, 2, 4);    //显示一个浮点数并去除整数部分无效0
-        //ips200_showuint16(0,1,666);                //显示一个16位无符号整数
-        //ips200_showint32(0,3,-666,3);              //显示一个32位有符号数并去除无效0
-        ips200_showfloat(0, 13, PID_CAR_CENTER_CAM.P, 3, 2);
-        break;
-    case 3:
-        ips200_showstr(0, 12, "straight_speed: "); //显示字符串
-        ips200_showfloat(0, 13, STRAIGHT_SPEED, 2, 2);
-        break;
-    case 4:
-        ips200_showstr(0, 12, "SPEED_MOTOR_SCALE_HIGH //threshold_offset");
-        ips200_showfloat(0, 13, SPEED_MOTOR_SCALE_HIGH, 4, 2);
-        break;
-    case 14:
-        ips200_showstr(0, 12, "CURVE_SPEED");
-        ips200_showfloat(0, 13, CURVE_SPEED, 4, 2);
-        break;
-    case 6:
-        ips200_showstr(0, 12, "fuck b");
-        ips200_showfloat(0, 13, car_straight_b, 4, 2); //PID_TURN_CAM_EXT.P, 4, 2);
-        break;
-    case 7:
-        ips200_showstr(0, 12, "motor p CamStraightD");
-        ips200_showfloat(0, 13, PID_SPEED.P, 4, 2); //PID_TURN_CAM_EXT.D, 4, 2);
-        break;
-    case 8:
-        ips200_showstr(0, 12, "motor i DEBUG_CHOICE");
-        ips200_showfloat(0, 13, PID_SPEED.I, 4, 2); //PID_TURN_CAM_EXT.D, 4, 2);
-        //ips200_showint32(0, 13, PID_SPEED.I, 3);
-        break;
-    case 9:
-        ips200_showstr(0, 12, "PID_CAR_STRAIGHT_CAM.D");
-        ips200_showfloat(0, 13, PID_CAR_STRAIGHT_CAM.D, 4, 2);
-        break;
-    case 10:
-        ips200_showstr(0, 12, "PID_diff.P");
-        ips200_showfloat(0, 13, PID_diff.P, 4, 2);
-        break;
-    case 11:
-        ips200_showstr(0, 12, "PID_diff0.P");
-        ips200_showfloat(0, 13, PID_diff0.P, 4, 2);
-        break;
-    case 12:
-        if (barn_state)
-        {
-            ips200_showstr(0, 12, "L_barn");
-        }
-        else
-        {
-            ips200_showstr(0, 12, "R_barn");
-        }
-        break;
-    case 13:
-        ips200_showstr(0, 12, "competition_strategy");
-        ips200_showint32(0, 13, competition_strategy, 3);
-        break;
-    case 5:
-        ips200_showstr(0, 12, "fuck k");
-        ips200_showfloat(0, 13, car_straight_k, 4, 2);
-        break;
-    case 0:
-        ips200_showstr(0, 12, "Road");
-        ips200_showint32(0, 13, Road, 3);
-        break;
-    case 1:
-        ips200_showstr(0, 12, "Road       _flag");
-        ips200_showint32(12, 12, Road, 3);
-        switch (Road)
-        {
-        case 0:
-
-            ips200_showint32(0, 13, Road0_flag, 3);
-            break;
-        case 1:
-            ips200_showint32(0, 13, Road1_flag, 3);
-            break;
-        case 2:
-            ips200_showint32(0, 13, Road2_flag, 3);
-            break;
-        case 3:
-            ips200_showint32(0, 13, Road3_flag, 3);
-            break;
-        case 4:
-            ips200_showint32(0, 13, Road4_flag, 3);
-            break;
-        case 7:
-            ips200_showint32(0, 13, Road7_flag, 3);
-            break;
-        default:
-            break;
-        }
-        break;
-
-    case 15:
-        ips200_showstr(0, 12, "threshold_offset: ");
-        ips200_showint32(0, 13, threshold_offset, 3);
-        break;
-    case 16:
-        ips200_showstr(0, 12, "Sobel_Threshold_FarFar: ");
-        ips200_showuint8(0, 13, Sobel_Threshold_FarFar);
-        break;
-    case 17:
-        ips200_showstr(0, 12, "tingche shijian");
-        ips200_showfloat(0, 13, stop_time, 4, 2);
-        
-        break;
-    case 18:
-        ips200_showstr(0, 12, "Sobel_Threshold_Far");
-        ips200_showfloat(0, 13, Sobel_Threshold_Far, 4, 2);
-                break;
-            case 19:
-        ips200_showstr(0, 12, "Sobel_Threshold_Near");
-        ips200_showfloat(0, 13, Sobel_Threshold_Near, 4, 2);
-                break;
-        /*     
-    case 17:
-        ips200_showstr(0, 12, "Sobel_Threshold_Near: ");
-        ips200_showuint8(0, 13, Sobel_Threshold_Near);
-        break; */
-
-    default:
-        // ips_show_debug_pd(ips_num);
-        // ips200_showint32(0, 11, ips_num, 2);
-        // if (ips_num < 21)
-        // {
-        //     ips200_showstr(0, 12, "P");
-        //     ips200_showfloat(0, 13, Turn_Cam_Straight_P_Table[ips_num - 10], 4, 2);
-        // }
-        // else if (ips_num < 32)
-        // {
-        //     ips200_showstr(0, 12, "D");
-        //     ips200_showfloat(0, 13, Turn_Cam_Straight_D_Table[ips_num - 21], 4, 2);
-        // }
-        break;
-    }
-}
-
 
 void ips_show_debug1(int ips_num)
 {
@@ -835,157 +649,12 @@ void ips_show_debug1(int ips_num)
             ips200_showfloat(0, 13, Road4_stoptime*0.001, 2, 2);
             break;
         
-        
-        
         default:
             break;
 
     }
     
-    switch (ips_num)
-    {
-
-    /** pages **/
-    case 2:                                          //阈值
-        ips200_showstr(0, 12, "PID_CENTER_CAM.P: "); //显示字符串
-        //ips200_showfloat(0, 13, 66.6667, 2, 4);    //显示一个浮点数并去除整数部分无效0
-        //ips200_showuint16(0,1,666);                //显示一个16位无符号整数
-        //ips200_showint32(0,3,-666,3);              //显示一个32位有符号数并去除无效0
-        ips200_showfloat(0, 13, PID_CAR_CENTER_CAM.P, 3, 2);
-        break;
-    case 3:
-        ips200_showstr(0, 12, "straight_speed: "); //显示字符串
-        ips200_showfloat(0, 13, STRAIGHT_SPEED, 2, 2);
-        break;
-    case 4:
-        ips200_showstr(0, 12, "SPEED_MOTOR_SCALE_HIGH //threshold_offset");
-        ips200_showfloat(0, 13, SPEED_MOTOR_SCALE_HIGH, 4, 2);
-        break;
-    case 14:
-        ips200_showstr(0, 12, "CURVE_SPEED");
-        ips200_showfloat(0, 13, CURVE_SPEED, 4, 2);
-        break;
-    case 6:
-        ips200_showstr(0, 12, "fuck b");
-        ips200_showfloat(0, 13, car_straight_b, 4, 2); //PID_TURN_CAM_EXT.P, 4, 2);
-        break;
-    case 7:
-        ips200_showstr(0, 12, "motor p CamStraightD");
-        ips200_showfloat(0, 13, PID_SPEED.P, 4, 2); //PID_TURN_CAM_EXT.D, 4, 2);
-        break;
-    case 8:
-        ips200_showstr(0, 12, "motor i DEBUG_CHOICE");
-        ips200_showfloat(0, 13, PID_SPEED.I, 4, 2); //PID_TURN_CAM_EXT.D, 4, 2);
-        //ips200_showint32(0, 13, PID_SPEED.I, 3);
-        break;
-    case 9:
-        ips200_showstr(0, 12, "PID_CAR_STRAIGHT_CAM.D");
-        ips200_showfloat(0, 13, PID_CAR_STRAIGHT_CAM.D, 4, 2);
-        break;
-    case 10:
-        ips200_showstr(0, 12, "PID_diff.P");
-        ips200_showfloat(0, 13, PID_diff.P, 4, 2);
-        break;
-    case 11:
-        ips200_showstr(0, 12, "PID_diff0.P");
-        ips200_showfloat(0, 13, PID_diff0.P, 4, 2);
-        break;
-    case 12:
-        if (barn_state)
-        {
-            ips200_showstr(0, 12, "L_barn");
-        }
-        else
-        {
-            ips200_showstr(0, 12, "R_barn");
-        }
-        break;
-    case 13:
-        ips200_showstr(0, 12, "competition_strategy");
-        ips200_showint32(0, 13, competition_strategy, 3);
-        break;
-    case 5:
-        ips200_showstr(0, 12, "fuck k");
-        ips200_showfloat(0, 13, car_straight_k, 4, 2);
-        break;
-    case 0:
-        ips200_showstr(0, 12, "Road");
-        ips200_showint32(0, 13, Road, 3);
-        break;
-    case 1:
-        ips200_showstr(0, 12, "Road       _flag");
-        ips200_showint32(12, 12, Road, 3);
-        switch (Road)
-        {
-        case 0:
-
-            ips200_showint32(0, 13, Road0_flag, 3);
-            break;
-        case 1:
-            ips200_showint32(0, 13, Road1_flag, 3);
-            break;
-        case 2:
-            ips200_showint32(0, 13, Road2_flag, 3);
-            break;
-        case 3:
-            ips200_showint32(0, 13, Road3_flag, 3);
-            break;
-        case 4:
-            ips200_showint32(0, 13, Road4_flag, 3);
-            break;
-        case 7:
-            ips200_showint32(0, 13, Road7_flag, 3);
-            break;
-        default:
-            break;
-        }
-        break;
-
-    case 15:
-        ips200_showstr(0, 12, "threshold_offset: ");
-        ips200_showint32(0, 13, threshold_offset, 3);
-        break;
-    case 16:
-        ips200_showstr(0, 12, "Sobel_Threshold_FarFar: ");
-        ips200_showuint8(0, 13, Sobel_Threshold_FarFar);
-        break;
-    case 17:
-        ips200_showstr(0, 12, "tingche shijian");
-        ips200_showfloat(0, 13, stop_time, 4, 2);
-        
-        break;
-    case 18:
-        ips200_showstr(0, 12, "Sobel_Threshold_Far");
-        ips200_showfloat(0, 13, Sobel_Threshold_Far, 4, 2);
-                break;
-            case 19:
-        ips200_showstr(0, 12, "Sobel_Threshold_Near");
-        ips200_showfloat(0, 13, Sobel_Threshold_Near, 4, 2);
-                break;
-        /*     
-    case 17:
-        ips200_showstr(0, 12, "Sobel_Threshold_Near: ");
-        ips200_showuint8(0, 13, Sobel_Threshold_Near);
-        break; */
-
-    default:
-        // ips_show_debug_pd(ips_num);
-        // ips200_showint32(0, 11, ips_num, 2);
-        // if (ips_num < 21)
-        // {
-        //     ips200_showstr(0, 12, "P");
-        //     ips200_showfloat(0, 13, Turn_Cam_Straight_P_Table[ips_num - 10], 4, 2);
-        // }
-        // else if (ips_num < 32)
-        // {
-        //     ips200_showstr(0, 12, "D");
-        //     ips200_showfloat(0, 13, Turn_Cam_Straight_D_Table[ips_num - 21], 4, 2);
-        // }
-        break;
-    }
-}
-
-
+ }
 
 void ips_show_debug0(int ips_num)
 {
@@ -997,83 +666,56 @@ void ips_show_debug0(int ips_num)
     //systick_delay_ms(300);
     ips200_showstr(PAGE_X, 14, "page");
     ips200_showuint16(PAGE_NUM_X, 14, ips_num);
-    switch (ips_num)
+    switch (19 - ips_num)
     {
 
     /** pages **/
-    case 2:                                          //阈值
-        ips200_showstr(0, 12, "PID_CENTER_CAM.P: "); //显示字符串
-        //ips200_showfloat(0, 13, 66.6667, 2, 4);    //显示一个浮点数并去除整数部分无效0
-        //ips200_showuint16(0,1,666);                //显示一个16位无符号整数
-        //ips200_showint32(0,3,-666,3);              //显示一个32位有符号数并去除无效0
-        ips200_showfloat(0, 13, PID_CAR_CENTER_CAM.P, 3, 2);
-        break;
-    case 3:
-        ips200_showstr(0, 12, "straight_speed: "); //显示字符串
-        ips200_showfloat(0, 13, STRAIGHT_SPEED, 2, 2);
-        break;
-    case 4:
-        ips200_showstr(0, 12, "SPEED_MOTOR_SCALE_HIGH //threshold_offset");
-        ips200_showfloat(0, 13, SPEED_MOTOR_SCALE_HIGH, 4, 2);
-        break;
-    case 14:
-        ips200_showstr(0, 12, "CURVE_SPEED");
-        ips200_showfloat(0, 13, CURVE_SPEED, 4, 2);
-        break;
-    case 6:
-        ips200_showstr(0, 12, "fuck b");
-        ips200_showfloat(0, 13, car_straight_b, 4, 2); //PID_TURN_CAM_EXT.P, 4, 2);
-        break;
-    case 7:
-        ips200_showstr(0, 12, "motor p CamStraightD");
-        ips200_showfloat(0, 13, PID_SPEED.P, 4, 2); //PID_TURN_CAM_EXT.D, 4, 2);
-        break;
-    case 8:
-        ips200_showstr(0, 12, "motor i DEBUG_CHOICE");
-        ips200_showfloat(0, 13, PID_SPEED.I, 4, 2); //PID_TURN_CAM_EXT.D, 4, 2);
-        //ips200_showint32(0, 13, PID_SPEED.I, 3);
-        break;
-    case 9:
-        ips200_showstr(0, 12, "PID_CAR_STRAIGHT_CAM.D");
-        ips200_showfloat(0, 13, PID_CAR_STRAIGHT_CAM.D, 4, 2);
-        break;
-    case 10:
-        ips200_showstr(0, 12, "PID_diff.P");
-        ips200_showfloat(0, 13, PID_diff.P, 4, 2);
-        break;
-    case 11:
-        ips200_showstr(0, 12, "PID_diff0.P");
-        ips200_showfloat(0, 13, PID_diff0.P, 4, 2);
-        break;
-    case 12:
-        if (barn_state)
-        {
-            ips200_showstr(0, 12, "L_barn");
-        }
-        else
-        {
-            ips200_showstr(0, 12, "R_barn");
-        }
-        break;
-    case 13:
+    /* 正着调 */
+
+    case 1:
         ips200_showstr(0, 12, "competition_strategy");
         ips200_showint32(0, 13, competition_strategy, 3);
         break;
-    case 5:
-        ips200_showstr(0, 12, "fuck k");
-        ips200_showfloat(0, 13, car_straight_k, 4, 2);
+    case 2:
+        ips200_showstr(0, 12, "straight_speed: "); //显示字符串
+        ips200_showfloat(0, 13, STRAIGHT_SPEED, 2, 2);
         break;
-    case 0:
+    case 3:
+        ips200_showstr(0, 12, "CURVE_SPEED");
+        ips200_showfloat(0, 13, CURVE_SPEED, 4, 2);
+        break;
+    case 4:
+        ips200_showstr(0, 12, "up_ramp_speed");
+        ips200_showfloat(0, 13, UP_RAMP_SPEED, 4, 2);
+        break;
+
+    case 5:
+        ips200_showstr(0, 12, "on_ramp_speed");
+        ips200_showfloat(0, 13, ON_RAMP_SPEED, 4, 2);
+        break;
+
+    case 6:
+        ips200_showstr(0, 12, "pre_stop_speed");
+        ips200_showfloat(0, 13, PRE_STOP_SPEED, 4, 2);
+        break;
+    case 7:
+        ips200_showstr(0, 12, "rush_stop_speed");
+        ips200_showfloat(0, 13, RUSH_STOP_SPEED, 4, 2);
+        break;
+    case 8:
+        ips200_showstr(0, 12, "emergency_stop_speed");
+        ips200_showfloat(0, 13, EMERGENCY_STOP_SPEED, 4, 2);
+        break;
+    case 9:
         ips200_showstr(0, 12, "Road");
         ips200_showint32(0, 13, Road, 3);
         break;
-    case 1:
+    case 10:
         ips200_showstr(0, 12, "Road       _flag");
         ips200_showint32(12, 12, Road, 3);
         switch (Road)
         {
         case 0:
-
             ips200_showint32(0, 13, Road0_flag, 3);
             break;
         case 1:
@@ -1096,66 +738,51 @@ void ips_show_debug0(int ips_num)
         }
         break;
 
-    case 15:
-        ips200_showstr(0, 12, "threshold_offset: ");
-        ips200_showint32(0, 13, threshold_offset, 3);
-        break;
-    case 16:
-        ips200_showstr(0, 12, "Sobel_Threshold_FarFar: ");
-        ips200_showuint8(0, 13, Sobel_Threshold_FarFar);
-        break;
-    case 17:
-        ips200_showstr(0, 12, "tingche shijian");
-        ips200_showfloat(0, 13, stop_time, 4, 2);
-        
+        /* 倒着调 */
+    case 19:
+        if (barn_state)
+        {
+            ips200_showstr(0, 12, "L_barn");
+        }
+        else
+        {
+            ips200_showstr(0, 12, "R_barn");
+        }
         break;
     case 18:
-        ips200_showstr(0, 12, "Sobel_Threshold_Far");
-        ips200_showfloat(0, 13, Sobel_Threshold_Far, 4, 2);
-                break;
-            case 19:
-        ips200_showstr(0, 12, "Sobel_Threshold_Near");
-        ips200_showfloat(0, 13, Sobel_Threshold_Near, 4, 2);
-                break;
-        /*     
+        ips200_showstr(0, 12, "car_straight_k");
+        ips200_showfloat(0, 13, car_straight_k, 4, 2); //PID_TURN_CAM_EXT.P, 4, 2);
+        break;
     case 17:
-        ips200_showstr(0, 12, "Sobel_Threshold_Near: ");
-        ips200_showuint8(0, 13, Sobel_Threshold_Near);
-        break; */
-
+        ips200_showstr(0, 12, "car_straight_b");
+        ips200_showfloat(0, 13, car_straight_b, 4, 2); //PID_TURN_CAM_EXT.D, 4, 2);
+        break;
+    case 16:
+        ips200_showstr(0, 12, "PID_diff.P");
+        ips200_showfloat(0, 13, PID_diff.P, 4, 2);
+        break;
+    case 15:
+        ips200_showstr(0, 12, "PID_diff0.P");
+        ips200_showfloat(0, 13, PID_diff0.P, 4, 2);
+        break;
+    case 14:
+        ips200_showstr(0, 12, "PID_CAR_STRAIGHT_CAM.D");
+        ips200_showfloat(0, 13, PID_CAR_STRAIGHT_CAM.D, 4, 2);
+        break;
+    case 13:
+        ips200_showstr(0, 12, "If_Use_EM_On_Ramp");
+        ips200_showint32(0, 13, If_Use_EM_On_Ramp, 3); //PID_TURN_CAM_EXT.P, 4, 2);
+        break;
+    case 12:
+        ips200_showstr(0, 12, "If_Use_EM_Stop");
+        ips200_showint32(0, 13, If_Use_EM_Stop, 3); //PID_TURN_CAM_EXT.P, 4, 2);
+        break;
+    case 11:
+        ips200_showstr(0, 12, "ramp_ANGLE_3");
+        ips200_showfloat(0, 13, ramp_ANGLE_3, 4, 2);
+        break;
     default:
-        // ips_show_debug_pd(ips_num);
-        // ips200_showint32(0, 11, ips_num, 2);
-        // if (ips_num < 21)
-        // {
-        //     ips200_showstr(0, 12, "P");
-        //     ips200_showfloat(0, 13, Turn_Cam_Straight_P_Table[ips_num - 10], 4, 2);
-        // }
-        // else if (ips_num < 32)
-        // {
-        //     ips200_showstr(0, 12, "D");
-        //     ips200_showfloat(0, 13, Turn_Cam_Straight_D_Table[ips_num - 21], 4, 2);
-        // }
+
         break;
     }
 }
-
-
-/*
-void ips_show_debug_pd(int ips_num)
-{
-    int index = ips_num / 2 - 1;
-    ips200_showstr(0, 11, "index:");
-    ips200_showuint16(100, 11, index);
-    if (ips_num % 2)
-    {
-        ips200_showstr(0, 12, "Turn_Cam_D_Table: ");
-        ips200_showfloat(0, 13, Turn_Cam_D_Table0[index], 2, 3);
-    }
-    else
-    {
-        ips200_showstr(0, 12, "Turn_Cam_P_Table: ");
-        ips200_showfloat(0, 13, Turn_Cam_P_Table0[index], 2, 3);
-    }
-}
-*/

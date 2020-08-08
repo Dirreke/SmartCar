@@ -20,7 +20,6 @@ void ips_show_debug1(int ips_num);
 void DEBUG_KEY_adjust(int ips_num);
 // extern int DDDebug;
 extern float Cam_P_New;
-extern float stop_time;
 extern bool ips_choice;
 
 // extern float DDDDeubg_Turn_diff;

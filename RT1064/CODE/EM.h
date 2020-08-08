@@ -9,6 +9,8 @@ extern float EM_Value_3;
 extern float EM_Value_4;
 extern float EM_center_offset;
 extern float EM_straight_offset;
+extern bool If_Use_EM_Stop;
+extern bool If_Use_EM_On_Ramp;
 
 void EM_main(void);
 void EM_Init(void);

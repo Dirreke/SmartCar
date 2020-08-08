@@ -105,10 +105,24 @@ void SPEED_INIT(void)
 {
         switch (competition_strategy)
         {
-        case 1:
+        case 2:
                 DEFAULT_SPEED = 3.5;
                 STRAIGHT_SPEED = 3.5;
-                CURVE_SPEED = 2.7;
+                CURVE_SPEED = 2.6;
+                PRE_STOP_SPEED = 2.5;
+                RUSH_STOP_SPEED = 1.5;
+                STOP_SPEED = 0.5;
+                EMERGENCY_STOP_SPEED = 1.0;
+                UP_RAMP_SPEED = 2.0;
+                ON_RAMP_SPEED = 1.0;
+                DOWN_RAMP_SPEED = DEFAULT_SPEED;
+
+                SPEED_MOTOR_SCALE_HIGH = 2500;
+                break;
+        case 1:
+                DEFAULT_SPEED = 3.2;
+                STRAIGHT_SPEED = 3.2;
+                CURVE_SPEED = 2.5;
                 PRE_STOP_SPEED = 2.5;
                 RUSH_STOP_SPEED = 2.0;
                 STOP_SPEED = 0.5;
@@ -133,6 +147,21 @@ void SPEED_INIT(void)
 
                 SPEED_MOTOR_SCALE_HIGH = 2500;
                 break;
+        case -2:
+                DEFAULT_SPEED = 2.5;
+                STRAIGHT_SPEED = 2.5;
+                CURVE_SPEED = 2.0;
+                PRE_STOP_SPEED = 2.0;
+                RUSH_STOP_SPEED = 1.5;
+                STOP_SPEED = 0.5;
+                EMERGENCY_STOP_SPEED = 1.0;
+                UP_RAMP_SPEED = 2.0;
+                ON_RAMP_SPEED = 1.0;
+                DOWN_RAMP_SPEED = DEFAULT_SPEED;
+
+                SPEED_MOTOR_SCALE_HIGH = 2500;
+                break;          
+        case 0:      
         default:
                 DEFAULT_SPEED = 2.8;
                 STRAIGHT_SPEED = 2.8;

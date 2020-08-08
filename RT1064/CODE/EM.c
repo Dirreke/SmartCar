@@ -6,6 +6,8 @@ float EM_Value_3 = 0;
 float EM_Value_4 = 0;
 
 float EM_center_offset = 0;
+bool If_Use_EM_Stop = 1;
+bool If_Use_EM_On_Ramp = 1;
 /*************************************************************************
 *  函数名称：void EM_init(void)
 *  功能说明：电磁初始化

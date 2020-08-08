@@ -35,13 +35,15 @@ void PIT_IRQHandler(void)
     if (PIT_FLAG_GET(PIT_CH0))
     {
         PIT_FLAG_CLEAR(PIT_CH0);
-        wosijile += 16;
         if (Road != 3 && loop_time > 500 && Road7_flag != 2 && Road7_flag != 3)
         {
-            if ((EM_Value_2 < 0.3 && EM_Value_3 < 0.3 && EM_Value_1 < 0.3 && EM_Value_4 < 0.3)||loop_time > stop_time*1000)
+            if ((EM_Value_2 < 0.2 && EM_Value_3 < 0.2 && EM_Value_1 < 0.2 && EM_Value_4 < 0.2))
             //if(loop_time > 1500)
             {
-                lib_speed_set(0);
+                if(If_Use_EM_Stop)
+                {
+                    lib_speed_set(0);
+                }
             }
         }
         EM_Get();
@@ -57,7 +59,15 @@ void PIT_IRQHandler(void)
         if (Road == 4)
         {
             EM_main();
-            Turn_Out = Turn_EM_Out;
+            if(If_Use_EM_On_Ramp)
+            {
+                Turn_Out = Turn_EM_Out;
+            }
+            else
+            {
+                Turn_Out = 0;
+            }
+            
             Servo_Duty(-Turn_Out);
         }
         if (gpio_get(DEBUG_KEY0))
@@ -80,7 +90,6 @@ void PIT_IRQHandler(void)
         BB_add();
         Moto_Out();
         Mean_Turn_Out();
-        wosijile -=16;
     }
 
     __DSB();

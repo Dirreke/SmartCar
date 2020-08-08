@@ -52,6 +52,7 @@ extern int start_line;
 
 
 extern int stop_line;
+extern float ramp_ANGLE_3;
 
 void Allwhite_find(void);
 void Pic_find_circle(void);
