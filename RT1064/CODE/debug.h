@@ -17,6 +17,7 @@ void Debug_key(void);
 void ips_show_debug0(int ips_num);
 // void ips_show_debug_pd(int ips_num);
 void ips_show_debug1(int ips_num);
+void DEBUG_KEY_adjust(int ips_num);
 // extern int DDDebug;
 extern float Cam_P_New;
 extern float stop_time;

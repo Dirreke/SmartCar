@@ -148,7 +148,7 @@ void Moto_Out(void)
     //feisu_flag = -2;
   }
 
-  if (MotorOut1 >= 0) //正转
+  if (Motor1_temp >= 0) //正转
   {
     Motor_Duty(3, 0);
     Motor_Duty(2, (uint32)Motor1_temp);
@@ -159,7 +159,7 @@ void Moto_Out(void)
     Motor_Duty(2, 0);
   }
 
-  if (MotorOut2 >= 0)
+  if (Motor2_temp >= 0)
   {
     Motor_Duty(1, 0);
     Motor_Duty(0, (uint32)Motor2_temp);

@@ -1965,6 +1965,9 @@
             <name>$PROJ_DIR$\..\..\USER\src\main.c</name>
         </file>
         <file>
+            <name>$PROJ_DIR$\..\..\CODE\NB.c</name>
+        </file>
+        <file>
             <name>$PROJ_DIR$\..\..\CODE\Picture.c</name>
         </file>
         <file>
@@ -2005,6 +2008,9 @@
         </file>
         <file>
             <name>$PROJ_DIR$\..\..\USER\inc\isr.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\CODE\NB.h</name>
         </file>
         <file>
             <name>$PROJ_DIR$\..\..\CODE\Picture.h</name>

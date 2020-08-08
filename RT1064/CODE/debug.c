@@ -22,9 +22,10 @@ void Debug_Init(void)
 void Debug_key(void)
 {
     static int ips_num = 0;
-    const int page_num0 = 20;
-    const int page_num1 = 30;
-    int page_num = page_num0;
+    int page_num0 = 20;
+    const int page_num1 = 49;
+    int NB_Use_No = 0;
+    static int page_num =20;
     static bool qipao_flag;
     static bool guanpingmu_flag = 0;
     if (gpio_get(DEBUG_KEY0))
@@ -34,7 +35,7 @@ void Debug_key(void)
         {
             lib_speed_set(DEFAULT_SPEED);
             qipao_flag = 1;
-            barn_reset_flag = 0;
+            //barn_reset_flag = 0;
         }
         guanpingmu_flag = 0;
 
@@ -77,51 +78,103 @@ void Debug_key(void)
         }
     }
 
-    //ç¿»é¡µ
-    if (!gpio_get(DEBUG_KEY2))
+    //·­Ò³
+    if(ips_choice == 0)
     {
-        systick_delay_ms(50);
         if (!gpio_get(DEBUG_KEY2))
         {
-            ips_num++;
-            ips200_clear(WHITE);
-            if (ips_num >= page_num)
+            systick_delay_ms(50);
+            if (!gpio_get(DEBUG_KEY2))
             {
-                ips_num = 0;
+                ips_num++;
+                ips200_clear(WHITE);
+                if (ips_num >= page_num)
+                {
+                    ips_num = 0;
+                }
+                return;
             }
-            return;
         }
-    }
 
-    if (!gpio_get(DEBUG_KEY1))
-    {
-        systick_delay_ms(50);
         if (!gpio_get(DEBUG_KEY1))
         {
-            // ips_clear(IPS_WHITE);
-            ips_num--;
-            ips200_clear(WHITE);
-            if (ips_num < 0)
+            systick_delay_ms(50);
+            if (!gpio_get(DEBUG_KEY1))
             {
-                ips_num = page_num - 1;
+                // ips_clear(IPS_WHITE);
+                ips_num--;
+                ips200_clear(WHITE);
+                if (ips_num < 0)
+                {
+                    ips_num = page_num - 1;
+                }
+                return;
             }
-            return;
         }
     }
+    else
+    {
+        for(int i = 9 ; i >= 0 ; i--)
+        {
+            if(NB_starttime[i]>=0)
+            {
+                NB_Use_No = i+1;
+            }
+        }
 
-    //æ˜¾ç¤º
-        if(ips_choice == 0)
-{
-    ips_show_debug0(ips_num);
-}
-else
-{
-    ips_show_debug1(ips_num);
-}
+        if (!gpio_get(DEBUG_KEY2))
+        {
+            systick_delay_ms(50);
+            if (!gpio_get(DEBUG_KEY2))
+            {
+                ips_num++;
+                if(ips_num > NB_Use_No*4+1 && ips_num < 41)
+                {
+                    ips_num = 41;
+                }
+                ips200_clear(WHITE);
+                if (ips_num >= page_num)
+                {
+                    ips_num = 0;
+                }
+                return;
+            }
+        }
+
+        if (!gpio_get(DEBUG_KEY1))
+        {
+            systick_delay_ms(50);
+            if (!gpio_get(DEBUG_KEY1))
+            {
+                // ips_clear(IPS_WHITE);
+                ips_num--;
+                if(ips_num > NB_Use_No*4+1 && ips_num < 41)
+                {
+                    ips_num = NB_Use_No*4+1;
+                }
+                ips200_clear(WHITE);
+                if (ips_num < 0)
+                {
+                    ips_num = page_num - 1;
+                }
+                return;
+            }
+        }
+    }
+    
+    //ÏÔÊ¾
+    if(ips_choice == 0)
+    {
+        ips_show_debug0(ips_num);
+    }
+    else
+    {
+        ips_show_debug1(ips_num);
+    }
 
     // ips_show_debug(ips_num);
 
-    //è°ƒæ•´
+    //µ÷Õû
     if(ips_choice == 0)
     {
         if (!gpio_get(DEBUG_KEY3))
@@ -249,98 +302,7 @@ else
                     Sobel_Threshold_Near += 1;
                     break; */
 
-                /* èˆµæœºPDä»…è°ƒå‚ç”¨
-                case 2:
-                    Turn_Cam_P_Table0[0] += 0.01;
-                    break;
-                case 3:
-                    Turn_Cam_D_Table0[0] += 0.01;
-                    break;
-                case 4:
-                    Turn_Cam_P_Table0[1] += 0.01;
-                    break;
-                case 5:
-                    Turn_Cam_D_Table0[1] += 0.01;
-                    break;
-                case 6:
-                    Turn_Cam_P_Table0[2] += 0.01;
-                    break;
-                case 7:
-                    Turn_Cam_D_Table0[2] += 0.01;
-                    break;
-                case 8:
-                    Turn_Cam_P_Table0[3] += 0.01;
-                    break;
-                case 9:
-                    Turn_Cam_D_Table0[3] += 0.01;
-                    break;
-                case 10:
-                    Turn_Cam_P_Table0[4] += 0.01;
-                    break;
-                case 11:
-                    Turn_Cam_D_Table0[4] += 0.01;
-                    break;
-                case 12:
-                    Turn_Cam_P_Table0[5] += 0.01;
-                    break;
-                case 13:
-                    Turn_Cam_D_Table0[5] += 0.01;
-                    break;
-                case 14:
-                    Turn_Cam_P_Table0[6] += 0.01;
-                    break;
-                case 15:
-                    Turn_Cam_D_Table0[6] += 0.01;
-                    break;
-                case 16:
-                    Turn_Cam_P_Table0[7] += 0.01;
-                    break;
-                case 17:
-                    Turn_Cam_D_Table0[7] += 0.01;
-                    break;
-                case 18:
-                    Turn_Cam_P_Table0[8] += 0.01;
-                    break;
-                case 19:
-                    Turn_Cam_D_Table0[8] += 0.01;
-                    break;
-                case 20:
-                    Turn_Cam_P_Table0[9] += 0.01;
-                    break;
-                case 21:
-                    Turn_Cam_D_Table0[9] += 0.01;
-                    break;
-                case 22:
-                    Turn_Cam_P_Table0[10] += 0.01;
-                    break;
-                case 23:
-                    Turn_Cam_D_Table0[10] += 0.01;
-                    break;
-                case 24:
-                    Turn_Cam_P_Table0[11] += 0.01;
-                    break;
-                case 25:
-                    Turn_Cam_D_Table0[11] += 0.01;
-                    break;
-                case 26:
-                    Turn_Cam_P_Table0[12] += 0.01;
-                    break;
-                case 27:
-                    Turn_Cam_D_Table0[12] += 0.01;
-                    break;
-                case 28:
-                    Turn_Cam_P_Table0[13] += 0.01;
-                    break;
-                case 29:
-                    Turn_Cam_D_Table0[13] += 0.01;
-                    break;
-                case 30:
-                    Turn_Cam_P_Table0[14] += 0.01;
-                    break;
-                case 31:
-                    Turn_Cam_D_Table0[14] += 0.01;
-                    break;
-    */
+               
                 default:
                     // if (ips_num < 21)
                     // {
@@ -473,107 +435,6 @@ else
                 case 19:
                     Sobel_Threshold_Near -= 1;
                     break;
-                    /*             case 15:
-                    threshold_offset -= 1;
-                    break;
-
-                case 17:
-                    Sobel_Threshold_Near -= 1;
-                    break; */
-
-                    /* èˆµæœºPDä»…è°ƒå‚ç”¨
-                case 2:
-                    Turn_Cam_P_Table0[0] -= 0.01;
-                    break;
-
-                case 3:
-                    Turn_Cam_D_Table0[0] -= 0.01;
-                    break;
-                case 4:
-                    Turn_Cam_P_Table0[1] -= 0.01;
-                    break;
-                case 5:
-                    Turn_Cam_D_Table0[1] -= 0.01;
-                    break;
-                case 6:
-                    Turn_Cam_P_Table0[2] -= 0.01;
-                    break;
-                case 7:
-                    Turn_Cam_D_Table0[2] -= 0.01;
-                    break;
-                case 8:
-                    Turn_Cam_P_Table0[3] -= 0.01;
-                    break;
-                case 9:
-                    Turn_Cam_D_Table0[3] -= 0.01;
-                    break;
-                case 10:
-                    Turn_Cam_P_Table0[4] -= 0.01;
-                    break;
-                case 11:
-                    Turn_Cam_D_Table0[4] -= 0.01;
-                    break;
-                case 12:
-                    Turn_Cam_P_Table0[5] -= 0.01;
-                    break;
-                case 13:
-                    Turn_Cam_D_Table0[5] -= 0.01;
-                    break;
-                case 14:
-                    Turn_Cam_P_Table0[6] -= 0.01;
-                    break;
-                case 15:
-                    Turn_Cam_D_Table0[6] -= 0.01;
-                    break;
-                case 16:
-                    Turn_Cam_P_Table0[7] -= 0.01;
-                    break;
-                case 17:
-                    Turn_Cam_D_Table0[7] -= 0.01;
-                    break;
-                case 18:
-                    Turn_Cam_P_Table0[8] -= 0.01;
-                    break;
-                case 19:
-                    Turn_Cam_D_Table0[8] -= 0.01;
-                    break;
-                case 20:
-                    Turn_Cam_P_Table0[9] -= 0.01;
-                    break;
-                case 21:
-                    Turn_Cam_D_Table0[9] -= 0.01;
-                    break;
-                case 22:
-                    Turn_Cam_P_Table0[10] -= 0.01;
-                    break;
-                case 23:
-                    Turn_Cam_D_Table0[10] -= 0.01;
-                    break;
-                case 24:
-                    Turn_Cam_P_Table0[11] -= 0.01;
-                    break;
-                case 25:
-                    Turn_Cam_D_Table0[11] -= 0.01;
-                    break;
-                case 26:
-                    Turn_Cam_P_Table0[12] -= 0.01;
-                    break;
-                case 27:
-                    Turn_Cam_D_Table0[12] -= 0.01;
-                    break;
-                case 28:
-                    Turn_Cam_P_Table0[13] -= 0.01;
-                    break;
-                case 29:
-                    Turn_Cam_D_Table0[13] -= 0.01;
-                    break;
-                case 30:
-                    Turn_Cam_P_Table0[14] -= 0.01;
-                    break;
-                case 31:
-                    Turn_Cam_D_Table0[14] -= 0.01;
-                    break;
-                    */
                 default:
                     // if (ips_num < 21)
                     // {
@@ -591,11 +452,152 @@ else
     }
     else
     {
-        ;
+        DEBUG_KEY_adjust(ips_num);
     }       
 }
 
-void ips_show_debug0(int ips_num)
+void DEBUG_KEY_adjust(int ips_num)
+{
+    if (!gpio_get(DEBUG_KEY3))
+    {
+        systick_delay_ms(50);
+        if (!gpio_get(DEBUG_KEY3))
+        {
+            if(ips_num == 0)
+            {
+                threshold_offset ++;
+                return;
+            }
+            for(int i = 0;i < 10 ; ++i)
+            {
+                if(ips_num <= i*4+4)
+                {
+                    switch(ips_num % 4)
+                    {
+                        case 1:
+                        NB_starttime[i] += 500;
+                        NB_stoptime[i] = NB_starttime[i];
+                        break;
+                        case 2:
+                        NB_stoptime[i] += 500;
+                        break;
+                        case 3:
+                        NB_Road[i] ++;
+                        break;
+                        case 0:
+                        NB_Road_flag[i] ++;
+                        default:
+                        break;
+                    }
+                    return;
+                }
+            }
+            switch(ips_num)
+            {
+
+                case 42:
+                    Road7_starttime += 500;
+                    break;
+                case 41:
+                    Road7_stoptime += 500;
+                    break;
+                case 44:
+                    Road1_starttime += 500;
+                    break;
+                case 43:
+                    Road1_stoptime += 500;
+                    break;
+                case 46:
+                    Road2_starttime += 500;
+                    break;
+                case 45:
+                    Road2_stoptime += 500;
+                    break;
+                case 48:
+                    Road4_starttime += 500;
+                    break;
+                case 47:
+                    Road4_stoptime += 500;
+                    break;
+                default:
+                    break;
+
+            }
+            return;
+        }
+    }
+    if (!gpio_get(DEBUG_KEY4))
+    {
+        systick_delay_ms(50);
+        if (!gpio_get(DEBUG_KEY4))
+        {
+            if(ips_num == 0)
+            {
+                threshold_offset --;
+                return;
+            }
+            for(int i = 0;i < 10 ; ++i)
+            {
+                if(ips_num <= i*4+4)
+                {
+                    switch(ips_num % 4)
+                    {
+                        case 1:
+                        NB_starttime[i] -= 500;
+                        NB_stoptime[i] = NB_starttime[i];
+                        break;
+                        case 2:
+                        NB_stoptime[i] -= 500;
+                        break;
+                        case 3:
+                        NB_Road[i] --;
+                        break;
+                        case 0:
+                        NB_Road_flag[i] --;
+                        default:
+                        break;
+                    }
+                    return;
+                }
+            }
+            switch(ips_num)
+            {
+
+                case 42:
+                    Road7_starttime -= 500;
+                    break;
+                case 41:
+                    Road7_stoptime -= 500;
+                    break;
+                case 44:
+                    Road1_starttime -= 500;
+                    break;
+                case 43:
+                    Road1_stoptime -= 500;
+                    break;
+                case 46:
+                    Road2_starttime -= 500;
+                    break;
+                case 45:
+                    Road2_stoptime -= 500;
+                    break;
+                case 48:
+                    Road4_starttime -= 500;
+                    break;
+                case 47:
+                    Road4_stoptime -= 500;
+                    break;
+                default:
+                    break;
+
+            }
+            return;
+        }
+    }
+
+}
+
+void ips_show_debug_gmy0(int ips_num)
 {
     const int PAGE_X = 100;
     const int PAGE_NUM_X = 200;
@@ -609,15 +611,15 @@ void ips_show_debug0(int ips_num)
     {
 
     /** pages **/
-    case 2:                                          //é˜ˆå€¼
-        ips200_showstr(0, 12, "PID_CENTER_CAM.P: "); //æ˜¾ç¤ºå­—ç¬¦ä¸²
-        //ips200_showfloat(0, 13, 66.6667, 2, 4);    //æ˜¾ç¤ºä¸€ä¸ªæµ®ç‚¹æ•°å¹¶åŽ»é™¤æ•´æ•°éƒ¨åˆ†æ— æ•ˆ0
-        //ips200_showuint16(0,1,666);                //æ˜¾ç¤ºä¸€ä¸ª16ä½æ— ç¬¦å·æ•´æ•°
-        //ips200_showint32(0,3,-666,3);              //æ˜¾ç¤ºä¸€ä¸ª32ä½æœ‰ç¬¦å·æ•°å¹¶åŽ»é™¤æ— æ•ˆ0
+    case 2:                                          //ãÐÖµ
+        ips200_showstr(0, 12, "PID_CENTER_CAM.P: "); //ÏÔÊ¾×Ö·û´®
+        //ips200_showfloat(0, 13, 66.6667, 2, 4);    //ÏÔÊ¾Ò»¸ö¸¡µãÊý²¢È¥³ýÕûÊý²¿·ÖÎÞÐ§0
+        //ips200_showuint16(0,1,666);                //ÏÔÊ¾Ò»¸ö16Î»ÎÞ·ûºÅÕûÊý
+        //ips200_showint32(0,3,-666,3);              //ÏÔÊ¾Ò»¸ö32Î»ÓÐ·ûºÅÊý²¢È¥³ýÎÞÐ§0
         ips200_showfloat(0, 13, PID_CAR_CENTER_CAM.P, 3, 2);
         break;
     case 3:
-        ips200_showstr(0, 12, "straight_speed: "); //æ˜¾ç¤ºå­—ç¬¦ä¸²
+        ips200_showstr(0, 12, "straight_speed: "); //ÏÔÊ¾×Ö·û´®
         ips200_showfloat(0, 13, STRAIGHT_SPEED, 2, 2);
         break;
     case 4:
@@ -755,23 +757,104 @@ void ips_show_debug1(int ips_num)
     const int PAGE_NUM_X = 200;
     /** ips show image **/
     //ips200_clear(WHITE);
-    ips200_displayimage032_zoom(Image_Use[20], 80, 40, 320, 160);
+    ips200_displayimage032_zoom_gmy(Pixle[20], 80, 40, 320, 160);
     //systick_delay_ms(300);
     ips200_showstr(PAGE_X, 14, "page");
     ips200_showuint16(PAGE_NUM_X, 14, ips_num);
+    
+    if(ips_num == 0)
+    {
+        ips200_showstr(0, 12, "threshold_offset"); //ÏÔÊ¾×Ö·û´®
+        ips200_showint32(0, 13, threshold_offset, 2);
+        return;
+    }
+    for(int i = 0;i < 10 ; ++i)
+    {
+        if(ips_num <= i*4+4)
+        {
+            switch(ips_num % 4)
+            {
+                case 1:
+                ips200_showstr(0, 12, "NB_starttime"); //ÏÔÊ¾×Ö·û´®
+                ips200_showint32(150,12,i+1,2);
+                ips200_showfloat(0, 13, NB_starttime[i]*0.001, 2, 2);
+                break;
+                case 2:
+                ips200_showstr(0, 12, "NB_stoptime"); //ÏÔÊ¾×Ö·û´®
+                ips200_showint32(150,12,i+1,2);
+                ips200_showfloat(0, 13, NB_stoptime[i]*0.001, 2, 2);
+                break;
+                case 3:
+                ips200_showstr(0, 12, "NB_Road"); //ÏÔÊ¾×Ö·û´®
+                ips200_showint32(150,12,i+1,2);
+                ips200_showint32(0, 13, NB_Road[i], 2);
+                break;
+                case 0:
+                ips200_showstr(0, 12, "NB_Road_flag"); //ÏÔÊ¾×Ö·û´®
+                ips200_showint32(150,12,i+1,2);
+                ips200_showint32(0, 13, NB_Road_flag[i], 2);
+                default:
+                break;
+            }
+            return;
+        }
+    }
+    switch(ips_num)
+    {
+
+        case 42:
+            ips200_showstr(0, 12, "Road7_starttime"); //ÏÔÊ¾×Ö·û´®
+            ips200_showfloat(0, 13, Road7_starttime*0.001, 2, 2);
+            break;
+        case 41:
+            ips200_showstr(0, 12, "Road7_stoptime"); //ÏÔÊ¾×Ö·û´®
+            ips200_showfloat(0, 13, Road7_stoptime*0.001, 2, 2);
+            break;
+        case 44:
+            ips200_showstr(0, 12, "Road1_starttime"); //ÏÔÊ¾×Ö·û´®
+            ips200_showfloat(0, 13, Road1_starttime*0.001, 2, 2);
+            break;
+        case 43:
+            ips200_showstr(0, 12, "Road1_stoptime"); //ÏÔÊ¾×Ö·û´®
+            ips200_showfloat(0, 13, Road1_stoptime*0.001, 2, 2);
+            break;
+        case 46:
+            ips200_showstr(0, 12, "Road2_starttime"); //ÏÔÊ¾×Ö·û´®
+            ips200_showfloat(0, 13, Road2_starttime*0.001, 2, 2);
+            break;
+        case 45:
+            ips200_showstr(0, 12, "Road2_stoptime"); //ÏÔÊ¾×Ö·û´®
+            ips200_showfloat(0, 13, Road2_stoptime*0.001, 2, 2);
+            break;
+        case 48:
+            ips200_showstr(0, 12, "Road4_starttime"); //ÏÔÊ¾×Ö·û´®
+            ips200_showfloat(0, 13, Road4_starttime*0.001, 2, 2);
+            break;
+        case 47:
+            ips200_showstr(0, 12, "Road4_stoptime"); //ÏÔÊ¾×Ö·û´®
+            ips200_showfloat(0, 13, Road4_stoptime*0.001, 2, 2);
+            break;
+        
+        
+        
+        default:
+            break;
+
+    }
+    
     switch (ips_num)
     {
 
     /** pages **/
-    case 2:                                          //é˜ˆå€¼
-        ips200_showstr(0, 12, "PID_CENTER_CAM.P: "); //æ˜¾ç¤ºå­—ç¬¦ä¸²
-        //ips200_showfloat(0, 13, 66.6667, 2, 4);    //æ˜¾ç¤ºä¸€ä¸ªæµ®ç‚¹æ•°å¹¶åŽ»é™¤æ•´æ•°éƒ¨åˆ†æ— æ•ˆ0
-        //ips200_showuint16(0,1,666);                //æ˜¾ç¤ºä¸€ä¸ª16ä½æ— ç¬¦å·æ•´æ•°
-        //ips200_showint32(0,3,-666,3);              //æ˜¾ç¤ºä¸€ä¸ª32ä½æœ‰ç¬¦å·æ•°å¹¶åŽ»é™¤æ— æ•ˆ0
+    case 2:                                          //ãÐÖµ
+        ips200_showstr(0, 12, "PID_CENTER_CAM.P: "); //ÏÔÊ¾×Ö·û´®
+        //ips200_showfloat(0, 13, 66.6667, 2, 4);    //ÏÔÊ¾Ò»¸ö¸¡µãÊý²¢È¥³ýÕûÊý²¿·ÖÎÞÐ§0
+        //ips200_showuint16(0,1,666);                //ÏÔÊ¾Ò»¸ö16Î»ÎÞ·ûºÅÕûÊý
+        //ips200_showint32(0,3,-666,3);              //ÏÔÊ¾Ò»¸ö32Î»ÓÐ·ûºÅÊý²¢È¥³ýÎÞÐ§0
         ips200_showfloat(0, 13, PID_CAR_CENTER_CAM.P, 3, 2);
         break;
     case 3:
-        ips200_showstr(0, 12, "straight_speed: "); //æ˜¾ç¤ºå­—ç¬¦ä¸²
+        ips200_showstr(0, 12, "straight_speed: "); //ÏÔÊ¾×Ö·û´®
         ips200_showfloat(0, 13, STRAIGHT_SPEED, 2, 2);
         break;
     case 4:
@@ -901,6 +984,162 @@ void ips_show_debug1(int ips_num)
         break;
     }
 }
+
+
+
+void ips_show_debug0(int ips_num)
+{
+    const int PAGE_X = 100;
+    const int PAGE_NUM_X = 200;
+    /** ips show image **/
+    //ips200_clear(WHITE);
+    ips200_displayimage032_zoom(Image_Use[20], 80, 40, 320, 160);
+    //systick_delay_ms(300);
+    ips200_showstr(PAGE_X, 14, "page");
+    ips200_showuint16(PAGE_NUM_X, 14, ips_num);
+    switch (ips_num)
+    {
+
+    /** pages **/
+    case 2:                                          //ãÐÖµ
+        ips200_showstr(0, 12, "PID_CENTER_CAM.P: "); //ÏÔÊ¾×Ö·û´®
+        //ips200_showfloat(0, 13, 66.6667, 2, 4);    //ÏÔÊ¾Ò»¸ö¸¡µãÊý²¢È¥³ýÕûÊý²¿·ÖÎÞÐ§0
+        //ips200_showuint16(0,1,666);                //ÏÔÊ¾Ò»¸ö16Î»ÎÞ·ûºÅÕûÊý
+        //ips200_showint32(0,3,-666,3);              //ÏÔÊ¾Ò»¸ö32Î»ÓÐ·ûºÅÊý²¢È¥³ýÎÞÐ§0
+        ips200_showfloat(0, 13, PID_CAR_CENTER_CAM.P, 3, 2);
+        break;
+    case 3:
+        ips200_showstr(0, 12, "straight_speed: "); //ÏÔÊ¾×Ö·û´®
+        ips200_showfloat(0, 13, STRAIGHT_SPEED, 2, 2);
+        break;
+    case 4:
+        ips200_showstr(0, 12, "SPEED_MOTOR_SCALE_HIGH //threshold_offset");
+        ips200_showfloat(0, 13, SPEED_MOTOR_SCALE_HIGH, 4, 2);
+        break;
+    case 14:
+        ips200_showstr(0, 12, "CURVE_SPEED");
+        ips200_showfloat(0, 13, CURVE_SPEED, 4, 2);
+        break;
+    case 6:
+        ips200_showstr(0, 12, "fuck b");
+        ips200_showfloat(0, 13, car_straight_b, 4, 2); //PID_TURN_CAM_EXT.P, 4, 2);
+        break;
+    case 7:
+        ips200_showstr(0, 12, "motor p CamStraightD");
+        ips200_showfloat(0, 13, PID_SPEED.P, 4, 2); //PID_TURN_CAM_EXT.D, 4, 2);
+        break;
+    case 8:
+        ips200_showstr(0, 12, "motor i DEBUG_CHOICE");
+        ips200_showfloat(0, 13, PID_SPEED.I, 4, 2); //PID_TURN_CAM_EXT.D, 4, 2);
+        //ips200_showint32(0, 13, PID_SPEED.I, 3);
+        break;
+    case 9:
+        ips200_showstr(0, 12, "PID_CAR_STRAIGHT_CAM.D");
+        ips200_showfloat(0, 13, PID_CAR_STRAIGHT_CAM.D, 4, 2);
+        break;
+    case 10:
+        ips200_showstr(0, 12, "PID_diff.P");
+        ips200_showfloat(0, 13, PID_diff.P, 4, 2);
+        break;
+    case 11:
+        ips200_showstr(0, 12, "PID_diff0.P");
+        ips200_showfloat(0, 13, PID_diff0.P, 4, 2);
+        break;
+    case 12:
+        if (barn_state)
+        {
+            ips200_showstr(0, 12, "L_barn");
+        }
+        else
+        {
+            ips200_showstr(0, 12, "R_barn");
+        }
+        break;
+    case 13:
+        ips200_showstr(0, 12, "competition_strategy");
+        ips200_showint32(0, 13, competition_strategy, 3);
+        break;
+    case 5:
+        ips200_showstr(0, 12, "fuck k");
+        ips200_showfloat(0, 13, car_straight_k, 4, 2);
+        break;
+    case 0:
+        ips200_showstr(0, 12, "Road");
+        ips200_showint32(0, 13, Road, 3);
+        break;
+    case 1:
+        ips200_showstr(0, 12, "Road       _flag");
+        ips200_showint32(12, 12, Road, 3);
+        switch (Road)
+        {
+        case 0:
+
+            ips200_showint32(0, 13, Road0_flag, 3);
+            break;
+        case 1:
+            ips200_showint32(0, 13, Road1_flag, 3);
+            break;
+        case 2:
+            ips200_showint32(0, 13, Road2_flag, 3);
+            break;
+        case 3:
+            ips200_showint32(0, 13, Road3_flag, 3);
+            break;
+        case 4:
+            ips200_showint32(0, 13, Road4_flag, 3);
+            break;
+        case 7:
+            ips200_showint32(0, 13, Road7_flag, 3);
+            break;
+        default:
+            break;
+        }
+        break;
+
+    case 15:
+        ips200_showstr(0, 12, "threshold_offset: ");
+        ips200_showint32(0, 13, threshold_offset, 3);
+        break;
+    case 16:
+        ips200_showstr(0, 12, "Sobel_Threshold_FarFar: ");
+        ips200_showuint8(0, 13, Sobel_Threshold_FarFar);
+        break;
+    case 17:
+        ips200_showstr(0, 12, "tingche shijian");
+        ips200_showfloat(0, 13, stop_time, 4, 2);
+        
+        break;
+    case 18:
+        ips200_showstr(0, 12, "Sobel_Threshold_Far");
+        ips200_showfloat(0, 13, Sobel_Threshold_Far, 4, 2);
+                break;
+            case 19:
+        ips200_showstr(0, 12, "Sobel_Threshold_Near");
+        ips200_showfloat(0, 13, Sobel_Threshold_Near, 4, 2);
+                break;
+        /*     
+    case 17:
+        ips200_showstr(0, 12, "Sobel_Threshold_Near: ");
+        ips200_showuint8(0, 13, Sobel_Threshold_Near);
+        break; */
+
+    default:
+        // ips_show_debug_pd(ips_num);
+        // ips200_showint32(0, 11, ips_num, 2);
+        // if (ips_num < 21)
+        // {
+        //     ips200_showstr(0, 12, "P");
+        //     ips200_showfloat(0, 13, Turn_Cam_Straight_P_Table[ips_num - 10], 4, 2);
+        // }
+        // else if (ips_num < 32)
+        // {
+        //     ips200_showstr(0, 12, "D");
+        //     ips200_showfloat(0, 13, Turn_Cam_Straight_D_Table[ips_num - 21], 4, 2);
+        // }
+        break;
+    }
+}
+
 
 /*
 void ips_show_debug_pd(int ips_num)

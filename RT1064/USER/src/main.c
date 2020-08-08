@@ -102,10 +102,10 @@ int main(void)
         wosijile = 2;
         Picture_pre_main();
         wosijile = 3;
+        judge_EN_set();
         Road_rec();
+        NB_set();
         wosijile = 4;
-        Curve_shift();
-        wosijile = 5;
         camera_dispose_main();
         wosijile = 6;
         //Turn_Servo_Normal();

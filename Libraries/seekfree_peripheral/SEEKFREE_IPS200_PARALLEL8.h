@@ -222,6 +222,7 @@ void ips200_showfloat(uint16 x,uint16 y,double dat,int8 num,int8 pointnum);
 void ips200_showimage(uint16 x,uint16 y,uint16 w,uint16 l,const unsigned char *p);
 
 void ips200_displayimage032(uint8 *p, uint16 width, uint16 height);
+void ips200_displayimage032_zoom_gmy(uint8 *p, uint16 width, uint16 height, uint16 dis_width, uint16 dis_height);
 void ips200_displayimage032_zoom(uint8 *p, uint16 width, uint16 height, uint16 dis_width, uint16 dis_height);
 void ips200_displayimage032_zoom1(uint8 *p, uint16 width, uint16 height, uint16 start_x, uint16 start_y, uint16 dis_width, uint16 dis_height);
 void ips200_displayimage8660_zoom(uint16 *p, uint16 width, uint16 height, uint16 dis_width, uint16 dis_height);

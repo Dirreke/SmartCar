@@ -840,7 +840,7 @@ void Road_rec(void)
     //起跑线
     if (Road == 0) //&& Road0_flag == 0)
     {
-        if (start_stop_line_flag == 1)
+        if (start_stop_line_flag == 1 && Road7_judge_EN)
         {
             Road70_count++;
             if (Road70_count > 1)
@@ -919,7 +919,7 @@ void Road_rec(void)
         // }
 
         /* ICM判坡 */
-        if (icm_gyro_y_w < -15 * CarSpeed && icm_gyro_y_w < -60 && loop_time - ramp_out_time > 500)
+        if (icm_gyro_y_w < -15 * CarSpeed && icm_gyro_y_w < -60 && loop_time - ramp_out_time > 500 && Road4_judge_EN)
         //if (icm_gyro_y_w> 15 * CarSpeed && icm_gyro_y_w > 60 && loop_time - ramp_out_time > 500)
         {
             Road40_count++;
@@ -937,7 +937,8 @@ void Road_rec(void)
         /* 左元环状态机 */
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////普通赛道→圆环
         //先判断是否有左上连续右连续，作为Road1_flag0的置位条件，如果不满足就else if判断直接进Road1_flag=1的条件
-         if (Rig[39] - Rig[37] < 5 && Rig[37] - Rig[35] < 5 && Rig[35] - Rig[33] < 5 && Rig[33] - Rig[31] < 5 && Rig[31] - Rig[29] < 5 && Rig[29] - Rig[27] < 5 &&
+         if (Road1_judge_EN &&
+             Rig[39] - Rig[37] < 5 && Rig[37] - Rig[35] < 5 && Rig[35] - Rig[33] < 5 && Rig[33] - Rig[31] < 5 && Rig[31] - Rig[29] < 5 && Rig[29] - Rig[27] < 5 &&
             //Rig[27] - Rig[25] < 5 && Rig[25] - Rig[23] < 5 &&
             ((Rig[27] - Rig[25] < 5 && Rig[25] - Rig[23] < 5 && Rig[23] - Rig[21] < 4 && Rig[23] - Rig[21] >= 0) || (Rig[27] - Rig[25] < 4 && Rig[25] - Rig[23] < 4 && Rig[27] - Rig[23] < 6)) &&
             Rig[39] - Rig[37] >= 0 && Rig[37] - Rig[35] >= 0 && Rig[35] - Rig[33] > 0 && Rig[33] - Rig[31] > 0 && Rig[31] - Rig[29] > 0 && Rig[29] - Rig[27] > 0 && Rig[27] - Rig[25] > 0 && Rig[25] - Rig[23] > 0)
@@ -989,7 +990,8 @@ void Road_rec(void)
         /* 右圆环状态机 */
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////普通赛道→圆环
         //先判断是否有右上连续左连续，作为Road2_flag0的置位条件，如果不满足就else if判断直接进Road2_flag=1的条件
-           if (Lef[27] - Lef[29] < 5 && Lef[29] - Lef[31] < 5 && Lef[31] - Lef[33] < 5 && Lef[33] - Lef[35] < 5 && Lef[35] - Lef[37] < 5 && Lef[37] - Lef[39] < 5 &&
+           if (Road2_judge_EN &&
+               Lef[27] - Lef[29] < 5 && Lef[29] - Lef[31] < 5 && Lef[31] - Lef[33] < 5 && Lef[33] - Lef[35] < 5 && Lef[35] - Lef[37] < 5 && Lef[37] - Lef[39] < 5 &&
             // Lef[23] - Lef[25] < 5 && Lef[25] - Lef[27] < 5 && 
             ((Lef[23] - Lef[25] < 5 && Lef[25] - Lef[27] < 5 && Lef[21] - Lef[23] < 4 && Lef[21] - Lef[23] >= 0 ) || (Lef[23] - Lef[25] < 4 && Lef[25] - Lef[27] < 4 && Lef[23] - Lef[27] < 6)) &&
             Lef[37] - Lef[39] > 0 && Lef[35] - Lef[37] > 0 && Lef[33] - Lef[35] > 0 && Lef[31] - Lef[33] > 0 && Lef[29] - Lef[31] > 0 && Lef[27] - Lef[29] > 0 && Lef[25] - Lef[27] > 0 && Lef[23] - Lef[25] > 0)
@@ -2341,7 +2343,14 @@ void Road3_zhuangtaiji(void)
             if (Road32_count > 2)
             {
                 Road = 0;
-                Road0_flag = 0;
+                if(barn_state)
+                { 
+                    Road0_flag = 4;
+                }
+                else
+                {
+                    Road0_flag = 5;
+                }
                 Road3_flag = 0;
                 Road32_count = 0;
             }

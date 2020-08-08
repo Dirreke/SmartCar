@@ -21,7 +21,7 @@
 #define _isr_h
 
 extern uint16 loop_time;
-extern float loop_time2;
-extern int feisu_flag;
+// extern float loop_time2;
+// extern int feisu_flag;
 extern float loop_distance;
 #endif

@@ -20,9 +20,9 @@ extern int Road3_flag;
 extern int Road4_flag;
 extern bool Road0_flag0_flag;
 
-extern int EM_Road;
-extern bool ganhuangguan_flag;
-extern bool barn_reset_flag;
+// extern int EM_Road;
+// extern bool ganhuangguan_flag;
+// extern bool barn_reset_flag;
 
 extern volatile int turn_stop;//×ªÍäÖÕÖ¹Ïß
 

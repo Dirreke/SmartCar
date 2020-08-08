@@ -27,8 +27,7 @@ void SpeedTarget_fig(void);
 void Speed_Control_New(void);
 
 void Turn_EM(void);
-v vg
-t55 oid Turn_Servo_Normal(void);
+void Turn_Servo_Normal(void);
 
 void Kalman_Filter(void);
 void BBC(void);

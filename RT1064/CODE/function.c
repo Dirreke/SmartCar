@@ -34,7 +34,7 @@ void Para_Init()
                 //PID_CAR_Diffcomp_CAM.D = 0;
                 PID_diff.P = 0.5; //1;
                 PID_diff0.P = 0.2;
-                barn_reset_flag = 0;
+                //barn_reset_flag = 0;
                 // DEBUG_CHOICE = 2;
 
                 MotorOut1 = 0;
@@ -66,7 +66,7 @@ void Para_Init()
                 //PID_CAR_Diffcomp_CAM.D = 0;
                 PID_diff.P = 0.5; //1;
                 PID_diff0.P = 0.2;
-                barn_reset_flag = 0;
+                //barn_reset_flag = 0;
                 // DEBUG_CHOICE = 2;
 
                 MotorOut1 = 0;

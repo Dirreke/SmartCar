@@ -681,6 +681,47 @@ void ips200_displayimage032_zoom(uint8 *p, uint16 width, uint16 height, uint16 d
 	}
 }
 
+void ips200_displayimage032_zoom_gmy(uint8 *p, uint16 width, uint16 height, uint16 dis_width, uint16 dis_height)
+{
+  uint32 i, j;
+
+  uint16 color = 0;
+  uint16 temp = 0;
+
+  //ips200_address_set(0, 0, dis_width - 1, dis_height - 1); //设置显示区域
+
+  // for(j=0;j<dis_height;j++)
+  // {
+  //     for(i=0;i<dis_width;i++)
+  //     {
+  //         temp = *(p+(j*height/dis_height)*width+i*width/dis_width);//读取像素点
+  //         color=(0x001f&((temp)>>3))<<11;
+  //         color=color|(((0x003f)&((temp)>>2))<<5);
+  //         color=color|(0x001f&((temp)>>3));
+  //         ips200_wr_data16(color);
+  //     }
+  // }
+  ips200_address_set(0, 0, dis_width - 1, dis_height - 1); //设置显示区域
+
+  for (j = dis_height - 1; j >= 0; j--)
+  {
+    for (i = dis_width - 1; i >= 0; i--)
+    {
+      temp = *(p + (j * height / dis_height) * width + i * width / dis_width); //读取像素点
+      if(temp == 0 || temp == 1)
+      {
+        temp *= 255;
+      }
+      color = (0x001f & ((temp) >> 3)) << 11;
+      color = color | (((0x003f) & ((temp) >> 2)) << 5);
+      color = color | (0x001f & ((temp) >> 3));
+      ips200_wr_data16(color);
+      if(i == 0) break;
+    }
+    if(j == 0) break;
+  }
+}
+
 //-------------------------------------------------------------------------------------------------------------------
 //  @brief      总钻风(灰度摄像头)液晶缩放显示函数
 //  @param      *p     			图像数组地址
