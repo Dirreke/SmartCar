@@ -45,6 +45,7 @@ beiyingjian 63070主板 done
 注释wifi代码 // NO  Use
 icm、各板固定
 若不关电源 要reset//（各种road的flag清空）
-粘磁铁
+粘磁铁 // OK
 去掉我死机了
-
+舵机白胶带 
+粘wifi的胶带

@@ -243,7 +243,7 @@ void Variable_update(void)
   // Variable[14] = Allwhitestart * 100 + Allwhiteend;
   // Variable[15] = 100 + Lef_circle * 10 + Rig_circle; //whitecnt;//Road1_turnout;//limit_pos(EM_Value_1/1.5-EM_Value_2/3.5);//speedTarget1;//map_line[MIN(50,AllWhileStartLine)];
 
-  Variable[0] = DDDebug;                //EM_Value_4;//crossing_flag_flag;                 //Mid_intercept;//MotorOut1_add;      //Cam_offset;   //EM_Value_1;// Cam_offset;//cntt;//ToF_distance;
+  Variable[0] = icm_gyro_y_w;//DDDebug;                //EM_Value_4;//crossing_flag_flag;                 //Mid_intercept;//MotorOut1_add;      //Cam_offset;   //EM_Value_1;// Cam_offset;//cntt;//ToF_distance;
   Variable[1] = Turn_Out;               //EM_Value_2; //Turn_Cam_Out;//cnt;//Turn_Cam_Out;//;//stat_slope;//gyroy_1;//Turn_Cam_Out;//Car_W;
   Variable[2] = PID_CAR_STRAIGHT_CAM.P; //icm_gyro_y_w;//Lef_innercurve_point * 100 + Rig_innercurve_point;//mean_turn_out;//Allwhitestart * 100 + Allwhiteend; //Picture_Failure; //curve_state * 100 + Mid_slope; //Allwhitestart * 100 + Allwhiteend; //EM_Value_1;//Cam_offset;
   Variable[3] = CarSpeed1;

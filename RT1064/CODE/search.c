@@ -745,7 +745,7 @@ void start_stop_find(void)
 
     // }
 }
-
+#if 0
 /*************************************************************************
 *  函数名称：void mag_find(void)
 *  功能说明：干簧管识别
@@ -787,7 +787,9 @@ void mag_find(void)
 
     return;
 }
+#endif
 // char Road1_turnout = 1;
+
 void Road_rec(void)
 {
     static int Road0_count = 0;
@@ -935,7 +937,9 @@ void Road_rec(void)
         /* 左元环状态机 */
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////普通赛道→圆环
         //先判断是否有左上连续右连续，作为Road1_flag0的置位条件，如果不满足就else if判断直接进Road1_flag=1的条件
-        if (Rig[39] - Rig[37] < 5 && Rig[37] - Rig[35] < 5 && Rig[35] - Rig[33] < 5 && Rig[33] - Rig[31] < 5 && Rig[31] - Rig[29] < 5 && Rig[29] - Rig[27] < 5 && Rig[27] - Rig[25] < 5 && Rig[25] - Rig[23] < 5 &&
+         if (Rig[39] - Rig[37] < 5 && Rig[37] - Rig[35] < 5 && Rig[35] - Rig[33] < 5 && Rig[33] - Rig[31] < 5 && Rig[31] - Rig[29] < 5 && Rig[29] - Rig[27] < 5 &&
+            //Rig[27] - Rig[25] < 5 && Rig[25] - Rig[23] < 5 &&
+            ((Rig[27] - Rig[25] < 5 && Rig[25] - Rig[23] < 5 && Rig[23] - Rig[21] < 4 && Rig[23] - Rig[21] >= 0) || (Rig[27] - Rig[25] < 4 && Rig[25] - Rig[23] < 4 && Rig[27] - Rig[23] < 6)) &&
             Rig[39] - Rig[37] >= 0 && Rig[37] - Rig[35] >= 0 && Rig[35] - Rig[33] > 0 && Rig[33] - Rig[31] > 0 && Rig[31] - Rig[29] > 0 && Rig[29] - Rig[27] > 0 && Rig[27] - Rig[25] > 0 && Rig[25] - Rig[23] > 0)
 
         {
@@ -944,6 +948,10 @@ void Road_rec(void)
                 Rig[45] - Rig[43] >= 0 && Rig[43] - Rig[41] >= 0 && Rig[41] - Rig[39] >= 0 &&
                 loop_time - out_circle_time_temp > 500)
             {
+                    // if(Rig[37] < Fir_col + 1 && Rig[39] < Fir_col + 1 && Rig[41] < Fir_col + 1 && Rig[43] < Fir_col + 1 && Rig[45] < Fir_col + 1)
+                // {
+                //     Rig[37] - Rig[45]>5
+                // }
 
                 Road100_count++;
                 if (Road100_count >= 2)
@@ -981,9 +989,11 @@ void Road_rec(void)
         /* 右圆环状态机 */
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////普通赛道→圆环
         //先判断是否有右上连续左连续，作为Road2_flag0的置位条件，如果不满足就else if判断直接进Road2_flag=1的条件
-        if (Lef[25] - Lef[27] < 5 && Lef[27] - Lef[29] < 5 && Lef[29] - Lef[31] < 5 && Lef[31] - Lef[33] < 5 && Lef[33] - Lef[35] < 5 && Lef[35] - Lef[37] < 5 && Lef[37] - Lef[39] < 5 && Lef[23] - Lef[25] < 5 &&
+           if (Lef[27] - Lef[29] < 5 && Lef[29] - Lef[31] < 5 && Lef[31] - Lef[33] < 5 && Lef[33] - Lef[35] < 5 && Lef[35] - Lef[37] < 5 && Lef[37] - Lef[39] < 5 &&
+            // Lef[23] - Lef[25] < 5 && Lef[25] - Lef[27] < 5 && 
+            ((Lef[23] - Lef[25] < 5 && Lef[25] - Lef[27] < 5 && Lef[21] - Lef[23] < 4 && Lef[21] - Lef[23] >= 0 ) || (Lef[23] - Lef[25] < 4 && Lef[25] - Lef[27] < 4 && Lef[23] - Lef[27] < 6)) &&
             Lef[37] - Lef[39] > 0 && Lef[35] - Lef[37] > 0 && Lef[33] - Lef[35] > 0 && Lef[31] - Lef[33] > 0 && Lef[29] - Lef[31] > 0 && Lef[27] - Lef[29] > 0 && Lef[25] - Lef[27] > 0 && Lef[23] - Lef[25] > 0)
-        {
+            {
             if (Lef_circle_pre_flag == 0 && Rig_circle_pre_flag == 1 &&
                 Lef[43] - Lef[45] < 5 && Lef[41] - Lef[43] < 5 && Lef[39] - Lef[41] < 5 &&
                 Lef[43] - Lef[45] >= 0 && Lef[41] - Lef[43] >= 0 && Lef[39] - Lef[41] >= 0 &&
@@ -2518,6 +2528,7 @@ void Road4_zhuangtaiji(void)
     }
     else if (Road4_flag == 1)
     {
+        Road4_mistake0 = 0;
         if (icm_gyro_y_angle > 9) //< -9)//> 9)
         {
             Road4_flag = 3;
@@ -2529,6 +2540,7 @@ void Road4_zhuangtaiji(void)
     }
     else if (Road4_flag == 2)
     {
+        Road4_mistake0 = 0;
         if (icm_gyro_y_angle > 10) //< -10)//> 10)
         {
             Road4_flag = 3;
@@ -2536,6 +2548,7 @@ void Road4_zhuangtaiji(void)
     }
     else if (Road4_flag == 3)
     {
+        Road4_mistake0 = 0;
         if (icm_gyro_y_angle < 6) //> -6)//< 6)
         {
             Road4_count3++;
@@ -2547,14 +2560,16 @@ void Road4_zhuangtaiji(void)
                 Road4_flag = 0;
                 // road_change_flag = 1;
                 icm_gyro_y_angle = 0;
-                Road4_mistake0 = 0;
+                // Road4_mistake0 = 0;
             }
         }
+        else
+        {
+            Road4_count3 = 0;
+        }
+        
     }
-    else
-    {
-        Road4_count3 = 0;
-    }
+
 }
 
 /*************************************************************************

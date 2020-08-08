@@ -4,7 +4,7 @@ float car_straight_dias;
 float car_center_dias;
 PID PID_CAR_STRAIGHT_CAM;
 PID PID_CAR_CENTER_CAM;
-float car_straight_b = 0.45;
+float car_straight_b = 0.4;
 float car_straight_k = 0.7;
 void Turn_Cam_New(void)
 {
@@ -65,7 +65,7 @@ void Turn_Cam_dias(void)
   Straight_offset_filter();
   car_center_dias = car_center();
   Center_offset_filter();
-  if(Road == 0 && Road0_flag < 3 && Road0_flag0_flag && fabs(car_straight_dias - car_straight_dias_old) < 30 )
+  if(Road == 0 && Road0_flag == 0 && Road0_flag0_flag && fabs(car_straight_dias - car_straight_dias_old) < 30 )
   {
     temp = car_straight_dias + PID_CAR_STRAIGHT_CAM.D * (car_straight_dias - car_straight_dias_old);
     // DDDDDDebug2 = car_straight_dias - car_straight_dias_old;

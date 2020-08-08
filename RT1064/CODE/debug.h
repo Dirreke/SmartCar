@@ -14,11 +14,13 @@ extern int DEBUG_CHOICE;
 void Debug_Init(void);
 void Debug_key(void);
 
-void ips_show_debug(int ips_num);
-void ips_show_debug_pd(int ips_num);
-
-extern int DDDebug;
+void ips_show_debug0(int ips_num);
+// void ips_show_debug_pd(int ips_num);
+void ips_show_debug1(int ips_num);
+// extern int DDDebug;
 extern float Cam_P_New;
 extern float stop_time;
-extern float DDDDeubg_Turn_diff;
-extern float DDDDDDebug2;
+extern bool ips_choice;
+
+// extern float DDDDeubg_Turn_diff;
+// extern float DDDDDDebug2;

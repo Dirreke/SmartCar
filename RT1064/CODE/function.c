@@ -10,7 +10,7 @@ void Para_Init()
         switch (competition_strategy)
         {
         case 0:
-                threshold_offset = 10;
+                threshold_offset = 5;
                 Road = 3;
                 Road3_flag = 0;
                 PID_SPEED.P = 50;    //2.9;//0.50
@@ -24,8 +24,8 @@ void Para_Init()
                 // PID_TURN_CAM_EXT.D = 1.8; //0.8;
                 PID_CENTER_EM.P = 9;        //4
                 PID_CENTER_EM.D = 12;       //9
-                PID_STRAIGHT_EM.P = 0.7;    //0.7;//0.5;
-                PID_STRAIGHT_EM.D = 0.6;    //0.6;//0.4;
+                // PID_STRAIGHT_EM.P = 0.7;    //0.7;//0.5;
+                // PID_STRAIGHT_EM.D = 0.6;    //0.6;//0.4;
                 PID_CAR_CENTER_CAM.P = 0.5; //0.3;//0.5;
                 PID_CAR_CENTER_CAM.D = 0;
                 PID_CAR_STRAIGHT_CAM.P = 0.8; //0.7;//0.6;//0.7;
@@ -35,14 +35,14 @@ void Para_Init()
                 PID_diff.P = 0.5; //1;
                 PID_diff0.P = 0.2;
                 barn_reset_flag = 0;
-                DEBUG_CHOICE = 2;
+                // DEBUG_CHOICE = 2;
 
                 MotorOut1 = 0;
                 MotorOut2 = 0;
                 break;
 
         default:
-                threshold_offset = 10;
+                threshold_offset = 5;
                 Road = 3;
                 Road3_flag = 0;
                 PID_SPEED.P = 50;    //2.9;//0.50
@@ -56,8 +56,8 @@ void Para_Init()
                 // PID_TURN_CAM_EXT.D = 1.8; //0.8;
                 PID_CENTER_EM.P = 9;        //4
                 PID_CENTER_EM.D = 12;       //9
-                PID_STRAIGHT_EM.P = 0.7;    //0.7;//0.5;
-                PID_STRAIGHT_EM.D = 0.6;    //0.6;//0.4;
+                // PID_STRAIGHT_EM.P = 0.7;    //0.7;//0.5;
+                // PID_STRAIGHT_EM.D = 0.6;    //0.6;//0.4;
                 PID_CAR_CENTER_CAM.P = 0.5; //0.3;//0.5;
                 PID_CAR_CENTER_CAM.D = 0;
                 PID_CAR_STRAIGHT_CAM.P = 0.8; //0.7;//0.6;//0.7;
@@ -67,7 +67,7 @@ void Para_Init()
                 PID_diff.P = 0.5; //1;
                 PID_diff0.P = 0.2;
                 barn_reset_flag = 0;
-                DEBUG_CHOICE = 2;
+                // DEBUG_CHOICE = 2;
 
                 MotorOut1 = 0;
                 MotorOut2 = 0;
@@ -78,14 +78,14 @@ void Para_Init()
         //        lib_speed_init();
 
         SPEED_INIT();
-#ifdef DIFF0
-        lib_active_diff_init();
-        lib_active_diff_set_p(0.1);
-        lib_active_diff_set_d(0.1);
-#endif
-        //开差速
-        //diff_on();
-        diff_off();
+// #ifdef DIFF0
+//         lib_active_diff_init();
+//         lib_active_diff_set_p(0.1);
+//         lib_active_diff_set_d(0.1);
+// #endif
+//         //开差速
+//         //diff_on();
+//         diff_off();
 }
 
 float DEFAULT_SPEED = 0;
