@@ -3,7 +3,7 @@
 uint8 Image_Use[CAMERA_H][CAMERA_W];
 uint8 Pixle[CAMERA_H][CAMERA_W]; //二值化后用于OLED显uint16氖???//u16
 
-int threshold_offset = 10;
+int threshold_offset = 5;
 int threshold_offset2 = 0;
 int threshold_offset3 = -10;
 
@@ -352,23 +352,7 @@ void Pic_DrawLRside(void)
         }
     }
 
-    // for (i = Last_row; i > Last_row - 5; i--)
-    // {
 
-    //     for (j = Middle; j > Fir_col; j--)
-    //     {
-    //         if (Pixle[i][j] == 1 && Pixle[i][j + 1] == 1 && Pixle[i][j + 2] == 1 && Pixle[i][j + 3] == 1 && Pixle[i][j + 4] == 1 && Pixle[i][j + 5] == 1 && Pixle[i][j + 6] == 1 && Pixle[i][j - 1] == 0 && Pixle[i][j - 2] == 0 && Pixle[i][j - 3] == 0)
-    //         {
-    //             Lef[i] = j;
-    //             break;
-    //         }
-    //     }
-    //     if (Rig[i] != 78 && Lef[i] != 1)
-    //     {
-    //         --i;
-    //         break;
-    //     }
-    // }
     /* 从底层向上绘线 */
     for (i = Last_row; i > Fir_row - 1; i--)
     {
@@ -652,93 +636,15 @@ void Pic_DrawLRside(void)
             Rig[i] = 78;
         }
     }
-#if 0
-        // /* 十字边线误判为另一条路 补充边线搜索如下 */
-        // for (i = Last_row - 5; i > Fir_row; i--) //车头朝向偏置
-        // {
-        //     if (Lef[i] > 2)
-        //     {
-        //         if (Rig[i] < 78)
-        //         {
-        //             direction_offset = (Lef[i] + Rig[i]) / 2;
-        //         }
-        //         else
-        //         {
-        //             direction_offset = Lef[i] + 40;
-        //         }
-        //         break;
-        //     }
-        //     else if (Rig[i] < 78)
-        //     {
-        //         direction_offset = Rig[i] - 40;
-        //         break;
-        //     }
-        // }
-        // for (; i > Fir_row; i--)//依偏置补搜
-        // {
-        //     if (Rig[i] < 78)
-        //     {
-        //         for (j = Rig[i] - 3; j > Fir_col + 5; j--)
-        //         {
-        //             if (Pixle[i][j] == 1 && Pixle[i][j - 1] == 1 && Pixle[i][j - 2] == 1 && Pixle[i][j - 3] == 1 && Pixle[i][j - 4] == 1 && Pixle[i][j - 5] == 1 && Pixle[i][j + 1] == 0 && Pixle[i][j + 2] == 0 && Pixle[i][j + 3] == 0)
-        //             {
-
-        //                 if (abs(Rig[i] - direction_offset) > abs(j - direction_offset))
-        //                 {
-        //                     Rig[i] = j;
-        //                 }
-        //                 //Rig[i] = (abs(Rig[i] - direction_offset) > abs(j - direction_offset) ? j : Rig[i]);
-        //                 break;
-        //             }
-        //         }
-        //     }
-        //     if (Lef[i] > 2)
-        //     {
-        //         for (j = Lef[i] + 3; j < Last_col - 5; j++)
-        //         {
-        //             if (Pixle[i][j] == 1 && Pixle[i][j + 1] == 1 && Pixle[i][j + 2] == 1 && Pixle[i][j + 3] == 1 && Pixle[i][j + 4] == 1 && Pixle[i][j + 5] == 1 && Pixle[i][j - 1] == 0 && Pixle[i][j - 2] == 0 && Pixle[i][j - 3] == 0)
-        //             {
-        //                 if (abs(Lef[i] - direction_offset) > abs(j - direction_offset))
-        //                 {
-        //                     Lef[i] = j;
-        //                 }
-        //                 break;
-        //             }
-        //         }
-        //     }
-
-        // }
-        // /* 补充搜索结束 */
-
-#endif
+    
     if (Road1_flag == 1 || Road1_flag == 2)
     {
-        // for (i = Fir_row; i < Last_row - 4 && Lef[i] - Fir_col < 2 && Lef[i] - Lef[i + 2] < 5 && Lef[i + 2] - Lef[i + 4] < 5; ++i)
-        // {
-        //     ;
-        // }
-        // if (i == Last_row - 4)
-        // {
-        //     return;
-        // }
-        // ++i;
-        // for (; i < Last_row; ++i)
-        // {
-        //     if (Lef[i - 1] > 2)
-        //     {
-
-        //     }
-        // }
         for (i = 0; i < CAMERA_H; i++)
         {
             side_temp[i] = Rig[i];
         }
         for (i = Fir_row + 1; i < Last_row - 28; ++i)
         {
-            // if (Lef[i] - Fir_col > 10 || Lef[i + 1] - Fir_col > 10)
-            // {
-            //     continue;
-            // }
           if ((Pixle[i][4] == 1 &&Pixle[i-1][4] == 0 &&Pixle[i][6] == 1 && Pixle[i - 1][6] == 0) || (Pixle[i][5] == 1 &&Pixle[i-1][5] == 0&&Pixle[i][7] == 1 && Pixle[i - 1][7] == 0))
             {
                 ;
@@ -830,10 +736,6 @@ void Pic_DrawLRside(void)
         }
         for (i = Fir_row; i < Last_row - 28; ++i)
         {
-            // if (Last_col - Rig[i] > 10 || Last_col - Rig[i + 1] > 10)
-            // {
-            //     continue;
-            // }
          
             if ((Pixle[i][75] == 1 &&Pixle[i][73] == 1 &&Pixle[i-1][75] == 0 && Pixle[i - 1][73] == 0) || (Pixle[i][74] == 1 &&Pixle[i][72] == 1 &&Pixle[i-1][74] == 0 && Pixle[i - 1][72] == 0))
             {
@@ -918,77 +820,6 @@ void Pic_DrawLRside(void)
             }
         }
     }
-#if 0
-    if (Road0_flag == 4) //|| Road0_flag == 5)
-    {
-        for (i = Last_row - 5; i > Last_row - 10; --i)
-        {
-            if (Rig[i] >= Last_col)
-            {
-                continue;
-            }
-            if (Rig[i + 2] - Rig[i] < 7 &&
-                Rig[i + 2] - Rig[i] > 0 && Rig[i] - Rig[i - 2] > 0 && Rig[i - 2] - Rig[i - 4] > 0 && Rig[i - 4] - Rig[i - 6] > 0 && Rig[i - 6] - Rig[i - 8] > 0 && Rig[i - 8] - Rig[i - 10] > 0)
-            {
-                continue;
-            }
-            else
-            {
-                for (j = Last_row; j > Last_row - 5; --j)
-                {
-                    if (Rig[j] >= Last_col)
-                    {
-                        continue;
-                    }
-                    for (int k = Middle; k > Fir_col + 10; k--)
-                    {
-                        if (Pixle[j][k] == 1 && Pixle[j][k - 1] == 1 && Pixle[j][k - 2] == 1 && Pixle[j][k - 3] == 1 && Pixle[j][k - 4] == 1 && Pixle[j][k - 5] == 1 && Pixle[j][k - 6] == 1 && Pixle[j][k + 1] == 0 && Pixle[j][k + 2] == 0 && Pixle[j][k + 3] == 0)
-                        {
-                            Picture_Failure = 1;
-                            break;
-                        }
-                    }
-                }
-                return;
-            }
-        }
-    }
-
-    else if (Road0_flag == 5) //|| Road0_flag == 5)
-    {
-        for (i = Last_row - 5; i > Last_row - 10; --i)
-        {
-            if (Lef[i] <= Fir_col)
-            {
-                continue;
-            } ///DEBUG!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            if (Rig[i + 2] - Rig[i] < 7 &&
-                Rig[i + 2] - Rig[i] > 0 && Rig[i] - Rig[i - 2] > 0 && Rig[i - 2] - Rig[i - 4] > 0 && Rig[i - 4] - Rig[i - 6] > 0 && Rig[i - 6] - Rig[i - 8] > 0 && Rig[i - 8] - Rig[i - 10] > 0)
-            {
-                continue;
-            }
-            else
-            {
-                for (j = Last_row; j > Last_row - 5; --j)
-                {
-                    if (Rig[j] >= Last_col)
-                    {
-                        continue;
-                    }
-                    for (int k = Middle; k > Fir_col + 10; k--)
-                    {
-                        if (Pixle[j][k] == 1 && Pixle[j][k - 1] == 1 && Pixle[j][k - 2] == 1 && Pixle[j][k - 3] == 1 && Pixle[j][k - 4] == 1 && Pixle[j][k - 5] == 1 && Pixle[j][k - 6] == 1 && Pixle[j][k + 1] == 0 && Pixle[j][k + 2] == 0 && Pixle[j][k + 3] == 0)
-                        {
-                            Picture_Failure = 1;
-                            break;
-                        }
-                    }
-                }
-                return;
-            }
-        }
-    }
-#endif
 }
 /*************************************************************************
  *  函数名称：void Pic_undistort(int L, int R)

@@ -9,8 +9,8 @@ void Para_Init()
 {
         switch (competition_strategy)
         {
-        case 0:
-                threshold_offset = 5;
+        case 1:
+                // threshold_offset = 5;
                 Road = 3;
                 Road3_flag = 0;
                 PID_SPEED.P = 50;    //2.9;//0.50
@@ -28,7 +28,7 @@ void Para_Init()
                 // PID_STRAIGHT_EM.D = 0.6;    //0.6;//0.4;
                 PID_CAR_CENTER_CAM.P = 0.5; //0.3;//0.5;
                 PID_CAR_CENTER_CAM.D = 0;
-                PID_CAR_STRAIGHT_CAM.P = 0.8; //0.7;//0.6;//0.7;
+                // PID_CAR_STRAIGHT_CAM.P = 0.8; //0.7;//0.6;//0.7;
                 PID_CAR_STRAIGHT_CAM.D = 30;
                 //PID_CAR_Diffcomp_CAM.P = 0; //0.6;//0;//0.6;
                 //PID_CAR_Diffcomp_CAM.D = 0;
@@ -36,13 +36,15 @@ void Para_Init()
                 PID_diff0.P = 0.2;
                 //barn_reset_flag = 0;
                 // DEBUG_CHOICE = 2;
+                car_straight_k = 0.65;
+                car_straight_b = 0.35;
 
                 MotorOut1 = 0;
                 MotorOut2 = 0;
                 break;
 
-        default:
-                threshold_offset = 5;
+        case -1:
+                // threshold_offset = 5;
                 Road = 3;
                 Road3_flag = 0;
                 PID_SPEED.P = 50;    //2.9;//0.50
@@ -60,7 +62,41 @@ void Para_Init()
                 // PID_STRAIGHT_EM.D = 0.6;    //0.6;//0.4;
                 PID_CAR_CENTER_CAM.P = 0.5; //0.3;//0.5;
                 PID_CAR_CENTER_CAM.D = 0;
-                PID_CAR_STRAIGHT_CAM.P = 0.8; //0.7;//0.6;//0.7;
+                // PID_CAR_STRAIGHT_CAM.P = 0.8; //0.7;//0.6;//0.7;
+                PID_CAR_STRAIGHT_CAM.D = 30;
+                //PID_CAR_Diffcomp_CAM.P = 0; //0.6;//0;//0.6;
+                //PID_CAR_Diffcomp_CAM.D = 0;
+                PID_diff.P = 0.5; //1;
+                PID_diff0.P = 0.2;
+                //barn_reset_flag = 0;
+                // DEBUG_CHOICE = 2;
+                car_straight_k = 0.75;
+                car_straight_b = 0.45;
+
+                MotorOut1 = 0;
+                MotorOut2 = 0;
+                break;
+
+        default:
+                // threshold_offset = 5;
+                Road = 3;
+                Road3_flag = 0;
+                PID_SPEED.P = 50;    //2.9;//0.50
+                PID_SPEED.I = 20;    //10;    //0.25;//0.0014;
+                PID_SPEED.D = 0.000; //0.030
+                                     //PID2_SPEED.P=100;//2.9;//0.50
+                                     //PID2_SPEED.I=100;//0.25;//0.0014;
+                                     // PID_TURN.P=0.0102*325;//0.0118;//0.0112;//
+                                     // PID_TURN.D=-0.0042*325;//-0.0053;//-0.004//3.7йт╦д-0.0035;
+                // PID_TURN_CAM_EXT.P = 0.85;
+                // PID_TURN_CAM_EXT.D = 1.8; //0.8;
+                PID_CENTER_EM.P = 9;        //4
+                PID_CENTER_EM.D = 12;       //9
+                // PID_STRAIGHT_EM.P = 0.7;    //0.7;//0.5;
+                // PID_STRAIGHT_EM.D = 0.6;    //0.6;//0.4;
+                PID_CAR_CENTER_CAM.P = 0.5; //0.3;//0.5;
+                PID_CAR_CENTER_CAM.D = 0;
+                //PID_CAR_STRAIGHT_CAM.P = 0.8; //0.7;//0.6;//0.7;
                 PID_CAR_STRAIGHT_CAM.D = 30;
                 //PID_CAR_Diffcomp_CAM.P = 0; //0.6;//0;//0.6;
                 //PID_CAR_Diffcomp_CAM.D = 0;

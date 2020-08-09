@@ -812,8 +812,14 @@ void Road_rec(void)
                 {
                     Road = 0;
                     Road0_flag = 0;
+                    Road0_count4 = 0;
                 }
             }
+            else
+            {
+                Road0_count4 = 0;
+            }
+            
         }
         if (fabs(Lef_slope) > 1.5 && fabs(Rig_slope) > 1.5 && Road7_flag != 2 &&
             ((Lef_edge < 10 && Rig_edge < 10) || (Lef_edge < 4 && Rig_edge < 12) || (Rig_edge < 4 && Lef_edge < 12)))
@@ -2249,54 +2255,6 @@ void Road3_zhuangtaiji(void)
                 Road3_flag = 1;
                 return;
             }
-            /*
-        for (k = Last_row - 3; k > Fir_row + 1; --k)
-        {
-            if (Lef[k] <= 2)
-            {
-                continue;
-            }
-            else
-            {
-                break;
-            }
-        }
-        if (k == Fir_row + 1)
-        {
-            Road3_flag = 1;
-            return;
-        }
-        for (; k > Fir_row + 1; --k)
-        {
-            if (Lef[k - 1] <= 2 && Lef[k - 2] <= 2 && Lef[k - 3] <= 2)
-            {
-                start_line = k;
-                break;
-            }
-            if (abs(Lef[k - 1] - Lef[k]) < 10)
-            {
-                continue;
-            }
-            else
-            {
-                start_line = k;
-                break;
-            }
-        }
-        if (start_line > 38)
-        {
-            Road31_count++;
-            if (Road31_count > 1)
-            {
-                Road31_count = 0;
-                Road3_flag = 1;
-            }
-        }
-        else
-        {
-            Road31_count = 0;
-        }
-        */
         }
         else if (Road3_flag == 1)
         {
@@ -2344,14 +2302,7 @@ void Road3_zhuangtaiji(void)
             if (Road32_count > 2)
             {
                 Road = 0;
-                if(barn_state)
-                { 
-                    Road0_flag = 4;
-                }
-                else
-                {
-                    Road0_flag = 5;
-                }
+                Road0_flag = 4;
                 Road3_flag = 0;
                 Road32_count = 0;
             }
@@ -2388,54 +2339,6 @@ void Road3_zhuangtaiji(void)
                 Road3_flag = 1;
                 return;
             }
-            /*
-        for (k = Last_row - 3; k > Fir_row + 1; --k)
-        {
-            if (Rig[k] >= 78)
-            {
-                continue;
-            }
-            else
-            {
-                break;
-            }
-        }
-        if (k == Fir_row + 1)
-        {
-            Road3_flag = 1;
-            return;
-        }
-        for (int i = k; i > Fir_row + 1; --i)
-        {
-            if (Rig[i - 1] >= 78 && Rig[i - 2] >= 78 && Rig[i - 3] >= 78)
-            {
-                start_line = i;
-                break;
-            }
-            if (abs(Rig[i] - Rig[i - 1]) < 10)
-            {
-                continue;
-            }
-            else
-            {
-                start_line = i;
-                break;
-            }
-        }
-        if (start_line > 35 - (60 - k)) // ²»¶Ô³Æ
-        {
-            Road31_count++;
-            if (Road31_count > 1)
-            {
-                Road31_count = 0;
-                Road3_flag = 1;
-            }
-        }
-        else
-        {
-            Road31_count = 0;
-        }
-        */
         }
         else if (Road3_flag == 1)
         {
@@ -2483,7 +2386,7 @@ void Road3_zhuangtaiji(void)
             if (Road32_count > 2)
             {
                 Road = 0;
-                Road0_flag = 0;
+                Road0_flag = 5;
                 Road3_flag = 0;
                 Road32_count = 0;
             }

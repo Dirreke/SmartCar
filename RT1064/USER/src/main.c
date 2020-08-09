@@ -67,6 +67,7 @@ int main(void)
 
     NVIC_SetPriority(GPIO2_Combined_16_31_IRQn, 0); //设置中断优先级 范围0-15 越小优先级越高
     gyro_y_init();                                  //陀螺仪校正初始化
+    threshold_offset = 5;
     Para_Init();                                    //各个变量初始化
 
     EnableGlobalIRQ(0);

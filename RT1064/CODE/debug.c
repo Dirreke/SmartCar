@@ -21,10 +21,10 @@ void Debug_Init(void)
 void Debug_key(void)
 {
     static int ips_num = 0;
-    int page_num0 = 19;
+    int page_num0 = 20;
     const int page_num1 = 49;
     int NB_Use_No = 0;
-    static int page_num = 19;
+    static int page_num = 20;
     static bool qipao_flag;
     static bool guanpingmu_flag = 0;
     if (gpio_get(DEBUG_KEY0))
@@ -183,7 +183,7 @@ void Debug_key(void)
             systick_delay_ms(50);
             if (!gpio_get(DEBUG_KEY3))
             {
-                switch (19 - ips_num)
+                switch (20 - ips_num)
                 {
 
                 case 1:
@@ -260,31 +260,36 @@ void Debug_key(void)
                         break;
                     }
                     break;
+
                 case 11:
-                    ramp_ANGLE_3 += 0.5;
-                    break;
-                case 12:
                     If_Use_EM_Stop =! If_Use_EM_Stop;
                     break;
-                case 13:
+                case 12:
                     If_Use_EM_On_Ramp  =! If_Use_EM_On_Ramp;
                     break;
+                    
+                case 13:
+                    ramp_ANGLE_3 += 0.5;
+                    break;
                 case 14:
-                    PID_CAR_STRAIGHT_CAM.D += 1;
+                    PID_CENTER_EM.P += 0.5;
                     break;
                 case 15:
-                    PID_diff0.P += 0.05;
+                    PID_CAR_STRAIGHT_CAM.D += 1;
                     break;
                 case 16:
-                    PID_diff.P += 0.05;
+                    PID_diff0.P += 0.05;
                     break;
                 case 17:
-                    car_straight_b += 0.01;
+                    PID_diff.P += 0.05;
                     break;
                 case 18:
-                    car_straight_k += 0.01;
+                    car_straight_b += 0.01;
                     break;
                 case 19:
+                    car_straight_k += 0.01;
+                    break;
+                case 20:
                     barn_state = !barn_state;
                     break;
                 default:
@@ -298,7 +303,7 @@ void Debug_key(void)
             systick_delay_ms(50);
             if (!gpio_get(DEBUG_KEY4))
             {
-                switch (19 - ips_num)
+                switch (20 - ips_num)
                 {
 
                     case 1:
@@ -375,31 +380,35 @@ void Debug_key(void)
                             break;
                         }
                         break;
+
                     case 11:
-                        ramp_ANGLE_3 -= 0.5;
-                        break;
-                    case 12:
                         If_Use_EM_Stop =! If_Use_EM_Stop;
                         break;
-                    case 13:
+                    case 12:
                         If_Use_EM_On_Ramp  =! If_Use_EM_On_Ramp;
                         break;
+                    case 13:
+                        ramp_ANGLE_3 -= 0.5;
+                        break;
                     case 14:
-                        PID_CAR_STRAIGHT_CAM.D -= 1;
+                        PID_CENTER_EM.P -= 0.5;
                         break;
                     case 15:
-                        PID_diff0.P -= 0.05;
+                        PID_CAR_STRAIGHT_CAM.D -= 1;
                         break;
                     case 16:
-                        PID_diff.P -= 0.05;
+                        PID_diff0.P -= 0.05;
                         break;
                     case 17:
-                        car_straight_b -= 0.01;
+                        PID_diff.P -= 0.05;
                         break;
                     case 18:
-                        car_straight_k -= 0.01;
+                        car_straight_b -= 0.01;
                         break;
                     case 19:
+                        car_straight_k -= 0.01;
+                        break;
+                    case 20:
                         barn_state = !barn_state;
                         break;
 
@@ -666,7 +675,7 @@ void ips_show_debug0(int ips_num)
     //systick_delay_ms(300);
     ips200_showstr(PAGE_X, 14, "page");
     ips200_showuint16(PAGE_NUM_X, 14, ips_num);
-    switch (19 - ips_num)
+    switch (20 - ips_num)
     {
 
     /** pages **/
@@ -739,7 +748,7 @@ void ips_show_debug0(int ips_num)
         break;
 
         /* µ¹×Åµ÷ */
-    case 19:
+    case 20:
         if (barn_state)
         {
             ips200_showstr(0, 12, "L_barn");
@@ -749,38 +758,43 @@ void ips_show_debug0(int ips_num)
             ips200_showstr(0, 12, "R_barn");
         }
         break;
-    case 18:
+    case 19:
         ips200_showstr(0, 12, "car_straight_k");
         ips200_showfloat(0, 13, car_straight_k, 4, 2); //PID_TURN_CAM_EXT.P, 4, 2);
         break;
-    case 17:
+    case 18:
         ips200_showstr(0, 12, "car_straight_b");
         ips200_showfloat(0, 13, car_straight_b, 4, 2); //PID_TURN_CAM_EXT.D, 4, 2);
         break;
-    case 16:
+    case 17:
         ips200_showstr(0, 12, "PID_diff.P");
         ips200_showfloat(0, 13, PID_diff.P, 4, 2);
         break;
-    case 15:
+    case 16:
         ips200_showstr(0, 12, "PID_diff0.P");
         ips200_showfloat(0, 13, PID_diff0.P, 4, 2);
         break;
-    case 14:
+    case 15:
         ips200_showstr(0, 12, "PID_CAR_STRAIGHT_CAM.D");
         ips200_showfloat(0, 13, PID_CAR_STRAIGHT_CAM.D, 4, 2);
         break;
+    case 14:
+        ips200_showstr(0, 12, "PID_CENTER_EM.P");
+        ips200_showfloat(0, 13, PID_CENTER_EM.P, 4, 2);
+        break;  
     case 13:
-        ips200_showstr(0, 12, "If_Use_EM_On_Ramp");
-        ips200_showint32(0, 13, If_Use_EM_On_Ramp, 3); //PID_TURN_CAM_EXT.P, 4, 2);
-        break;
-    case 12:
-        ips200_showstr(0, 12, "If_Use_EM_Stop");
-        ips200_showint32(0, 13, If_Use_EM_Stop, 3); //PID_TURN_CAM_EXT.P, 4, 2);
-        break;
-    case 11:
         ips200_showstr(0, 12, "ramp_ANGLE_3");
         ips200_showfloat(0, 13, ramp_ANGLE_3, 4, 2);
         break;
+    case 12:
+        ips200_showstr(0, 12, "If_Use_EM_On_Ramp");
+        ips200_showint32(0, 13, If_Use_EM_On_Ramp, 3); //PID_TURN_CAM_EXT.P, 4, 2);
+        break;
+    case 11:
+        ips200_showstr(0, 12, "If_Use_EM_Stop");
+        ips200_showint32(0, 13, If_Use_EM_Stop, 3); //PID_TURN_CAM_EXT.P, 4, 2);
+        break;
+
     default:
 
         break;
